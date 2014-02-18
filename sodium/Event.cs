@@ -313,7 +313,7 @@ namespace sodium
         public Event<TEvent> Gate(Behavior<Boolean> behaviorPredicate)
         {
             var f = new BinaryFunction<TEvent, bool, Maybe<TEvent>>((a,pred) => pred ? new Maybe<TEvent>(a) : null);
-            return Snapshot(behaviorPredicate, f).FilterNotNull().Map(a => a.Value);
+            return Snapshot(behaviorPredicate, f).FilterNotNull().Map(a => a.Value());
         }
 
         /// <summary>

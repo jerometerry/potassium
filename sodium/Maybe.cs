@@ -40,21 +40,18 @@
             }
         }
 
-        public T Value
+        public T Value()
         {
-            get
+            if (!HasValue)
             {
-                if (!HasValue)
-                {
-                    throw new ArgumentException("Maybe doesn't contain a value!");
-                }
-                return _value;
+                throw new ArgumentException("Maybe doesn't contain a value!");
             }
+            return _value;
         }
 
         public static implicit operator T(Maybe<T> m)
         {
-            return m.Value;
+            return m.Value();
         }
 
         public static implicit operator Maybe<T>(T m)
@@ -80,14 +77,16 @@
             }
 
             if (HasValue != m.HasValue)
+            { 
                 return false;
+            }
 
-            return Value.Equals(m.Value);
+            return Value().Equals(m.Value());
         }
 
         public override int GetHashCode()
         {
-            return !HasValue ? 0 : Value.GetHashCode();
+            return !HasValue ? 0 : Value().GetHashCode();
         }
     }
 }
