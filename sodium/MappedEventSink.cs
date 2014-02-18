@@ -21,7 +21,7 @@ namespace sodium
             
             var results = new TNewEvent[oi.Length];
             for (var i = 0; i < results.Length; i++)
-                results[i] = _mapFunction.Apply((TEvent)oi[i]);
+                results[i] = _mapFunction.Apply(oi[i]);
             return results;
             
         }

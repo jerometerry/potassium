@@ -23,7 +23,7 @@
             
             var evt = events[0];
             for (var i = 1; i < events.Length; i++)
-                evt = _combiningFunction.Apply(evt, (TEvent)events[i]);
+                evt = _combiningFunction.Apply(evt, events[i]);
             return new TEvent[] { evt };
         }
     }

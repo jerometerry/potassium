@@ -86,9 +86,9 @@ namespace sodium
             if (events != null)
             {    
                 // In cases like Value(), we start with an initial value.
-                foreach (object evt in events)
+                foreach (var evt in events)
                 { 
-                    action.Run(transaction, (TEvent)evt);
+                    action.Run(transaction, evt);
                 }
             }
 

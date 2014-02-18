@@ -23,10 +23,7 @@ namespace sodium
                 return null;
             }
 
-            var outputs = (from i in inputs 
-                           let evt = (TEvent) i 
-                           where _predicate.Apply(evt) 
-                           select i).ToArray();
+            var outputs = inputs.Where(_predicate.Apply).ToArray();
 
             if (outputs.Length == 0)
             {
