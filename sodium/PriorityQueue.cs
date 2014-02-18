@@ -16,6 +16,15 @@
             }
         }
 
+        public void AddRange(IEnumerable<T> items)
+        {
+            lock (_items)
+            {
+                _items.AddRange(items);
+                _items.Sort();
+            }
+        }
+
         public void Clear()
         {
             lock(_items)

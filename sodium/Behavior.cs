@@ -141,7 +141,9 @@ namespace sodium
         /// </returns>
         public Behavior<TResultBehavior> Map<TResultBehavior>(IFunction<TBehavior, TResultBehavior> f)
         {
-            return Updates().Map(f).Hold(f.Apply(Sample()));
+            var sample = Sample();
+            var initValue = f.Apply(sample);
+            return Updates().Map(f).Hold(initValue);
         }
 
         public Behavior<TResultBehavior> Map<TResultBehavior>(Func<TBehavior, TResultBehavior> f)

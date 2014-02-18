@@ -76,15 +76,20 @@ namespace sodium
             lock (Transaction.ListenersLock)
             {
                 if (Node.LinkTo(target))
+                { 
                     transaction.NeedToRegeneratePriorityQueue = true;
+                }
                 _actions.Add(action);
             }
 
             var events = SampleNow();
             if (events != null)
-            {    // In cases like value(), we start with an initial value.
+            {    
+                // In cases like Value(), we start with an initial value.
                 foreach (object evt in events)
-                    action.Run(transaction, (TEvent)evt); 
+                { 
+                    action.Run(transaction, (TEvent)evt);
+                }
             }
 
             if (!suppressEarlierFirings)
@@ -92,7 +97,9 @@ namespace sodium
                 // Anything sent already in this transaction must be sent now so that
                 // there's no order dependency between send and listen.
                 foreach (var firing in Firings)
+                { 
                     action.Run(transaction, firing);
+                }
             }
 
             return new Listener<TEvent>(this, action, target);

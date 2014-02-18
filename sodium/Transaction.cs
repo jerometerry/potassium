@@ -140,10 +140,7 @@ namespace sodium
         private void RegeneratePriorityQueue()
         {
             _prioritized.Clear();
-            foreach (var e in _entries)
-            { 
-                _prioritized.Add(e);
-            }
+            _prioritized.AddRange(_entries);
         }
 
         public void Close()

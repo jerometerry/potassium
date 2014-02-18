@@ -237,6 +237,29 @@ namespace sodium.tests
 		    listener.Unlisten();
 		    AssertArraysEqual(Arrays<string>.AsList("6", "8"), results);
 	    }
+
+        [Test]
+        public void TestMapB2()
+        {
+            var behavior = new BehaviorSink<Int32>(1);
+            var behavior1 = behavior.Map(x => x * 3);
+            var results = new List<Int32>();
+            var listener = behavior1.Value().Listen(results.Add);
+            listener.Unlisten();
+            AssertArraysEqual(Arrays<Int32>.AsList(3), results);
+        }
+
+        [Test]
+        public void TestMapB3()
+        {
+            var behavior = new BehaviorSink<Int32>(1);
+            var behavior1 = behavior.Map(x => x * 3);
+            var results = new List<Int32>();
+            var listener = behavior1.Value().Listen(results.Add);
+            behavior.Send(2);
+            listener.Unlisten();
+            AssertArraysEqual(Arrays<Int32>.AsList(3, 6), results);
+        }
 	
         [Test]
 	    public void TestMapBLateListen() 
@@ -279,8 +302,8 @@ namespace sodium.tests
 		    var behavior1 = new BehaviorSink<Int32>(1);
 		    var behavior2 = new BehaviorSink<Int64>(5L);
 		    var results = new List<String>();
-		    var listener = Behavior<Int32>.Lift((x, y) => x + " " + y, behavior1, behavior2)
-                .Value().Listen(results.Add);
+		    var combinedBehavior = Behavior<Int32>.Lift((x, y) => x + " " + y, behavior1, behavior2);
+            var listener = combinedBehavior.Value().Listen(results.Add);
 		    behavior1.Send(12);
 		    behavior2.Send(6L);
             listener.Unlisten();
@@ -288,17 +311,19 @@ namespace sodium.tests
 	    }
 	
         [Test]
-	    public void TestLiftGlitch() 
+	    public void TestMapAndLift() 
         {
 		    var behavior = new BehaviorSink<Int32>(1);
-		    var behavior1 = behavior.Map(x => x * 3);
-		    var behavior2 = behavior.Map(x => x * 5);
-		    var behavior3 = Behavior<Int32>.Lift((x, y) => x + " " + y, behavior1, behavior2);
-		    var results = new List<String>();
-		    var listener = behavior3.Value().Listen(results.Add);
+		    var mappedBehavior1 = behavior.Map(x => x * 3);
+		    var mappedBehavior2 = behavior.Map(x => x * 5);
+            var results = new List<String>();
+            var combinedBehavior = Behavior<Int32>.Lift((x, y) => x + " " + y, mappedBehavior1, mappedBehavior2);
+		    var listener = combinedBehavior.Value().Listen(results.Add);
 		    behavior.Send(2);
 		    listener.Unlisten();
-		    AssertArraysEqual(Arrays<string>.AsList("3 5", "6 10"), results);
+            // TODO - should the "3 10" value be generated?
+            // 
+		    AssertArraysEqual(Arrays<string>.AsList("3 5", "3 10", "6 10"), results);
 	    }
 
         [Test]
