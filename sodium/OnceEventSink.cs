@@ -13,14 +13,17 @@
             _listeners = listeners;
         }
 
-        public override Object[] SampleNow()
+        public override TEvent[] SampleNow()
         {
             var inputs = _event.SampleNow();
             var outputs = inputs;
             if (outputs != null)
             {
                 if (outputs.Length > 1)
+                { 
                     outputs = new[] { inputs[0] };
+                }
+
                 if (_listeners[0] != null)
                 {
                     _listeners[0].Unlisten();

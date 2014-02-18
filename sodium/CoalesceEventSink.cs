@@ -13,7 +13,7 @@
             _combiningFunction = combiningFunction;
         }
 
-        public override Object[] SampleNow()
+        public override TEvent[] SampleNow()
         {
             var events = _event.SampleNow();
             if (events == null)
@@ -21,10 +21,10 @@
                 return null;
             }
             
-            var evt = (TEvent)events[0];
+            var evt = events[0];
             for (var i = 1; i < events.Length; i++)
                 evt = _combiningFunction.Apply(evt, (TEvent)events[i]);
-            return new Object[] { evt };
+            return new TEvent[] { evt };
         }
     }
 }

@@ -18,7 +18,7 @@
             _behavior = behavior;
         }
 
-        public override Object[] SampleNow()
+        public override TSnapshot[] SampleNow()
         {
             var inputs = _event.SampleNow();
             if (inputs == null)
@@ -26,10 +26,10 @@
                 return null;
             }
 
-            var outputs = new Object[inputs.Length];
+            var outputs = new TSnapshot[inputs.Length];
             for (int i = 0; i < outputs.Length; i++)
             { 
-                var evt = (TEvent)inputs[i];
+                var evt = inputs[i];
                 var snapshot = _behavior.Sample();
                 outputs[i] = _snapshotFunction.Apply(evt, snapshot);
             }

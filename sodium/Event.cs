@@ -39,7 +39,7 @@ namespace sodium
             }
         }
 
-        public virtual Object[] SampleNow() 
+        public virtual TEvent[] SampleNow() 
         { 
             return null; 
         }

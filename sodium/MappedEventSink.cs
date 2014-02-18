@@ -13,13 +13,13 @@ namespace sodium
             _mapFunction = mapFunction;
         }
 
-        public override Object[] SampleNow()
+        public override TNewEvent[] SampleNow()
         {
             var oi = _event.SampleNow();
             if (oi == null)
                 return null;
             
-            var results = new Object[oi.Length];
+            var results = new TNewEvent[oi.Length];
             for (var i = 0; i < results.Length; i++)
                 results[i] = _mapFunction.Apply((TEvent)oi[i]);
             return results;

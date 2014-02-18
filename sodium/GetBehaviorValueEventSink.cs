@@ -11,9 +11,9 @@ namespace sodium
             _behavior = behavior;
         }
 
-        public override Object[] SampleNow()
+        public override TBehavior[] SampleNow()
         {
-            return new Object[] 
+            return new TBehavior[] 
             { 
                 _behavior.Sample() 
             };

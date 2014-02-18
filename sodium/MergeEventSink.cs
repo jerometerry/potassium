@@ -13,13 +13,13 @@
             _event2 = evt2;
         }
 
-        public override Object[] SampleNow()
+        public override TEvent[] SampleNow()
         {
             var output1 = _event1.SampleNow();
             var output2 = _event2.SampleNow();
             if (output1 != null && output2 != null)
             {
-                var outputs = new Object[output1.Length + output2.Length];
+                var outputs = new TEvent[output1.Length + output2.Length];
                 int i = 0;
                 foreach (var t in output1)
                     outputs[i++] = t;
