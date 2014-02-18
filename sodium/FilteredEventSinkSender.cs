@@ -2,10 +2,6 @@
 {
     using System;
 
-    /// <summary>
-    /// TODO - codesmell. Looks very similar to EventSinkRunner and EventSinkSender
-    /// </summary>
-    /// <typeparam name="TEvent"></typeparam>
     class FilteredEventSinkSender<TEvent> : ITransactionHandler<TEvent>
     {
         private readonly IFunction<TEvent, Boolean> _predicate;

@@ -36,19 +36,9 @@
         {
             lock(_items)
             {
-                var last = Peek();
-                // TODO - can't assume nullable
-                if (last != null)
-                    Remove(last);
+                var last = _items.Last();
+                Remove(last);
                 return last;
-            }
-        }
-
-        public T Peek()
-        {
-            lock(_items)
-            {
-                return _items.Last();
             }
         }
 

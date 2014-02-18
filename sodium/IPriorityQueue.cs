@@ -6,7 +6,6 @@ namespace sodium
         void Clear();
         bool Remove(T item);
         T Remove();
-        T Peek();
         bool IsEmpty();
     }
 }
