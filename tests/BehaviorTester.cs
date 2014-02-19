@@ -321,9 +321,7 @@ namespace sodium.tests
 		    var listener = combinedBehavior.Value().Listen(results.Add);
 		    behavior.Send(2);
 		    listener.Unlisten();
-            // TODO - should the "3 10" value be generated?
-            // 
-		    AssertArraysEqual(Arrays<string>.AsList("3 5", "3 10", "6 10"), results);
+		    AssertArraysEqual(Arrays<string>.AsList("3 5", "6 10"), results);
 	    }
 
         [Test]
@@ -343,40 +341,163 @@ namespace sodium.tests
         [Test]
 	    public void TestSwitchB()
 	    {
-	        var esb = new EventSink<Sb>();
+	        var sink = new EventSink<Sb>();
 	        // Split each field o of SB so we can update multiple behaviours in a
 	        // single transaction.
-	        var ba = esb.Map(s => s.A).FilterNotNull().Hold('A');
-	        var bb = esb.Map(s => s.B).FilterNotNull().Hold('a');
-	        var bsw = esb.Map(s => s.Sw).FilterNotNull().Hold(ba);
-	        var bo = Behavior<char?>.SwitchB(bsw);
-		    var o = new List<char>();
-	        var l = bo.Value().Listen(c =>
+	        var behaviorA = sink.Map(s => s.C1).FilterNotNull().Hold('A');
+	        var behaviorB = sink.Map(s => s.C2).FilterNotNull().Hold('a');
+	        var bsw = sink.Map(s => s.Behavior).FilterNotNull().Hold(behaviorA);
+	        var behavior = Behavior<char?>.SwitchB(bsw);
+		    var results = new List<char>();
+	        var listener = behavior.Value().Listen(c =>
 	        {
 	            Assert.IsNotNull(c, "c != null");
-	            o.Add(c.Value);
+	            results.Add(c.Value);
 	        });
-	        esb.Send(new Sb('B','b',null));
-	        esb.Send(new Sb('C','c',bb));
-	        esb.Send(new Sb('D','d',null));
-	        esb.Send(new Sb('E','e',ba));
-	        esb.Send(new Sb('F','f',null));
-	        esb.Send(new Sb(null,null,bb));
-	        esb.Send(new Sb(null,null,ba));
-	        esb.Send(new Sb('G','g',bb));
-	        esb.Send(new Sb('H','h',ba));
-	        esb.Send(new Sb('I','i',ba));
-	        l.Unlisten();
-	        AssertArraysEqual(Arrays<char>.AsList('A','B','c','d','E','F','f','F','g','H','I'), o);
+	        sink.Send(new Sb('B','b',null));
+	        sink.Send(new Sb('C','c',behaviorB));
+	        sink.Send(new Sb('D','d',null));
+	        sink.Send(new Sb('E','e',behaviorA));
+	        sink.Send(new Sb('F','f',null));
+	        sink.Send(new Sb(null,null,behaviorB));
+	        sink.Send(new Sb(null,null,behaviorA));
+	        sink.Send(new Sb('G','g',behaviorB));
+	        sink.Send(new Sb('H','h',behaviorA));
+	        sink.Send(new Sb('I','i',behaviorA));
+	        listener.Unlisten();
+	        AssertArraysEqual(Arrays<char>.AsList('A','B','c','d','E','F','f','F','g','H','I'), results);
 	    }
+
+        [Test]
+        public void TestSwitchB1()
+        {
+            var sink = new EventSink<Sb>();
+            // Split each field o of SB so we can update multiple behaviours in a
+            // single transaction.
+            var behaviorA = sink.Map(s => s.C1).FilterNotNull().Hold('A');
+            var behaviorB = sink.Map(s => s.C2).FilterNotNull().Hold('a');
+            var bsw = sink.Map(s => s.Behavior).FilterNotNull().Hold(behaviorA);
+            var behavior = Behavior<char?>.SwitchB(bsw);
+            var results = new List<char>();
+            var listener = behavior.Value().Listen(c =>
+            {
+                Assert.IsNotNull(c, "c != null");
+                results.Add(c.Value);
+            });
+            sink.Send(new Sb('B', 'b', null));
+            listener.Unlisten();
+            AssertArraysEqual(Arrays<char>.AsList('A', 'B'), results);
+        }
+
+        [Test]
+        public void TestSwitchB2()
+        {
+            Debug.WriteLine("{0:HH:mm:SS.fff} Creating Sink", DateTime.Now); 
+            var sink = new EventSink<Sb>();
+            Debug.WriteLine("{0:HH:mm:SS.fff} Sink Created", DateTime.Now); 
+
+            // Split each field o of SB so we can update multiple behaviours in a
+            // single transaction.
+            Debug.WriteLine("{0:HH:mm:SS.fff} Creating behaviorC1", DateTime.Now); 
+            var behaviorC1 = sink.Map(s => s.C1).FilterNotNull().Hold('A');
+            Debug.WriteLine("{0:HH:mm:SS.fff} behaviorC1 created", DateTime.Now);
+
+            Debug.WriteLine("{0:HH:mm:SS.fff} Creating behaviorC2", DateTime.Now); 
+            var behaviorC2 = sink.Map(s => s.C2).FilterNotNull().Hold('a');
+            Debug.WriteLine("{0:HH:mm:SS.fff} behaviorC2 created", DateTime.Now);
+
+            Debug.WriteLine("{0:HH:mm:SS.fff} Creating bsw", DateTime.Now);
+            var bsw = sink.Map(s => s.Behavior).FilterNotNull().Hold(behaviorC1);
+            Debug.WriteLine("{0:HH:mm:SS.fff} bsw created", DateTime.Now);
+
+            Debug.WriteLine("{0:HH:mm:SS.fff} registering behaviorC1 listener", DateTime.Now);
+            behaviorC1.Value().Listen(c1 => 
+            { 
+                Debug.WriteLine("{0:HH:mm:SS.fff} C1 changed: {1}", DateTime.Now, c1); 
+            });
+            Debug.WriteLine("{0:HH:mm:SS.fff} behaviorC1 listener registered", DateTime.Now);
+
+            Debug.WriteLine("{0:HH:mm:SS.fff} registering behaviorC2 listener", DateTime.Now);
+            behaviorC2.Value().Listen(c2 => 
+            {
+                Debug.WriteLine("{0:HH:mm:SS.fff} C2 changed: {1}", DateTime.Now, c2); 
+            });
+            Debug.WriteLine("{0:HH:mm:SS.fff} behaviorC2 listener registered", DateTime.Now);
+
+            Debug.WriteLine("{0:HH:mm:SS.fff} registering bsw listener", DateTime.Now);
+            bsw.Value().Listen(b => 
+            { 
+                if (b == behaviorC1)
+                {
+                    Debug.WriteLine("{0:HH:mm:SS.fff} Behavior set to behaviorC1", DateTime.Now);
+                }
+                else if (b == behaviorC2)
+                {
+                    Debug.WriteLine("{0:HH:mm:SS.fff} Behavior set to behaviorC2", DateTime.Now);
+                }
+                else if (b == null)
+                {
+                    Debug.WriteLine("{0:HH:mm:SS.fff} Behavior set to NULL", DateTime.Now);
+                }
+                else
+                {
+                    Debug.WriteLine("{0:HH:mm:SS.fff} Unknown Behavior", DateTime.Now);
+                }
+            });
+            Debug.WriteLine("{0:HH:mm:SS.fff} bsw listener registered", DateTime.Now);
+
+            Debug.WriteLine("{0:HH:mm:SS.fff} switching to behavior", DateTime.Now);
+            var behavior = Behavior<char?>.SwitchB(bsw);
+            Debug.WriteLine("{0:HH:mm:SS.fff} switched to behavior", DateTime.Now);
+
+            Debug.WriteLine("{0:HH:mm:SS.fff} registering behavior listener", DateTime.Now);
+            var results = new List<char>();
+            var listener = behavior.Value().Listen(c =>
+            {
+                Assert.IsNotNull(c, "c != null");
+                Debug.WriteLine("{0:HH:mm:SS.fff} Value Changed: {1}", DateTime.Now, c); 
+                results.Add(c.Value);
+            });
+            Debug.WriteLine("{0:HH:mm:SS.fff} behavior listener registered", DateTime.Now);
+
+            Debug.WriteLine("{0:HH:mm:SS.fff} Sending ('B', 'b', behaviorC2)", DateTime.Now);
+            sink.Send(new Sb('B', 'b', behaviorC2));
+            Debug.WriteLine("{0:HH:mm:SS.fff} Sent ('B', 'b', behaviorC2)", DateTime.Now);
+            
+            listener.Unlisten();
+
+            AssertArraysEqual(Arrays<char>.AsList('A', 'b'), results);
+        }
+
+        [Test]
+        public void TestSwitchB3()
+        {
+            var sink = new EventSink<Sb>();
+            // Split each field o of SB so we can update multiple behaviours in a
+            // single transaction.
+            var behaviorC1 = sink.Map(s => s.C1).FilterNotNull().Hold('A');
+            var behaviorC2 = sink.Map(s => s.C2).FilterNotNull().Hold('a');
+            var bsw = sink.Map(s => s.Behavior).FilterNotNull().Hold(behaviorC1);
+            var behavior = Behavior<char?>.SwitchB(bsw);
+            var results = new List<char>();
+            var listener = behavior.Value().Listen(c =>
+            {
+                Assert.IsNotNull(c, "c != null");
+                results.Add(c.Value);
+            });
+            sink.Send(new Sb('B', 'b', null));
+            sink.Send(new Sb('C', 'c', behaviorC2));
+            listener.Unlisten();
+            AssertArraysEqual(Arrays<char>.AsList('A', 'B'), results);
+        }
 
         [Test]
         public void TestSwitchE()
         {
             var ese = new EventSink<Se>();
-            var ea = ese.Map(s => s.A).FilterNotNull();
-            var eb = ese.Map(s => s.B).FilterNotNull();
-            var bsw = ese.Map(s => s.Sw).FilterNotNull().Hold(ea);
+            var ea = ese.Map(s => s.C1).FilterNotNull();
+            var eb = ese.Map(s => s.C2).FilterNotNull();
+            var bsw = ese.Map(s => s.Event).FilterNotNull().Hold(ea);
             var o = new List<char>();
             var eo = Behavior<char>.SwitchE(bsw);
 	        var l = eo.Listen(o.Add);
@@ -458,28 +579,28 @@ namespace sodium.tests
 
         class Se
 	    {
-	        public Se(char a, char b, Event<char> sw)
+	        public Se(char c1, char c2, Event<char> evt)
 	        {
-	            A = a;
-	            B = b;
-	            Sw = sw;
+	            C1 = c1;
+	            C2 = c2;
+	            Event = evt;
 	        }
-	        public readonly char A;
-	        public readonly char B;
-            public readonly Event<char> Sw;
+	        public readonly char C1;
+	        public readonly char C2;
+            public readonly Event<char> Event;
 	    }
 
         class Sb
 	    {
-            public Sb(char? a, char? b, Behavior<char?> sw)
+            public Sb(char? c1, char? c2, Behavior<char?> behavior)
 	        {
-	            A = a;
-	            B = b;
-	            Sw = sw;
+	            C1 = c1;
+	            C2 = c2;
+	            Behavior = behavior;
 	        }
-            public readonly char? A;
-            public readonly char? B;
-            public readonly Behavior<char?> Sw;
+            public readonly char? C1;
+            public readonly char? C2;
+            public readonly Behavior<char?> Behavior;
 	    }
     }
 }
