@@ -120,13 +120,13 @@ namespace sodium
         public Event<TBehavior> Value()
         {
             var behavior = this;
-            var action = new Function<Transaction, Event<TBehavior>>(behavior.GetValue);
+            var action = new Function<Transaction, Event<TBehavior>>(behavior.Value);
             return Transaction.Apply(action);
         }
 
-        public Event<TBehavior> GetValue(Transaction transaction)
+        public Event<TBehavior> Value(Transaction transaction)
         {
-            var sink = new GetBehaviorValueEventSink<TBehavior>(this);
+            var sink = new BehaviorValueEventSink<TBehavior>(this);
             var action = new EventSinkSender<TBehavior>(sink);
             var listener = Event.Listen(sink.Node, transaction, action, false);
             // Needed in case of an initial value and an update in the same transaction.

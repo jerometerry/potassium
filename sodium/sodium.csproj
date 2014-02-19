@@ -74,7 +74,7 @@
     <Compile Include="EventSink.cs" />
     <Compile Include="FilteredEventSink.cs" />
     <Compile Include="FilteredEventSinkSender.cs" />
-    <Compile Include="GetBehaviorValueEventSink.cs" />
+    <Compile Include="BehaviorValueEventSink.cs" />
     <Compile Include="Handler.cs" />
     <Compile Include="IHandler.cs" />
     <Compile Include="IFunction.cs" />

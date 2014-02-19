@@ -25,7 +25,7 @@ namespace sodium
                 _currentListener.Unlisten();
             }
             var handler = new EventSinkSender<TBehavior>(_sink);
-            _currentListener = behavior.GetValue(transaction).Listen(_sink.Node, transaction, handler, false);
+            _currentListener = behavior.Value(transaction).Listen(_sink.Node, transaction, handler, false);
         }
 
         public void Dispose()

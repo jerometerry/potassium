@@ -2,11 +2,11 @@ namespace sodium
 {
     using System;
 
-    class GetBehaviorValueEventSink<TBehavior> : EventSink<TBehavior>
+    class BehaviorValueEventSink<TBehavior> : EventSink<TBehavior>
     {
         private readonly Behavior<TBehavior> _behavior;
 
-        public GetBehaviorValueEventSink(Behavior<TBehavior> behavior)
+        public BehaviorValueEventSink(Behavior<TBehavior> behavior)
         {
             _behavior = behavior;
         }
@@ -15,7 +15,7 @@ namespace sodium
         {
             return new TBehavior[] 
             { 
-                _behavior.Sample() 
+                _behavior.Sample()
             };
         }
     }
