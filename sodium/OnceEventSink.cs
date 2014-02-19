@@ -13,7 +13,7 @@
             _listeners = listeners;
         }
 
-        public override TEvent[] SampleNow()
+        internal override TEvent[] SampleNow()
         {
             var inputs = _event.SampleNow();
             var outputs = inputs;

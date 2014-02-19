@@ -12,9 +12,10 @@
         [TearDown]
         public void TearDown()
         {
+            GC.Collect();
+
             // All tests are being run on a single thread.
             // Is this really necessary?
-            //GC.Collect();
             //Thread.Sleep(100);
         }
 

@@ -2,7 +2,7 @@
 {
     using System;
 
-    class Handler<T> : IHandler<T>
+    sealed class Handler<T> : IHandler<T>
     {
         readonly Action<T> _function;
 
@@ -14,6 +14,10 @@
         public void Run(T p)
         {
             _function(p);
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

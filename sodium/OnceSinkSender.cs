@@ -1,6 +1,6 @@
 ﻿namespace sodium
 {
-    class OnceSinkSender<TEvent> : ITransactionHandler<TEvent>
+    sealed class OnceSinkSender<TEvent> : ITransactionHandler<TEvent>
     {
         private readonly EventSink<TEvent> _sink;
         private readonly IListener[] _listeners;
@@ -19,6 +19,10 @@
                 _listeners[0].Unlisten();
                 _listeners[0] = null;
             }
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

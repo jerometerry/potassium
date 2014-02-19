@@ -1,11 +1,12 @@
 namespace sodium
 {
-    class BehaviorPrioritizedInvoker<TBehavior, TNewBehavior> : IHandler<Transaction>
+    sealed class BehaviorPrioritizedInvoker<TBehavior, TNewBehavior> : IHandler<Transaction>
     {
         public bool Fired = false;
         private readonly EventSink<TNewBehavior> _sink;
         private readonly Behavior<IFunction<TBehavior, TNewBehavior>> _behaviorFunction;
         private readonly Behavior<TBehavior> _behavior;
+        private IHandler<Transaction> _action;
 
         public BehaviorPrioritizedInvoker(
             EventSink<TNewBehavior> sink, 
@@ -24,8 +25,7 @@ namespace sodium
 
             Fired = true;
             var invoker = this;
-
-            var action = new Handler<Transaction>(t => 
+            _action = new Handler<Transaction>(t => 
             {
                 var mappingFunction = _behaviorFunction.NewValue();
                 var behavior = _behavior.NewValue();
@@ -34,7 +34,15 @@ namespace sodium
                 invoker.Fired = false;
             });
 
-            transaction.Prioritized(_sink.Node, action);
+            transaction.Prioritized(_sink.Node, _action);
+        }
+
+        public void Dispose()
+        {
+            if (_action != null)
+            {
+                _action.Dispose();
+            }
         }
     }
 }

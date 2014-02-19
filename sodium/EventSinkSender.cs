@@ -1,6 +1,6 @@
 namespace sodium
 {
-    class EventSinkSender<TEvent> : ITransactionHandler<TEvent>
+    sealed class EventSinkSender<TEvent> : ITransactionHandler<TEvent>
     {
         private readonly EventSink<TEvent> _sink;
 
@@ -12,6 +12,10 @@ namespace sodium
         public void Run(Transaction transaction, TEvent evt)
         {
             _sink.Send(transaction, evt);
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

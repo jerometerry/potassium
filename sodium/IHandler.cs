@@ -1,6 +1,7 @@
 namespace sodium
 {
-    public interface IHandler<in T>
+    using System;
+    public interface IHandler<in T> : IDisposable
     {
         void Run(T p);
     }

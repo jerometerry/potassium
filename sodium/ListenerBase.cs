@@ -12,5 +12,7 @@ namespace sodium
         {
             return new DualListener(this, listener);
         }
+
+        public abstract void Dispose();
     }
 }

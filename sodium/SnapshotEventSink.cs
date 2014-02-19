@@ -18,7 +18,7 @@
             _behavior = behavior;
         }
 
-        public override TSnapshot[] SampleNow()
+        internal override TSnapshot[] SampleNow()
         {
             var inputs = _event.SampleNow();
             if (inputs == null)

@@ -1,6 +1,6 @@
 ﻿namespace sodium
 {
-    class CoalesceHandler<TEvent> : ITransactionHandler<TEvent>
+    sealed class CoalesceHandler<TEvent> : ITransactionHandler<TEvent>
     {
         private readonly IBinaryFunction<TEvent, TEvent, TEvent> _combiningFunction;
         private readonly EventSink<TEvent> _sink;
@@ -31,6 +31,10 @@
                 Accumulation = evt;
                 AccumulationValid = true;
             }
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

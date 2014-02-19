@@ -2,7 +2,7 @@
 {
     using System;
 
-    class FilteredEventSinkSender<TEvent> : ITransactionHandler<TEvent>
+    sealed class FilteredEventSinkSender<TEvent> : ITransactionHandler<TEvent>
     {
         private readonly IFunction<TEvent, Boolean> _predicate;
         private readonly EventSink<TEvent> _sink;
@@ -19,6 +19,10 @@
             { 
                _sink.Send(transaction, evt);
             }
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

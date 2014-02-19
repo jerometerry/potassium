@@ -15,7 +15,7 @@ namespace sodium
             _predicate = predicate;
         }
 
-        public override TEvent[] SampleNow()
+        internal override TEvent[] SampleNow()
         {
             var inputs = _event.SampleNow();
             if (inputs == null)

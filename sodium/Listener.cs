@@ -4,10 +4,10 @@
 
     sealed class Listener<TEvent> : ListenerBase, IDisposable
     {
-        /**
-         * It's essential that we keep the listener alive while the caller holds
-         * the Listener, so that the finalizer doesn't get triggered.
-         */
+        /// <summary>
+        /// It's essential that we keep the listener alive while the caller holds
+        /// the Listener, so that the finalizer doesn't get triggered.
+        /// </summary>
         private readonly Event<TEvent> _event;
         private readonly ITransactionHandler<TEvent> _action;
         private readonly Node _target;
@@ -28,7 +28,7 @@
             }
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Unlisten();
         }

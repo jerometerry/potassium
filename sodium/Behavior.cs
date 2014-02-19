@@ -7,26 +7,26 @@ namespace sodium
         private TBehavior _valueUpdate;
         private bool _disposed;
 
-        public TBehavior Val { get; protected set; }
+        protected TBehavior Val { get; set; }
 
-        public TBehavior ValueUpdate
+        private TBehavior ValueUpdate
         {
             get
             {
                 return _valueUpdate;
             }
-            internal set 
+            set 
             { 
                 _valueUpdate = value;
                 ValueUpdated = true;
             }
         }
 
-        public bool ValueUpdated { get; private set; }
+        private bool ValueUpdated { get; set; }
 
-        internal IListener EventListener { get; set; }
+        private IListener EventListener { get; set; }
 
-        public Event<TBehavior> Event { get; set; }
+        public Event<TBehavior> Event { get; protected set; }
 
         /// <summary>
         /// A behavior with a constant value.
@@ -82,10 +82,10 @@ namespace sodium
         /// <summary>
         /// Sample the behavior's current value.
         ///
-        /// This should generally be avoided in favour of value().listen(..) so you don't
+        /// This should generally be avoided in favour of Value().Listen(..) so you don't
         /// miss any updates, but in many circumstances it makes sense.
         ///
-        /// It can be best to use it inside an explicit transaction (using Transaction.run()).
+        /// It can be best to use it inside an explicit transaction (using Transaction.Run()).
         /// For example, a b.Sample() inside an explicit transaction along with a
         /// b.Updates().Listen(..) will capture the current value and any updates without risk
         /// of missing any in between.
@@ -101,7 +101,7 @@ namespace sodium
 
         /// <summary>
         /// An event that gives the updates for the behavior. If this behavior was created
-        /// with a hold, then updates() gives you an evt equivalent to the one that was held.
+        /// with a hold, then Updates() gives you an evt equivalent to the one that was held.
         /// </summary>
         /// <returns>
         /// </returns>
@@ -112,7 +112,7 @@ namespace sodium
 
         /// <summary>
         /// An event that is guaranteed to fire once when you listen to it, giving
-        /// the current value of the behavior, and thereafter behaves like updates(),
+        /// the current value of the behavior, and thereafter behaves like Updates(),
         /// firing for each update to the behavior's value.
         /// </summary>
         /// <returns>

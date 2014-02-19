@@ -16,5 +16,11 @@
             _listener1.Unlisten();
             _listener2.Unlisten();
         }
+
+        public override void Dispose()
+        {
+            _listener1.Dispose();
+            _listener2.Dispose();
+        }
     }
 }

@@ -1,6 +1,8 @@
 namespace sodium
 {
-    public interface ITransactionHandler<in T>
+    using System;
+
+    public interface ITransactionHandler<in T> : IDisposable
     {
         void Run(Transaction transaction, T p);
     }

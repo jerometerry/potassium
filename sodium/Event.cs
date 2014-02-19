@@ -39,7 +39,7 @@ namespace sodium
             }
         }
 
-        public virtual TEvent[] SampleNow() 
+        internal virtual TEvent[] SampleNow() 
         { 
             return null; 
         }
@@ -408,7 +408,9 @@ namespace sodium
                 if (disposing)
                 {
                     foreach (var listener in _listeners)
+                    { 
                         listener.Unlisten();
+                    }
                 }
 
                 // Indicate that the instance has been disposed.

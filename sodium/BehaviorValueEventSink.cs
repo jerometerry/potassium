@@ -11,7 +11,7 @@ namespace sodium
             _behavior = behavior;
         }
 
-        public override TBehavior[] SampleNow()
+        internal override TBehavior[] SampleNow()
         {
             return new TBehavior[] 
             { 

@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class TransactionHandler<T> : ITransactionHandler<T>
+    public sealed class TransactionHandler<T> : ITransactionHandler<T>
     {
         private readonly Action<Transaction, T> _handler;
 
@@ -24,6 +24,10 @@
         public void Run(Transaction transaction, T action)
         {
             _handler(transaction, action);
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

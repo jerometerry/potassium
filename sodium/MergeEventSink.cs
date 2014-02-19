@@ -13,7 +13,7 @@
             _event2 = evt2;
         }
 
-        public override TEvent[] SampleNow()
+        internal override TEvent[] SampleNow()
         {
             var output1 = _event1.SampleNow();
             var output2 = _event2.SampleNow();

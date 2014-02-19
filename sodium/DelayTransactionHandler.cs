@@ -1,6 +1,6 @@
 ﻿namespace sodium
 {
-    class DelayTransactionHandler<TEvent> : ITransactionHandler<TEvent>
+    sealed class DelayTransactionHandler<TEvent> : ITransactionHandler<TEvent>
     {
         private readonly EventSink<TEvent> _sink;
 
@@ -23,6 +23,10 @@
                     trans2.Close();
                 }
             }));
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

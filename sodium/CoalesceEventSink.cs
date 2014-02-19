@@ -13,7 +13,7 @@
             _combiningFunction = combiningFunction;
         }
 
-        public override TEvent[] SampleNow()
+        internal override TEvent[] SampleNow()
         {
             var events = _event.SampleNow();
             if (events == null)
