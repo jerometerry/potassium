@@ -129,8 +129,9 @@ namespace sodium
             var sink = new BehaviorValueEventSink<TBehavior>(this);
             var action = new EventSinkSender<TBehavior>(sink);
             var listener = Event.Listen(sink.Node, transaction, action, false);
-            // Needed in case of an initial value and an update in the same transaction.
-            return sink.RegisterListener(listener).LastFiringOnly(transaction);  
+            
+            return sink.RegisterListener(listener)
+                .LastFiringOnly(transaction);  // Needed in case of an initial value and an update in the same transaction.
         }
 
         /// <summary>

@@ -4,8 +4,8 @@
     {
         private readonly IBinaryFunction<TEvent, TEvent, TEvent> _combiningFunction;
         private readonly EventSink<TEvent> _sink;
-        public bool AccumulationValid = false;
-        public TEvent Accumulation;
+        private bool _accumulationValid = false;
+        private TEvent _accumulation;
 
         public CoalesceHandler(IBinaryFunction<TEvent, TEvent, TEvent> combiningFunction, EventSink<TEvent> sink)
         {
@@ -15,21 +15,21 @@
 
         public void Run(Transaction transaction, TEvent evt)
         {
-            if (AccumulationValid)
+            if (_accumulationValid)
             {
-                Accumulation = _combiningFunction.Apply(Accumulation, evt);
+                _accumulation = _combiningFunction.Apply(_accumulation, evt);
             }
             else
             {
                 var action = new Handler<Transaction>(t => 
                 {
-                    _sink.Send(t, Accumulation);
-                    AccumulationValid = false;
-                    Accumulation = default(TEvent);
+                    _sink.Send(t, _accumulation);
+                    _accumulationValid = false;
+                    _accumulation = default(TEvent);
                 });
                 transaction.Prioritized(_sink.Node, action);
-                Accumulation = evt;
-                AccumulationValid = true;
+                _accumulation = evt;
+                _accumulationValid = true;
             }
         }
 
