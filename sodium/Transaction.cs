@@ -3,7 +3,7 @@ namespace sodium
     using System;
     using System.Collections.Generic;
 
-    public sealed class Transaction
+    public sealed class Transaction : IDisposable
     {
         // Coarse-grained lock that's held during the whole transaction.
         private static readonly Object TransactionLock = new Object();
@@ -59,7 +59,7 @@ namespace sodium
                     {
                         if (_currentTransaction != null) 
                         {
-                            _currentTransaction.Close();
+                            _currentTransaction.Dispose();
                         }
                     }
                     _currentTransaction = previousTransaction;
@@ -74,7 +74,7 @@ namespace sodium
                 // If we are already inside a transaction (which must be on the same
                 // thread otherwise we wouldn't have acquired transactionLock), then
                 // keep using that same transaction.
-                var transWas = _currentTransaction;
+                var previousTransaction = _currentTransaction;
                 try
                 {
                     if (_currentTransaction == null)
@@ -85,11 +85,14 @@ namespace sodium
                 }
                 finally
                 {
-                    if (_currentTransaction != null) 
+                    if (previousTransaction == null)
                     {
-                        _currentTransaction.Close();
+                        if (_currentTransaction != null)
+                        {
+                            _currentTransaction.Dispose();
+                        }
                     }
-                    _currentTransaction = transWas;
+                    _currentTransaction = previousTransaction;
                 }
             }
         }
@@ -132,8 +135,8 @@ namespace sodium
         {
             if (NeedToRegeneratePriorityQueue)
             {
-                RegeneratePriorityQueue();
                 NeedToRegeneratePriorityQueue = false;
+                RegeneratePriorityQueue();
             }
         }
 
@@ -169,6 +172,11 @@ namespace sodium
                 action.Run();
             }
             _post.Clear();
+        }
+
+        public void Dispose()
+        {
+            Close();
         }
     }
 }
