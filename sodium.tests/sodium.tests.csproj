@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CC18D685-53D9-4A66-8CCA-3E8ED4EC8F13}</ProjectGuid>
+    <ProjectGuid>{1D1FFCFA-CDD6-401A-BE6A-D079CC98200B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>sodium</RootNamespace>
-    <AssemblyName>sodium</AssemblyName>
+    <RootNamespace>sodium.tests</RootNamespace>
+    <AssemblyName>sodium.tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -31,10 +29,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,66 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BehaviorApplyHandler.cs" />
-    <Compile Include="BehaviorSwitchHandler.cs" />
-    <Compile Include="BehaviorValueEventSink.cs" />
-    <Compile Include="CoalesceEventSink.cs" />
-    <Compile Include="CoalesceHandler.cs" />
-    <Compile Include="DualListener.cs" />
-    <Compile Include="Entry.cs" />
-    <Compile Include="EventSwitchHandler.cs" />
-    <Compile Include="FilterEventSink.cs" />
-    <Compile Include="IListener.cs" />
-    <Compile Include="Listener.cs" />
-    <Compile Include="MapEventSink.cs" />
-    <Compile Include="Maybe.cs" />
-    <Compile Include="MergeEventSink.cs" />
-    <Compile Include="OnceEventSink.cs" />
-    <Compile Include="PriorityQueue.cs" />
+    <Compile Include="BehaviorTests.cs" />
+    <Compile Include="EventTests.cs" />
+    <Compile Include="PriorityQueueTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Behavior.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Event.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ListenerBase.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="EventSink.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="IRunnable.cs" />
-    <Compile Include="Runnable.cs" />
-    <Compile Include="SnapshotEventSink.cs" />
-    <Compile Include="Transaction.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ILambda1.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Node.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ITransactionHandler.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="IHandler.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ILambda2.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="TransactionHandler.cs" />
-    <Compile Include="Unit.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="EventLoop.cs" />
-    <Compile Include="BehaviorSink.cs" />
-    <Compile Include="ILambda3.cs" />
-    <Compile Include="Tuple2.cs" />
+    <ProjectReference Include="..\sodium\sodium.csproj">
+      <Project>{cc18d685-53d9-4a66-8cca-3e8ed4ec8f13}</Project>
+      <Name>sodium</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

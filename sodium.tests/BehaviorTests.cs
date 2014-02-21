@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace sodium
+namespace sodium.tests
 {
     [TestFixture]
     public class BehaviorTests
