@@ -3,11 +3,11 @@ namespace sodium
     internal class BehaviorSwitchHandler<A> : ITransactionHandler<Behavior<A>>
     {
         private IListener _currentListener;
-        private readonly EventSink<A> _out;
+        private readonly EventSink<A> _sink;
 
-        public BehaviorSwitchHandler(EventSink<A> o)
+        public BehaviorSwitchHandler(EventSink<A> sink)
         {
-            _out = o;
+            _sink = sink;
         }
 
         public void Run(Transaction trans2, Behavior<A> ba)
@@ -22,12 +22,12 @@ namespace sodium
                 _currentListener.unlisten();
 
             var ev = ba.Value(trans2);
-            _currentListener = ev.Listen(_out.Node, trans2, new TransactionHandler<A>(Handler), false);
+            _currentListener = ev.Listen(_sink.Node, trans2, new TransactionHandler<A>(Handler), false);
         }
 
         private void Handler(Transaction t3, A a)
         {
-            _out.send(t3, a);
+            _sink.send(t3, a);
         }
 
         ~BehaviorSwitchHandler()

@@ -37,13 +37,13 @@ namespace sodium.tests
         public void TestFilter2()
         {
             var e = new EventSink<char>();
-            var out_ = new List<char>();
-            var l = e.Filter(char.IsUpper).Listen(out_.Add);
+            var results = new List<char>();
+            var l = e.Filter(char.IsUpper).Listen(results.Add);
             e.send('H');
             e.send('o');
             e.send('I');
             l.unlisten();
-            AssertArraysEqual(Arrays<char>.AsList('H','I'), out_);
+            AssertArraysEqual(Arrays<char>.AsList('H','I'), results);
         }
 
         [Test]
@@ -81,16 +81,16 @@ namespace sodium.tests
         {
             var e1 = new EventSink<Int32>();
             var e2 = new EventSink<Int32>();
-            var out_ = new List<Int32>();
+            var results = new List<Int32>();
             var l =
                  Event<Int32>.Merge(e1,Event<Int32>.Merge(e1.Map(x => x * 100), e2))
                 .Coalesce((a,b) => a+b)
-                .Listen((x) => { out_.Add(x); });
+                .Listen(results.Add);
             e1.send(2);
             e1.send(8);
             e2.send(40);
             l.unlisten();
-            AssertArraysEqual(Arrays<Int32>.AsList(202, 808, 40), out_);
+            AssertArraysEqual(Arrays<Int32>.AsList(202, 808, 40), results);
         }
 
         [Test]
@@ -98,47 +98,47 @@ namespace sodium.tests
         {
             var e = new EventSink<char>();
             var b = e.Hold(' ');
-            var out_ = new List<char>();
-            var l = e.Delay().Snapshot(b).Listen((x) => { out_.Add(x); });
+            var results = new List<char>();
+            var l = e.Delay().Snapshot(b).Listen(results.Add);
             e.send('C');
             e.send('B');
             e.send('A');
             l.unlisten();
-            AssertArraysEqual(Arrays<char>.AsList('C','B','A'), out_);
+            AssertArraysEqual(Arrays<char>.AsList('C','B','A'), results);
         }
 
         [Test]
         public void TestCollect()
         {
             var ea = new EventSink<Int32>();
-            var out_ = new List<Int32>();
+            var results = new List<Int32>();
             var sum = ea.Collect(100,
                 //(a,s) -> new Tuple2(a+s, a+s)
                 new Lambda2Impl<Int32, Int32, Tuple2<Int32,Int32>>((a,s) => new Tuple2<int, int>(a+s,a+s)));
-            var l = sum.Listen(out_.Add);
+            var l = sum.Listen(results.Add);
             ea.send(5);
             ea.send(7);
             ea.send(1);
             ea.send(2);
             ea.send(3);
             l.unlisten();
-            AssertArraysEqual(Arrays<Int32>.AsList(105,112,113,115,118), out_);
+            AssertArraysEqual(Arrays<Int32>.AsList(105,112,113,115,118), results);
         }
 
         [Test]
         public void TestAccum()
         {
             var ea = new EventSink<Int32>();
-            var out_ = new List<Int32>();
+            var results = new List<Int32>();
             var sum = ea.Accum(100, (a,s)=>a+s);
-            var l = sum.Updates().Listen(out_.Add);
+            var l = sum.Updates().Listen(results.Add);
             ea.send(5);
             ea.send(7);
             ea.send(1);
             ea.send(2);
             ea.send(3);
             l.unlisten();
-            AssertArraysEqual(Arrays<Int32>.AsList(105,112,113,115,118), out_);
+            AssertArraysEqual(Arrays<Int32>.AsList(105,112,113,115,118), results);
         }
 
         [Test]
@@ -146,28 +146,28 @@ namespace sodium.tests
         {
             var ec = new EventSink<char>();
             var epred = new BehaviorSink<Boolean>(true);
-            var out_ = new List<Char>();
-            var l = ec.Gate(epred).Listen(out_.Add);
+            var results = new List<Char>();
+            var l = ec.Gate(epred).Listen(results.Add);
             ec.send('H');
             epred.Send(false);
             ec.send('O');
             epred.Send(true);
             ec.send('I');
             l.unlisten();
-            AssertArraysEqual(Arrays<char>.AsList('H','I'), out_);
+            AssertArraysEqual(Arrays<char>.AsList('H','I'), results);
         }
 
         [Test]
         public void TestOnce()
         {
             var e = new EventSink<char>();
-            var out_ = new List<char>();
-            var l = e.Once().Listen(out_.Add);
+            var results = new List<char>();
+            var l = e.Once().Listen(results.Add);
             e.send('A');
             e.send('B');
             e.send('C');
             l.unlisten();
-            AssertArraysEqual(Arrays<char>.AsList('A'), out_);
+            AssertArraysEqual(Arrays<char>.AsList('A'), results);
         }
 
         public static void AssertArraysEqual<TA>(List<TA> l1, List<TA> l2)

@@ -12,14 +12,14 @@ namespace sodium.tests
         public void TestSwitchB()
         {
             var esb = new EventSink<SB>();
-            // Split each field out_ of SB so we can update multiple behaviours in a
+            // Split each field out of SB so we can update multiple behaviours in a
             // single transaction.
             var ba = esb.Map<char?>(s => s.a).FilterNotNull().Hold('A');
             var bb = esb.Map(s => s.b).FilterNotNull().Hold('a');
             var bsw = esb.Map(s => s.sw).FilterNotNull().Hold(ba);
             var bo = Behavior<char?>.SwitchB(bsw);
-            var out_ = new List<char?>();
-            var l = bo.Value().Listen(out_.Add);
+            var results = new List<char?>();
+            var l = bo.Value().Listen(results.Add);
             esb.send(new SB('B', 'b', null));
             esb.send(new SB('C', 'c', bb));
             esb.send(new SB('D', 'd', null));
@@ -31,90 +31,90 @@ namespace sodium.tests
             esb.send(new SB('H', 'h', ba));
             esb.send(new SB('I', 'i', ba));
             l.unlisten();
-            EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'c', 'd', 'E', 'F', 'f', 'F', 'g', 'H', 'I'), out_);
+            EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'c', 'd', 'E', 'F', 'f', 'F', 'g', 'H', 'I'), results);
         }
 
         [Test]
         public void TestSwitchB2()
         {
             var esb = new EventSink<SB>();
-            // Split each field out_ of SB so we can update multiple behaviours in a
+            // Split each field out of SB so we can update multiple behaviours in a
             // single transaction.
-            var ba = esb.Map<char?>(s => s.a).FilterNotNull().Hold('A');
+            var ba = esb.Map(s => s.a).FilterNotNull().Hold('A');
             var bb = esb.Map(s => s.b).FilterNotNull().Hold('a');
             var bsw = esb.Map(s => s.sw).FilterNotNull().Hold(ba);
             var bo = Behavior<char?>.SwitchB(bsw);
-            var out_ = new List<char?>();
-            var l = bo.Value().Listen(out_.Add);
+            var results = new List<char?>();
+            var l = bo.Value().Listen(results.Add);
             esb.send(new SB('B', 'b', null));
             esb.send(new SB('C', 'c', bb));
             esb.send(new SB('D', 'd', null));
             esb.send(new SB('E', 'e', ba));
             l.unlisten();
-            EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'c', 'd', 'E'), out_);
+            EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'c', 'd', 'E'), results);
         }
 
         [Test]
         public void TestSwitchB3()
         {
             var esb = new EventSink<SB>();
-            // Split each field out_ of SB so we can update multiple behaviours in a
+            // Split each field out of SB so we can update multiple behaviours in a
             // single transaction.
             var ba = esb.Map<char?>(s => s.a).FilterNotNull().Hold('A');
             var bb = esb.Map(s => s.b).FilterNotNull().Hold('a');
             var bsw = esb.Map(s => s.sw).FilterNotNull().Hold(ba);
             var bo = Behavior<char?>.SwitchB(bsw);
-            var out_ = new List<char?>();
-            var l = bo.Value().Listen(out_.Add);
+            var results = new List<char?>();
+            var l = bo.Value().Listen(results.Add);
             esb.send(new SB('B', 'b', null));
             esb.send(new SB('C', 'c', bb));
             esb.send(new SB('D', 'd', null));
             esb.send(new SB('E', 'e', ba));
             esb.send(new SB('F', 'f', null));
             l.unlisten();
-            EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'c', 'd', 'E', 'F'), out_);
+            EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'c', 'd', 'E', 'F'), results);
         }
 
         [Test]
         public void TestSwitchB4()
         {
             var esb = new EventSink<SB>();
-            // Split each field out_ of SB so we can update multiple behaviours in a
+            // Split each field out of SB so we can update multiple behaviours in a
             // single transaction.
             var ba = esb.Map<char?>(s => s.a).FilterNotNull().Hold('A');
             var bb = esb.Map(s => s.b).FilterNotNull().Hold('a');
             var bsw = esb.Map(s => s.sw).FilterNotNull().Hold(ba);
             var bo = Behavior<char?>.SwitchB(bsw);
-            var out_ = new List<char?>();
-            var l = bo.Value().Listen(out_.Add);
+            var results = new List<char?>();
+            var l = bo.Value().Listen(results.Add);
             esb.send(new SB('B', 'b', null));
             esb.send(new SB('C', 'c', bb));
             esb.send(new SB('D', 'd', null));
             esb.send(new SB('E', 'e', ba));
             esb.send(new SB('F', 'f', ba));
             l.unlisten();
-            EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'c', 'd', 'E', 'F'), out_);
+            EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'c', 'd', 'E', 'F'), results);
         }
 
         [Test]
         public void TestSwitchB5()
         {
             var esb = new EventSink<SB>();
-            // Split each field out_ of SB so we can update multiple behaviours in a
+            // Split each field out of SB so we can update multiple behaviours in a
             // single transaction.
             var ba = esb.Map<char?>(s => s.a).FilterNotNull().Hold('A');
             var bb = esb.Map(s => s.b).FilterNotNull().Hold('a');
             var bsw = esb.Map(s => s.sw).FilterNotNull().Hold(ba);
             var bo = Behavior<char?>.SwitchB(bsw);
-            var out_ = new List<char?>();
-            var l = bo.Value().Listen(out_.Add);
+            var results = new List<char?>();
+            var l = bo.Value().Listen(results.Add);
             esb.send(new SB('B', 'b', null));
             esb.send(new SB('C', 'c', bb));
             esb.send(new SB('D', 'd', null));
             esb.send(new SB('E', 'e', ba));
             esb.send(new SB('F', 'f', bb));
             l.unlisten();
-            EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'c', 'd', 'E', 'f'), out_);
+            EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'c', 'd', 'E', 'f'), results);
         }
 
         class SB
@@ -150,7 +150,7 @@ namespace sodium.tests
         [Test]
         public void TestHandlerImpl()
         {
-            List<string> results = new List<string>();
+            var results = new List<string>();
             var impl = new HandlerImpl<string>(results.Add);
             impl.run("hello world!");
             Assert.AreEqual("hello world!", results[0]);
@@ -161,7 +161,7 @@ namespace sodium.tests
         {
             var a = new BehaviorSink<Int32>(1);
             var b = new BehaviorSink<long>(5L);
-            var out_ = new List<String>();
+            var results = new List<String>();
             var l = Behavior<Int32>.Lift(
                 (x, y) =>
                 {
@@ -170,11 +170,11 @@ namespace sodium.tests
                 },
                 a,
                 b
-            ).Value().Listen(out_.Add);
+            ).Value().Listen(results.Add);
             a.Send(12);
             b.Send(6L);
             l.unlisten();
-            EventTests.AssertArraysEqual(EventTests.Arrays<string>.AsList("1 5", "12 5", "12 6"), out_);
+            EventTests.AssertArraysEqual(EventTests.Arrays<string>.AsList("1 5", "12 5", "12 6"), results);
         }
 
         [Test]
@@ -182,7 +182,7 @@ namespace sodium.tests
         {
             var a = new BehaviorSink<Int32>(1);
             var b = new BehaviorSink<long>(5L);
-            var out_ = new List<String>();
+            var results = new List<String>();
             var l = Behavior<Int32>.Lift(
                 (x, y) =>
                 {
@@ -191,10 +191,10 @@ namespace sodium.tests
                 },
                 a,
                 b
-            ).Value().Listen(out_.Add);
+            ).Value().Listen(results.Add);
             a.Send(12);
             l.unlisten();
-            EventTests.AssertArraysEqual(EventTests.Arrays<string>.AsList("1 5", "12 5"), out_);
+            EventTests.AssertArraysEqual(EventTests.Arrays<string>.AsList("1 5", "12 5"), results);
         }
 
         [Test]
@@ -203,13 +203,13 @@ namespace sodium.tests
             var a = new BehaviorSink<Int32>(1);
             var a3 = a.Map((x) => x * 3);
             var a5 = a.Map((x) => x * 5);
-            var b = Behavior<Int32>.Lift<Int32, Int32, String>((x, y) => x + " " + y, a3, a5);
-            var out_ = new List<String>();
-            var l = b.Value().Listen(out_.Add);
+            var b = Behavior<Int32>.Lift<Int32, String>((x, y) => x + " " + y, a3, a5);
+            var results = new List<String>();
+            var l = b.Value().Listen(results.Add);
 
             a.Send(2);
             l.unlisten();
-            EventTests.AssertArraysEqual(EventTests.Arrays<string>.AsList("3 5", "6 10"), out_);
+            EventTests.AssertArraysEqual(EventTests.Arrays<string>.AsList("3 5", "6 10"), results);
         }
 
         class SE
@@ -232,9 +232,9 @@ namespace sodium.tests
             var ea = ese.Map(s => s.a).FilterNotNull();
             var eb = ese.Map(s => s.b).FilterNotNull();
             var bsw = ese.Map(s => s.sw).FilterNotNull().Hold(ea);
-            var out_ = new List<char?>();
+            var results = new List<char?>();
             var eo = Behavior<char?>.SwitchE(bsw);
-            var l = eo.Listen(out_.Add);
+            var l = eo.Listen(results.Add);
             ese.send(new SE('A', 'a', null));
             ese.send(new SE('B', 'b', null));
             ese.send(new SE('C', 'c', eb));
@@ -245,7 +245,7 @@ namespace sodium.tests
             ese.send(new SE('H', 'h', ea));
             ese.send(new SE('I', 'i', ea));
             l.unlisten();
-            EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'C', 'd', 'e', 'F', 'G', 'h', 'I'), out_);
+            EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'C', 'd', 'e', 'F', 'G', 'h', 'I'), results);
         }
     }
 }

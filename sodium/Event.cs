@@ -82,9 +82,9 @@ namespace sodium
         public Event<TB> Map<TB>(ILambda1<TA, TB> f)
         {
             var ev = this;
-            var out_ = new MapEventSink<TA, TB>(ev, f);
-            var l = Listen(out_.Node, new TransactionHandler<TA>((t, a) => out_.send(t, f.apply(a))));
-            return out_.RegisterListener(l);
+            var sink = new MapEventSink<TA, TB>(ev, f);
+            var l = Listen(sink.Node, new TransactionHandler<TA>((t, a) => sink.send(t, f.apply(a))));
+            return sink.RegisterListener(l);
         }
 
         ///
@@ -115,9 +115,9 @@ namespace sodium
         public Event<TC> Snapshot<TB, TC>(Behavior<TB> b, ILambda2<TA, TB, TC> f)
         {
             var ev = this;
-            var out_ = new SnapshotEventSink<TA, TB, TC>(ev, f, b);
-            var l = Listen(out_.Node, new TransactionHandler<TA>((t2, a) => out_.send(t2, f.apply(a, b.Sample()))));
-            return out_.RegisterListener(l);
+            var sink = new SnapshotEventSink<TA, TB, TC>(ev, f, b);
+            var l = Listen(sink.Node, new TransactionHandler<TA>((t2, a) => sink.send(t2, f.apply(a, b.Sample()))));
+            return sink.RegisterListener(l);
         }
 
         ///
@@ -131,11 +131,11 @@ namespace sodium
         ///
         public static Event<TA> Merge(Event<TA> ea, Event<TA> eb)
         {
-            var out_ = new MergeEventSink<TA>(ea, eb);
-            var h = new TransactionHandler<TA>(out_.send);
-            var l1 = ea.Listen(out_.Node, h);
-            var l2 = eb.Listen(out_.Node, h);
-            return out_.RegisterListener(l1).RegisterListener(l2);
+            var sink = new MergeEventSink<TA>(ea, eb);
+            var h = new TransactionHandler<TA>(sink.send);
+            var l1 = ea.Listen(sink.Node, h);
+            var l2 = eb.Listen(sink.Node, h);
+            return sink.RegisterListener(l1).RegisterListener(l2);
         }
 
         ///
@@ -143,13 +143,13 @@ namespace sodium
         ///
         public Event<TA> Delay()
         {
-            var out_ = new EventSink<TA>();
-            var l1 = Listen(out_.Node, new TransactionHandler<TA>((t, a) => t.Post(new Runnable(() =>
+            var sink = new EventSink<TA>();
+            var l1 = Listen(sink.Node, new TransactionHandler<TA>((t, a) => t.Post(new Runnable(() =>
             {
                 var trans = new Transaction();
                 try
                 {
-                    out_.send(trans, a);
+                    sink.send(trans, a);
                 }
                 finally
                 {
@@ -157,7 +157,7 @@ namespace sodium
                 }
             }))));
 
-            return out_.RegisterListener(l1);
+            return sink.RegisterListener(l1);
         }
 
         /// <summary>
@@ -187,10 +187,10 @@ namespace sodium
         Event<TA> Coalesce(Transaction trans1, ILambda2<TA, TA, TA> f)
         {
             var ev = this;
-            var out_ = new CoalesceEventSink<TA>(ev, f);
-            var h = new CoalesceHandler<TA>(f, out_);
-            var l = Listen(out_.Node, trans1, h, false);
-            return out_.RegisterListener(l);
+            var sink = new CoalesceEventSink<TA>(ev, f);
+            var h = new CoalesceHandler<TA>(f, sink);
+            var l = Listen(sink.Node, trans1, h, false);
+            return sink.RegisterListener(l);
         }
 
         ///
@@ -230,9 +230,9 @@ namespace sodium
         public Event<TA> Filter(ILambda1<TA, Boolean> f)
         {
             var ev = this;
-            var out_ = new FilterEventSink<TA>(ev, f);
-            var l = Listen(out_.Node, new TransactionHandler<TA>((t, a) => { if (f.apply(a)) out_.send(t, a); }));
-            return out_.RegisterListener(l);
+            var sink = new FilterEventSink<TA>(ev, f);
+            var l = Listen(sink.Node, new TransactionHandler<TA>((t, a) => { if (f.apply(a)) sink.send(t, a); }));
+            return sink.RegisterListener(l);
         }
 
         ///
@@ -266,7 +266,7 @@ namespace sodium
             var ebs = ea.Snapshot(s, f);
             var eb = ebs.Map(new Lambda1Impl<Tuple2<TB, TS>, TB>(bs => bs.V1));
             var esOut = ebs.Map(new Lambda1Impl<Tuple2<TB, TS>, TS>(bs => bs.V2));
-            es.loop(esOut);
+            es.Loop(esOut);
             return eb;
         }
 
@@ -285,7 +285,7 @@ namespace sodium
             var es = new EventLoop<TS>();
             var s = es.Hold(initState);
             var esOut = ea.Snapshot(s, f);
-            es.loop(esOut);
+            es.Loop(esOut);
             return esOut.Hold(initState);
         }
 
@@ -298,16 +298,16 @@ namespace sodium
             // the listener.
             var ev = this;
             var la = new IListener[1];
-            var out_ = new OnceEventSink<TA>(ev, la);
-            la[0] = ev.Listen(out_.Node, new TransactionHandler<TA>((t, a) =>
+            var sink = new OnceEventSink<TA>(ev, la);
+            la[0] = ev.Listen(sink.Node, new TransactionHandler<TA>((t, a) =>
             {
-                out_.send(t, a);
+                sink.send(t, a);
                 if (la[0] == null) 
                     return;
                 la[0].unlisten();
                 la[0] = null;
             }));
-            return out_.RegisterListener(la[0]);
+            return sink.RegisterListener(la[0]);
         }
 
         internal Event<TA> RegisterListener(IListener listener)
