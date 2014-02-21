@@ -8,10 +8,10 @@ namespace sodium
         ///
         private readonly Event<A> _event;
 
-        private readonly TransactionHandler<A> action;
+        private readonly ITransactionHandler<A> action;
         private readonly Node target;
 
-        public Listener(Event<A> evt, TransactionHandler<A> action, Node target)
+        public Listener(Event<A> evt, ITransactionHandler<A> action, Node target)
         {
             this._event = evt;
             this.action = action;
@@ -23,7 +23,7 @@ namespace sodium
             lock (Transaction.ListenersLock)
             {
                 _event.listeners.Remove(action);
-                _event.node.unlinkTo(target);
+                _event.node.UnlinkTo(target);
             }
         }
 

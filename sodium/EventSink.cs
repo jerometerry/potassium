@@ -8,18 +8,18 @@ namespace sodium
         public EventSink() {}
 
 	    public void send(A a) {
-		    Transaction.run(new HandlerImpl<Transaction>(t => send(t, a)));
+		    Transaction.Run(new HandlerImpl<Transaction>(t => send(t, a)));
 	    }
 
         internal void send(Transaction trans, A a) {
             if (!firings.Any())
-                trans.last(new Runnable(() => firings.Clear()));
+                trans.Last(new Runnable(() => firings.Clear()));
             firings.Add(a);
         
-		    List<TransactionHandler<A>> listeners = new List<TransactionHandler<A>>(this.listeners);
-    	    foreach (TransactionHandler<A> action in listeners) {
+		    List<ITransactionHandler<A>> listeners = new List<ITransactionHandler<A>>(this.listeners);
+    	    foreach (ITransactionHandler<A> action in listeners) {
     		    try {
-                    action.run(trans, a);
+                    action.Run(trans, a);
     		    }
     		    catch (Exception t) {
     		        System.Diagnostics.Debug.WriteLine("{0}", t);

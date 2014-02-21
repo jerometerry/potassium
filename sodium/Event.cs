@@ -5,7 +5,7 @@ namespace sodium
 
     public class Event<A>
     {
-        protected internal List<TransactionHandler<A>> listeners = new List<TransactionHandler<A>>();
+        protected internal List<ITransactionHandler<A>> listeners = new List<ITransactionHandler<A>>();
         protected List<IListener> finalizers = new List<IListener>();
         internal Node node = new Node(0L);
         protected List<A> firings = new List<A>();
@@ -38,20 +38,20 @@ namespace sodium
         ///</summary>
         public IListener listen(IHandler<A> action)
         {
-            return listen_(Node.NULL, new TransactionHandlerImpl<A>((t, a) => action.run(a)));
+            return listen_(Node.Null, new TransactionHandler<A>((t, a) => action.run(a)));
         }
 
-        internal IListener listen_(Node target, TransactionHandler<A> action)
+        internal IListener listen_(Node target, ITransactionHandler<A> action)
         {
-            return Transaction.apply(new Lambda1Impl<Transaction, IListener>(t => listen(target, t, action, false)));
+            return Transaction.Apply(new Lambda1Impl<Transaction, IListener>(t => listen(target, t, action, false)));
         }
 
-        internal IListener listen(Node target, Transaction trans, TransactionHandler<A> action,
+        internal IListener listen(Node target, Transaction trans, ITransactionHandler<A> action,
                                 bool suppressEarlierFirings)
         {
             lock (Transaction.ListenersLock)
             {
-                if (node.linkTo(target))
+                if (node.LinkTo(target))
                     trans.ToRegen = true;
                 listeners.Add(action);
             }
@@ -60,14 +60,14 @@ namespace sodium
             {
                 // In cases like value(), we start with an initial value.
                 for (int i = 0; i < aNow.Length; i++)
-                    action.run(trans, (A)aNow[i]); // <-- unchecked warning is here
+                    action.Run(trans, (A)aNow[i]); // <-- unchecked warning is here
             }
             if (!suppressEarlierFirings)
             {
                 // Anything sent already in this transaction must be sent now so that
                 // there's no order dependency between send and listen.
                 foreach (A a in firings)
-                    action.run(trans, a);
+                    action.Run(trans, a);
             }
             return new Listener<A>(this, action, target);
         }
@@ -90,7 +90,7 @@ namespace sodium
         {
             var ev = this;
             var out_ = new MapEventSink<A, B>(ev, f);
-            var l = listen_(out_.node, new TransactionHandlerImpl<A>((t, a) => out_.send(t, f.apply(a))));
+            var l = listen_(out_.node, new TransactionHandler<A>((t, a) => out_.send(t, f.apply(a))));
             return out_.addCleanup(l);
         }
 
@@ -103,7 +103,7 @@ namespace sodium
         ///
         public Behavior<A> hold(A initValue)
         {
-            return Transaction.apply(new Lambda1Impl<Transaction, Behavior<A>>(t => new Behavior<A>(lastFiringOnly(t), initValue)));
+            return Transaction.Apply(new Lambda1Impl<Transaction, Behavior<A>>(t => new Behavior<A>(lastFiringOnly(t), initValue)));
         }
 
         ///
@@ -123,7 +123,7 @@ namespace sodium
         {
             Event<A> ev = this;
             EventSink<C> out_ = new SnapshotEventSink<A, B, C>(ev, f, b);
-            IListener l = listen_(out_.node, new TransactionHandlerImpl<A>((t2, a) => out_.send(t2, f.apply(a, b.sample()))));
+            IListener l = listen_(out_.node, new TransactionHandler<A>((t2, a) => out_.send(t2, f.apply(a, b.sample()))));
             return out_.addCleanup(l);
         }
 
@@ -167,7 +167,7 @@ namespace sodium
         public static Event<A> merge<A>(Event<A> ea, Event<A> eb)
         {
             var out_ = new MergeEventSink<A>(ea, eb);
-            var h = new TransactionHandlerImpl<A>(out_.send);
+            var h = new TransactionHandler<A>(out_.send);
             var l1 = ea.listen_(out_.node, h);
             var l2 = eb.listen_(out_.node, h);
             return out_.addCleanup(l1).addCleanup(l2);
@@ -210,9 +210,9 @@ namespace sodium
         public Event<A> delay()
         {
             var out_ = new EventSink<A>();
-            var l1 = listen_(out_.node, new TransactionHandlerImpl<A>((t, a) =>
+            var l1 = listen_(out_.node, new TransactionHandler<A>((t, a) =>
             {
-                t.post(new Runnable(() =>
+                t.Post(new Runnable(() =>
                 {
                     Transaction trans = new Transaction();
                     try
@@ -221,7 +221,7 @@ namespace sodium
                     }
                     finally
                     {
-                        trans.close();
+                        trans.Close();
                     }
                 }));
             }));
@@ -251,14 +251,14 @@ namespace sodium
         ///
         public Event<A> coalesce(ILambda2<A, A, A> f)
         {
-            return Transaction.apply(new Lambda1Impl<Transaction, Event<A>>(t => coalesce(t, f)));
+            return Transaction.Apply(new Lambda1Impl<Transaction, Event<A>>(t => coalesce(t, f)));
         }
 
         Event<A> coalesce(Transaction trans1, ILambda2<A, A, A> f)
         {
             Event<A> ev = this;
             EventSink<A> out_ = new CoalesceEventSink<A>(ev, f);
-            TransactionHandler<A> h = new CoalesceHandler<A>(f, out_);
+            ITransactionHandler<A> h = new CoalesceHandler<A>(f, out_);
             IListener l = listen(out_.node, trans1, h, false);
             return out_.addCleanup(l);
         }
@@ -329,7 +329,7 @@ namespace sodium
             var out_ = new FilterEventSink<A>(ev, f);
 
             var l = listen_(out_.node,
-                                 new TransactionHandlerImpl<A>((t, a) => { if (f.apply(a)) out_.send(t, a); }));
+                                 new TransactionHandler<A>((t, a) => { if (f.apply(a)) out_.send(t, a); }));
             return out_.addCleanup(l);
         }
 
@@ -399,8 +399,8 @@ namespace sodium
             EventLoop<S> es = new EventLoop<S>();
             Behavior<S> s = es.hold(initState);
             Event<Tuple2<B, S>> ebs = ea.snapshot(s, f);
-            Event<B> eb = ebs.map(new Lambda1Impl<Tuple2<B, S>, B>(bs => bs.a));
-            Event<S> es_out = ebs.map(new Lambda1Impl<Tuple2<B, S>, S>(bs => bs.b));
+            Event<B> eb = ebs.map(new Lambda1Impl<Tuple2<B, S>, B>(bs => bs.V1));
+            Event<S> es_out = ebs.map(new Lambda1Impl<Tuple2<B, S>, S>(bs => bs.V2));
             es.loop(es_out);
             return eb;
         }
@@ -434,7 +434,7 @@ namespace sodium
             Event<A> ev = this;
             var la = new IListener[1];
             EventSink<A> out_ = new OnceEventSink<A>(ev, la);
-            la[0] = ev.listen_(out_.node, new TransactionHandlerImpl<A>((t, a) =>
+            la[0] = ev.listen_(out_.node, new TransactionHandler<A>((t, a) =>
             {
                 out_.send(t, a);
                 if (la[0] != null)
@@ -487,7 +487,7 @@ namespace sodium
                 l.unlisten();
         }
 
-        private class CoalesceHandler<A> : TransactionHandler<A>
+        private class CoalesceHandler<A> : ITransactionHandler<A>
         {
             public CoalesceHandler(ILambda2<A, A, A> f, EventSink<A> out_)
             {
@@ -500,14 +500,14 @@ namespace sodium
 
             private Maybe<A> accum = Maybe<A>.Null;
 
-            public void run(Transaction trans1, A a)
+            public void Run(Transaction trans1, A a)
             {
                 if (accum.HasValue)
                     accum = new Maybe<A>(f.apply(accum.Value(), a));
                 else
                 {
                     CoalesceHandler<A> thiz = this;
-                    trans1.prioritized(out_.node, new HandlerImpl<Transaction>((t) =>
+                    trans1.Prioritized(out_.node, new HandlerImpl<Transaction>((t) =>
                     {
                         out_.send(t, thiz.accum.Value());
                         thiz.accum = Maybe<A>.Null;

@@ -13,17 +13,13 @@ namespace sodium
         // True if we need to re-generate the priority queue.
         internal bool ToRegen = false;
 
-        private PriorityQueue<Entry> prioritizedQ = new PriorityQueue<Entry>();
-        private ISet<Entry> entries = new HashSet<Entry>();
+        private readonly PriorityQueue<Entry> _prioritized = new PriorityQueue<Entry>();
+        private readonly ISet<Entry> _entries = new HashSet<Entry>();
 
-        private List<IRunnable> lastQ = new List<IRunnable>();
-        private List<IRunnable> postQ;
+        private readonly List<IRunnable> _last = new List<IRunnable>();
+        private List<IRunnable> _post;
 
-        public Transaction()
-        {
-        }
-
-        private static Transaction currentTransaction;
+        private static Transaction _currentTransaction;
 
         ///
         /// Run the specified code inside a single transaction.
@@ -32,132 +28,132 @@ namespace sodium
         /// transaction automatically. It is useful where you want to run multiple
         /// reactive operations atomically.
         ///
-        public static void run(IRunnable code)
+        public static void Run(IRunnable code)
         {
             lock (TransactionLock)
             {
                 // If we are already inside a transaction (which must be on the same
                 // thread otherwise we wouldn't have acquired transactionLock), then
                 // keep using that same transaction.
-                Transaction transWas = currentTransaction;
+                Transaction transWas = _currentTransaction;
                 try
                 {
-                    if (currentTransaction == null)
-                        currentTransaction = new Transaction();
+                    if (_currentTransaction == null)
+                        _currentTransaction = new Transaction();
                     code.Run();
                 }
                 finally
                 {
                     if (transWas == null)
-                        currentTransaction.close();
-                    currentTransaction = transWas;
+                        _currentTransaction.Close();
+                    _currentTransaction = transWas;
                 }
             }
         }
 
-        internal static void run(IHandler<Transaction> code)
+        internal static void Run(IHandler<Transaction> code)
         {
             lock (TransactionLock)
             {
                 // If we are already inside a transaction (which must be on the same
                 // thread otherwise we wouldn't have acquired transactionLock), then
                 // keep using that same transaction.
-                Transaction transWas = currentTransaction;
+                Transaction transWas = _currentTransaction;
                 try
                 {
-                    if (currentTransaction == null)
-                        currentTransaction = new Transaction();
-                    code.run(currentTransaction);
+                    if (_currentTransaction == null)
+                        _currentTransaction = new Transaction();
+                    code.run(_currentTransaction);
                 }
                 finally
                 {
                     if (transWas == null)
-                        currentTransaction.close();
-                    currentTransaction = transWas;
+                        _currentTransaction.Close();
+                    _currentTransaction = transWas;
                 }
             }
         }
 
-        internal static A apply<A>(ILambda1<Transaction, A> code)
+        internal static A Apply<A>(ILambda1<Transaction, A> code)
         {
             lock (TransactionLock)
             {
                 // If we are already inside a transaction (which must be on the same
                 // thread otherwise we wouldn't have acquired transactionLock), then
                 // keep using that same transaction.
-                Transaction transWas = currentTransaction;
+                Transaction transWas = _currentTransaction;
                 try
                 {
-                    if (currentTransaction == null)
-                        currentTransaction = new Transaction();
-                    return code.apply(currentTransaction);
+                    if (_currentTransaction == null)
+                        _currentTransaction = new Transaction();
+                    return code.apply(_currentTransaction);
                 }
                 finally
                 {
-                    currentTransaction.close();
-                    currentTransaction = transWas;
+                    _currentTransaction.Close();
+                    _currentTransaction = transWas;
                 }
             }
         }
 
-        public void prioritized(Node rank, IHandler<Transaction> action)
+        public void Prioritized(Node rank, IHandler<Transaction> action)
         {
-            Entry e = new Entry(rank, action);
-            prioritizedQ.Enqueue(e);
-            entries.Add(e);
+            var e = new Entry(rank, action);
+            _prioritized.Add(e);
+            _entries.Add(e);
         }
 
         ///
         /// Add an action to run after all prioritized() actions.
         ///
-        public void last(IRunnable action)
+        public void Last(IRunnable action)
         {
-            lastQ.Add(action);
+            _last.Add(action);
         }
 
         ///
         /// Add an action to run after all last() actions.
         ///
-        public void post(IRunnable action)
+        public void Post(IRunnable action)
         {
-            if (postQ == null)
-                postQ = new List<IRunnable>();
-            postQ.Add(action);
+            if (_post == null)
+                _post = new List<IRunnable>();
+            _post.Add(action);
         }
 
         ///
         /// If the priority queue has entries in it when we modify any of the nodes'
         /// ranks, then we need to re-generate it to make sure it's up-to-date.
         ///
-        private void checkRegen()
+        private void CheckRegen()
         {
             if (ToRegen)
             {
                 ToRegen = false;
-                prioritizedQ.clear();
-                foreach (Entry e in entries)
-                    prioritizedQ.Enqueue(e);
+                _prioritized.Clear();
+                foreach (Entry e in _entries)
+                    _prioritized.Add(e);
             }
         }
 
-        public void close()
+        public void Close()
         {
             while (true)
             {
-                checkRegen();
-                if (prioritizedQ.isEmpty()) break;
-                Entry e = prioritizedQ.Dequeue();
-                entries.Remove(e);
+                CheckRegen();
+                if (_prioritized.IsEmpty()) break;
+                Entry e = _prioritized.Remove();
+                _entries.Remove(e);
                 e.Action.run(this);
             }
-            foreach (IRunnable action in lastQ)
+            foreach (IRunnable action in _last)
                 action.Run();
-            lastQ.Clear();
-            if (postQ != null)
+            _last.Clear();
+            if (_post != null)
             {
-                foreach (IRunnable action in postQ)
+                foreach (IRunnable action in _post)
                     action.Run();
-                postQ.Clear();
+                _post.Clear();
             }
         }
     }

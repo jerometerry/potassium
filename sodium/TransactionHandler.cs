@@ -1,24 +1,19 @@
+using System;
+
 namespace sodium
 {
-    using System;
-
-    public interface TransactionHandler<A> {
-        void run(Transaction trans, A a);
-    }
-
-    public class TransactionHandlerImpl<A> : TransactionHandler<A>
+    public class TransactionHandler<A> : ITransactionHandler<A>
     {
         private readonly Action<Transaction, A> _action;
 
-        public TransactionHandlerImpl(Action<Transaction, A> action)
+        public TransactionHandler(Action<Transaction, A> action)
         {
             _action = action;
         }
 
-        public void run(Transaction trans, A a)
+        public void Run(Transaction trans, A a)
         {
             _action(trans, a);
         }
     }
 }
-

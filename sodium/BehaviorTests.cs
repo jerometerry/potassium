@@ -138,8 +138,8 @@ namespace sodium
         public void TestTransactionHandlerImpl()
         {
             var results = new List<string>();
-            var impl = new TransactionHandlerImpl<string>((t, a) => results.Add(a));
-            impl.run(null, "this is a test");
+            var impl = new TransactionHandler<string>((t, a) => results.Add(a));
+            impl.Run(null, "this is a test");
             Assert.AreEqual("this is a test", results[0]);
         }
 

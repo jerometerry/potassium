@@ -22,31 +22,31 @@ namespace sodium
             Employee e6 = new Employee("Flynn", 6.0);
 
             Console.WriteLine("Adding " + e5.ToString() + " to priority queue");
-            pq.Enqueue(e5);
+            pq.Add(e5);
             Console.WriteLine("Adding " + e3.ToString() + " to priority queue");
-            pq.Enqueue(e3);
+            pq.Add(e3);
             Console.WriteLine("Adding " + e6.ToString() + " to priority queue");
-            pq.Enqueue(e6);
+            pq.Add(e6);
             Console.WriteLine("Adding " + e4.ToString() + " to priority queue");
-            pq.Enqueue(e4);
+            pq.Add(e4);
             Console.WriteLine("Adding " + e1.ToString() + " to priority queue");
-            pq.Enqueue(e1);
+            pq.Add(e1);
             Console.WriteLine("Adding " + e2.ToString() + " to priority queue");
-            pq.Enqueue(e2);
+            pq.Add(e2);
 
             Console.WriteLine("\nPriory queue is: ");
             Console.WriteLine(pq.ToString());
             Console.WriteLine("\n");
 
             Console.WriteLine("Removing an employee from priority queue");
-            Employee e = pq.Dequeue();
+            Employee e = pq.Remove();
             Console.WriteLine("Removed employee is " + e.ToString());
             Console.WriteLine("\nPriory queue is now: ");
             Console.WriteLine(pq.ToString());
             Console.WriteLine("\n");
 
             Console.WriteLine("Removing a second employee from queue");
-            e = pq.Dequeue();
+            e = pq.Remove();
             Console.WriteLine("\nPriory queue is now: ");
             Console.WriteLine(pq.ToString());
             Console.WriteLine("\n");
@@ -71,7 +71,7 @@ namespace sodium
                 {
                     string lastName = op + "man";
                     double priority = (100.0 - 1.0) * rand.NextDouble() + 1.0;
-                    pq.Enqueue(new Employee(lastName, priority));
+                    pq.Add(new Employee(lastName, priority));
                     if (pq.IsConsistent() == false)
                     {
                         Console.WriteLine("Test fails after enqueue operation # " + op);
@@ -81,7 +81,7 @@ namespace sodium
                 {
                     if (pq.Count() > 0)
                     {
-                        Employee e = pq.Dequeue();
+                        Employee e = pq.Remove();
                         if (pq.IsConsistent() == false)
                         {
                             Console.WriteLine("Test fails after dequeue operation # " + op);

@@ -24,13 +24,13 @@ namespace sodium
             this._value = initValue;
             Behavior<A> thiz = this;
 
-            Transaction.run(new HandlerImpl<Transaction>(t1 =>
+            Transaction.Run(new HandlerImpl<Transaction>(t1 =>
             {
-                var handler = new TransactionHandlerImpl<A>((t2, a) =>
+                var handler = new TransactionHandler<A>((t2, a) =>
                 {
                     if (!thiz.valueUpdate.HasValue)
                     {
-                        t2.last(new Runnable(() =>
+                        t2.Last(new Runnable(() =>
                         {
                             thiz._value = thiz.valueUpdate.Value();
                             thiz.valueUpdate = Maybe<A>.Null;
@@ -39,7 +39,7 @@ namespace sodium
                     this.valueUpdate = new Maybe<A>(a);
 
                 });
-                this.cleanup = evt.listen(Node.NULL, t1, handler, false);
+                this.cleanup = evt.listen(Node.Null, t1, handler, false);
             }));
         }
 
@@ -85,14 +85,14 @@ namespace sodium
         ///
         public Event<A> value()
         {
-            return Transaction.apply(new Lambda1Impl<Transaction, Event<A>>(value));
+            return Transaction.Apply(new Lambda1Impl<Transaction, Event<A>>(value));
         }
 
         Event<A> value(Transaction trans1)
         {
             var out_ = new ValueEventSink<A>(this);
             var l = _event.listen(out_.node, trans1,
-                new TransactionHandlerImpl<A>(out_.send), false);
+                new TransactionHandler<A>(out_.send), false);
             return out_.addCleanup(l)
                 .lastFiringOnly(trans1);  // Needed in case of an initial value and an update
             // in the same transaction.
@@ -214,8 +214,8 @@ namespace sodium
         {
             var out_ = new EventSink<B>();
             IHandler<Transaction> h = new ApplyHandler<A, B>(out_, bf, ba);
-            var l1 = bf.updates().listen_(out_.node, new TransactionHandlerImpl<ILambda1<A, B>>((t, f) => h.run(t)));
-            var l2 = ba.updates().listen_(out_.node, new TransactionHandlerImpl<A>((t, a) => h.run(t)));
+            var l1 = bf.updates().listen_(out_.node, new TransactionHandler<ILambda1<A, B>>((t, f) => h.run(t)));
+            var l2 = ba.updates().listen_(out_.node, new TransactionHandler<A>((t, a) => h.run(t)));
             return out_.addCleanup(l1).addCleanup(l2).hold(bf.sample().apply(ba.sample()));
         }
 
@@ -239,7 +239,7 @@ namespace sodium
                     return;
 
                 fired = true;
-                trans1.prioritized(out_.node, new HandlerImpl<Transaction>(t2 =>
+                trans1.Prioritized(out_.node, new HandlerImpl<Transaction>(t2 =>
                 {
                     var v = bf.newValue();
                     var nv = ba.newValue();
@@ -262,7 +262,7 @@ namespace sodium
             return out_.addCleanup(l1).hold(za);
         }
 
-        private class SwitchHandler<A> : TransactionHandler<Behavior<A>>
+        private class SwitchHandler<A> : ITransactionHandler<Behavior<A>>
         {
             private IListener currentListener;
             private EventSink<A> out_;
@@ -272,7 +272,7 @@ namespace sodium
                 out_ = o;
             }
 
-            public void run(Transaction trans2, Behavior<A> ba)
+            public void Run(Transaction trans2, Behavior<A> ba)
             {
                 // Note: If any switch takes place during a transaction, then the
                 // value().listen will always cause a sample to be fetched from the
@@ -284,7 +284,7 @@ namespace sodium
                     currentListener.unlisten();
 
                 Event<A> ev = ba.value(trans2);
-                currentListener = ev.listen(out_.node, trans2, new TransactionHandlerImpl<A>(Handler), false);
+                currentListener = ev.listen(out_.node, trans2, new TransactionHandler<A>(Handler), false);
             }
 
             private void Handler(Transaction t3, A a)
@@ -304,27 +304,27 @@ namespace sodium
         ///
         public static Event<A> switchE<A>(Behavior<Event<A>> bea)
         {
-            return Transaction.apply(new Lambda1Impl<Transaction, Event<A>>((t) => switchE<A>(t, bea)));
+            return Transaction.Apply(new Lambda1Impl<Transaction, Event<A>>((t) => switchE<A>(t, bea)));
         }
 
         private static Event<A> switchE<A>(Transaction trans1, Behavior<Event<A>> bea)
         {
             var out_ = new EventSink<A>();
-            var h2 = new TransactionHandlerImpl<A>(out_.send);
+            var h2 = new TransactionHandler<A>(out_.send);
 
             var h1 = new SwitchEHandler<A>(bea, out_, trans1, h2);
             var l1 = bea.updates().listen(out_.node, trans1, h1, false);
             return out_.addCleanup(l1);
         }
 
-        private class SwitchEHandler<A> : TransactionHandler<Event<A>>
+        private class SwitchEHandler<A> : ITransactionHandler<Event<A>>
         {
             private IListener currentListener;
             private EventSink<A> out_;
             private Transaction trans1;
-            private TransactionHandler<A> h2;
+            private ITransactionHandler<A> h2;
 
-            public SwitchEHandler(Behavior<Event<A>> bea, EventSink<A> out_, Transaction trans1, TransactionHandler<A> h2)
+            public SwitchEHandler(Behavior<Event<A>> bea, EventSink<A> out_, Transaction trans1, ITransactionHandler<A> h2)
             {
                 this.out_ = out_;
                 this.trans1 = trans1;
@@ -332,9 +332,9 @@ namespace sodium
                 currentListener = bea.sample().listen(out_.node, trans1, h2, false);
             }
 
-            public void run(Transaction trans2, Event<A> ea)
+            public void Run(Transaction trans2, Event<A> ea)
             {
-                trans2.last(new Runnable(() =>
+                trans2.Last(new Runnable(() =>
                 {
                     if (currentListener != null)
                         currentListener.unlisten();
@@ -360,10 +360,10 @@ namespace sodium
             Tuple2<B, S> zbs = f.apply(za, initState);
             EventLoop<Tuple2<B, S>> ebs = new EventLoop<Tuple2<B, S>>();
             Behavior<Tuple2<B, S>> bbs = ebs.hold(zbs);
-            Behavior<S> bs = bbs.map(new Lambda1Impl<Tuple2<B, S>, S>(x => x.b));
+            Behavior<S> bs = bbs.map(new Lambda1Impl<Tuple2<B, S>, S>(x => x.V2));
             Event<Tuple2<B, S>> ebs_out = ea.snapshot(bs, f);
             ebs.loop(ebs_out);
-            return bbs.map(new Lambda1Impl<Tuple2<B, S>, B>(x => x.a));
+            return bbs.map(new Lambda1Impl<Tuple2<B, S>, B>(x => x.V1));
         }
 
         ~Behavior()
