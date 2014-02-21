@@ -22,10 +22,19 @@ namespace sodium
             var answer = _rank.CompareTo(o._rank);
             if (answer == 0)
             {  // Same rank: preserve chronological sequence.
-                if (_seq < o._seq) answer = -1;
+                if (_seq < o._seq) 
+                {
+                    answer = -1;
+                }
                 else
-                    if (_seq > o._seq) answer = 1;
+                {
+                    if (_seq > o._seq) 
+                    {
+                        answer = 1;
+                    }
+                }
             }
+
             return answer;
         }
     }

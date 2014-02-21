@@ -99,7 +99,6 @@ namespace sodium
         /// <summary>
         /// Overload of map that accepts a Func, allowing for C# lambda support
         /// </summary>
-        /// <typeparam name="TB"></typeparam>
         /// <param name="f"></param>
         /// <returns></returns>
         public Event<TB> Map<TB>(Func<TA, TB> f)

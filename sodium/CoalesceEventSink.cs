@@ -20,9 +20,13 @@ namespace sodium
             {
                 var o = oi[0];
                 for (var i = 1; i < oi.Length; i++)
+                {
                     o = _f.Apply(o, oi[i]);
-                return new [] { o };
+                }
+
+                return new[] { o };
             }
+
             return null;
         }
     }

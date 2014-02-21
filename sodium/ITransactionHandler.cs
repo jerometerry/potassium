@@ -5,4 +5,3 @@ namespace sodium
         void Run(Transaction trans, TA a);
     }
 }
-

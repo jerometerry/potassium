@@ -41,6 +41,7 @@ namespace sodium
                             behavior._valueUpdate = Maybe<TA>.Null;
                         }));
                     }
+
                     _valueUpdate = new Maybe<TA>(a);
 
                 });
@@ -106,9 +107,8 @@ namespace sodium
         }
 
         /// <summary>
-        /// Overload of map that accepts a Func to support C# lambdas
+        /// Overload of map to support C# lambdas
         /// </summary>
-        /// <typeparam name="TB"></typeparam>
         /// <param name="f"></param>
         /// <returns></returns>
         public Behavior<TB> Map<TB>(Func<TA, TB> f)
@@ -157,7 +157,7 @@ namespace sodium
         /// <summary>
         /// Lift a ternary function into behaviors.
         /// </summary>
-        // TODO
+        /// TODO
         //public Behavior<D> Lift<B, C, D>(Lambda3<TA, B, C, D> f, Behavior<B> b, Behavior<C> c)
         //{
         //    
@@ -182,7 +182,7 @@ namespace sodium
         /// <summary>
         /// Lift a ternary function into behaviors.
         /// </summary>
-        // TODO
+        /// TODO
         //public static Behavior<D> Lift<TA, B, C, D>(Lambda3<TA, B, C, D> f, Behavior<TA> a, Behavior<B> b, Behavior<C> c)
         //{
         //    return a.lift(f, b, c);

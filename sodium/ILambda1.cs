@@ -5,6 +5,3 @@ namespace sodium
         TB Apply(TA a);
     }
 }
-
-
-
