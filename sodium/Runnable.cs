@@ -1,19 +1,27 @@
-﻿namespace sodium
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace sodium
 {
-    using System;
-
-    public sealed class Runnable : IRunnable
+    public interface Runnable
     {
-        private readonly Action _action;
+        void run();
+    }
 
-        public Runnable(Action action)
+    public class RunnableImpl : Runnable
+    {
+        private Action action;
+        public RunnableImpl(Action action)
         {
-            _action = action;
+            this.action = action;
         }
 
-        public void Run()
+        public void run()
         {
-            _action();
+            action();
         }
     }
 }

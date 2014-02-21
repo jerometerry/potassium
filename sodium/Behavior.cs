@@ -2,363 +2,381 @@ namespace sodium
 {
     using System;
 
-    public class Behavior<TBehavior> : IDisposable
+    public class Behavior<A>
     {
-        private TBehavior _valueUpdate;
-        private bool _disposed;
+        protected Event<A> _event;
+        protected A _value;
+        Maybe<A> valueUpdate = Maybe<A>.Null;
+        private Listener cleanup;
 
-        protected TBehavior Val { get; set; }
-
-        private TBehavior ValueUpdate
-        {
-            get
-            {
-                return _valueUpdate;
-            }
-            set 
-            { 
-                _valueUpdate = value;
-                ValueUpdated = true;
-            }
-        }
-
-        private bool ValueUpdated { get; set; }
-
-        private IListener EventListener { get; set; }
-
-        public Event<TBehavior> Event { get; protected set; }
-
-        /// <summary>
+        ///
         /// A behavior with a constant value.
-        /// </summary>
-        /// <param name="value"></param>
-        public Behavior(TBehavior value)
+        ///
+        public Behavior(A value)
         {
-            Event = new Event<TBehavior>();
-            Val = value;
-            _valueUpdate = default(TBehavior);
+            this._event = new Event<A>();
+            this._value = value;
         }
 
-        public Behavior(Event<TBehavior> evt, TBehavior initValue)
+        internal Behavior(Event<A> evt, A initValue)
         {
-            Event = evt;
-            Val = initValue;
-            var behavior = this;
-            var code = new Handler<Transaction>(t => 
+            this._event = evt;
+            this._value = initValue;
+            Behavior<A> thiz = this;
+
+            Transaction.run(new HandlerImpl<Transaction>(t1 =>
             {
-                var handler = new TransactionHandler<TBehavior>((t2,b) => 
+                var handler = new TransactionHandlerImpl<A>((t2, a) =>
                 {
-                    if (!behavior.ValueUpdated)
+                    if (!thiz.valueUpdate.HasValue)
                     {
-                        var action = new Runnable(behavior.ApplyUpdate);
-                        t2.Last(action);
-                        behavior.ValueUpdate = b;
+                        t2.last(new RunnableImpl(() =>
+                        {
+                            thiz._value = thiz.valueUpdate.Value();
+                            thiz.valueUpdate = Maybe<A>.Null;
+                        }));
                     }
+                    this.valueUpdate = new Maybe<A>(a);
+
                 });
-
-                behavior.EventListener = evt.Listen(Node.Null, t, handler, false);
-            });
-            Transaction.Run(code);
+                this.cleanup = evt.listen(Node.NULL, t1, handler, false);
+            }));
         }
 
-        public void ApplyUpdate()
+        ///
+        /// @return The value including any updates that have happened in this transaction.
+        ///
+        A newValue()
         {
-            Val = ValueUpdate;
-            ValueUpdate = default(TBehavior);
-            ValueUpdated = false;
+            return !valueUpdate.HasValue ? _value : valueUpdate.Value();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>
-        /// The value including any updates that have happened in this transaction.
-        /// </returns>
-        public TBehavior NewValue()
-        {
-            return ValueUpdated ? ValueUpdate : Val;
-        }
-
-        /// <summary>
+        ///
         /// Sample the behavior's current value.
         ///
-        /// This should generally be avoided in favour of Value().Listen(..) so you don't
+        /// This should generally be avoided in favour of value().listen(..) so you don't
         /// miss any updates, but in many circumstances it makes sense.
         ///
-        /// It can be best to use it inside an explicit transaction (using Transaction.Run()).
-        /// For example, a b.Sample() inside an explicit transaction along with a
-        /// b.Updates().Listen(..) will capture the current value and any updates without risk
+        /// It can be best to use it inside an explicit transaction (using Transaction.run()).
+        /// For example, a b.sample() inside an explicit transaction along with a
+        /// b.updates().listen(..) will capture the current value and any updates without risk
         /// of missing any in between.
-        /// </summary>
-        /// <returns>
-        /// </returns>
-        public TBehavior Sample()
+        ///
+        public A sample()
         {
             // Since pointers in Java are atomic, we don't need to explicitly create a
             // transaction.
-            return Val;
+            return _value;
         }
 
-        /// <summary>
+        ///
         /// An event that gives the updates for the behavior. If this behavior was created
-        /// with a hold, then Updates() gives you an evt equivalent to the one that was held.
-        /// </summary>
-        /// <returns>
-        /// </returns>
-        public Event<TBehavior> Updates()
+        /// with a hold, then updates() gives you an event equivalent to the one that was held.
+        ///
+        public Event<A> updates()
         {
-            return Event;
+            return _event;
         }
 
-        /// <summary>
+        ///
         /// An event that is guaranteed to fire once when you listen to it, giving
-        /// the current value of the behavior, and thereafter behaves like Updates(),
+        /// the current value of the behavior, and thereafter behaves like updates(),
         /// firing for each update to the behavior's value.
-        /// </summary>
-        /// <returns>
-        /// </returns>
-        public Event<TBehavior> Value()
+        ///
+        public Event<A> value()
         {
-            var behavior = this;
-            var action = new Function<Transaction, Event<TBehavior>>(behavior.Value);
-            return Transaction.Apply(action);
+            return Transaction.apply(new Lambda1Impl<Transaction, Event<A>>(value));
         }
 
-        public Event<TBehavior> Value(Transaction transaction)
+        Event<A> value(Transaction trans1)
         {
-            var sink = new BehaviorValueEventSink<TBehavior>(this);
-            var action = new EventSinkSender<TBehavior>(sink);
-            var listener = Event.Listen(sink.Node, transaction, action, false);
-            
-            return sink.RegisterListener(listener)
-                .LastFiringOnly(transaction);  // Needed in case of an initial value and an update in the same transaction.
+            EventSink<A> out_ = new ValueEventSink<A>(this);
+            Listener l = _event.listen(out_.node, trans1,
+                new TransactionHandlerImpl<A>(out_.send), false);
+            return out_.addCleanup(l)
+                .lastFiringOnly(trans1);  // Needed in case of an initial value and an update
+            // in the same transaction.
         }
 
-        /// <summary>
-        /// Transform the behavior's value according to the supplied function.
-        /// </summary>
-        /// <param name="f"></param>
-        /// <returns>
-        /// </returns>
-        public Behavior<TResultBehavior> Map<TResultBehavior>(IFunction<TBehavior, TResultBehavior> f)
+        private class ValueEventSink<A> : EventSink<A>
         {
-            var sample = Sample();
-            var initValue = f.Apply(sample);
-            return Updates().Map(f).Hold(initValue);
-        }
+            private Behavior<A> _behavior;
 
-        public Behavior<TResultBehavior> Map<TResultBehavior>(Func<TBehavior, TResultBehavior> f)
-        {
-            return Map(new Function<TBehavior, TResultBehavior>(f));
-        }
-
-        /// <summary>
-        /// Lift a binary function into behaviors.
-        /// </summary>
-        /// <param name="f"></param>
-        /// <param name="behavior"></param>
-        /// <returns></returns>
-        public Behavior<TResultBehavior> Lift<TBehavior2, TResultBehavior>(
-            IBinaryFunction<TBehavior, TBehavior2, TResultBehavior> f, 
-            Behavior<TBehavior2> behavior)
-        {
-            var behaviorLifter = new BinaryBehaviorLifter<TBehavior, TBehavior2, TResultBehavior>(f);
-		    var behaviorMap = Map(behaviorLifter);
-		    return Behavior<TBehavior2>.Apply(behaviorMap, behavior);
-        }
-
-        public Behavior<TResultBehavior> Lift<TBehavior2, TResultBehavior>(
-            Func<TBehavior, TBehavior2, TResultBehavior> f,
-            Behavior<TBehavior2> behavior)
-        {
-            return Lift(new BinaryFunction<TBehavior, TBehavior2, TResultBehavior>(f), behavior);
-        }
-       
-        /// <summary>
-        /// Lift a binary function into behaviors.
-        /// </summary>
-        /// <param name="f"></param>
-        /// <param name="behavior1"></param>
-        /// <param name="behavior2"></param>
-        /// <returns></returns>
-        public static Behavior<TResultBehavior> Lift<TBehavior2, TResultBehavior>(
-            IBinaryFunction<TBehavior, TBehavior2, TResultBehavior> f, 
-            Behavior<TBehavior> behavior1, 
-            Behavior<TBehavior2> behavior2)
-        {
-            return behavior1.Lift(f, behavior2);
-        }
-
-        public static Behavior<TResultBehavior> Lift<TBehavior2, TResultBehavior>(
-            Func<TBehavior, TBehavior2, TResultBehavior> f,
-            Behavior<TBehavior> behavior1,
-            Behavior<TBehavior2> behavior2)
-        {
-            return Lift(new BinaryFunction<TBehavior, TBehavior2, TResultBehavior>(f), behavior1, behavior2);
-        }
-        
-        /// <summary>
-        /// Lift a ternary function into behaviors.
-        /// </summary>
-        /// <param name="f"></param>
-        /// <param name="behavior2"></param>
-        /// <param name="behavior3"></param>
-        /// <returns></returns>
-        public Behavior<TResultBehavior> Lift<TBehavior2, TBehavior3, TResultBehavior>(
-            ITernaryFunction<TBehavior, TBehavior2, TBehavior3, TResultBehavior> f, 
-            Behavior<TBehavior2> behavior2, 
-            Behavior<TBehavior3> behavior3)
-        {
-            var behaviorLifter = new TernaryBehaviorLifter<TBehavior, TBehavior2, TBehavior3, TResultBehavior>(f);
-		    var mapFunction = Map(behaviorLifter);
-            var behaviorFunction2 = Behavior<TBehavior2>.Apply(mapFunction, behavior2);
-            return Behavior<TBehavior3>.Apply(behaviorFunction2, behavior3);
-        }
-
-        public Behavior<TResultBehavior> Lift<TBehavior2, TBehavior3, TResultBehavior>(
-            Func<TBehavior, TBehavior2, TBehavior3, TResultBehavior> f,
-            Behavior<TBehavior2> behavior2,
-            Behavior<TBehavior3> behavior3)
-        {
-            return Lift(new TernaryFunction<TBehavior, TBehavior2, TBehavior3, TResultBehavior>(f), behavior2, behavior3);
-        }
-
-        /// <summary>
-        /// Lift a ternary function into behaviors.
-        /// </summary>
-        /// <param name="f"></param>
-        /// <param name="behavior1"></param>
-        /// <param name="behavior2"></param>
-        /// <param name="behavior3"></param>
-        /// <returns></returns>
-        public static Behavior<TResultBehavior> Lift<TBehavior2, TBehavior3, TResultBehavior>(
-            ITernaryFunction<TBehavior, TBehavior2, TBehavior3, TResultBehavior> f, 
-            Behavior<TBehavior> behavior1, 
-            Behavior<TBehavior2> behavior2, 
-            Behavior<TBehavior3> behavior3)
-        {
-            return behavior1.Lift(f, behavior2, behavior3);
-        }
-
-        public static Behavior<TResultBehavior> Lift<TBehavior2, TBehavior3, TResultBehavior>(
-            Func<TBehavior, TBehavior2, TBehavior3, TResultBehavior> f,
-            Behavior<TBehavior> behavior1,
-            Behavior<TBehavior2> behavior2,
-            Behavior<TBehavior3> behavior3)
-        {
-            return behavior1.Lift(f, behavior2, behavior3);
-        }
-
-        /// <summary>
-        /// Apply a value inside a behavior to a function inside a behavior. This is the
-        /// primitive for all function lifting.
-        /// </summary>
-        /// <param name="f"></param>
-        /// <param name="behavior"></param>
-        /// <returns></returns>
-        public static Behavior<TResultBehavior> Apply<TResultBehavior>(
-            Behavior<IFunction<TBehavior, TResultBehavior>> f, 
-            Behavior<TBehavior> behavior)
-        {
-            var sink = new EventSink<TResultBehavior>();
-            var invoker = new BehaviorPrioritizedInvoker<TBehavior, TResultBehavior>(sink, f, behavior);
-            var handler1 = TransactionHandler<IFunction<TBehavior, TResultBehavior>>.Create<IFunction<TBehavior, TResultBehavior>>(invoker);
-            var listener1 = f.Updates().Listen(sink.Node, handler1);
-            var handler2 = TransactionHandler<TBehavior>.Create<TBehavior>(invoker);
-            var listener2 = behavior.Updates().Listen(sink.Node, handler2);
-            var initValue = f.Sample().Apply(behavior.Sample());
-            return sink.RegisterListener(listener1).RegisterListener(listener2).Hold(initValue);
-        }
-
-        /// <summary>
-        /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
-        /// </summary>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        public static Behavior<TBehavior> SwitchB(Behavior<Behavior<TBehavior>> f)
-        {
-            var value = f.Sample().Sample();
-            var sink = new EventSink<TBehavior>();
-            var handler = new BehaviorUnwrapper<TBehavior>(sink);
-            var listener = f.Value().Listen(sink.Node, handler);
-            return sink.RegisterListener(listener).Hold(value);
-        }
-
-        /// <summary>
-        /// Unwrap an evt inside a behavior to give a time-varying evt implementation.
-        /// </summary>
-        /// <param name="behavior"></param>
-        /// <returns></returns>
-        public static Event<TBehavior> SwitchE(Behavior<Event<TBehavior>> behavior)
-        {
-            var action = new Function<Transaction, Event<TBehavior>>(t => SwitchE(t, behavior));
-            return Transaction.Apply(action);
-        }
-
-        public static Event<TBehavior> SwitchE(Transaction transaction, Behavior<Event<TBehavior>> behavior)
-        {
-            var sink = new EventSink<TBehavior>();
-            var handler2 = new EventSinkSender<TBehavior>(sink);
-            var handler1 = new SwitchToEventTransactionHandler<TBehavior>(sink, behavior, transaction, handler2);
-            var listener = behavior.Updates().Listen(sink.Node, transaction, handler1, false);
-            return sink.RegisterListener(listener);
-        }
-        
-        /// <summary>
-        /// Transform a behavior with a generalized state loop (a mealy machine). The function
-        /// is passed the input and the old state and returns the new state and output value.
-        /// </summary>
-        /// <param name="initState"></param>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        public Behavior<TResultBehavior> Collect<TResultBehavior, TState>(
-            TState initState, 
-            IBinaryFunction<TBehavior, TState, Tuple2<TResultBehavior, TState>> f)
-        {
-            var combiningFunction = new BinaryFunction<TBehavior, TBehavior, TBehavior>((a, b) => b);
-            var evt = Updates().Coalesce(combiningFunction);
-            var value = Sample();
-            var zbs = f.Apply(value, initState);
-            var loop = new EventLoop<Tuple2<TResultBehavior, TState>>();
-            var bbs = loop.Hold(zbs);
-            var mapFunction1 = new Function<Tuple2<TResultBehavior, TState>, TState>(x => x.V2);
-            var bs = bbs.Map(mapFunction1);
-            var ebsOut = evt.Snapshot(bs, f);
-            loop.Loop(ebsOut);
-            var mapFunction2 = new Function<Tuple2<TResultBehavior, TState>, TResultBehavior>(x => x.V1);
-            return bbs.Map(mapFunction2);
-        }
-
-        public Behavior<TResultBehavior> Collect<TResultBehavior, TState>(
-            TState initState,
-            Func<TBehavior, TState, Tuple2<TResultBehavior, TState>> f)
-        {
-            return Collect(initState, new BinaryFunction<TBehavior, TState, Tuple2<TResultBehavior, TState>>(f));
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-
-            // Call SupressFinalize in case a subclass implements a finalizer.
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            // If you need thread safety, use a lock around these  
-            // operations, as well as in your methods that use the resource. 
-            if (!_disposed)
+            public ValueEventSink(Behavior<A> behavior)
             {
-                if (disposing)
-                {
-                    if (EventListener != null)
-                        EventListener.Unlisten();
-                }
+                _behavior = behavior;
+            }
 
-                // Indicate that the instance has been disposed.
-                _disposed = true;
+            protected internal override Object[] sampleNow()
+            {
+                return new Object[] { _behavior.sample() };
             }
         }
+
+        /// <summary>
+        /// Overload of map that accepts a Func<A,B> to support C# lambdas
+        /// </summary>
+        /// <typeparam name="B"></typeparam>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public Behavior<B> map<B>(Func<A, B> f)
+        {
+            return map(new Lambda1Impl<A, B>(f));
+        }
+
+        ///
+        /// Transform the behavior's value according to the supplied function.
+        ///
+        public Behavior<B> map<B>(Lambda1<A, B> f)
+        {
+            return updates().map(f).hold(f.apply(sample()));
+        }
+
+        ///
+        /// Lift a binary function into behaviors.
+        ///
+        public Behavior<C> lift<B, C>(Lambda2<A, B, C> f, Behavior<B> b)
+        {
+            Lambda1<A, Lambda1<B, C>> ffa = new Lambda1Impl<A, Lambda1<B, C>>((aa) =>
+            {
+
+                return new Lambda1Impl<B, C>((bb) =>
+                                                 {
+                                                     return f.apply(aa, bb);
+                                                 });
+            });
+            Behavior<Lambda1<B, C>> bf = map(ffa);
+            return apply(bf, b);
+        }
+
+        /// <summary>
+        /// Overload of lift that accepts binary function Func<A,B,C> f and two behaviors, to enable C# lambdas
+        /// </summary>
+        /// <typeparam name="A"></typeparam>
+        /// <typeparam name="B"></typeparam>
+        /// <typeparam name="C"></typeparam>
+        /// <param name="f"></param>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static Behavior<C> lift<A, B, C>(Func<A, B, C> f, Behavior<A> a, Behavior<B> b)
+        {
+            return lift<A, B, C>(new Lambda2Impl<A, B, C>(f), a, b);
+        }
+
+        ///
+        /// Lift a binary function into behaviors.
+        ///
+        public static Behavior<C> lift<A, B, C>(Lambda2<A, B, C> f, Behavior<A> a, Behavior<B> b)
+        {
+            return a.lift(f, b);
+        }
+
+        ///
+        /// Lift a ternary function into behaviors.
+        ///
+        // TODO
+        //public Behavior<D> lift<B, C, D>(Lambda3<A, B, C, D> f, Behavior<B> b, Behavior<C> c)
+        //{
+        //    
+        //    Lambda1<A, Lambda1<B, Lambda1<C, D>>> ffa = null;
+        //    //Lambda1<A, Lambda1<B, Lambda1<C,D>>> ffa = new Lambda1<A, Lambda1<B, Lambda1<C,D>>>() {
+        //    //    public Lambda1<B, Lambda1<C,D>> apply(final A aa) {
+        //    //        return new Lambda1<B, Lambda1<C,D>>() {
+        //    //            public Lambda1<C,D> apply(final B bb) {
+        //    //                return new Lambda1<C,D>() {
+        //    //                    public D apply(C cc) {
+        //    //                        return f.apply(aa,bb,cc);
+        //    //                    }
+        //    //                };
+        //    //            }
+        //    //        };
+        //    //    }
+        //    //};
+        //    Behavior<Lambda1<B, Lambda1<C, D>>> bf = map(ffa);
+        //    return apply(apply(bf, b), c);
+        //}
+
+        ///
+        /// Lift a ternary function into behaviors.
+        ///
+        // TODO
+        //public static Behavior<D> lift<A, B, C, D>(Lambda3<A, B, C, D> f, Behavior<A> a, Behavior<B> b, Behavior<C> c)
+        //{
+        //    return a.lift(f, b, c);
+        //}
+
+        ///
+        /// Apply a value inside a behavior to a function inside a behavior. This is the
+        /// primitive for all function lifting.
+        ///
+        public static Behavior<B> apply<A, B>(Behavior<Lambda1<A, B>> bf, Behavior<A> ba)
+        {
+            EventSink<B> out_ = new EventSink<B>();
+            Handler<Transaction> h = new ApplyHandler<A, B>(out_, bf, ba);
+            Listener l1 = bf.updates().listen_(out_.node, new TransactionHandlerImpl<Lambda1<A, B>>((t, f) =>
+            {
+                h.run(t);
+            }));
+            Listener l2 = ba.updates().listen_(out_.node, new TransactionHandlerImpl<A>((t, a) =>
+            {
+                h.run(t);
+            }));
+            return out_.addCleanup(l1).addCleanup(l2).hold(bf.sample().apply(ba.sample()));
+        }
+
+        private class ApplyHandler<A, B> : Handler<Transaction>
+        {
+            private bool fired = false;
+            private EventSink<B> out_;
+            private Behavior<Lambda1<A, B>> bf;
+            private Behavior<A> ba;
+
+            public ApplyHandler(EventSink<B> ev, Behavior<Lambda1<A, B>> bf, Behavior<A> ba)
+            {
+                out_ = ev;
+                this.bf = bf;
+                this.ba = ba;
+            }
+
+            public void run(Transaction trans1)
+            {
+                if (fired)
+                    return;
+
+                fired = true;
+                trans1.prioritized(out_.node, new HandlerImpl<Transaction>(t2 =>
+                {
+                    var v = bf.newValue();
+                    var nv = ba.newValue();
+                    var b = v.apply(nv);
+                    out_.send(t2, b);
+                    fired = false;
+                }));
+            }
+        }
+
+        ///
+        /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
+        ///
+        public static Behavior<A> switchB<A>(Behavior<Behavior<A>> bba)
+        {
+            A za = bba.sample().sample();
+            EventSink<A> out_ = new EventSink<A>();
+            SwitchHandler<A> h = new SwitchHandler<A>(out_);
+            Listener l1 = bba.value().listen_(out_.node, h);
+            return out_.addCleanup(l1).hold(za);
+        }
+
+        private class SwitchHandler<A> : TransactionHandler<Behavior<A>>
+        {
+            private Listener currentListener;
+            private EventSink<A> out_;
+
+            public SwitchHandler(EventSink<A> o)
+            {
+                out_ = o;
+            }
+
+            public void run(Transaction trans2, Behavior<A> ba)
+            {
+                // Note: If any switch takes place during a transaction, then the
+                // value().listen will always cause a sample to be fetched from the
+                // one we just switched to. The caller will be fetching our output
+                // using value().listen, and value() throws away all firings except
+                // for the last one. Therefore, anything from the old input behaviour
+                // that might have happened during this transaction will be suppressed.
+                if (currentListener != null)
+                    currentListener.unlisten();
+
+                Event<A> ev = ba.value(trans2);
+                currentListener = ev.listen(out_.node, trans2, new TransactionHandlerImpl<A>(Handler), false);
+            }
+
+            private void Handler(Transaction t3, A a)
+            {
+                out_.send(t3, a);
+            }
+
+            ~SwitchHandler()
+            {
+                if (currentListener != null)
+                    currentListener.unlisten();
+            }
+        }
+
+        ///
+        /// Unwrap an event inside a behavior to give a time-varying event implementation.
+        ///
+        public static Event<A> switchE<A>(Behavior<Event<A>> bea)
+        {
+            return Transaction.apply(new Lambda1Impl<Transaction, Event<A>>((t) => switchE<A>(t, bea)));
+        }
+
+        private static Event<A> switchE<A>(Transaction trans1, Behavior<Event<A>> bea)
+        {
+            EventSink<A> out_ = new EventSink<A>();
+            TransactionHandler<A> h2 = new TransactionHandlerImpl<A>(out_.send);
+
+            TransactionHandler<Event<A>> h1 = new SwitchEHandler<A>(bea, out_, trans1, h2);
+            Listener l1 = bea.updates().listen(out_.node, trans1, h1, false);
+            return out_.addCleanup(l1);
+        }
+
+        private class SwitchEHandler<A> : TransactionHandler<Event<A>>
+        {
+            private Listener currentListener;
+            private EventSink<A> out_;
+            private Transaction trans1;
+            private TransactionHandler<A> h2;
+
+            public SwitchEHandler(Behavior<Event<A>> bea, EventSink<A> out_, Transaction trans1, TransactionHandler<A> h2)
+            {
+                this.out_ = out_;
+                this.trans1 = trans1;
+                this.h2 = h2;
+                currentListener = bea.sample().listen(out_.node, trans1, h2, false);
+            }
+
+            public void run(Transaction trans2, Event<A> ea)
+            {
+                trans2.last(new RunnableImpl(() =>
+                {
+                    if (currentListener != null)
+                        currentListener.unlisten();
+                    currentListener = ea.listen(out_.node, trans2, h2, true);
+                }));
+            }
+
+            ~SwitchEHandler()
+            {
+                if (currentListener != null)
+                    currentListener.unlisten();
+            }
+        }
+
+        ///
+        /// Transform a behavior with a generalized state loop (a mealy machine). The function
+        /// is passed the input and the old state and returns the new state and output value.
+        ///
+        public Behavior<B> collect<B, S>(S initState, Lambda2<A, S, Tuple2<B, S>> f)
+        {
+            Event<A> ea = updates().coalesce(new Lambda2Impl<A, A, A>((a, b) => b));
+            A za = sample();
+            Tuple2<B, S> zbs = f.apply(za, initState);
+            EventLoop<Tuple2<B, S>> ebs = new EventLoop<Tuple2<B, S>>();
+            Behavior<Tuple2<B, S>> bbs = ebs.hold(zbs);
+            Behavior<S> bs = bbs.map(new Lambda1Impl<Tuple2<B, S>, S>(x => x.b));
+            Event<Tuple2<B, S>> ebs_out = ea.snapshot(bs, f);
+            ebs.loop(ebs_out);
+            return bbs.map(new Lambda1Impl<Tuple2<B, S>, B>(x => x.a));
+        }
+
+        ~Behavior()
+        {
+            if (cleanup != null)
+                cleanup.unlisten();
+        }
+
     }
 }

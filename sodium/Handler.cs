@@ -1,23 +1,24 @@
-﻿namespace sodium
+namespace sodium
 {
     using System;
 
-    sealed class Handler<T> : IHandler<T>
+    public interface Handler<A> {
+        void run(A a);
+    }
+
+    public class HandlerImpl<A> : Handler<A>
     {
-        readonly Action<T> _function;
+        private Action<A> _action;
 
-        public Handler(Action<T> function)
+        public HandlerImpl(Action<A> action)
         {
-            _function = function;
+            _action = action;
         }
 
-        public void Run(T p)
+        public void run(A a)
         {
-            _function(p);
-        }
-
-        public void Dispose()
-        {
+            _action(a);
         }
     }
 }
+

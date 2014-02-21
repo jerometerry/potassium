@@ -1,62 +1,98 @@
-﻿namespace sodium
+using System;
+using System.Collections.Generic;
+
+namespace sodium
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
-    public class PriorityQueue<T> : IPriorityQueue<T>
+    public class PriorityQueue<T> where T : IComparable<T>
     {
-        private readonly List<T> _items = new List<T>();
+        private List<T> data;
 
-        public void Add(T item)
+        public PriorityQueue()
         {
-            lock(_items)
+            this.data = new List<T>();
+        }
+
+        public void Enqueue(T item)
+        {
+            data.Add(item);
+            int ci = data.Count - 1; // child index; start at end
+            while (ci > 0)
             {
-                _items.Add(item);
-                _items.Sort();
+                int pi = (ci - 1) / 2; // parent index
+                if (data[ci].CompareTo(data[pi]) >= 0) break; // child item is larger than (or equal) parent so we're done
+                T tmp = data[ci]; data[ci] = data[pi]; data[pi] = tmp;
+                ci = pi;
             }
         }
 
-        public void AddRange(IEnumerable<T> items)
+        public T Dequeue()
         {
-            lock (_items)
+            // assumes pq is not empty; up to calling code
+            int li = data.Count - 1; // last index (before removal)
+            T frontItem = data[0];   // fetch the front
+            data[0] = data[li];
+            data.RemoveAt(li);
+
+            --li; // last index (after removal)
+            int pi = 0; // parent index. start at front of pq
+            while (true)
             {
-                _items.AddRange(items);
-                _items.Sort();
+                int ci = pi * 2 + 1; // left child index of parent
+                if (ci > li) break;  // no children so done
+                int rc = ci + 1;     // right child
+                if (rc <= li && data[rc].CompareTo(data[ci]) < 0) // if there is a rc (ci + 1), and it is smaller than left child, use the rc instead
+                    ci = rc;
+                if (data[pi].CompareTo(data[ci]) <= 0) break; // parent is smaller than (or equal to) smallest child so done
+                T tmp = data[pi]; data[pi] = data[ci]; data[ci] = tmp; // swap parent and child
+                pi = ci;
             }
+            return frontItem;
         }
 
-        public void Clear()
+        public T Peek()
         {
-            lock(_items)
-            {
-                _items.Clear();
-            }
+            T frontItem = data[0];
+            return frontItem;
         }
 
-        public bool Remove(T item)
+        public void clear()
         {
-            lock(_items)
-            {
-                return _items.Remove(item);
-            }
+            data.Clear();
         }
 
-        public T Remove()
+        public int Count()
         {
-            lock(_items)
-            {
-                var last = _items.Last();
-                Remove(last);
-                return last;
-            }
+            return data.Count;
         }
 
-        public bool IsEmpty()
+        public bool isEmpty()
         {
-            lock(_items)
-            {
-                return !_items.Any();
-            }
+            return Count() == 0;
         }
+
+        public override string ToString()
+        {
+            string s = "";
+            for (int i = 0; i < data.Count; ++i)
+                s += data[i].ToString() + " ";
+            s += "count = " + data.Count;
+            return s;
+        }
+
+        public bool IsConsistent()
+        {
+            // is the heap property true for all data?
+            if (data.Count == 0) return true;
+            int li = data.Count - 1; // last index
+            for (int pi = 0; pi < data.Count; ++pi) // each parent index
+            {
+                int lci = 2 * pi + 1; // left child index
+                int rci = 2 * pi + 2; // right child index
+
+                if (lci <= li && data[pi].CompareTo(data[lci]) > 0) return false; // if lc exists and it's greater than parent then bad.
+                if (rci <= li && data[pi].CompareTo(data[rci]) > 0) return false; // check the right child too.
+            }
+            return true; // passed all checks
+        } // IsConsistent
     }
 }

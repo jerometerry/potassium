@@ -3,71 +3,50 @@ namespace sodium
     using System;
     using System.Collections.Generic;
 
-    public class Node : IComparable<Node>
-    {
-        public readonly static Node Null = new Node(long.MaxValue);
-        private readonly ISet<Node> _listeners = new HashSet<Node>();
-        private long _rank;
+    public class Node : IComparable<Node> {
+        public readonly static Node NULL = new Node(long.MaxValue);
 
-        public Node(long rank)
-        {
-            _rank = rank;
-        }
+	    public Node(long rank) {
+		    this.rank = rank;
+	    }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="target"></param>
-        /// <returns>true if any changes were made.</returns>
-        public bool LinkTo(Node target)
-        {
-            if (target == Null)
-            { 
-                return false;
-            }
+	    private long rank;
+	    private ISet<Node> listeners = new HashSet<Node>();
 
-            bool changed = target.EnsureBiggerThan(_rank, new HashSet<Node>());
-            _listeners.Add(target);
-            return changed;
-        }
+	    /**
+	     * @return true if any changes were made. 
+	     */
+	    public bool linkTo(Node target) {
+		    if (target == NULL)
+			    return false;
 
-        public void UnlinkTo(Node target)
-        {
-            if (target == Null)
-            { 
-                return;
-            }
+		    bool changed = target.ensureBiggerThan(rank, new HashSet<Node>());
+		    listeners.Add(target);
+		    return changed;
+	    }
 
-            _listeners.Remove(target);
-        }
+	    public void unlinkTo(Node target) {
+		    if (target == NULL)
+			    return;
 
-        private bool EnsureBiggerThan(long limit, ISet<Node> visited)
-        {
-            if (_rank > limit || visited.Contains(this))
-            { 
-                return false;
-            }
+		    listeners.Remove(target);
+	    }
 
-            visited.Add(this);
-            _rank = limit + 1;
+	    private bool ensureBiggerThan(long limit, ISet<Node> visited) {
+		    if (rank > limit || visited.Contains(this))
+			    return false;
 
-            foreach (Node l in _listeners)
-            { 
-                l.EnsureBiggerThan(_rank, visited);
-            }
-            return true;
-        }
+		    visited.Add(this);
+		    rank = limit + 1;
+		    foreach (Node l in listeners)
+			    l.ensureBiggerThan(rank, visited);
+		    return true;
+	    }
 
-        public int CompareTo(Node o)
-        {
-            if (_rank < o._rank)
-            { 
-                return -1;
-            }
-            if (_rank > o._rank)
-            { 
-                return 1;
-            }
-            return 0;
-        }
+	    public int CompareTo(Node o) {
+		    if (rank < o.rank) return -1;
+		    if (rank > o.rank) return 1;
+		    return 0;
+	    }
     }
 }

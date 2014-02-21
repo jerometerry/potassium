@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("sodium")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Desire2Learn")]
 [assembly: AssemblyProduct("sodium")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCopyright("Copyright © Desire2Learn 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("562cf500-b7ba-46a1-b952-1bda0d596749")]
+[assembly: Guid("60658943-01ca-4b52-8abf-0d4404418d05")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -2,178 +2,194 @@ namespace sodium
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
-    public class Event<TEvent> : IDisposable
+    public class Event<A>
     {
-        private readonly List<ITransactionHandler<TEvent>> _actions = new List<ITransactionHandler<TEvent>>();
-        private readonly List<IListener> _listeners = new List<IListener>();
-        internal Node Node = new Node(0L);
-        protected readonly List<TEvent> Firings = new List<TEvent>();
-        private bool _disposed;
-
-        private IEnumerable<ITransactionHandler<TEvent>> CloneActions()
+        private sealed class ListenerImplementation<A> : Listener
         {
-            return new List<ITransactionHandler<TEvent>>(_actions);
-        }
+            ///
+            /// It's essential that we keep the listener alive while the caller holds
+            /// the Listener, so that the finalizer doesn't get triggered.
+            ///
+            private readonly Event<A> _event;
 
-        public void Send(Transaction transaction, TEvent evt)
-        {
-            if (!Firings.Any())
+            private readonly TransactionHandler<A> action;
+            private readonly Node target;
+
+            public ListenerImplementation(Event<A> evt, TransactionHandler<A> action, Node target)
             {
-                transaction.Last(new Runnable(() => Firings.Clear()));
+                this._event = evt;
+                this.action = action;
+                this.target = target;
             }
-            Firings.Add(evt);
 
-            var actions = CloneActions();
-            foreach (var action in actions)
+            public override void unlisten()
             {
-                try
+                lock (Transaction.listenersLock)
                 {
-                    action.Run(transaction, evt);
-                }
-                catch (Exception t)
-                {
-                    Console.WriteLine("{0}", t);
+                    _event.listeners.Remove(action);
+                    _event.node.unlinkTo(target);
                 }
             }
+
+            ~ListenerImplementation()
+            {
+                unlisten();
+            }
         }
 
-        internal virtual TEvent[] SampleNow() 
-        { 
-            return null; 
-        }
 
-        public IListener Listen(Action<TEvent> action)
-        {
-            var handler = new Handler<TEvent>(action);
-            return Listen(handler);
-        }
-        
+        protected List<TransactionHandler<A>> listeners = new List<TransactionHandler<A>>();
+        protected List<Listener> finalizers = new List<Listener>();
+        internal Node node = new Node(0L);
+        protected List<A> firings = new List<A>();
+
         /// <summary>
-        /// Method to cause the listener to be removed. This is the observer pattern.
+        /// An event that never fires.
+        /// </summary>
+        public Event()
+        {
+        }
+
+        protected internal virtual Object[] sampleNow()
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Overload of the listen method that accepts and Action, to support C# lambda expressions
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        public IListener Listen(IHandler<TEvent> action)
+        public Listener listen(Action<A> action)
         {
-            return Listen(Node.Null, TransactionHandler<TEvent>.Create(action));
+            return listen(new HandlerImpl<A>(action));
         }
 
-        public IListener Listen(Node target, ITransactionHandler<TEvent> action)
+        /// <summary>
+        /// Listen for firings of this event. The returned Listener has an unlisten()
+        /// method to cause the listener to be removed. This is the observer pattern.
+        ///</summary>
+        public Listener listen(Handler<A> action)
         {
-            var evt = this;
-            var code = new Function<Transaction, IListener>(t => evt.Listen(target, t, action, false));
-            return Transaction.Apply(code);
+            return listen_(Node.NULL, new TransactionHandlerImpl<A>((t, a) => action.run(a)));
         }
 
-        public IListener Listen(
-            Node target, 
-            Transaction transaction, 
-            ITransactionHandler<TEvent> action, 
-            bool suppressEarlierFirings)
+        internal Listener listen_(Node target, TransactionHandler<A> action)
         {
-            lock (Transaction.ListenersLock)
+            return Transaction.apply(new Lambda1Impl<Transaction, Listener>(t => listen(target, t, action, false)));
+        }
+
+        internal Listener listen(Node target, Transaction trans, TransactionHandler<A> action,
+                                bool suppressEarlierFirings)
+        {
+            lock (Transaction.listenersLock)
             {
-                if (Node.LinkTo(target))
-                { 
-                    transaction.NeedToRegeneratePriorityQueue = true;
-                }
-                _actions.Add(action);
+                if (node.linkTo(target))
+                    trans.toRegen = true;
+                listeners.Add(action);
             }
-
-            var events = SampleNow();
-            if (events != null)
-            {    
-                // In cases like Value(), we start with an initial value.
-                foreach (var evt in events)
-                { 
-                    action.Run(transaction, evt);
-                }
+            Object[] aNow = sampleNow();
+            if (aNow != null)
+            {
+                // In cases like value(), we start with an initial value.
+                for (int i = 0; i < aNow.Length; i++)
+                    action.run(trans, (A)aNow[i]); // <-- unchecked warning is here
             }
-
             if (!suppressEarlierFirings)
             {
                 // Anything sent already in this transaction must be sent now so that
                 // there's no order dependency between send and listen.
-                foreach (var firing in Firings)
-                { 
-                    action.Run(transaction, firing);
-                }
+                foreach (A a in firings)
+                    action.run(trans, a);
             }
-
-            return new Listener<TEvent>(this, action, target);
+            return new ListenerImplementation<A>(this, action, target);
         }
-        
+
         /// <summary>
-        /// Transform the event's value according to the supplied function.
+        /// Overload of map that accepts a Func<A,B>, allowing for C# lambda support
         /// </summary>
+        /// <typeparam name="B"></typeparam>
         /// <param name="f"></param>
         /// <returns></returns>
-        public Event<TResultEvent> Map<TResultEvent>(IFunction<TEvent, TResultEvent> f)
+        public Event<B> map<B>(Func<A, B> f)
         {
-            var sink = new MappedEventSink<TEvent, TResultEvent>(this, f);
-            var listener = Listen(sink.Node, new MapSinkSender<TEvent, TResultEvent>(sink, f));
-            return sink.RegisterListener(listener);
+            return map(new Lambda1Impl<A, B>(f));
         }
 
-        public Event<TResultEvent> Map<TResultEvent>(Func<TEvent, TResultEvent> f)
+        ///
+        /// Transform the event's value according to the supplied function.
+        ///
+        public Event<B> map<B>(Lambda1<A, B> f)
         {
-            return Map(new Function<TEvent, TResultEvent>(f));
+            Event<A> ev = this;
+            EventSink<B> out_ = new MapEventSink<A, B>(ev, f);
+            Listener l = listen_(out_.node, new TransactionHandlerImpl<A>((t, a) => out_.send(t, f.apply(a))));
+            return out_.addCleanup(l);
         }
 
-        /// <summary>
+        ///
         /// Create a behavior with the specified initial value, that gets updated
         /// by the values coming through the event. The 'current value' of the behavior
         /// is notionally the value as it was 'at the start of the transaction'.
         /// That is, state updates caused by event firings get processed at the end of
         /// the transaction.
-        /// </summary>
-        /// <param name="initValue"></param>
-        /// <returns></returns>
-        public Behavior<TEvent> Hold(TEvent initValue)
+        ///
+        public Behavior<A> hold(A initValue)
         {
-            var evt = this;
-            var code = new Function<Transaction, Behavior<TEvent>>(t => new Behavior<TEvent>(evt.LastFiringOnly(t), initValue));
-            return Transaction.Apply(code);
+            return Transaction.apply(new Lambda1Impl<Transaction, Behavior<A>>(t => new Behavior<A>(lastFiringOnly(t), initValue)));
         }
 
-        /// <summary>
+        ///
         /// Variant of snapshot that throws away the event's value and captures the behavior's.
-        /// </summary>
-        /// <param name="behavior"></param>
-        /// <returns></returns>
-        public Event<TResultEvent> Snapshot<TResultEvent>(Behavior<TResultEvent> behavior)
+        ///
+        public Event<B> snapshot<B>(Behavior<B> beh)
         {
-            var snapshotGenerator = new BinaryFunction<TEvent, TResultEvent, TResultEvent>((a,b) => b);
-            return Snapshot(behavior, snapshotGenerator);
+            return snapshot(beh, new Lambda2Impl<A, B, B>((a, b) => b));
         }
 
-        /// <summary>
+        ///
         /// Sample the behavior at the time of the event firing. Note that the 'current value'
         /// of the behavior that's sampled is the value as at the start of the transaction
         /// before any state changes of the current transaction are applied through 'hold's.
-        /// </summary>
-        /// <param name="behavior"></param>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        public Event<TSnapshot> Snapshot<TBehavior, TSnapshot>(
-            Behavior<TBehavior> behavior, 
-            IBinaryFunction<TEvent, TBehavior, TSnapshot> f)
+        ///
+        public Event<C> snapshot<B, C>(Behavior<B> b, Lambda2<A, B, C> f)
         {
-            var sink = new SnapshotEventSink<TEvent, TBehavior, TSnapshot>(this, f, behavior);
-            var listener = Listen(sink.Node, new SnapshotSinkSender<TEvent, TBehavior, TSnapshot>(sink, f, behavior));
-            return sink.RegisterListener(listener);
+            Event<A> ev = this;
+            EventSink<C> out_ = new SnapshotEventSink<A, B, C>(ev, f, b);
+            Listener l = listen_(out_.node, new TransactionHandlerImpl<A>((t2, a) => out_.send(t2, f.apply(a, b.sample()))));
+            return out_.addCleanup(l);
         }
 
-        public Event<TSnapshot> Snapshot<TBehavior, TSnapshot>(
-            Behavior<TBehavior> behavior,
-            Func<TEvent, TBehavior, TSnapshot> f)
+        private class SnapshotEventSink<A, B, C> : EventSink<C>
         {
-            return Snapshot(behavior, new BinaryFunction<TEvent, TBehavior, TSnapshot>(f));
+            private Event<A> ev;
+            private Lambda2<A, B, C> _f;
+            private Behavior<B> b;
+
+            public SnapshotEventSink(Event<A> ev, Lambda2<A, B, C> f, Behavior<B> b)
+            {
+                this.ev = ev;
+                _f = f;
+                this.b = b;
+            }
+
+            protected internal override Object[] sampleNow()
+            {
+                Object[] oi = ev.sampleNow();
+                if (oi != null)
+                {
+                    Object[] oo = new Object[oi.Length];
+                    for (int i = 0; i < oo.Length; i++)
+                        oo[i] = _f.apply((A)oi[i], b.sample());
+                    return oo;
+                }
+                else
+                    return null;
+            }
         }
 
-        /// <summary>
+        ///
         /// Merge two streams of events of the same type.
         ///
         /// In the case where two event occurrences are simultaneous (i.e. both
@@ -181,31 +197,84 @@ namespace sodium
         /// transaction. If the event firings are ordered for some reason, then
         /// their ordering is retained. In many common cases the ordering will
         /// be undefined.
-        /// </summary>
-        /// <param name="event1"></param>
-        /// <param name="event2"></param>
-        /// <returns></returns>
-        public static Event<TEvent> Merge(Event<TEvent> event1, Event<TEvent> event2)
+        ///
+        public static Event<A> merge<A>(Event<A> ea, Event<A> eb)
         {
-            var sink = new MergeEventSink<TEvent>(event1, event2);
-            var handler = new EventSinkSender<TEvent>(sink);
-            var listener1 = event1.Listen(sink.Node, handler);
-            var listener2 = event2.Listen(sink.Node, handler);
-            return sink.RegisterListener(listener1).RegisterListener(listener2);
+            MergeEventSink<A> out_ = new MergeEventSink<A>(ea, eb);
+            TransactionHandler<A> h = new TransactionHandlerImpl<A>(out_.send);
+            Listener l1 = ea.listen_(out_.node, h);
+            Listener l2 = eb.listen_(out_.node, h);
+            return out_.addCleanup(l1).addCleanup(l2);
         }
 
-        /// <summary>
+        private class MergeEventSink<A> : EventSink<A>
+        {
+            private Event<A> ea;
+            private Event<A> eb;
+
+            public MergeEventSink(Event<A> ea, Event<A> eb)
+            {
+                this.ea = ea;
+                this.eb = eb;
+            }
+
+            protected internal override Object[] sampleNow()
+            {
+                Object[] oa = ea.sampleNow();
+                Object[] ob = eb.sampleNow();
+                if (oa != null && ob != null)
+                {
+                    Object[] oo = new Object[oa.Length + ob.Length];
+                    int j = 0;
+                    for (int i = 0; i < oa.Length; i++) oo[j++] = oa[i];
+                    for (int i = 0; i < ob.Length; i++) oo[j++] = ob[i];
+                    return oo;
+                }
+                else
+                    if (oa != null)
+                        return oa;
+                    else
+                        return ob;
+            }
+        }
+
+        ///
         /// Push each event occurrence onto a new transaction.
-        /// </summary>
-        /// <returns></returns>
-        public Event<TEvent> Delay()
+        ///
+        public Event<A> delay()
         {
-            var sink = new EventSink<TEvent>();
-            var listener = Listen(sink.Node, new DelayTransactionHandler<TEvent>(sink));
-            return sink.RegisterListener(listener);
+            EventSink<A> out_ = new EventSink<A>();
+            Listener l1 = listen_(out_.node, new TransactionHandlerImpl<A>((t, a) =>
+                                                                               {
+                                                                                   t.post(new RunnableImpl(() =>
+                                                                                                               {
+                                                                                                                   Transaction trans = new Transaction();
+                                                                                                                   try
+                                                                                                                   {
+                                                                                                                       out_.send(trans, a);
+                                                                                                                   }
+                                                                                                                   finally
+                                                                                                                   {
+                                                                                                                       trans.close();
+                                                                                                                   }
+                                                                                                               }));
+                                                                               }));
+
+
+            return out_.addCleanup(l1);
         }
 
         /// <summary>
+        /// Overload of coalese that accepts a Func<A,A,A> to support C# lambdas
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public Event<A> coalesce(Func<A, A, A> f)
+        {
+            return coalesce(new Lambda2Impl<A, A, A>(f));
+        }
+
+        ///
         /// If there's more than one firing in a single transaction, combine them into
         /// one using the specified combining function.
         ///
@@ -213,209 +282,274 @@ namespace sodium
         /// input of the combining function. In most common cases it's best not to
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
-        /// </summary>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        public Event<TEvent> Coalesce(IBinaryFunction<TEvent, TEvent, TEvent> f)
+        ///
+        public Event<A> coalesce(Lambda2<A, A, A> f)
         {
-            var evt = this;
-            var code = new Function<Transaction, Event<TEvent>>(t => evt.Coalesce(t, f));
-            return Transaction.Apply(code);
+            return Transaction.apply(new Lambda1Impl<Transaction, Event<A>>(t => coalesce(t, f)));
         }
 
-        public Event<TEvent> Coalesce(Func<TEvent, TEvent, TEvent> f)
+        Event<A> coalesce(Transaction trans1, Lambda2<A, A, A> f)
         {
-            return Coalesce(new BinaryFunction<TEvent, TEvent, TEvent>(f));
+            Event<A> ev = this;
+            EventSink<A> out_ = new CoalesceEventSink<A>(ev, f);
+            TransactionHandler<A> h = new CoalesceHandler<A>(f, out_);
+            Listener l = listen(out_.node, trans1, h, false);
+            return out_.addCleanup(l);
         }
 
-        public Event<TEvent> Coalesce(Transaction transaction, IBinaryFunction<TEvent, TEvent, TEvent> f)
+        private class CoalesceEventSink<A> : EventSink<A>
         {
-            var sink = new CoalesceEventSink<TEvent>(this, f);
-            var handler = new CoalesceHandler<TEvent>(f, sink);
-            var listener = Listen(sink.Node, transaction, handler, false);
-            return sink.RegisterListener(listener);
+            private Event<A> ev;
+            private Lambda2<A, A, A> f;
+
+            public CoalesceEventSink(Event<A> ev, Lambda2<A, A, A> f)
+            {
+                this.ev = ev;
+                this.f = f;
+            }
+
+            protected internal override Object[] sampleNow()
+            {
+                Object[] oi = ev.sampleNow();
+                if (oi != null)
+                {
+                    A o = (A)oi[0];
+                    for (int i = 1; i < oi.Length; i++)
+                        o = f.apply(o, (A)oi[i]);
+                    return new Object[] { o };
+                }
+                else
+                    return null;
+            }
         }
 
-        /// <summary>
+        ///
         /// Clean up the output by discarding any firing other than the last one. 
-        /// </summary>
-        /// <param name="transaction"></param>
-        /// <returns></returns>
-        public Event<TEvent> LastFiringOnly(Transaction transaction)
+        ///
+        internal Event<A> lastFiringOnly(Transaction trans)
         {
-            var combiningFunction = new BinaryFunction<TEvent, TEvent, TEvent>((first, second) => second);
-            return Coalesce(transaction, combiningFunction);
+            return coalesce(trans, new Lambda2Impl<A, A, A>((a, b) => b));
         }
 
-        /// <summary>
+        ///
         /// Merge two streams of events of the same type, combining simultaneous
         /// event occurrences.
         ///
         /// In the case where multiple event occurrences are simultaneous (i.e. all
         /// within the same transaction), they are combined using the same logic as
         /// 'coalesce'.
+        ///
+        public static Event<A> mergeWith<A>(Lambda2<A, A, A> f, Event<A> ea, Event<A> eb)
+        {
+            return merge(ea, eb).coalesce(f);
+        }
+
+        /// <summary>
+        /// Overload of filter that accepts a Func<A,Bool> to support C# lambda expressions
         /// </summary>
         /// <param name="f"></param>
-        /// <param name="event1"></param>
-        /// <param name="event2"></param>
         /// <returns></returns>
-        public static Event<TEvent> MergeWith(
-            IBinaryFunction<TEvent, TEvent, TEvent> f, 
-            Event<TEvent> event1, 
-            Event<TEvent> event2)
+        public Event<A> filter(Func<A, bool> f)
         {
-            return Merge(event1, event2).Coalesce(f);
+            return filter(new Lambda1Impl<A, bool>(f));
         }
 
-        public static Event<TEvent> MergeWith(
-            Func<TEvent, TEvent, TEvent> f,
-            Event<TEvent> event1, 
-            Event<TEvent> event2)
-        {
-            return MergeWith(new BinaryFunction<TEvent, TEvent, TEvent>(f), event1, event2);
-        }
-
-        /// <summary>
+        ///
         /// Only keep event occurrences for which the predicate returns true.
-        /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
-        public Event<TEvent> Filter(IFunction<TEvent, Boolean> predicate)
+        ///
+        public Event<A> filter(Lambda1<A, Boolean> f)
         {
-            var sink = new FilteredEventSink<TEvent>(this, predicate);
-            var listener = Listen(sink.Node, new FilteredEventSinkSender<TEvent>(predicate, sink));
-            return sink.RegisterListener(listener);
+            Event<A> ev = this;
+            EventSink<A> out_ = new FilterEventSink<A>(ev, f);
+
+            Listener l = listen_(out_.node,
+                                 new TransactionHandlerImpl<A>((t, a) => { if (f.apply(a)) out_.send(t, a); }));
+            return out_.addCleanup(l);
         }
 
-        public Event<TEvent> Filter(Func<TEvent, Boolean> predicate)
+        private class FilterEventSink<A> : EventSink<A>
         {
-            return Filter(new Function<TEvent, Boolean>(predicate));
+            private Event<A> ev;
+            private Lambda1<A, Boolean> f;
+
+            public FilterEventSink(Event<A> ev, Lambda1<A, Boolean> f)
+            {
+                this.ev = ev;
+                this.f = f;
+            }
+
+            protected internal override Object[] sampleNow()
+            {
+                Object[] oi = ev.sampleNow();
+                if (oi != null)
+                {
+                    Object[] oo = new Object[oi.Length];
+                    int j = 0;
+                    for (int i = 0; i < oi.Length; i++)
+                        if (f.apply((A)oi[i]))
+                            oo[j++] = oi[i];
+                    if (j == 0)
+                        oo = null;
+                    else if (j < oo.Length)
+                    {
+                        Object[] oo2 = new Object[j];
+                        for (int i = 0; i < j; i++)
+                            oo2[i] = oo[i];
+                        oo = oo2;
+                    }
+                    return oo;
+                }
+                else
+                    return null;
+            }
         }
 
-        /// <summary>
+        ///
         /// Filter out any event occurrences whose value is a Java null pointer.
-        /// </summary>
-        /// <returns></returns>
-        public Event<TEvent> FilterNotNull()
+        ///
+        public Event<A> filterNotNull()
         {
-            // TODO - can't assume nullable
-            var predicate = new Function<TEvent, bool>(a => a != null);
-            return Filter(predicate);
+            return filter(new Lambda1Impl<A, Boolean>(a => a != null));
         }
 
-        /// <summary>
+        ///
         /// Let event occurrences through only when the behavior's value is True.
         /// Note that the behavior's value is as it was at the start of the transaction,
         /// that is, no state changes from the current transaction are taken into account.
-        /// </summary>
-        /// <param name="behaviorPredicate"></param>
-        /// <returns></returns>
-        public Event<TEvent> Gate(Behavior<Boolean> behaviorPredicate)
+        ///
+        public Event<A> gate(Behavior<Boolean> bPred)
         {
-            var f = new BinaryFunction<TEvent, bool, Maybe<TEvent>>((a,pred) => pred ? new Maybe<TEvent>(a) : null);
-            return Snapshot(behaviorPredicate, f).FilterNotNull().Map(a => a.Value());
+            var f = new Lambda2Impl<A, bool, Maybe<A>>((a, pred) => pred ? new Maybe<A>(a) : null);
+            return snapshot(bPred, f).filterNotNull().map(a => a.Value());
         }
 
-        /// <summary>
+        ///
         /// Transform an event with a generalized state loop (a mealy machine). The function
         /// is passed the input and the old state and returns the new state and output value.
-        /// </summary>
-        /// <param name="initState"></param>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        public Event<TResultEvent> Collect<TResultEvent, TState>(
-            TState initState, 
-            IBinaryFunction<TEvent, TState, Tuple2<TResultEvent, TState>> f)
+        ///
+        public Event<B> collect<B, S>(S initState, Lambda2<A, S, Tuple2<B, S>> f)
         {
-            var loop = new EventLoop<TState>();
-            var behavior = loop.Hold(initState);
-            var snapshot = Snapshot(behavior, f);
-            var event1 = snapshot.Map(new Function<Tuple2<TResultEvent, TState>, TResultEvent>(bs => bs.V1));
-            var event2 = snapshot.Map(new Function<Tuple2<TResultEvent, TState>, TState>(bs => bs.V2));
-            loop.Loop(event2);
-            return event1;
+            Event<A> ea = this;
+            EventLoop<S> es = new EventLoop<S>();
+            Behavior<S> s = es.hold(initState);
+            Event<Tuple2<B, S>> ebs = ea.snapshot(s, f);
+            Event<B> eb = ebs.map(new Lambda1Impl<Tuple2<B, S>, B>(bs => bs.a));
+            Event<S> es_out = ebs.map(new Lambda1Impl<Tuple2<B, S>, S>(bs => bs.b));
+            es.loop(es_out);
+            return eb;
         }
 
-        public Event<TResultEvent> Collect<TResultEvent, TState>(
-            TState initState,
-            Func<TEvent, TState, Tuple2<TResultEvent, TState>> f)
+
+        public Behavior<S> accum<S>(S initState, Func<A, S, S> f)
         {
-            var function = new BinaryFunction<TEvent, TState, Tuple2<TResultEvent, TState>>(f);
-            return Collect(initState, function);
+            return accum(initState, new Lambda2Impl<A, S, S>(f));
         }
 
-        /// <summary>
+        ///
         /// Accumulate on input event, outputting the new state each time.
-        /// </summary>
-        /// <param name="initState"></param>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        public Behavior<TState> Accum<TState>(
-            TState initState, 
-            IBinaryFunction<TEvent, TState, TState> f)
+        ///
+        public Behavior<S> accum<S>(S initState, Lambda2<A, S, S> f)
         {
-            var loop = new EventLoop<TState>();
-            var behavior = loop.Hold(initState);
-            var snapshot = Snapshot(behavior, f);
-            loop.Loop(snapshot);
-            return snapshot.Hold(initState);
+            Event<A> ea = this;
+            EventLoop<S> es = new EventLoop<S>();
+            Behavior<S> s = es.hold(initState);
+            Event<S> es_out = ea.snapshot(s, f);
+            es.loop(es_out);
+            return es_out.hold(initState);
         }
 
-        public Behavior<TState> Accum<TState>(TState initState, Func<TEvent, TState, TState> f)
-        {
-            return Accum(initState, new BinaryFunction<TEvent, TState, TState>(f));
-        }
-
-        /// <summary>
+        ///
         /// Throw away all event occurrences except for the first one.
-        /// </summary>
-        /// <returns></returns>
-        public Event<TEvent> Once()
+        ///
+        public Event<A> once()
         {
             // This is a bit long-winded but it's efficient because it deregisters
             // the listener.
-            var listeners = new IListener[1];
-            var sink = new OnceEventSink<TEvent>(this, listeners);
-            listeners[0] = Listen(sink.Node, new OnceSinkSender<TEvent>(sink, listeners));
-            return sink.RegisterListener(listeners[0]);
+            Event<A> ev = this;
+            Listener[] la = new Listener[1];
+            EventSink<A> out_ = new OnceEventSink<A>(ev, la);
+            la[0] = ev.listen_(out_.node, new TransactionHandlerImpl<A>((t, a) =>
+            {
+                out_.send(t, a);
+                if (la[0] != null)
+                {
+                    la[0].unlisten();
+                    la[0] = null;
+                }
+            }));
+            return out_.addCleanup(la[0]);
         }
 
-        public Event<TEvent> RegisterListener(IListener listener)
+        private class OnceEventSink<A> : EventSink<A>
         {
-            _listeners.Add(listener);
+            private Event<A> ev;
+            private Listener[] la;
+
+            public OnceEventSink(Event<A> ev, Listener[] la)
+            {
+                this.ev = ev;
+                this.la = la;
+            }
+
+            protected internal override Object[] sampleNow()
+            {
+                Object[] oi = ev.sampleNow();
+                Object[] oo = oi;
+                if (oo != null)
+                {
+                    if (oo.Length > 1)
+                        oo = new Object[] { oi[0] };
+                    if (la[0] != null)
+                    {
+                        la[0].unlisten();
+                        la[0] = null;
+                    }
+                }
+                return oo;
+            }
+        }
+
+        internal Event<A> addCleanup(Listener cleanup)
+        {
+            finalizers.Add(cleanup);
             return this;
         }
 
-        public void RemoveAction(ITransactionHandler<TEvent> action)
+        ~Event()
         {
-            _actions.Remove(action);
+            foreach (Listener l in finalizers)
+                l.unlisten();
         }
 
-        public void Dispose()
+        private class CoalesceHandler<A> : TransactionHandler<A>
         {
-            Dispose(true);
-
-            // Call SupressFinalize in case a subclass implements a finalizer.
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            // If you need thread safety, use a lock around these  
-            // operations, as well as in your methods that use the resource. 
-            if (!_disposed)
+            public CoalesceHandler(Lambda2<A, A, A> f, EventSink<A> out_)
             {
-                if (disposing)
-                {
-                    foreach (var listener in _listeners)
-                    { 
-                        listener.Unlisten();
-                    }
-                }
+                this.f = f;
+                this.out_ = out_;
+            }
 
-                // Indicate that the instance has been disposed.
-                _disposed = true;
+            private Lambda2<A, A, A> f;
+            private EventSink<A> out_;
+
+            private Maybe<A> accum = Maybe<A>.Null;
+
+            public void run(Transaction trans1, A a)
+            {
+                if (accum.HasValue)
+                    accum = new Maybe<A>(f.apply(accum.Value(), a));
+                else
+                {
+                    CoalesceHandler<A> thiz = this;
+                    trans1.prioritized(out_.node, new HandlerImpl<Transaction>((t) =>
+                    {
+                        out_.send(t, thiz.accum.Value());
+                        thiz.accum = Maybe<A>.Null;
+                    }));
+                    accum = new Maybe<A>(a);
+                }
             }
         }
+
     }
 }
