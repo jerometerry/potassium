@@ -13,14 +13,14 @@ namespace sodium
             _f = f;
         }
 
-        protected internal override Object[] SampleNow()
+        protected internal override TB[] SampleNow()
         {
             var oi = _ev.SampleNow();
             if (oi != null)
             {
-                var oo = new Object[oi.Length];
+                var oo = new TB[oi.Length];
                 for (int i = 0; i < oo.Length; i++)
-                    oo[i] = _f.Apply((TA)oi[i]);
+                    oo[i] = _f.Apply(oi[i]);
                 return oo;
             }
             return null;

@@ -11,9 +11,9 @@ namespace sodium
             _behavior = behavior;
         }
 
-        protected internal override Object[] SampleNow()
+        protected internal override TA[] SampleNow()
         {
-            return new Object[] { _behavior.Sample() };
+            return new [] { _behavior.Sample() };
         }
     }
 }

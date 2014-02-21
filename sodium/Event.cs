@@ -10,7 +10,7 @@ namespace sodium
         internal Node Node = new Node(0L);
         protected List<TA> Firings = new List<TA>();
 
-        protected internal virtual Object[] SampleNow()
+        protected internal virtual TA[] SampleNow()
         {
             return null;
         }

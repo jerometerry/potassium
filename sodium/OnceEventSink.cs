@@ -13,7 +13,7 @@ namespace sodium
             _la = la;
         }
 
-        protected internal override Object[] SampleNow()
+        protected internal override TA[] SampleNow()
         {
             var oi = _ev.SampleNow();
             var oo = oi;

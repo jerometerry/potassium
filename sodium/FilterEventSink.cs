@@ -13,7 +13,7 @@ namespace sodium
             _f = f;
         }
 
-        protected internal override Object[] SampleNow()
+        protected internal override TA[] SampleNow()
         {
             var oi = _ev.SampleNow();
             if (oi == null)
@@ -21,11 +21,11 @@ namespace sodium
                 return null;
             }
             
-            var results = new Object[oi.Length];
+            var results = new TA[oi.Length];
             var j = 0;
             foreach (var t in oi)
             {
-                if (_f.Apply((TA)t))
+                if (_f.Apply(t))
                     results[j++] = t;
             }
             if (j == 0)
@@ -34,7 +34,7 @@ namespace sodium
             }
             else if (j < results.Length)
             {
-                var oo2 = new Object[j];
+                var oo2 = new TA[j];
                 for (var i = 0; i < j; i++)
                     oo2[i] = results[i];
                 results = oo2;
