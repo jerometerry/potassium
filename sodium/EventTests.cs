@@ -13,9 +13,9 @@ namespace sodium
         [Test]
         public void TestListen()
         {
-            EventSink<Int32> esb = new EventSink<Int32>();
-            List<Int32> results = new List<Int32>();
-            Listener listener = esb.listen(results.Add);
+            var esb = new EventSink<Int32>();
+            var results = new List<Int32>();
+            var listener = esb.listen(results.Add);
             Assert.IsNotNull(listener);
             esb.send(123);
             Assert.AreEqual(123, results[0]);
@@ -24,10 +24,10 @@ namespace sodium
         [Test]
         public void TestFilter()
         {
-            EventSink<Int32> esb = new EventSink<Int32>();
-            Event<Int32> even = esb.filter(a => a%2 == 0);
-            List<Int32> results = new List<Int32>();
-            Listener listener = even.listen(results.Add);
+            var esb = new EventSink<Int32>();
+            var even = esb.filter(a => a%2 == 0);
+            var results = new List<Int32>();
+            var listener = even.listen(results.Add);
             Assert.IsNotNull(listener);
             esb.send(1);
             esb.send(2);
@@ -52,10 +52,10 @@ namespace sodium
         [Test]
         public void TestFilterNotNull()
         {
-            EventSink<Int32?> esb = new EventSink<Int32?>();
-            Event<Int32?> nonNull = esb.filterNotNull();
-            List<Int32> results = new List<Int32>();
-            Listener listener = nonNull.listen(a => results.Add(a.Value));
+            var esb = new EventSink<Int32?>();
+            var nonNull = esb.filterNotNull();
+            var results = new List<Int32>();
+            var listener = nonNull.listen(a => results.Add(a.Value));
             Assert.IsNotNull(listener);
             esb.send(1);
             esb.send(null);
@@ -68,11 +68,11 @@ namespace sodium
         [Test]
         public void TestMap()
         {
-            EventSink<Int32> esb = new EventSink<Int32>();
-            Event<string> map = esb.map<string>(a => a.ToString());
+            var esb = new EventSink<Int32>();
+            var map = esb.map<string>(a => a.ToString());
             Assert.IsNotNull(map);
-            List<string> results = new List<string>();
-            Listener listener = map.listen(results.Add);
+            var results = new List<string>();
+            var listener = map.listen(results.Add);
             Assert.IsNotNull(listener);
             Assert.IsNotNull(map);
             esb.send(123);
@@ -82,10 +82,10 @@ namespace sodium
         [Test]
         public void TestCoalesce()
         {
-            EventSink<Int32> e1 = new EventSink<Int32>();
-            EventSink<Int32> e2 = new EventSink<Int32>();
-            List<Int32> out_ = new List<Int32>();
-            Listener l =
+            var e1 = new EventSink<Int32>();
+            var e2 = new EventSink<Int32>();
+            var out_ = new List<Int32>();
+            var l =
                  Event<Int32>.merge(e1,Event<Int32>.merge(e1.map(x => x * 100), e2))
                 .coalesce((a,b) => a+b)
                 .listen((x) => { out_.Add(x); });
@@ -97,12 +97,12 @@ namespace sodium
         }
 
         [Test]
-        public void testDelay()
+        public void TestDelay()
         {
-            EventSink<char> e = new EventSink<char>();
-            Behavior<char> b = e.hold(' ');
-            List<char> out_ = new List<char>();
-            Listener l = e.delay().snapshot(b).listen((x) => { out_.Add(x); });
+            var e = new EventSink<char>();
+            var b = e.hold(' ');
+            var out_ = new List<char>();
+            var l = e.delay().snapshot(b).listen((x) => { out_.Add(x); });
             e.send('C');
             e.send('B');
             e.send('A');
@@ -111,14 +111,14 @@ namespace sodium
         }
 
         [Test]
-        public void testCollect()
+        public void TestCollect()
         {
-            EventSink<Int32> ea = new EventSink<Int32>();
-            List<Int32> out_ = new List<Int32>();
-            Event<Int32> sum = ea.collect(100,
+            var ea = new EventSink<Int32>();
+            var out_ = new List<Int32>();
+            var sum = ea.collect(100,
                 //(a,s) -> new Tuple2(a+s, a+s)
                 new Lambda2Impl<Int32, Int32, Tuple2<Int32,Int32>>((a,s) => new Tuple2<int, int>(a+s,a+s)));
-            Listener l = sum.listen((x) => { out_.Add(x); });
+            var l = sum.listen(out_.Add);
             ea.send(5);
             ea.send(7);
             ea.send(1);
@@ -129,12 +129,12 @@ namespace sodium
         }
 
         [Test]
-        public void testAccum()
+        public void TestAccum()
         {
-            EventSink<Int32> ea = new EventSink<Int32>();
-            List<Int32> out_ = new List<Int32>();
-            Behavior<Int32> sum = ea.accum(100, (a,s)=>a+s);
-            Listener l = sum.updates().listen((x) => { out_.Add(x); });
+            var ea = new EventSink<Int32>();
+            var out_ = new List<Int32>();
+            var sum = ea.accum(100, (a,s)=>a+s);
+            var l = sum.updates().listen(out_.Add);
             ea.send(5);
             ea.send(7);
             ea.send(1);
@@ -145,12 +145,12 @@ namespace sodium
         }
 
         [Test]
-        public void testGate()
+        public void TestGate()
         {
-            EventSink<char> ec = new EventSink<char>();
-            BehaviorSink<Boolean> epred = new BehaviorSink<Boolean>(true);
-            List<Char> out_ = new List<Char>();
-            Listener l = ec.gate(epred).listen(x => { out_.Add(x); });
+            var ec = new EventSink<char>();
+            var epred = new BehaviorSink<Boolean>(true);
+            var out_ = new List<Char>();
+            var l = ec.gate(epred).listen(out_.Add);
             ec.send('H');
             epred.send(false);
             ec.send('O');
@@ -161,11 +161,11 @@ namespace sodium
         }
 
         [Test]
-        public void testOnce()
+        public void TestOnce()
         {
-            EventSink<char> e = new EventSink<char>();
-            List<char> out_ = new List<char>();
-            Listener l = e.once().listen((x) => { out_.Add(x); });
+            var e = new EventSink<char>();
+            var out_ = new List<char>();
+            var l = e.once().listen(out_.Add);
             e.send('A');
             e.send('B');
             e.send('C');
@@ -207,7 +207,7 @@ namespace sodium
 
             public static void AssertArraysEqual(List<TA> l1, List<TA> l2)
             {
-                Assert.True(Arrays<TA>.AreArraysEqual(l1, l2));
+                Assert.True(AreArraysEqual(l1, l2));
             }
         }
     }

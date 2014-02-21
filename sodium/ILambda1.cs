@@ -2,12 +2,12 @@ namespace sodium
 {
     using System;
 
-    public interface Lambda1<A, B>
+    public interface ILambda1<A, B>
     {
         B apply(A a);
     }
 
-    public class Lambda1Impl<A,B> : Lambda1<A,B>
+    public class Lambda1Impl<A,B> : ILambda1<A,B>
     {
         private readonly Func<A, B> _action;
 

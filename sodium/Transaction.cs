@@ -14,11 +14,11 @@ namespace sodium
         
 	    private class Entry : IComparable<Entry> {
 		    private Node rank;
-		    internal Handler<Transaction> action;
+		    internal IHandler<Transaction> action;
 		    private static long nextSeq;
 		    private long seq;
 
-		    public Entry(Node rank, Handler<Transaction> action) {
+		    public Entry(Node rank, IHandler<Transaction> action) {
 			    this.rank = rank;
 			    this.action = action;
 			    this.seq = nextSeq++;
@@ -37,8 +37,8 @@ namespace sodium
 	    private PriorityQueue<Entry> prioritizedQ = new PriorityQueue<Entry>();
 	    private ISet<Entry> entries = new HashSet<Entry>();
 
-        private List<Runnable> lastQ = new List<Runnable>(); 
-        private List<Runnable> postQ;
+        private List<IRunnable> lastQ = new List<IRunnable>(); 
+        private List<IRunnable> postQ;
 
         public Transaction() {
         }
@@ -52,7 +52,7 @@ namespace sodium
         /// transaction automatically. It is useful where you want to run multiple
         /// reactive operations atomically.
          ///
-        public static void run(Runnable code) {
+        public static void run(IRunnable code) {
             lock (transactionLock) {
                 // If we are already inside a transaction (which must be on the same
                 // thread otherwise we wouldn't have acquired transactionLock), then
@@ -70,7 +70,7 @@ namespace sodium
             }
         }
 
-        internal static void run(Handler<Transaction> code) {
+        internal static void run(IHandler<Transaction> code) {
             lock (transactionLock) {
                 // If we are already inside a transaction (which must be on the same
                 // thread otherwise we wouldn't have acquired transactionLock), then
@@ -88,7 +88,7 @@ namespace sodium
             }
         }
 
-        internal static A apply<A> (Lambda1<Transaction, A> code) {
+        internal static A apply<A> (ILambda1<Transaction, A> code) {
             lock (transactionLock) {
                 // If we are already inside a transaction (which must be on the same
                 // thread otherwise we wouldn't have acquired transactionLock), then
@@ -105,7 +105,7 @@ namespace sodium
             }
         }
 
-        public void prioritized(Node rank, Handler<Transaction> action) {
+        public void prioritized(Node rank, IHandler<Transaction> action) {
             Entry e = new Entry(rank, action);
             prioritizedQ.Enqueue(e);
             entries.Add(e);
@@ -114,16 +114,16 @@ namespace sodium
         ///
         /// Add an action to run after all prioritized() actions.
          ///
-        public void last(Runnable action) {
+        public void last(IRunnable action) {
             lastQ.Add(action);
         }
 
         ///
         /// Add an action to run after all last() actions.
          ///
-        public void post(Runnable action) {
+        public void post(IRunnable action) {
             if (postQ == null)
-                postQ = new List<Runnable>();
+                postQ = new List<IRunnable>();
             postQ.Add(action);
         }
 
@@ -149,11 +149,11 @@ namespace sodium
                 entries.Remove(e);
                 e.action.run(this);
             }
-            foreach (Runnable action in lastQ)
+            foreach (IRunnable action in lastQ)
                 action.run();
             lastQ.Clear();
             if (postQ != null) {
-                foreach (Runnable action in postQ)
+                foreach (IRunnable action in postQ)
                     action.run();
                 postQ.Clear();
             }

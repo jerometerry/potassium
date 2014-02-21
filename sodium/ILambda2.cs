@@ -1,11 +1,11 @@
 namespace sodium {
     using System;
 
-    public interface Lambda2<A,B,C> {
+    public interface ILambda2<A,B,C> {
         C apply(A a, B b);
     }
 
-    public class Lambda2Impl<A,B,C> : Lambda2<A,B,C>
+    public class Lambda2Impl<A,B,C> : ILambda2<A,B,C>
     {
         public Func<A, B, C> _f;
 

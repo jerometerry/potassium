@@ -72,11 +72,11 @@
     <Compile Include="EventSink.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Runnable.cs" />
+    <Compile Include="IRunnable.cs" />
     <Compile Include="Transaction.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Lambda1.cs" />
+    <Compile Include="ILambda1.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Node.cs" />
@@ -85,19 +85,18 @@
     <Compile Include="TransactionHandler.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Handler.cs" />
+    <Compile Include="IHandler.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Lambda2.cs" />
+    <Compile Include="ILambda2.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Unit.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BehaviorLoop.cs" />
     <Compile Include="EventLoop.cs" />
     <Compile Include="BehaviorSink.cs" />
-    <Compile Include="Lambda3.cs" />
+    <Compile Include="ILambda3.cs" />
     <Compile Include="Tuple2.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

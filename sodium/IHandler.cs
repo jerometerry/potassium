@@ -2,11 +2,11 @@ namespace sodium
 {
     using System;
 
-    public interface Handler<A> {
+    public interface IHandler<A> {
         void run(A a);
     }
 
-    public class HandlerImpl<A> : Handler<A>
+    public class HandlerImpl<A> : IHandler<A>
     {
         private Action<A> _action;
 

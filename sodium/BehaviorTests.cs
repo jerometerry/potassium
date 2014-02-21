@@ -202,13 +202,14 @@ namespace sodium
         }
 
         [Test]
-        public void TestLiftGlitch() {
-		    BehaviorSink<Int32> a = new BehaviorSink<Int32>(1);
-		    Behavior<Int32> a3 = a.map((x) => x * 3);
-		    Behavior<Int32> a5 = a.map((x) => x * 5);
-		    Behavior<String> b = Behavior<Int32>.lift<Int32, Int32, String>((x, y) => x + " " + y, a3, a5);
-		    List<String> out_ = new List<String>();
-            Listener l = b.value().listen(out_.Add);
+        public void TestLiftGlitch() 
+        {
+		    var a = new BehaviorSink<Int32>(1);
+		    var a3 = a.map((x) => x * 3);
+		    var a5 = a.map((x) => x * 5);
+		    var b = Behavior<Int32>.lift<Int32, Int32, String>((x, y) => x + " " + y, a3, a5);
+		    var out_ = new List<String>();
+            var l = b.value().listen(out_.Add);
 
 		    a.send(2);
 		    l.unlisten();
@@ -231,13 +232,13 @@ namespace sodium
         [Test]
         public void TestSwitchE()
         {
-            EventSink<SE> ese = new EventSink<SE>();
-            Event<char?> ea = ese.map(s => s.a).filterNotNull();
-            Event<char?> eb = ese.map(s => s.b).filterNotNull();
-            Behavior<Event<char?>> bsw = ese.map(s => s.sw).filterNotNull().hold(ea);
-            List<char?> out_ = new List<char?>();
-            Event<char?> eo = Behavior<char?>.switchE(bsw);
-	        Listener l = eo.listen(c => { out_.Add(c); });
+            var ese = new EventSink<SE>();
+            var ea = ese.map(s => s.a).filterNotNull();
+            var eb = ese.map(s => s.b).filterNotNull();
+            var bsw = ese.map(s => s.sw).filterNotNull().hold(ea);
+            var out_ = new List<char?>();
+            var eo = Behavior<char?>.switchE(bsw);
+	        var l = eo.listen(out_.Add);
 	        ese.send(new SE('A','a',null));
 	        ese.send(new SE('B','b',null));
 	        ese.send(new SE('C','c',eb));

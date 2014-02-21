@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace sodium
 {
-    public interface Runnable
+    public interface IRunnable
     {
         void run();
     }
 
-    public class RunnableImpl : Runnable
+    public class RunnableImpl : IRunnable
     {
         private Action action;
         public RunnableImpl(Action action)

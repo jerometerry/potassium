@@ -5,9 +5,9 @@ namespace sodium
     public class MapEventSink<A,B> : EventSink<B>
     {
         private Event<A> _ev;
-        private Lambda1<A, B> _f;
+        private ILambda1<A, B> _f;
 
-        public MapEventSink(Event<A> ev, Lambda1<A,B> f)
+        public MapEventSink(Event<A> ev, ILambda1<A,B> f)
         {
             _ev = ev;
             _f = f;
