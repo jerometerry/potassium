@@ -22,7 +22,7 @@ namespace sodium
         /// <returns></returns>
         public IListener Listen(Action<TA> action)
         {
-            return Listen(new HandlerImpl<TA>(action));
+            return Listen(new Handler<TA>(action));
         }
 
         /// <summary>
@@ -31,12 +31,12 @@ namespace sodium
         ///</summary>
         public IListener Listen(IHandler<TA> action)
         {
-            return Listen(Node.Null, new TransactionHandler<TA>((t, a) => action.run(a)));
+            return Listen(Node.Null, new TransactionHandler<TA>((t, a) => action.Run(a)));
         }
 
         internal IListener Listen(Node target, ITransactionHandler<TA> action)
         {
-            return Transaction.Apply(new Lambda1Impl<Transaction, IListener>(t => Listen(target, t, action, false)));
+            return Transaction.Apply(new Lambda1<Transaction, IListener>(t => Listen(target, t, action, false)));
         }
 
         internal IListener Listen(Node target, Transaction trans, ITransactionHandler<TA> action,
@@ -73,7 +73,7 @@ namespace sodium
         /// <returns></returns>
         public Event<TB> Map<TB>(Func<TA, TB> f)
         {
-            return Map(new Lambda1Impl<TA, TB>(f));
+            return Map(new Lambda1<TA, TB>(f));
         }
 
         ///
@@ -83,7 +83,7 @@ namespace sodium
         {
             var ev = this;
             var sink = new MapEventSink<TA, TB>(ev, f);
-            var l = Listen(sink.Node, new TransactionHandler<TA>((t, a) => sink.send(t, f.apply(a))));
+            var l = Listen(sink.Node, new TransactionHandler<TA>((t, a) => sink.Send(t, f.Apply(a))));
             return sink.RegisterListener(l);
         }
 
@@ -96,7 +96,7 @@ namespace sodium
         ///
         public Behavior<TA> Hold(TA initValue)
         {
-            return Transaction.Apply(new Lambda1Impl<Transaction, Behavior<TA>>(t => new Behavior<TA>(LastFiringOnly(t), initValue)));
+            return Transaction.Apply(new Lambda1<Transaction, Behavior<TA>>(t => new Behavior<TA>(LastFiringOnly(t), initValue)));
         }
 
         ///
@@ -104,7 +104,7 @@ namespace sodium
         ///
         public Event<TB> Snapshot<TB>(Behavior<TB> beh)
         {
-            return Snapshot(beh, new Lambda2Impl<TA, TB, TB>((a, b) => b));
+            return Snapshot(beh, new Lambda2<TA, TB, TB>((a, b) => b));
         }
 
         ///
@@ -116,7 +116,7 @@ namespace sodium
         {
             var ev = this;
             var sink = new SnapshotEventSink<TA, TB, TC>(ev, f, b);
-            var l = Listen(sink.Node, new TransactionHandler<TA>((t2, a) => sink.send(t2, f.apply(a, b.Sample()))));
+            var l = Listen(sink.Node, new TransactionHandler<TA>((t2, a) => sink.Send(t2, f.Apply(a, b.Sample()))));
             return sink.RegisterListener(l);
         }
 
@@ -132,7 +132,7 @@ namespace sodium
         public static Event<TA> Merge(Event<TA> ea, Event<TA> eb)
         {
             var sink = new MergeEventSink<TA>(ea, eb);
-            var h = new TransactionHandler<TA>(sink.send);
+            var h = new TransactionHandler<TA>(sink.Send);
             var l1 = ea.Listen(sink.Node, h);
             var l2 = eb.Listen(sink.Node, h);
             return sink.RegisterListener(l1).RegisterListener(l2);
@@ -149,7 +149,7 @@ namespace sodium
                 var trans = new Transaction();
                 try
                 {
-                    sink.send(trans, a);
+                    sink.Send(trans, a);
                 }
                 finally
                 {
@@ -167,7 +167,7 @@ namespace sodium
         /// <returns></returns>
         public Event<TA> Coalesce(Func<TA, TA, TA> f)
         {
-            return Coalesce(new Lambda2Impl<TA, TA, TA>(f));
+            return Coalesce(new Lambda2<TA, TA, TA>(f));
         }
 
         ///
@@ -181,7 +181,7 @@ namespace sodium
         ///
         public Event<TA> Coalesce(ILambda2<TA, TA, TA> f)
         {
-            return Transaction.Apply(new Lambda1Impl<Transaction, Event<TA>>(t => Coalesce(t, f)));
+            return Transaction.Apply(new Lambda1<Transaction, Event<TA>>(t => Coalesce(t, f)));
         }
 
         Event<TA> Coalesce(Transaction trans1, ILambda2<TA, TA, TA> f)
@@ -198,7 +198,7 @@ namespace sodium
         ///
         internal Event<TA> LastFiringOnly(Transaction trans)
         {
-            return Coalesce(trans, new Lambda2Impl<TA, TA, TA>((a, b) => b));
+            return Coalesce(trans, new Lambda2<TA, TA, TA>((a, b) => b));
         }
 
         ///
@@ -221,7 +221,7 @@ namespace sodium
         /// <returns></returns>
         public Event<TA> Filter(Func<TA, bool> f)
         {
-            return Filter(new Lambda1Impl<TA, bool>(f));
+            return Filter(new Lambda1<TA, bool>(f));
         }
 
         ///
@@ -231,7 +231,7 @@ namespace sodium
         {
             var ev = this;
             var sink = new FilterEventSink<TA>(ev, f);
-            var l = Listen(sink.Node, new TransactionHandler<TA>((t, a) => { if (f.apply(a)) sink.send(t, a); }));
+            var l = Listen(sink.Node, new TransactionHandler<TA>((t, a) => { if (f.Apply(a)) sink.Send(t, a); }));
             return sink.RegisterListener(l);
         }
 
@@ -240,7 +240,7 @@ namespace sodium
         ///
         public Event<TA> FilterNotNull()
         {
-            return Filter(new Lambda1Impl<TA, Boolean>(a => a != null));
+            return Filter(new Lambda1<TA, Boolean>(a => a != null));
         }
 
         ///
@@ -250,7 +250,7 @@ namespace sodium
         ///
         public Event<TA> Gate(Behavior<Boolean> bPred)
         {
-            var f = new Lambda2Impl<TA, bool, Maybe<TA>>((a, pred) => pred ? new Maybe<TA>(a) : null);
+            var f = new Lambda2<TA, bool, Maybe<TA>>((a, pred) => pred ? new Maybe<TA>(a) : null);
             return Snapshot(bPred, f).FilterNotNull().Map(a => a.Value());
         }
 
@@ -264,8 +264,8 @@ namespace sodium
             var es = new EventLoop<TS>();
             var s = es.Hold(initState);
             var ebs = ea.Snapshot(s, f);
-            var eb = ebs.Map(new Lambda1Impl<Tuple2<TB, TS>, TB>(bs => bs.V1));
-            var esOut = ebs.Map(new Lambda1Impl<Tuple2<TB, TS>, TS>(bs => bs.V2));
+            var eb = ebs.Map(new Lambda1<Tuple2<TB, TS>, TB>(bs => bs.V1));
+            var esOut = ebs.Map(new Lambda1<Tuple2<TB, TS>, TS>(bs => bs.V2));
             es.Loop(esOut);
             return eb;
         }
@@ -273,7 +273,7 @@ namespace sodium
 
         public Behavior<TS> Accum<TS>(TS initState, Func<TA, TS, TS> f)
         {
-            return Accum(initState, new Lambda2Impl<TA, TS, TS>(f));
+            return Accum(initState, new Lambda2<TA, TS, TS>(f));
         }
 
         ///
@@ -301,10 +301,10 @@ namespace sodium
             var sink = new OnceEventSink<TA>(ev, la);
             la[0] = ev.Listen(sink.Node, new TransactionHandler<TA>((t, a) =>
             {
-                sink.send(t, a);
+                sink.Send(t, a);
                 if (la[0] == null) 
                     return;
-                la[0].unlisten();
+                la[0].Unlisten();
                 la[0] = null;
             }));
             return sink.RegisterListener(la[0]);
@@ -319,7 +319,7 @@ namespace sodium
         ~Event()
         {
             foreach (var l in Listeners)
-                l.unlisten();
+                l.Unlisten();
         }
     }
 }

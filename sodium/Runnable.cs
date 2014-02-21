@@ -8,7 +8,7 @@ namespace sodium
 
         public Runnable(Action action)
         {
-            this._action = action;
+            _action = action;
         }
 
         public void Run()

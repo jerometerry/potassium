@@ -1,22 +1,7 @@
-namespace sodium {
-    using System;
-
-    public interface ILambda2<A,B,C> {
-        C apply(A a, B b);
-    }
-
-    public class Lambda2Impl<A,B,C> : ILambda2<A,B,C>
+namespace sodium
+{
+    public interface ILambda2<in TA, in TB, out TC>
     {
-        public Func<A, B, C> _f;
-
-        public Lambda2Impl(Func<A, B, C> f)
-        {
-            _f = f;
-        }
-
-        public C apply(A a, B b)
-        {
-            return _f(a, b);
-        }
+        TC Apply(TA a, TB b);
     }
 }

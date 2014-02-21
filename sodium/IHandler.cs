@@ -1,24 +1,8 @@
 namespace sodium
 {
-    using System;
-
-    public interface IHandler<A> {
-        void run(A a);
-    }
-
-    public class HandlerImpl<A> : IHandler<A>
+    public interface IHandler<in TA>
     {
-        private Action<A> _action;
-
-        public HandlerImpl(Action<A> action)
-        {
-            _action = action;
-        }
-
-        public void run(A a)
-        {
-            _action(a);
-        }
+        void Run(TA a);
     }
 }
 

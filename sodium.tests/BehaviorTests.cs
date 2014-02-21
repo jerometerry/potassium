@@ -20,17 +20,17 @@ namespace sodium.tests
             var bo = Behavior<char?>.SwitchB(bsw);
             var results = new List<char?>();
             var l = bo.Value().Listen(results.Add);
-            esb.send(new SB('B', 'b', null));
-            esb.send(new SB('C', 'c', bb));
-            esb.send(new SB('D', 'd', null));
-            esb.send(new SB('E', 'e', ba));
-            esb.send(new SB('F', 'f', null));
-            esb.send(new SB(null, null, bb));
-            esb.send(new SB(null, null, ba));
-            esb.send(new SB('G', 'g', bb));
-            esb.send(new SB('H', 'h', ba));
-            esb.send(new SB('I', 'i', ba));
-            l.unlisten();
+            esb.Send(new SB('B', 'b', null));
+            esb.Send(new SB('C', 'c', bb));
+            esb.Send(new SB('D', 'd', null));
+            esb.Send(new SB('E', 'e', ba));
+            esb.Send(new SB('F', 'f', null));
+            esb.Send(new SB(null, null, bb));
+            esb.Send(new SB(null, null, ba));
+            esb.Send(new SB('G', 'g', bb));
+            esb.Send(new SB('H', 'h', ba));
+            esb.Send(new SB('I', 'i', ba));
+            l.Unlisten();
             EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'c', 'd', 'E', 'F', 'f', 'F', 'g', 'H', 'I'), results);
         }
 
@@ -46,11 +46,11 @@ namespace sodium.tests
             var bo = Behavior<char?>.SwitchB(bsw);
             var results = new List<char?>();
             var l = bo.Value().Listen(results.Add);
-            esb.send(new SB('B', 'b', null));
-            esb.send(new SB('C', 'c', bb));
-            esb.send(new SB('D', 'd', null));
-            esb.send(new SB('E', 'e', ba));
-            l.unlisten();
+            esb.Send(new SB('B', 'b', null));
+            esb.Send(new SB('C', 'c', bb));
+            esb.Send(new SB('D', 'd', null));
+            esb.Send(new SB('E', 'e', ba));
+            l.Unlisten();
             EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'c', 'd', 'E'), results);
         }
 
@@ -66,12 +66,12 @@ namespace sodium.tests
             var bo = Behavior<char?>.SwitchB(bsw);
             var results = new List<char?>();
             var l = bo.Value().Listen(results.Add);
-            esb.send(new SB('B', 'b', null));
-            esb.send(new SB('C', 'c', bb));
-            esb.send(new SB('D', 'd', null));
-            esb.send(new SB('E', 'e', ba));
-            esb.send(new SB('F', 'f', null));
-            l.unlisten();
+            esb.Send(new SB('B', 'b', null));
+            esb.Send(new SB('C', 'c', bb));
+            esb.Send(new SB('D', 'd', null));
+            esb.Send(new SB('E', 'e', ba));
+            esb.Send(new SB('F', 'f', null));
+            l.Unlisten();
             EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'c', 'd', 'E', 'F'), results);
         }
 
@@ -87,12 +87,12 @@ namespace sodium.tests
             var bo = Behavior<char?>.SwitchB(bsw);
             var results = new List<char?>();
             var l = bo.Value().Listen(results.Add);
-            esb.send(new SB('B', 'b', null));
-            esb.send(new SB('C', 'c', bb));
-            esb.send(new SB('D', 'd', null));
-            esb.send(new SB('E', 'e', ba));
-            esb.send(new SB('F', 'f', ba));
-            l.unlisten();
+            esb.Send(new SB('B', 'b', null));
+            esb.Send(new SB('C', 'c', bb));
+            esb.Send(new SB('D', 'd', null));
+            esb.Send(new SB('E', 'e', ba));
+            esb.Send(new SB('F', 'f', ba));
+            l.Unlisten();
             EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'c', 'd', 'E', 'F'), results);
         }
 
@@ -108,12 +108,12 @@ namespace sodium.tests
             var bo = Behavior<char?>.SwitchB(bsw);
             var results = new List<char?>();
             var l = bo.Value().Listen(results.Add);
-            esb.send(new SB('B', 'b', null));
-            esb.send(new SB('C', 'c', bb));
-            esb.send(new SB('D', 'd', null));
-            esb.send(new SB('E', 'e', ba));
-            esb.send(new SB('F', 'f', bb));
-            l.unlisten();
+            esb.Send(new SB('B', 'b', null));
+            esb.Send(new SB('C', 'c', bb));
+            esb.Send(new SB('D', 'd', null));
+            esb.Send(new SB('E', 'e', ba));
+            esb.Send(new SB('F', 'f', bb));
+            l.Unlisten();
             EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'c', 'd', 'E', 'f'), results);
         }
 
@@ -142,8 +142,8 @@ namespace sodium.tests
         [Test]
         public void TestLambda1Impl()
         {
-            var impl = new Lambda1Impl<int, string>(a => a.ToString(CultureInfo.InvariantCulture));
-            var results = impl.apply(1);
+            var impl = new Lambda1<int, string>(a => a.ToString(CultureInfo.InvariantCulture));
+            var results = impl.Apply(1);
             Assert.AreEqual("1", results);
         }
 
@@ -151,8 +151,8 @@ namespace sodium.tests
         public void TestHandlerImpl()
         {
             var results = new List<string>();
-            var impl = new HandlerImpl<string>(results.Add);
-            impl.run("hello world!");
+            var impl = new Handler<string>(results.Add);
+            impl.Run("hello world!");
             Assert.AreEqual("hello world!", results[0]);
         }
 
@@ -173,7 +173,7 @@ namespace sodium.tests
             ).Value().Listen(results.Add);
             a.Send(12);
             b.Send(6L);
-            l.unlisten();
+            l.Unlisten();
             EventTests.AssertArraysEqual(EventTests.Arrays<string>.AsList("1 5", "12 5", "12 6"), results);
         }
 
@@ -193,7 +193,7 @@ namespace sodium.tests
                 b
             ).Value().Listen(results.Add);
             a.Send(12);
-            l.unlisten();
+            l.Unlisten();
             EventTests.AssertArraysEqual(EventTests.Arrays<string>.AsList("1 5", "12 5"), results);
         }
 
@@ -208,7 +208,7 @@ namespace sodium.tests
             var l = b.Value().Listen(results.Add);
 
             a.Send(2);
-            l.unlisten();
+            l.Unlisten();
             EventTests.AssertArraysEqual(EventTests.Arrays<string>.AsList("3 5", "6 10"), results);
         }
 
@@ -235,16 +235,16 @@ namespace sodium.tests
             var results = new List<char?>();
             var eo = Behavior<char?>.SwitchE(bsw);
             var l = eo.Listen(results.Add);
-            ese.send(new SE('A', 'a', null));
-            ese.send(new SE('B', 'b', null));
-            ese.send(new SE('C', 'c', eb));
-            ese.send(new SE('D', 'd', null));
-            ese.send(new SE('E', 'e', ea));
-            ese.send(new SE('F', 'f', null));
-            ese.send(new SE('G', 'g', eb));
-            ese.send(new SE('H', 'h', ea));
-            ese.send(new SE('I', 'i', ea));
-            l.unlisten();
+            ese.Send(new SE('A', 'a', null));
+            ese.Send(new SE('B', 'b', null));
+            ese.Send(new SE('C', 'c', eb));
+            ese.Send(new SE('D', 'd', null));
+            ese.Send(new SE('E', 'e', ea));
+            ese.Send(new SE('F', 'f', null));
+            ese.Send(new SE('G', 'g', eb));
+            ese.Send(new SE('H', 'h', ea));
+            ese.Send(new SE('I', 'i', ea));
+            l.Unlisten();
             EventTests.AssertArraysEqual(EventTests.Arrays<char?>.AsList('A', 'B', 'C', 'd', 'e', 'F', 'G', 'h', 'I'), results);
         }
     }

@@ -11,10 +11,10 @@ namespace sodium
             _listener2 = listener2;
         }
 
-        public override void unlisten()
+        public override void Unlisten()
         {
-            _listener1.unlisten();
-            _listener2.unlisten();
+            _listener1.Unlisten();
+            _listener2.Unlisten();
         }
     }
 }

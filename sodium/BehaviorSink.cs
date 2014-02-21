@@ -1,15 +1,15 @@
 namespace sodium
 {
-    public class BehaviorSink<A> : Behavior<A>
+    public class BehaviorSink<TA> : Behavior<TA>
     {
-        public BehaviorSink(A initVal)
-            : base(new EventSink<A>(), initVal)
+        public BehaviorSink(TA initVal)
+            : base(new EventSink<TA>(), initVal)
         {
         }
 
-        public void Send(A a)
+        public void Send(TA a)
         {
-            ((EventSink<A>)Event).send(a);
+            ((EventSink<TA>)Event).Send(a);
         }
     }
 }

@@ -2,29 +2,29 @@ using System;
 
 namespace sodium
 {
-    internal class OnceEventSink<A> : EventSink<A>
+    internal class OnceEventSink<TA> : EventSink<TA>
     {
-        private Event<A> ev;
-        private IListener[] la;
+        private readonly Event<TA> _ev;
+        private readonly IListener[] _la;
 
-        public OnceEventSink(Event<A> ev, IListener[] la)
+        public OnceEventSink(Event<TA> ev, IListener[] la)
         {
-            this.ev = ev;
-            this.la = la;
+            _ev = ev;
+            _la = la;
         }
 
         protected internal override Object[] SampleNow()
         {
-            Object[] oi = ev.SampleNow();
-            Object[] oo = oi;
+            var oi = _ev.SampleNow();
+            var oo = oi;
             if (oo != null)
             {
                 if (oo.Length > 1)
-                    oo = new Object[] { oi[0] };
-                if (la[0] != null)
+                    oo = new[] { oi[0] };
+                if (_la[0] != null)
                 {
-                    la[0].unlisten();
-                    la[0] = null;
+                    _la[0].Unlisten();
+                    _la[0] = null;
                 }
             }
             return oo;

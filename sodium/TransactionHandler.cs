@@ -2,16 +2,16 @@ using System;
 
 namespace sodium
 {
-    public class TransactionHandler<A> : ITransactionHandler<A>
+    public class TransactionHandler<TA> : ITransactionHandler<TA>
     {
-        private readonly Action<Transaction, A> _action;
+        private readonly Action<Transaction, TA> _action;
 
-        public TransactionHandler(Action<Transaction, A> action)
+        public TransactionHandler(Action<Transaction, TA> action)
         {
             _action = action;
         }
 
-        public void Run(Transaction trans, A a)
+        public void Run(Transaction trans, TA a)
         {
             _action(trans, a);
         }

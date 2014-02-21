@@ -2,31 +2,30 @@ using System;
 
 namespace sodium
 {
-    internal class SnapshotEventSink<A, B, C> : EventSink<C>
+    internal class SnapshotEventSink<TA, TB, TC> : EventSink<TC>
     {
-        private Event<A> ev;
-        private ILambda2<A, B, C> _f;
-        private Behavior<B> b;
+        private readonly Event<TA> _ev;
+        private readonly ILambda2<TA, TB, TC> _f;
+        private readonly Behavior<TB> _b;
 
-        public SnapshotEventSink(Event<A> ev, ILambda2<A, B, C> f, Behavior<B> b)
+        public SnapshotEventSink(Event<TA> ev, ILambda2<TA, TB, TC> f, Behavior<TB> b)
         {
-            this.ev = ev;
+            _ev = ev;
             _f = f;
-            this.b = b;
+            _b = b;
         }
 
         protected internal override Object[] SampleNow()
         {
-            Object[] oi = ev.SampleNow();
+            var oi = _ev.SampleNow();
             if (oi != null)
             {
-                Object[] oo = new Object[oi.Length];
-                for (int i = 0; i < oo.Length; i++)
-                    oo[i] = _f.apply((A)oi[i], b.Sample());
+                var oo = new Object[oi.Length];
+                for (var i = 0; i < oo.Length; i++)
+                    oo[i] = _f.Apply((TA)oi[i], _b.Sample());
                 return oo;
             }
-            else
-                return null;
+            return null;
         }
     }
 }

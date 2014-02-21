@@ -63,7 +63,7 @@ namespace sodium
                 {
                     if (_currentTransaction == null)
                         _currentTransaction = new Transaction();
-                    code.run(_currentTransaction);
+                    code.Run(_currentTransaction);
                 }
                 finally
                 {
@@ -86,7 +86,7 @@ namespace sodium
                 {
                     if (_currentTransaction == null)
                         _currentTransaction = new Transaction();
-                    return code.apply(_currentTransaction);
+                    return code.Apply(_currentTransaction);
                 }
                 finally
                 {
@@ -144,7 +144,7 @@ namespace sodium
                 if (_prioritized.IsEmpty()) break;
                 Entry e = _prioritized.Remove();
                 _entries.Remove(e);
-                e.Action.run(this);
+                e.Action.Run(this);
             }
             foreach (IRunnable action in _last)
                 action.Run();

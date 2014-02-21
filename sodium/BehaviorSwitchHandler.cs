@@ -1,16 +1,16 @@
 namespace sodium
 {
-    internal class BehaviorSwitchHandler<A> : ITransactionHandler<Behavior<A>>
+    internal class BehaviorSwitchHandler<TA> : ITransactionHandler<Behavior<TA>>
     {
         private IListener _currentListener;
-        private readonly EventSink<A> _sink;
+        private readonly EventSink<TA> _sink;
 
-        public BehaviorSwitchHandler(EventSink<A> sink)
+        public BehaviorSwitchHandler(EventSink<TA> sink)
         {
             _sink = sink;
         }
 
-        public void Run(Transaction trans2, Behavior<A> ba)
+        public void Run(Transaction trans2, Behavior<TA> ba)
         {
             // Note: If any switch takes place during a transaction, then the
             // value().listen will always cause a sample to be fetched from the
@@ -19,21 +19,21 @@ namespace sodium
             // for the last one. Therefore, anything from the old input behaviour
             // that might have happened during this transaction will be suppressed.
             if (_currentListener != null)
-                _currentListener.unlisten();
+                _currentListener.Unlisten();
 
             var ev = ba.Value(trans2);
-            _currentListener = ev.Listen(_sink.Node, trans2, new TransactionHandler<A>(Handler), false);
+            _currentListener = ev.Listen(_sink.Node, trans2, new TransactionHandler<TA>(Handler), false);
         }
 
-        private void Handler(Transaction t3, A a)
+        private void Handler(Transaction t3, TA a)
         {
-            _sink.send(t3, a);
+            _sink.Send(t3, a);
         }
 
         ~BehaviorSwitchHandler()
         {
             if (_currentListener != null)
-                _currentListener.unlisten();
+                _currentListener.Unlisten();
         }
     }
 }

@@ -2,29 +2,28 @@ using System;
 
 namespace sodium
 {
-    internal class CoalesceEventSink<A> : EventSink<A>
+    internal class CoalesceEventSink<TA> : EventSink<TA>
     {
-        private Event<A> ev;
-        private ILambda2<A, A, A> f;
+        private readonly Event<TA> _ev;
+        private readonly ILambda2<TA, TA, TA> _f;
 
-        public CoalesceEventSink(Event<A> ev, ILambda2<A, A, A> f)
+        public CoalesceEventSink(Event<TA> ev, ILambda2<TA, TA, TA> f)
         {
-            this.ev = ev;
-            this.f = f;
+            _ev = ev;
+            _f = f;
         }
 
         protected internal override Object[] SampleNow()
         {
-            Object[] oi = ev.SampleNow();
+            var oi = _ev.SampleNow();
             if (oi != null)
             {
-                A o = (A)oi[0];
-                for (int i = 1; i < oi.Length; i++)
-                    o = f.apply(o, (A)oi[i]);
+                var o = (TA)oi[0];
+                for (var i = 1; i < oi.Length; i++)
+                    o = _f.Apply(o, (TA)oi[i]);
                 return new Object[] { o };
             }
-            else
-                return null;
+            return null;
         }
     }
 }

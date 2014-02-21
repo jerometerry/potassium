@@ -2,12 +2,12 @@
 
 namespace sodium
 {
-    public class MapEventSink<A,B> : EventSink<B>
+    public class MapEventSink<TA, TB> : EventSink<TB>
     {
-        private Event<A> _ev;
-        private ILambda1<A, B> _f;
+        private readonly Event<TA> _ev;
+        private readonly ILambda1<TA, TB> _f;
 
-        public MapEventSink(Event<A> ev, ILambda1<A,B> f)
+        public MapEventSink(Event<TA> ev, ILambda1<TA, TB> f)
         {
             _ev = ev;
             _f = f;
@@ -15,16 +15,15 @@ namespace sodium
 
         protected internal override Object[] SampleNow()
         {
-            Object[] oi = _ev.SampleNow();
+            var oi = _ev.SampleNow();
             if (oi != null)
             {
-                Object[] oo = new Object[oi.Length];
+                var oo = new Object[oi.Length];
                 for (int i = 0; i < oo.Length; i++)
-                    oo[i] = _f.apply((A)oi[i]);
+                    oo[i] = _f.Apply((TA)oi[i]);
                 return oo;
             }
-            else
-                return null;
+            return null;
         }
     }
 }
