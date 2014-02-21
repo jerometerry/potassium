@@ -2,19 +2,19 @@ namespace sodium
 {
     internal class DualListener : ListenerBase
     {
-        private readonly IListener _one;
-        private readonly IListener _two;
+        private readonly IListener _listener1;
+        private readonly IListener _listener2;
 
-        public DualListener(IListener one, IListener two)
+        public DualListener(IListener listener1, IListener listener2)
         {
-            this._one = one;
-            this._two = two;
+            _listener1 = listener1;
+            _listener2 = listener2;
         }
 
         public override void unlisten()
         {
-            this._one.unlisten();
-            this._two.unlisten();
+            _listener1.unlisten();
+            _listener2.unlisten();
         }
     }
 }

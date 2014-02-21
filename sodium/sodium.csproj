@@ -48,13 +48,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BehaviorApplyHandler.cs" />
+    <Compile Include="BehaviorSwitchHandler.cs" />
+    <Compile Include="BehaviorValueEventSink.cs" />
+    <Compile Include="CoalesceEventSink.cs" />
+    <Compile Include="CoalesceHandler.cs" />
     <Compile Include="DualListener.cs" />
     <Compile Include="Entry.cs" />
+    <Compile Include="EventSwitchHandler.cs" />
     <Compile Include="EventTests.cs" />
+    <Compile Include="FilterEventSink.cs" />
     <Compile Include="IListener.cs" />
     <Compile Include="Listener.cs" />
     <Compile Include="MapEventSink.cs" />
     <Compile Include="Maybe.cs" />
+    <Compile Include="MergeEventSink.cs" />
+    <Compile Include="OnceEventSink.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="PriorityQueueTests.cs" />
     <Compile Include="BehaviorTests.cs" />
@@ -78,6 +87,7 @@
   <ItemGroup>
     <Compile Include="IRunnable.cs" />
     <Compile Include="Runnable.cs" />
+    <Compile Include="SnapshotEventSink.cs" />
     <Compile Include="Transaction.cs" />
   </ItemGroup>
   <ItemGroup>

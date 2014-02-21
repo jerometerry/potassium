@@ -13,9 +13,9 @@ namespace sodium
             _f = f;
         }
 
-        protected internal override Object[] sampleNow()
+        protected internal override Object[] SampleNow()
         {
-            Object[] oi = _ev.sampleNow();
+            Object[] oi = _ev.SampleNow();
             if (oi != null)
             {
                 Object[] oo = new Object[oi.Length];

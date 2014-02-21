@@ -13,11 +13,11 @@ namespace sodium {
 
 		// TO DO: Copy & paste from EventSink. Can we improve this?
 		private void send(Transaction trans, A a) {
-			if (!firings.Any())
-			    trans.Last(new Runnable(() => { firings.Clear(); }));
-			firings.Add(a);
+			if (!Firings.Any())
+			    trans.Last(new Runnable(() => { Firings.Clear(); }));
+			Firings.Add(a);
 
-		    List<ITransactionHandler<A>> listeners = new List<ITransactionHandler<A>>(this.listeners);
+		    List<ITransactionHandler<A>> listeners = new List<ITransactionHandler<A>>(this.Actions);
     		foreach (ITransactionHandler<A> action in listeners) {
     			try {
 					action.Run(trans, a);
@@ -35,7 +35,7 @@ namespace sodium {
 				throw new ApplicationException("EventLoop looped more than once");
 			this.ea_out = ea_out;
 			EventLoop<A> me = this;
-		    addCleanup(ea_out.listen_(this.node, new TransactionHandler<A>(me.send)));
+		    RegisterListener(ea_out.Listen(this.Node, new TransactionHandler<A>(me.send)));
 		}
 	}
 

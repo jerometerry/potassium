@@ -22,8 +22,8 @@ namespace sodium
         {
             lock (Transaction.ListenersLock)
             {
-                _event.listeners.Remove(action);
-                _event.node.UnlinkTo(target);
+                _event.Actions.Remove(action);
+                _event.Node.UnlinkTo(target);
             }
         }
 

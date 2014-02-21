@@ -12,11 +12,11 @@ namespace sodium
 	    }
 
         internal void send(Transaction trans, A a) {
-            if (!firings.Any())
-                trans.Last(new Runnable(() => firings.Clear()));
-            firings.Add(a);
+            if (!Firings.Any())
+                trans.Last(new Runnable(() => Firings.Clear()));
+            Firings.Add(a);
         
-		    List<ITransactionHandler<A>> listeners = new List<ITransactionHandler<A>>(this.listeners);
+		    List<ITransactionHandler<A>> listeners = new List<ITransactionHandler<A>>(this.Actions);
     	    foreach (ITransactionHandler<A> action in listeners) {
     		    try {
                     action.Run(trans, a);
