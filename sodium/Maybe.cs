@@ -46,6 +46,7 @@
             {
                 throw new ArgumentException("Maybe doesn't contain a value!");
             }
+
             return _value;
         }
 
@@ -65,6 +66,7 @@
             {
                 return _value.ToString();
             }
+
             return string.Empty;
         }
 

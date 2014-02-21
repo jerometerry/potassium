@@ -24,7 +24,10 @@ namespace sodium
         internal void Send(Transaction trans, TA a)
         {
             if (!_firings.Any())
+            { 
                 trans.Last(new Runnable(() => _firings.Clear()));
+            }
+
             _firings.Add(a);
 
             var listeners = new List<ITransactionHandler<TA>>(_actions);
@@ -70,29 +73,38 @@ namespace sodium
             return Transaction.Apply(new Lambda1<Transaction, IListener>(t => Listen(target, t, action, false)));
         }
 
-        internal IListener Listen(Node target, Transaction trans, ITransactionHandler<TA> action,
-                                bool suppressEarlierFirings)
+        internal IListener Listen(Node target, Transaction trans, ITransactionHandler<TA> action, bool suppressEarlierFirings)
         {
             lock (Transaction.ListenersLock)
             {
                 if (Node.LinkTo(target))
+                { 
                     trans.ToRegen = true;
+                }
+
                 _actions.Add(action);
             }
+
             var aNow = SampleNow();
             if (aNow != null)
             {
                 // In cases like value(), we start with an initial value.
                 foreach (var t in aNow)
+                { 
                     action.Run(trans, (TA)t); // <-- unchecked warning is here
+                }
             }
+
             if (!suppressEarlierFirings)
             {
                 // Anything sent already in this transaction must be sent now so that
                 // there's no order dependency between send and listen.
                 foreach (var a in _firings)
+                { 
                     action.Run(trans, a);
+                }
             }
+
             return new Listener<TA>(this, action, target);
         }
 
@@ -261,7 +273,13 @@ namespace sodium
         {
             var ev = this;
             var sink = new FilterEventSink<TA>(ev, f);
-            var l = Listen(sink.Node, new TransactionHandler<TA>((t, a) => { if (f.Apply(a)) sink.Send(t, a); }));
+            var l = Listen(sink.Node, new TransactionHandler<TA>((t, a) => 
+            { 
+                if (f.Apply(a))
+                { 
+                    sink.Send(t, a);
+                }
+            }));
             return sink.RegisterListener(l);
         }
 
@@ -331,8 +349,11 @@ namespace sodium
             la[0] = ev.Listen(sink.Node, new TransactionHandler<TA>((t, a) =>
             {
                 sink.Send(t, a);
-                if (la[0] == null) 
+                if (la[0] == null)
+                { 
                     return;
+                }
+
                 la[0].Unlisten();
                 la[0] = null;
             }));
@@ -348,7 +369,9 @@ namespace sodium
         ~Event()
         {
             foreach (var l in _listeners)
+            { 
                 l.Unlisten();
+            }
         }
     }
 }

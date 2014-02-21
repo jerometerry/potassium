@@ -2,7 +2,9 @@ namespace sodium
 {
     public abstract class ListenerBase : IListener
     {
-        public virtual void Unlisten() { }
+        public virtual void Unlisten() 
+        { 
+        }
 
         ///
         /// Combine listeners into one where a single unlisten() invocation will unlisten

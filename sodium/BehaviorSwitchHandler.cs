@@ -19,7 +19,9 @@ namespace sodium
             // for the last one. Therefore, anything from the old input behaviour
             // that might have happened during this transaction will be suppressed.
             if (_currentListener != null)
+            { 
                 _currentListener.Unlisten();
+            }
 
             var ev = ba.Value(t2);
             _currentListener = ev.Listen(_sink.Node, t2, new TransactionHandler<TA>(Handler), false);
@@ -33,7 +35,9 @@ namespace sodium
         ~BehaviorSwitchHandler()
         {
             if (_currentListener != null)
+            { 
                 _currentListener.Unlisten();
+            }
         }
     }
 }

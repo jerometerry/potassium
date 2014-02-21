@@ -1,6 +1,5 @@
 namespace sodium
 {
-
     public class EventSink<TA> : Event<TA>
     {
         public void Send(TA a)

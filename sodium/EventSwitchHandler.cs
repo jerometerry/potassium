@@ -18,7 +18,10 @@ namespace sodium
             t2.Last(new Runnable(() =>
             {
                 if (_currentListener != null)
+                { 
                     _currentListener.Unlisten();
+                }
+
                 _currentListener = ea.Listen(_ev.Node, t2, _h2, true);
             }));
         }
@@ -26,7 +29,9 @@ namespace sodium
         ~EventSwitchHandler()
         {
             if (_currentListener != null)
+            { 
                 _currentListener.Unlisten();
+            }
         }
     }
 }

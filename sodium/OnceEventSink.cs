@@ -20,13 +20,17 @@ namespace sodium
             if (oo != null)
             {
                 if (oo.Length > 1)
+                { 
                     oo = new[] { oi[0] };
+                }
+
                 if (_la[0] != null)
                 {
                     _la[0].Unlisten();
                     _la[0] = null;
                 }
             }
+
             return oo;
         }
     }

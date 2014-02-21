@@ -16,14 +16,18 @@ namespace sodium
         protected internal override TB[] SampleNow()
         {
             var oi = _ev.SampleNow();
-            if (oi != null)
-            {
-                var oo = new TB[oi.Length];
-                for (int i = 0; i < oo.Length; i++)
-                    oo[i] = _f.Apply(oi[i]);
-                return oo;
+            if (oi == null)
+            { 
+                return null;
             }
-            return null;
+            
+            var oo = new TB[oi.Length];
+            for (int i = 0; i < oo.Length; i++)
+            { 
+                oo[i] = _f.Apply(oi[i]);
+            }
+
+            return oo;
         }
     }
 }

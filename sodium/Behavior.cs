@@ -43,7 +43,6 @@ namespace sodium
                     }
 
                     _valueUpdate = new Maybe<TA>(a);
-
                 });
                 _listener = evt.Listen(Node.Null, t1, handler, false);
             }));
@@ -250,8 +249,9 @@ namespace sodium
         ~Behavior()
         {
             if (_listener != null)
+            { 
                 _listener.Unlisten();
+            }
         }
-
     }
 }

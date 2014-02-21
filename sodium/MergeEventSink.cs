@@ -22,9 +22,15 @@ namespace sodium
                 var oo = new TA[oa.Length + ob.Length];
                 var j = 0;
                 foreach (var t in oa)
+                {
                     oo[j++] = t;
+                }
+
                 foreach (var t in ob)
+                { 
                     oo[j++] = t;
+                }
+
                 return oo;
             }
 

@@ -17,7 +17,9 @@ namespace sodium
         public void Run(Transaction t1)
         {
             if (_fired)
+            { 
                 return;
+            }
 
             _fired = true;
             t1.Prioritized(_ev.Node, new Handler<Transaction>(t2 =>

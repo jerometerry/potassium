@@ -26,8 +26,11 @@ namespace sodium
             foreach (var t in oi)
             {
                 if (_f.Apply(t))
+                { 
                     results[j++] = t;
+                }
             }
+
             if (j == 0)
             {
                 results = null;
@@ -36,9 +39,13 @@ namespace sodium
             {
                 var oo2 = new TA[j];
                 for (var i = 0; i < j; i++)
+                { 
                     oo2[i] = results[i];
+                }
+
                 results = oo2;
             }
+
             return results;
         }
     }

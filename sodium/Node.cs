@@ -25,7 +25,9 @@ namespace sodium
         public bool LinkTo(Node target)
         {
             if (target == Null)
+            { 
                 return false;
+            }
 
             bool changed = target.EnsureBiggerThan(_rank, new HashSet<Node>());
             _listeners.Add(target);
@@ -35,7 +37,9 @@ namespace sodium
         public void UnlinkTo(Node target)
         {
             if (target == Null)
+            { 
                 return;
+            }
 
             _listeners.Remove(target);
         }
@@ -43,19 +47,32 @@ namespace sodium
         private bool EnsureBiggerThan(long limit, ISet<Node> visited)
         {
             if (_rank > limit || visited.Contains(this))
+            { 
                 return false;
+            }
 
             visited.Add(this);
             _rank = limit + 1;
             foreach (var l in _listeners)
+            { 
                 l.EnsureBiggerThan(_rank, visited);
+            }
+
             return true;
         }
 
         public int CompareTo(Node o)
         {
-            if (_rank < o._rank) return -1;
-            if (_rank > o._rank) return 1;
+            if (_rank < o._rank)
+            { 
+                return -1;
+            }
+
+            if (_rank > o._rank)
+            { 
+                return 1;
+            }
+
             return 0;
         }
     }

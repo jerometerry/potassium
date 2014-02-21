@@ -45,13 +45,19 @@ namespace sodium
                 try
                 {
                     if (_currentTransaction == null)
+                    { 
                         _currentTransaction = new Transaction();
+                    }
+
                     code.Run();
                 }
                 finally
                 {
                     if (transWas == null)
+                    { 
                         _currentTransaction.Close();
+                    }
+
                     _currentTransaction = transWas;
                 }
             }
@@ -68,13 +74,19 @@ namespace sodium
                 try
                 {
                     if (_currentTransaction == null)
+                    { 
                         _currentTransaction = new Transaction();
+                    }
+
                     code.Run(_currentTransaction);
                 }
                 finally
                 {
                     if (transWas == null)
+                    { 
                         _currentTransaction.Close();
+                    }
+
                     _currentTransaction = transWas;
                 }
             }
@@ -91,7 +103,10 @@ namespace sodium
                 try
                 {
                     if (_currentTransaction == null)
+                    { 
                         _currentTransaction = new Transaction();
+                    }
+
                     return code.Apply(_currentTransaction);
                 }
                 finally
@@ -136,7 +151,9 @@ namespace sodium
                 ToRegen = false;
                 _prioritized.Clear();
                 foreach (var e in _entries)
+                { 
                     _prioritized.Add(e);
+                }
             }
         }
 
@@ -145,21 +162,29 @@ namespace sodium
             while (true)
             {
                 CheckRegen();
-                if (_prioritized.IsEmpty()) 
+                if (_prioritized.IsEmpty())
+                { 
                     break;
+                }
+
                 var e = _prioritized.Remove();
                 _entries.Remove(e);
                 e.Action.Run(this);
             }
 
             foreach (var action in _last)
+            { 
                 action.Run();
+            }
+
             _last.Clear();
             
             foreach (var action in _post)
+            { 
                 action.Run();
-            _post.Clear();
-            
+            }
+
+            _post.Clear();   
         }
     }
 }
