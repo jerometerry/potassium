@@ -14,9 +14,9 @@ namespace sodium
             get { return _event; }
         }
 
-        ///
+        /// <summary>
         /// A behavior with a constant value.
-        ///
+        /// </summary>
         public Behavior(TA value)
         {
             _event = new Event<TA>();
@@ -48,25 +48,27 @@ namespace sodium
             }));
         }
 
-        ///
-        /// @return The value including any updates that have happened in this transaction.
-        ///
+        /// <summary>
+        /// </summary>
+        /// <returns>
+        /// The value including any updates that have happened in this transaction.
+        /// </returns>
         internal TA NewValue()
         {
             return !_valueUpdate.HasValue ? _value : _valueUpdate.Value();
         }
 
-        ///
+        /// <summary>
         /// Sample the behavior's current value.
         ///
-        /// This should generally be avoided in favour of value().listen(..) so you don't
+        /// This should generally be avoided in favour of Value().Listen(..) so you don't
         /// miss any updates, but in many circumstances it makes sense.
         ///
-        /// It can be best to use it inside an explicit transaction (using Transaction.run()).
+        /// It can be best to use it inside an explicit transaction (using Transaction.Run()).
         /// For example, a b.sample() inside an explicit transaction along with a
-        /// b.updates().listen(..) will capture the current value and any updates without risk
+        /// b.Updates().Listen(..) will capture the current value and any updates without risk
         /// of missing any in between.
-        ///
+        /// </summary>
         public TA Sample()
         {
             // Since pointers in Java are atomic, we don't need to explicitly create a
@@ -74,20 +76,20 @@ namespace sodium
             return _value;
         }
 
-        ///
+        /// <summary>
         /// An event that gives the updates for the behavior. If this behavior was created
         /// with a hold, then updates() gives you an event equivalent to the one that was held.
-        ///
+        /// </summary>
         public Event<TA> Updates()
         {
             return Event;
         }
 
-        ///
+        /// <summary>
         /// An event that is guaranteed to fire once when you listen to it, giving
         /// the current value of the behavior, and thereafter behaves like updates(),
         /// firing for each update to the behavior's value.
-        ///
+        /// </summary>
         public Event<TA> Value()
         {
             return Transaction.Apply(new Lambda1<Transaction, Event<TA>>(Value));
@@ -100,7 +102,7 @@ namespace sodium
                 new TransactionHandler<TA>(sink.Send), false);
             return sink.RegisterListener(l)
                 .LastFiringOnly(t1);  // Needed in case of an initial value and an update
-                                          // in the same transaction.
+                                      // in the same transaction.
         }
 
         /// <summary>
@@ -114,17 +116,17 @@ namespace sodium
             return Map(new Lambda1<TA, TB>(f));
         }
 
-        ///
+        /// <summary>
         /// Transform the behavior's value according to the supplied function.
-        ///
+        /// </summary>
         public Behavior<TB> Map<TB>(ILambda1<TA, TB> f)
         {
             return Updates().Map(f).Hold(f.Apply(Sample()));
         }
 
-        ///
+        /// <summary>
         /// Lift a binary function into behaviors.
-        ///
+        /// </summary>
         public Behavior<TC> Lift<TB, TC>(ILambda2<TA, TB, TC> f, Behavior<TB> b)
         {
             var ffa = new Lambda1<TA, ILambda1<TB, TC>>(aa => new Lambda1<TB, TC>(bb => f.Apply(aa, bb)));
@@ -144,17 +146,17 @@ namespace sodium
             return Lift(new Lambda2<TA, TB, TC>(f), a, b);
         }
 
-        ///
+        /// <summary>
         /// Lift a binary function into behaviors.
-        ///
+        /// </summary>
         public static Behavior<TC> Lift<TB, TC>(ILambda2<TA, TB, TC> f, Behavior<TA> a, Behavior<TB> b)
         {
             return a.Lift(f, b);
         }
 
-        ///
+        /// <summary>
         /// Lift a ternary function into behaviors.
-        ///
+        /// </summary>
         // TODO
         //public Behavior<D> Lift<B, C, D>(Lambda3<TA, B, C, D> f, Behavior<B> b, Behavior<C> c)
         //{
@@ -177,19 +179,19 @@ namespace sodium
         //    return apply(apply(bf, b), c);
         //}
 
-        ///
+        /// <summary>
         /// Lift a ternary function into behaviors.
-        ///
+        /// </summary>
         // TODO
         //public static Behavior<D> Lift<TA, B, C, D>(Lambda3<TA, B, C, D> f, Behavior<TA> a, Behavior<B> b, Behavior<C> c)
         //{
         //    return a.lift(f, b, c);
         //}
 
-        ///
+        /// <summary>
         /// Apply a value inside a behavior to a function inside a behavior. This is the
         /// primitive for all function lifting.
-        ///
+        /// </summary>
         public static Behavior<TB> Apply<TB>(Behavior<ILambda1<TA, TB>> bf, Behavior<TA> ba)
         {
             var sink = new EventSink<TB>();
@@ -199,9 +201,9 @@ namespace sodium
             return sink.RegisterListener(l1).RegisterListener(l2).Hold(bf.Sample().Apply(ba.Sample()));
         }
 
-        ///
+        /// <summary>
         /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
-        ///
+        /// </summary>
         public static Behavior<TA> SwitchB(Behavior<Behavior<TA>> bba)
         {
             var za = bba.Sample().Sample();
@@ -211,9 +213,9 @@ namespace sodium
             return sink.RegisterListener(l1).Hold(za);
         }
 
-        ///
+        /// <summary>
         /// Unwrap an event inside a behavior to give a time-varying event implementation.
-        ///
+        /// </summary>
         public static Event<TA> SwitchE(Behavior<Event<TA>> bea)
         {
             return Transaction.Apply(new Lambda1<Transaction, Event<TA>>(t => SwitchE(t, bea)));
@@ -228,10 +230,10 @@ namespace sodium
             return sink.RegisterListener(l1);
         }
 
-        ///
+        /// <summary>
         /// Transform a behavior with a generalized state loop (a mealy machine). The function
         /// is passed the input and the old state and returns the new state and output value.
-        ///
+        /// </summary>
         public Behavior<TB> Collect<TB, TS>(TS initState, ILambda2<TA, TS, Tuple2<TB, TS>> f)
         {
             var ea = Updates().Coalesce(new Lambda2<TA, TA, TA>((a, b) => b));

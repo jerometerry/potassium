@@ -5,29 +5,35 @@ namespace sodium
 
     public class Transaction
     {
-        // Coarse-grained lock that's held during the whole transaction.
+        /// <summary>
+        /// Coarse-grained lock that's held during the whole transaction. 
+        /// </summary>
         static readonly Object TransactionLock = new Object();
-        // Fine-grained lock that protects listeners and nodes.
-        internal static Object ListenersLock = new Object();
 
-        // True if we need to re-generate the priority queue.
+        /// <summary>
+        /// Fine-grained lock that protects listeners and nodes. 
+        /// </summary>
+        internal static readonly Object ListenersLock = new Object();
+
+        /// <summary>
+        /// True if we need to re-generate the priority queue.
+        /// </summary>
         internal bool ToRegen = false;
 
         private readonly PriorityQueue<Entry> _prioritized = new PriorityQueue<Entry>();
         private readonly ISet<Entry> _entries = new HashSet<Entry>();
-
         private readonly List<IRunnable> _last = new List<IRunnable>();
-        private List<IRunnable> _post;
+        private readonly List<IRunnable> _post = new List<IRunnable>();
 
         private static Transaction _currentTransaction;
 
-        ///
+        /// <summary>
         /// Run the specified code inside a single transaction.
         ///
         /// In most cases this is not needed, because all APIs will create their own
         /// transaction automatically. It is useful where you want to run multiple
         /// reactive operations atomically.
-        ///
+        /// </summary>
         public static void Run(IRunnable code)
         {
             lock (TransactionLock)
@@ -103,35 +109,33 @@ namespace sodium
             _entries.Add(e);
         }
 
-        ///
+        /// <summary>
         /// Add an action to run after all prioritized() actions.
-        ///
+        /// </summary>
         public void Last(IRunnable action)
         {
             _last.Add(action);
         }
 
-        ///
+        /// <summary>
         /// Add an action to run after all last() actions.
-        ///
+        /// </summary>
         public void Post(IRunnable action)
         {
-            if (_post == null)
-                _post = new List<IRunnable>();
             _post.Add(action);
         }
 
-        ///
+        /// <summary>
         /// If the priority queue has entries in it when we modify any of the nodes'
         /// ranks, then we need to re-generate it to make sure it's up-to-date.
-        ///
+        /// </summary>
         private void CheckRegen()
         {
             if (ToRegen)
             {
                 ToRegen = false;
                 _prioritized.Clear();
-                foreach (Entry e in _entries)
+                foreach (var e in _entries)
                     _prioritized.Add(e);
             }
         }
@@ -141,20 +145,21 @@ namespace sodium
             while (true)
             {
                 CheckRegen();
-                if (_prioritized.IsEmpty()) break;
-                Entry e = _prioritized.Remove();
+                if (_prioritized.IsEmpty()) 
+                    break;
+                var e = _prioritized.Remove();
                 _entries.Remove(e);
                 e.Action.Run(this);
             }
-            foreach (IRunnable action in _last)
+
+            foreach (var action in _last)
                 action.Run();
             _last.Clear();
-            if (_post != null)
-            {
-                foreach (IRunnable action in _post)
-                    action.Run();
-                _post.Clear();
-            }
+            
+            foreach (var action in _post)
+                action.Run();
+            _post.Clear();
+            
         }
     }
 }
