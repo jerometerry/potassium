@@ -30,7 +30,7 @@ namespace sodium
                 {
                     if (!thiz.valueUpdate.HasValue)
                     {
-                        t2.last(new RunnableImpl(() =>
+                        t2.last(new Runnable(() =>
                         {
                             thiz._value = thiz.valueUpdate.Value();
                             thiz.valueUpdate = Maybe<A>.Null;
@@ -334,7 +334,7 @@ namespace sodium
 
             public void run(Transaction trans2, Event<A> ea)
             {
-                trans2.last(new RunnableImpl(() =>
+                trans2.last(new Runnable(() =>
                 {
                     if (currentListener != null)
                         currentListener.unlisten();

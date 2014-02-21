@@ -13,7 +13,7 @@ namespace sodium
 
         internal void send(Transaction trans, A a) {
             if (!firings.Any())
-                trans.last(new RunnableImpl(() => firings.Clear()));
+                trans.last(new Runnable(() => firings.Clear()));
             firings.Add(a);
         
 		    List<TransactionHandler<A>> listeners = new List<TransactionHandler<A>>(this.listeners);

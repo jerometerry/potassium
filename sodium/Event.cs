@@ -49,10 +49,10 @@ namespace sodium
         internal IListener listen(Node target, Transaction trans, TransactionHandler<A> action,
                                 bool suppressEarlierFirings)
         {
-            lock (Transaction.listenersLock)
+            lock (Transaction.ListenersLock)
             {
                 if (node.linkTo(target))
-                    trans.toRegen = true;
+                    trans.ToRegen = true;
                 listeners.Add(action);
             }
             Object[] aNow = sampleNow();
@@ -69,7 +69,7 @@ namespace sodium
                 foreach (A a in firings)
                     action.run(trans, a);
             }
-            return new ListenerImplementation<A>(this, action, target);
+            return new Listener<A>(this, action, target);
         }
 
         /// <summary>
@@ -166,10 +166,10 @@ namespace sodium
         ///
         public static Event<A> merge<A>(Event<A> ea, Event<A> eb)
         {
-            MergeEventSink<A> out_ = new MergeEventSink<A>(ea, eb);
-            TransactionHandler<A> h = new TransactionHandlerImpl<A>(out_.send);
-            IListener l1 = ea.listen_(out_.node, h);
-            IListener l2 = eb.listen_(out_.node, h);
+            var out_ = new MergeEventSink<A>(ea, eb);
+            var h = new TransactionHandlerImpl<A>(out_.send);
+            var l1 = ea.listen_(out_.node, h);
+            var l2 = eb.listen_(out_.node, h);
             return out_.addCleanup(l1).addCleanup(l2);
         }
 
@@ -209,22 +209,22 @@ namespace sodium
         ///
         public Event<A> delay()
         {
-            EventSink<A> out_ = new EventSink<A>();
-            IListener l1 = listen_(out_.node, new TransactionHandlerImpl<A>((t, a) =>
-                                                                               {
-                                                                                   t.post(new RunnableImpl(() =>
-                                                                                                               {
-                                                                                                                   Transaction trans = new Transaction();
-                                                                                                                   try
-                                                                                                                   {
-                                                                                                                       out_.send(trans, a);
-                                                                                                                   }
-                                                                                                                   finally
-                                                                                                                   {
-                                                                                                                       trans.close();
-                                                                                                                   }
-                                                                                                               }));
-                                                                               }));
+            var out_ = new EventSink<A>();
+            var l1 = listen_(out_.node, new TransactionHandlerImpl<A>((t, a) =>
+            {
+                t.post(new Runnable(() =>
+                {
+                    Transaction trans = new Transaction();
+                    try
+                    {
+                        out_.send(trans, a);
+                    }
+                    finally
+                    {
+                        trans.close();
+                    }
+                }));
+            }));
 
 
             return out_.addCleanup(l1);
@@ -483,7 +483,7 @@ namespace sodium
 
         ~Event()
         {
-            foreach (Listener l in finalizers)
+            foreach (var l in finalizers)
                 l.unlisten();
         }
 
