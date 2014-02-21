@@ -6,14 +6,18 @@ namespace sodium
     public class Node : IComparable<Node>
     {
         public readonly static Node Null = new Node(long.MaxValue);
+        private long _rank;
+        private readonly ISet<Node> _listeners = new HashSet<Node>();
 
-        public Node(long rank)
+        public Node() 
+            : this(0L)
+        {
+        }
+
+        private Node(long rank)
         {
             _rank = rank;
         }
-
-        private long _rank;
-        private readonly ISet<Node> _listeners = new HashSet<Node>();
 
         ///
         /// @return true if any changes were made. 
@@ -43,7 +47,7 @@ namespace sodium
 
             visited.Add(this);
             _rank = limit + 1;
-            foreach (Node l in _listeners)
+            foreach (var l in _listeners)
                 l.EnsureBiggerThan(_rank, visited);
             return true;
         }

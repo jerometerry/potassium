@@ -14,13 +14,13 @@ namespace sodium
             _ba = ba;
         }
 
-        public void Run(Transaction trans1)
+        public void Run(Transaction t1)
         {
             if (_fired)
                 return;
 
             _fired = true;
-            trans1.Prioritized(_ev.Node, new Handler<Transaction>(t2 =>
+            t1.Prioritized(_ev.Node, new Handler<Transaction>(t2 =>
             {
                 var v = _bf.NewValue();
                 var nv = _ba.NewValue();

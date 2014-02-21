@@ -4,24 +4,29 @@ namespace sodium
 
     public class Behavior<TA>
     {
-        protected Event<TA> Event;
-        protected TA Val;
-        Maybe<TA> _valueUpdate = Maybe<TA>.Null;
-        private IListener _cleanup;
+        private readonly Event<TA> _event;
+        private TA _value;
+        private Maybe<TA> _valueUpdate = Maybe<TA>.Null;
+        private IListener _listener;
+
+        protected Event<TA> Event
+        {
+            get { return _event; }
+        }
 
         ///
         /// A behavior with a constant value.
         ///
-        public Behavior(TA val)
+        public Behavior(TA value)
         {
-            Event = new Event<TA>();
-            Val = val;
+            _event = new Event<TA>();
+            _value = value;
         }
 
-        internal Behavior(Event<TA> evt, TA initVal)
+        internal Behavior(Event<TA> evt, TA initValue)
         {
-            Event = evt;
-            Val = initVal;
+            _event = evt;
+            _value = initValue;
             var behavior = this;
 
             Transaction.Run(new Handler<Transaction>(t1 =>
@@ -32,14 +37,14 @@ namespace sodium
                     {
                         t2.Last(new Runnable(() =>
                         {
-                            behavior.Val = behavior._valueUpdate.Value();
+                            behavior._value = behavior._valueUpdate.Value();
                             behavior._valueUpdate = Maybe<TA>.Null;
                         }));
                     }
                     _valueUpdate = new Maybe<TA>(a);
 
                 });
-                _cleanup = evt.Listen(Node.Null, t1, handler, false);
+                _listener = evt.Listen(Node.Null, t1, handler, false);
             }));
         }
 
@@ -48,7 +53,7 @@ namespace sodium
         ///
         internal TA NewValue()
         {
-            return !_valueUpdate.HasValue ? Val : _valueUpdate.Value();
+            return !_valueUpdate.HasValue ? _value : _valueUpdate.Value();
         }
 
         ///
@@ -66,7 +71,7 @@ namespace sodium
         {
             // Since pointers in Java are atomic, we don't need to explicitly create a
             // transaction.
-            return Val;
+            return _value;
         }
 
         ///
@@ -88,13 +93,13 @@ namespace sodium
             return Transaction.Apply(new Lambda1<Transaction, Event<TA>>(Value));
         }
 
-        internal Event<TA> Value(Transaction trans1)
+        internal Event<TA> Value(Transaction t1)
         {
             var sink = new BehaviorValueEventSink<TA>(this);
-            var l = Event.Listen(sink.Node, trans1,
+            var l = Event.Listen(sink.Node, t1,
                 new TransactionHandler<TA>(sink.Send), false);
             return sink.RegisterListener(l)
-                .LastFiringOnly(trans1);  // Needed in case of an initial value and an update
+                .LastFiringOnly(t1);  // Needed in case of an initial value and an update
                                           // in the same transaction.
         }
 
@@ -214,12 +219,12 @@ namespace sodium
             return Transaction.Apply(new Lambda1<Transaction, Event<TA>>(t => SwitchE(t, bea)));
         }
 
-        private static Event<TA> SwitchE(Transaction trans1, Behavior<Event<TA>> bea)
+        private static Event<TA> SwitchE(Transaction t1, Behavior<Event<TA>> bea)
         {
             var sink = new EventSink<TA>();
             var h2 = new TransactionHandler<TA>(sink.Send);
-            var h1 = new EventSwitchHandler<TA>(bea, sink, trans1, h2);
-            var l1 = bea.Updates().Listen(sink.Node, trans1, h1, false);
+            var h1 = new EventSwitchHandler<TA>(bea, sink, t1, h2);
+            var l1 = bea.Updates().Listen(sink.Node, t1, h1, false);
             return sink.RegisterListener(l1);
         }
 
@@ -242,8 +247,8 @@ namespace sodium
 
         ~Behavior()
         {
-            if (_cleanup != null)
-                _cleanup.Unlisten();
+            if (_listener != null)
+                _listener.Unlisten();
         }
 
     }

@@ -4,8 +4,9 @@ namespace sodium
 {
     internal class Entry : IComparable<Entry>
     {
+        public readonly IHandler<Transaction> Action;
+
         private readonly Node _rank;
-        internal readonly IHandler<Transaction> Action;
         private static long _nextSeq;
         private readonly long _seq;
 

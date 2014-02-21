@@ -2,13 +2,44 @@ namespace sodium
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class Event<TA>
     {
-        protected internal List<ITransactionHandler<TA>> Actions = new List<ITransactionHandler<TA>>();
-        protected List<IListener> Listeners = new List<IListener>();
-        internal Node Node = new Node(0L);
-        protected List<TA> Firings = new List<TA>();
+        private readonly List<ITransactionHandler<TA>> _actions = new List<ITransactionHandler<TA>>();
+        private readonly List<IListener> _listeners = new List<IListener>();
+        private readonly Node _node = new Node();
+        private readonly List<TA> _firings = new List<TA>();
+
+        internal Node Node
+        {
+            get { return _node; }
+        }
+
+        internal void RemoveAction(ITransactionHandler<TA> action)
+        {
+            _actions.Remove(action);
+        }
+
+        internal void Send(Transaction trans, TA a)
+        {
+            if (!_firings.Any())
+                trans.Last(new Runnable(() => _firings.Clear()));
+            _firings.Add(a);
+
+            var listeners = new List<ITransactionHandler<TA>>(_actions);
+            foreach (var action in listeners)
+            {
+                try
+                {
+                    action.Run(trans, a);
+                }
+                catch (Exception t)
+                {
+                    System.Diagnostics.Debug.WriteLine("{0}", t);
+                }
+            }
+        }
 
         protected internal virtual TA[] SampleNow()
         {
@@ -46,7 +77,7 @@ namespace sodium
             {
                 if (Node.LinkTo(target))
                     trans.ToRegen = true;
-                Actions.Add(action);
+                _actions.Add(action);
             }
             var aNow = SampleNow();
             if (aNow != null)
@@ -59,7 +90,7 @@ namespace sodium
             {
                 // Anything sent already in this transaction must be sent now so that
                 // there's no order dependency between send and listen.
-                foreach (var a in Firings)
+                foreach (var a in _firings)
                     action.Run(trans, a);
             }
             return new Listener<TA>(this, action, target);
@@ -184,12 +215,12 @@ namespace sodium
             return Transaction.Apply(new Lambda1<Transaction, Event<TA>>(t => Coalesce(t, f)));
         }
 
-        Event<TA> Coalesce(Transaction trans1, ILambda2<TA, TA, TA> f)
+        Event<TA> Coalesce(Transaction t1, ILambda2<TA, TA, TA> f)
         {
             var ev = this;
             var sink = new CoalesceEventSink<TA>(ev, f);
             var h = new CoalesceHandler<TA>(f, sink);
-            var l = Listen(sink.Node, trans1, h, false);
+            var l = Listen(sink.Node, t1, h, false);
             return sink.RegisterListener(l);
         }
 
@@ -312,13 +343,13 @@ namespace sodium
 
         internal Event<TA> RegisterListener(IListener listener)
         {
-            Listeners.Add(listener);
+            _listeners.Add(listener);
             return this;
         }
 
         ~Event()
         {
-            foreach (var l in Listeners)
+            foreach (var l in _listeners)
                 l.Unlisten();
         }
     }

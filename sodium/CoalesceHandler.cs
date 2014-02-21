@@ -12,7 +12,7 @@ namespace sodium
             _ev = ev;
         }
 
-        public void Run(Transaction trans1, TA a)
+        public void Run(Transaction t1, TA a)
         {
             if (_accum.HasValue)
             {
@@ -20,11 +20,11 @@ namespace sodium
             }
             else
             {
-                var thiz = this;
-                trans1.Prioritized(_ev.Node, new Handler<Transaction>(t =>
+                var handler = this;
+                t1.Prioritized(_ev.Node, new Handler<Transaction>(t =>
                 {
-                    _ev.Send(t, thiz._accum.Value());
-                    thiz._accum = Maybe<TA>.Null;
+                    _ev.Send(t, handler._accum.Value());
+                    handler._accum = Maybe<TA>.Null;
                 }));
                 _accum = new Maybe<TA>(a);
             }

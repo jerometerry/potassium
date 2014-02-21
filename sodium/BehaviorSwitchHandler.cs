@@ -10,7 +10,7 @@ namespace sodium
             _sink = sink;
         }
 
-        public void Run(Transaction trans2, Behavior<TA> ba)
+        public void Run(Transaction t2, Behavior<TA> ba)
         {
             // Note: If any switch takes place during a transaction, then the
             // value().listen will always cause a sample to be fetched from the
@@ -21,8 +21,8 @@ namespace sodium
             if (_currentListener != null)
                 _currentListener.Unlisten();
 
-            var ev = ba.Value(trans2);
-            _currentListener = ev.Listen(_sink.Node, trans2, new TransactionHandler<TA>(Handler), false);
+            var ev = ba.Value(t2);
+            _currentListener = ev.Listen(_sink.Node, t2, new TransactionHandler<TA>(Handler), false);
         }
 
         private void Handler(Transaction t3, TA a)
