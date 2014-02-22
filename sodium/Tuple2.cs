@@ -1,4 +1,4 @@
-namespace sodium
+namespace Sodium
 {
     public sealed class Tuple2<TA, TB>
     {

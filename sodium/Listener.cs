@@ -1,4 +1,4 @@
-namespace sodium
+namespace Sodium
 {
     internal sealed class Listener<TA> : ListenerBase
     {

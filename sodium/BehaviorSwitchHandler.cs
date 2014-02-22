@@ -1,4 +1,4 @@
-namespace sodium
+namespace Sodium
 {
     internal class BehaviorSwitchHandler<TA> : ITransactionHandler<Behavior<TA>>
     {

@@ -1,4 +1,4 @@
-namespace sodium
+namespace Sodium
 {
     internal class EventSwitchHandler<TA> : ITransactionHandler<Event<TA>>
     {

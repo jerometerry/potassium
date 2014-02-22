@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace sodium.tests
+namespace Sodium.Tests
 {
     [TestFixture]
     public class EventTests

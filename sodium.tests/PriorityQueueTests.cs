@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 
-namespace sodium.tests
+namespace Sodium.Tests
 {
     [TestFixture]
     public class PriorityQueuesProgram

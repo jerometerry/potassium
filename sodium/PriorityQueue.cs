@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace sodium
+namespace Sodium
 {
     public class PriorityQueue<T> where T : IComparable<T>
     {

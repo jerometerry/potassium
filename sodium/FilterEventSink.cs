@@ -1,6 +1,6 @@
 using System;
 
-namespace sodium
+namespace Sodium
 {
     internal class FilterEventSink<TA> : EventSink<TA>
     {

@@ -1,4 +1,4 @@
-namespace sodium
+namespace Sodium
 {
     public class EventSink<TA> : Event<TA>
     {

@@ -1,4 +1,4 @@
-namespace sodium
+namespace Sodium
 {
     public interface ILambda3<in TA, in TB, in TC, out TD>
     {

@@ -1,4 +1,4 @@
-namespace sodium
+namespace Sodium
 {
     internal class CoalesceHandler<TA> : ITransactionHandler<TA>
     {

@@ -1,4 +1,4 @@
-﻿namespace sodium
+﻿namespace Sodium
 {
     using System;
 

@@ -1,6 +1,6 @@
 using System;
 
-namespace sodium
+namespace Sodium
 {
     public class Lambda2<TA, TB, TC> : ILambda2<TA, TB, TC>
     {

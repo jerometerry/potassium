@@ -7,8 +7,8 @@
     <ProjectGuid>{CC18D685-53D9-4A66-8CCA-3E8ED4EC8F13}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>sodium</RootNamespace>
-    <AssemblyName>sodium</AssemblyName>
+    <RootNamespace>Sodium</RootNamespace>
+    <AssemblyName>Sodium</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

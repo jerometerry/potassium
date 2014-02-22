@@ -1,6 +1,6 @@
 using System;
 
-namespace sodium
+namespace Sodium
 {
     public class TransactionHandler<TA> : ITransactionHandler<TA>
     {

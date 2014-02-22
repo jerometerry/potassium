@@ -1,4 +1,4 @@
-namespace sodium
+namespace Sodium
 {
     public abstract class ListenerBase : IListener
     {

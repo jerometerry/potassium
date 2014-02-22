@@ -49,9 +49,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\sodium\sodium.csproj">
+    <ProjectReference Include="..\sodium\Sodium.csproj">
       <Project>{cc18d685-53d9-4a66-8cca-3e8ed4ec8f13}</Project>
-      <Name>sodium</Name>
+      <Name>Sodium</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
