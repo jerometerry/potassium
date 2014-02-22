@@ -1,19 +1,19 @@
-using System;
-
 namespace Sodium
 {
-    public class Lambda2<TA, TB, TC> : ILambda2<TA, TB, TC>
+    using System;
+
+    public sealed class Lambda2<TA, TB, TC> : ILambda2<TA, TB, TC>
     {
-        private readonly Func<TA, TB, TC> _f;
+        private readonly Func<TA, TB, TC> f;
 
         public Lambda2(Func<TA, TB, TC> f)
         {
-            _f = f;
+            this.f = f;
         }
 
         public TC Apply(TA a, TB b)
         {
-            return _f(a, b);
+            return f(a, b);
         }
     }
 }

@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    public class BehaviorSink<TA> : Behavior<TA>
+    public sealed class BehaviorSink<TA> : Behavior<TA>
     {
         public BehaviorSink(TA initValue)
             : base(new EventSink<TA>(), initValue)

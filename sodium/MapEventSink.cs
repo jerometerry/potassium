@@ -1,33 +1,28 @@
-﻿using System;
-
-namespace Sodium
+﻿namespace Sodium
 {
-    public class MapEventSink<TA, TB> : EventSink<TB>
-    {
-        private readonly Event<TA> _ev;
-        private readonly ILambda1<TA, TB> _f;
+    using System.Linq;
 
-        public MapEventSink(Event<TA> ev, ILambda1<TA, TB> f)
+    internal sealed class MapEventSink<TA, TB> : EventSink<TB>
+    {
+        private readonly Event<TA> evt;
+        private readonly ILambda1<TA, TB> f;
+
+        public MapEventSink(Event<TA> evt, ILambda1<TA, TB> f)
         {
-            _ev = ev;
-            _f = f;
+            this.evt = evt;
+            this.f = f;
         }
 
         protected internal override TB[] SampleNow()
         {
-            var oi = _ev.SampleNow();
-            if (oi == null)
+            var events = evt.SampleNow();
+            if (events == null)
             { 
                 return null;
             }
-            
-            var oo = new TB[oi.Length];
-            for (int i = 0; i < oo.Length; i++)
-            { 
-                oo[i] = _f.Apply(oi[i]);
-            }
 
-            return oo;
+            var results = events.Select(e => f.Apply(e));
+            return results.ToArray();
         }
     }
 }

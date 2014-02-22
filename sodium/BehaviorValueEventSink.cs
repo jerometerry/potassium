@@ -1,19 +1,19 @@
-using System;
-
 namespace Sodium
 {
-    internal class BehaviorValueEventSink<TA> : EventSink<TA>
+    using System;
+
+    internal sealed class BehaviorValueEventSink<TA> : EventSink<TA>
     {
-        private readonly Behavior<TA> _behavior;
+        private readonly Behavior<TA> behavior;
 
         public BehaviorValueEventSink(Behavior<TA> behavior)
         {
-            _behavior = behavior;
+            this.behavior = behavior;
         }
 
         protected internal override TA[] SampleNow()
         {
-            return new [] { _behavior.Sample() };
+            return new[] { behavior.Sample() };
         }
     }
 }

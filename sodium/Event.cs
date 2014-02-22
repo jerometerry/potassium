@@ -6,31 +6,31 @@ namespace Sodium
 
     public class Event<TA>
     {
-        private readonly List<ITransactionHandler<TA>> _actions = new List<ITransactionHandler<TA>>();
-        private readonly List<IListener> _listeners = new List<IListener>();
-        private readonly Node _node = new Node();
-        private readonly List<TA> _firings = new List<TA>();
+        private readonly List<ITransactionHandler<TA>> actions = new List<ITransactionHandler<TA>>();
+        private readonly List<IListener> listeners = new List<IListener>();
+        private readonly Node node = new Node();
+        private readonly List<TA> firings = new List<TA>();
 
         internal Node Node
         {
-            get { return _node; }
+            get { return node; }
         }
 
         internal void RemoveAction(ITransactionHandler<TA> action)
         {
-            _actions.Remove(action);
+            actions.Remove(action);
         }
 
         internal void Send(Transaction trans, TA a)
         {
-            if (!_firings.Any())
+            if (!firings.Any())
             { 
-                trans.Last(new Runnable(() => _firings.Clear()));
+                trans.Last(new Runnable(() => firings.Clear()));
             }
 
-            _firings.Add(a);
+            firings.Add(a);
 
-            var listeners = new List<ITransactionHandler<TA>>(_actions);
+            var listeners = new List<ITransactionHandler<TA>>(actions);
             foreach (var action in listeners)
             {
                 try
@@ -82,7 +82,7 @@ namespace Sodium
                     trans.ToRegen = true;
                 }
 
-                _actions.Add(action);
+                actions.Add(action);
             }
 
             var aNow = SampleNow();
@@ -99,7 +99,7 @@ namespace Sodium
             {
                 // Anything sent already in this transaction must be sent now so that
                 // there's no order dependency between send and listen.
-                foreach (var a in _firings)
+                foreach (var a in firings)
                 { 
                     action.Run(trans, a);
                 }
@@ -226,11 +226,11 @@ namespace Sodium
             return Transaction.Apply(new Lambda1<Transaction, Event<TA>>(t => Coalesce(t, f)));
         }
 
-        Event<TA> Coalesce(Transaction t1, ILambda2<TA, TA, TA> f)
+        private Event<TA> Coalesce(Transaction t1, ILambda2<TA, TA, TA> f)
         {
             var ev = this;
             var sink = new CoalesceEventSink<TA>(ev, f);
-            var h = new CoalesceHandler<TA>(f, sink);
+            var h = new CoalesceHandler<TA>(sink, f);
             var l = Listen(sink.Node, t1, h, false);
             return sink.RegisterListener(l);
         }
@@ -362,13 +362,13 @@ namespace Sodium
 
         internal Event<TA> RegisterListener(IListener listener)
         {
-            _listeners.Add(listener);
+            listeners.Add(listener);
             return this;
         }
 
         ~Event()
         {
-            foreach (var l in _listeners)
+            foreach (var l in listeners)
             { 
                 l.Unlisten();
             }

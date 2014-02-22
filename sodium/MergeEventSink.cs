@@ -1,40 +1,30 @@
-using System;
-
 namespace Sodium
 {
-    internal class MergeEventSink<TA> : EventSink<TA>
-    {
-        private readonly Event<TA> _ea;
-        private readonly Event<TA> _eb;
+    using System;
+    using System.Linq;
 
-        public MergeEventSink(Event<TA> ea, Event<TA> eb)
+    internal sealed class MergeEventSink<TA> : EventSink<TA>
+    {
+        private readonly Event<TA> evt1;
+        private readonly Event<TA> evt2;
+
+        public MergeEventSink(Event<TA> evt1, Event<TA> evt2)
         {
-            _ea = ea;
-            _eb = eb;
+            this.evt1 = evt1;
+            this.evt2 = evt2;
         }
 
         protected internal override TA[] SampleNow()
         {
-            var oa = _ea.SampleNow();
-            var ob = _eb.SampleNow();
-            if (oa != null && ob != null)
+            var events1 = evt1.SampleNow();
+            var events2 = evt2.SampleNow();
+
+            if (events1 != null && events2 != null)
             {
-                var oo = new TA[oa.Length + ob.Length];
-                var j = 0;
-                foreach (var t in oa)
-                {
-                    oo[j++] = t;
-                }
-
-                foreach (var t in ob)
-                { 
-                    oo[j++] = t;
-                }
-
-                return oo;
+                return events1.Concat(events2).ToArray();
             }
 
-            return oa ?? ob;
+            return events1 ?? events2;
         }
     }
 }

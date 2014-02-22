@@ -3,12 +3,12 @@ namespace Sodium
     using System;
     using System.Collections.Generic;
 
-    public class Transaction
+    internal sealed class Transaction
     {
         /// <summary>
         /// Coarse-grained lock that's held during the whole transaction. 
         /// </summary>
-        static readonly Object TransactionLock = new Object();
+        private static readonly Object TransactionLock = new Object();
 
         /// <summary>
         /// Fine-grained lock that protects listeners and nodes. 
@@ -18,18 +18,18 @@ namespace Sodium
         /// <summary>
         /// True if we need to re-generate the priority queue.
         /// </summary>
-        private bool _toRegen = false;
+        private bool toRegen = false;
 
         internal bool ToRegen
         {
-            get { return _toRegen; }
-            set { _toRegen = value; }
+            get { return toRegen; }
+            set { toRegen = value; }
         }
 
-        private readonly PriorityQueue<Entry> _prioritized = new PriorityQueue<Entry>();
-        private readonly ISet<Entry> _entries = new HashSet<Entry>();
-        private readonly List<IRunnable> _last = new List<IRunnable>();
-        private readonly List<IRunnable> _post = new List<IRunnable>();
+        private readonly PriorityQueue<Entry> prioritized = new PriorityQueue<Entry>();
+        private readonly ISet<Entry> entries = new HashSet<Entry>();
+        private readonly List<IRunnable> last = new List<IRunnable>();
+        private readonly List<IRunnable> post = new List<IRunnable>();
 
         private static Transaction _currentTransaction;
 
@@ -126,8 +126,8 @@ namespace Sodium
         public void Prioritized(Node rank, IHandler<Transaction> action)
         {
             var e = new Entry(rank, action);
-            _prioritized.Add(e);
-            _entries.Add(e);
+            prioritized.Add(e);
+            entries.Add(e);
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Sodium
         /// </summary>
         public void Last(IRunnable action)
         {
-            _last.Add(action);
+            last.Add(action);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace Sodium
         /// </summary>
         public void Post(IRunnable action)
         {
-            _post.Add(action);
+            post.Add(action);
         }
 
         /// <summary>
@@ -155,10 +155,10 @@ namespace Sodium
             if (ToRegen)
             {
                 ToRegen = false;
-                _prioritized.Clear();
-                foreach (var e in _entries)
+                prioritized.Clear();
+                foreach (var e in entries)
                 { 
-                    _prioritized.Add(e);
+                    prioritized.Add(e);
                 }
             }
         }
@@ -168,29 +168,29 @@ namespace Sodium
             while (true)
             {
                 CheckRegen();
-                if (_prioritized.IsEmpty())
+                if (prioritized.IsEmpty())
                 { 
                     break;
                 }
 
-                var e = _prioritized.Remove();
-                _entries.Remove(e);
+                var e = prioritized.Remove();
+                entries.Remove(e);
                 e.Action.Run(this);
             }
 
-            foreach (var action in _last)
+            foreach (var action in last)
             { 
                 action.Run();
             }
 
-            _last.Clear();
+            last.Clear();
             
-            foreach (var action in _post)
+            foreach (var action in post)
             { 
                 action.Run();
             }
 
-            _post.Clear();   
+            post.Clear();   
         }
     }
 }

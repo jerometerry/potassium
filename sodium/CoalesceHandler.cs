@@ -1,32 +1,32 @@
 namespace Sodium
 {
-    internal class CoalesceHandler<TA> : ITransactionHandler<TA>
+    internal sealed class CoalesceHandler<TA> : ITransactionHandler<TA>
     {
-        private readonly ILambda2<TA, TA, TA> _f;
-        private readonly EventSink<TA> _ev;
-        private Maybe<TA> _accum = Maybe<TA>.Null;
+        private readonly ILambda2<TA, TA, TA> f;
+        private readonly EventSink<TA> evt;
+        private Maybe<TA> accum = Maybe<TA>.Null;
 
-        public CoalesceHandler(ILambda2<TA, TA, TA> f, EventSink<TA> ev)
+        public CoalesceHandler(EventSink<TA> evt, ILambda2<TA, TA, TA> f)
         {
-            _f = f;
-            _ev = ev;
+            this.evt = evt;
+            this.f = f;
         }
 
         public void Run(Transaction t1, TA a)
         {
-            if (_accum.HasValue)
+            if (accum.HasValue)
             {
-                _accum = new Maybe<TA>(_f.Apply(_accum.Value(), a));
+                accum = new Maybe<TA>(f.Apply(accum.Value(), a));
             }
             else
             {
                 var handler = this;
-                t1.Prioritized(_ev.Node, new Handler<Transaction>(t =>
+                t1.Prioritized(evt.Node, new Handler<Transaction>(t2 =>
                 {
-                    _ev.Send(t, handler._accum.Value());
-                    handler._accum = Maybe<TA>.Null;
+                    evt.Send(t2, handler.accum.Value());
+                    handler.accum = Maybe<TA>.Null;
                 }));
-                _accum = new Maybe<TA>(a);
+                accum = new Maybe<TA>(a);
             }
         }
     }

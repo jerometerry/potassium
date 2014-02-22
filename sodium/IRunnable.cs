@@ -1,6 +1,6 @@
 ﻿namespace Sodium
 {
-    public interface IRunnable
+    internal interface IRunnable
     {
         void Run();
     }

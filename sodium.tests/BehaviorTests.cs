@@ -131,15 +131,6 @@ namespace Sodium.Tests
         }
 
         [Test]
-        public void TestTransactionHandlerImpl()
-        {
-            var results = new List<string>();
-            var impl = new TransactionHandler<string>((t, a) => results.Add(a));
-            impl.Run(null, "this is a test");
-            Assert.AreEqual("this is a test", results[0]);
-        }
-
-        [Test]
         public void TestLambda1Impl()
         {
             var impl = new Lambda1<int, string>(a => a.ToString(CultureInfo.InvariantCulture));

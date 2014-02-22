@@ -2,10 +2,10 @@
 {
     using System;
 
-    public class Maybe<T>
+    public sealed class Maybe<T>
     {
-        private readonly T _value;
-        private readonly bool _hasValue;
+        private readonly T value;
+        private readonly bool hasValue;
 
         public static Maybe<T> Null
         {
@@ -17,26 +17,26 @@
 
         public Maybe()
         {
-            _hasValue = false;
+            hasValue = false;
         }
 
         public Maybe(T value)
         {
-            _value = value;
-            _hasValue = true;
+            this.value = value;
+            this.hasValue = true;
         }
 
         public Maybe(T value, bool hasValue)
         {
-            _value = value;
-            _hasValue = hasValue;
+            this.value = value;
+            this.hasValue = hasValue;
         }
 
         public bool HasValue
         {
             get
             {
-                return _hasValue;
+                return hasValue;
             }
         }
 
@@ -47,7 +47,7 @@
                 throw new ArgumentException("Maybe doesn't contain a value!");
             }
 
-            return _value;
+            return value;
         }
 
         public static implicit operator T(Maybe<T> m)
@@ -64,7 +64,7 @@
         {
             if (HasValue)
             {
-                return _value.ToString();
+                return value.ToString();
             }
 
             return string.Empty;

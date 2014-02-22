@@ -4,14 +4,14 @@ namespace Sodium
 
     public class Behavior<TA>
     {
-        private readonly Event<TA> _event;
-        private TA _value;
-        private Maybe<TA> _valueUpdate = Maybe<TA>.Null;
-        private IListener _listener;
+        private readonly Event<TA> evt;
+        private TA value;
+        private Maybe<TA> valueUpdate = Maybe<TA>.Null;
+        private IListener listener;
 
         protected Event<TA> Event
         {
-            get { return _event; }
+            get { return evt; }
         }
 
         /// <summary>
@@ -19,32 +19,32 @@ namespace Sodium
         /// </summary>
         public Behavior(TA value)
         {
-            _event = new Event<TA>();
-            _value = value;
+            this.evt = new Event<TA>();
+            this.value = value;
         }
 
         internal Behavior(Event<TA> evt, TA initValue)
         {
-            _event = evt;
-            _value = initValue;
+            this.evt = evt;
+            this.value = initValue;
             var behavior = this;
 
             Transaction.Run(new Handler<Transaction>(t1 =>
             {
                 var handler = new TransactionHandler<TA>((t2, a) =>
                 {
-                    if (!behavior._valueUpdate.HasValue)
+                    if (!behavior.valueUpdate.HasValue)
                     {
                         t2.Last(new Runnable(() =>
                         {
-                            behavior._value = behavior._valueUpdate.Value();
-                            behavior._valueUpdate = Maybe<TA>.Null;
+                            behavior.value = behavior.valueUpdate.Value();
+                            behavior.valueUpdate = Maybe<TA>.Null;
                         }));
                     }
 
-                    _valueUpdate = new Maybe<TA>(a);
+                    valueUpdate = new Maybe<TA>(a);
                 });
-                _listener = evt.Listen(Node.Null, t1, handler, false);
+                listener = evt.Listen(Node.Null, t1, handler, false);
             }));
         }
 
@@ -55,7 +55,7 @@ namespace Sodium
         /// </returns>
         internal TA NewValue()
         {
-            return !_valueUpdate.HasValue ? _value : _valueUpdate.Value();
+            return !valueUpdate.HasValue ? value : valueUpdate.Value();
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Sodium
         {
             // Since pointers in Java are atomic, we don't need to explicitly create a
             // transaction.
-            return _value;
+            return value;
         }
 
         /// <summary>
@@ -248,9 +248,9 @@ namespace Sodium
 
         ~Behavior()
         {
-            if (_listener != null)
+            if (listener != null)
             { 
-                _listener.Unlisten();
+                listener.Unlisten();
             }
         }
     }

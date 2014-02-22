@@ -1,36 +1,36 @@
 namespace Sodium
 {
-    internal class EventSwitchHandler<TA> : ITransactionHandler<Event<TA>>
+    internal sealed class EventSwitchHandler<TA> : ITransactionHandler<Event<TA>>
     {
-        private IListener _currentListener;
-        private readonly EventSink<TA> _ev;
-        private readonly ITransactionHandler<TA> _h2;
+        private IListener listener;
+        private readonly EventSink<TA> evt;
+        private readonly ITransactionHandler<TA> handler;
 
-        public EventSwitchHandler(Behavior<Event<TA>> bea, EventSink<TA> ev, Transaction t1, ITransactionHandler<TA> h2)
+        public EventSwitchHandler(Behavior<Event<TA>> bea, EventSink<TA> evt, Transaction t, ITransactionHandler<TA> h)
         {
-            _ev = ev;
-            _h2 = h2;
-            _currentListener = bea.Sample().Listen(ev.Node, t1, h2, false);
+            this.evt = evt;
+            this.handler = h;
+            this.listener = bea.Sample().Listen(evt.Node, t, h, false);
         }
 
-        public void Run(Transaction t2, Event<TA> ea)
+        public void Run(Transaction t, Event<TA> e)
         {
-            t2.Last(new Runnable(() =>
+            t.Last(new Runnable(() =>
             {
-                if (_currentListener != null)
+                if (listener != null)
                 { 
-                    _currentListener.Unlisten();
+                    listener.Unlisten();
                 }
 
-                _currentListener = ea.Listen(_ev.Node, t2, _h2, true);
+                listener = e.Listen(evt.Node, t, handler, true);
             }));
         }
 
         ~EventSwitchHandler()
         {
-            if (_currentListener != null)
+            if (listener != null)
             { 
-                _currentListener.Unlisten();
+                listener.Unlisten();
             }
         }
     }

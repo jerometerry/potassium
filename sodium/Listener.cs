@@ -6,23 +6,23 @@ namespace Sodium
         /// It's essential that we keep the listener alive while the caller holds
         /// the Listener, so that the finalizer doesn't get triggered.
         ///
-        private readonly Event<TA> _event;
-        private readonly ITransactionHandler<TA> _action;
-        private readonly Node _target;
+        private readonly Event<TA> evt;
+        private readonly ITransactionHandler<TA> action;
+        private readonly Node target;
 
         public Listener(Event<TA> evt, ITransactionHandler<TA> action, Node target)
         {
-            _event = evt;
-            _action = action;
-            _target = target;
+            this.evt = evt;
+            this.action = action;
+            this.target = target;
         }
 
         public override void Unlisten()
         {
             lock (Transaction.ListenersLock)
             {
-                _event.RemoveAction(_action);
-                _event.Node.UnlinkTo(_target);
+                evt.RemoveAction(action);
+                evt.Node.UnlinkTo(target);
             }
         }
 

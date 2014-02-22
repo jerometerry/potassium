@@ -1,52 +1,33 @@
-using System;
-
 namespace Sodium
 {
-    internal class FilterEventSink<TA> : EventSink<TA>
-    {
-        private readonly Event<TA> _ev;
-        private readonly ILambda1<TA, bool> _f;
+    using System.Linq;
 
-        public FilterEventSink(Event<TA> ev, ILambda1<TA, bool> f)
+    internal sealed class FilterEventSink<TA> : EventSink<TA>
+    {
+        private readonly Event<TA> evt;
+        private readonly ILambda1<TA, bool> f;
+
+        public FilterEventSink(Event<TA> evt, ILambda1<TA, bool> f)
         {
-            _ev = ev;
-            _f = f;
+            this.evt = evt;
+            this.f = f;
         }
 
         protected internal override TA[] SampleNow()
         {
-            var oi = _ev.SampleNow();
-            if (oi == null)
+            var events = evt.SampleNow();
+            if (events == null)
             {
                 return null;
             }
-            
-            var results = new TA[oi.Length];
-            var j = 0;
-            foreach (var t in oi)
+
+            var filtered = events.Where(e => f.Apply(e));
+            if (!filtered.Any())
             {
-                if (_f.Apply(t))
-                { 
-                    results[j++] = t;
-                }
+                return null;
             }
 
-            if (j == 0)
-            {
-                results = null;
-            }
-            else if (j < results.Length)
-            {
-                var oo2 = new TA[j];
-                for (var i = 0; i < j; i++)
-                { 
-                    oo2[i] = results[i];
-                }
-
-                results = oo2;
-            }
-
-            return results;
+            return filtered.ToArray();
         }
     }
 }

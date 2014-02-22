@@ -1,19 +1,19 @@
-using System;
-
 namespace Sodium
 {
-    public class Handler<TA> : IHandler<TA>
+    using System;
+
+    public sealed class Handler<TA> : IHandler<TA>
     {
-        private readonly Action<TA> _action;
+        private readonly Action<TA> action;
 
         public Handler(Action<TA> action)
         {
-            _action = action;
+            this.action = action;
         }
 
         public void Run(TA a)
         {
-            _action(a);
+            action(a);
         }
     }
 }

@@ -2,7 +2,7 @@ using System;
 
 namespace Sodium
 {
-    public class Runnable : IRunnable
+    internal sealed class Runnable : IRunnable
     {
         private readonly Action _action;
 

@@ -3,11 +3,11 @@ namespace Sodium
     using System;
     using System.Collections.Generic;
 
-    public class Node : IComparable<Node>
+    public sealed class Node : IComparable<Node>
     {
         public readonly static Node Null = new Node(long.MaxValue);
-        private long _rank;
-        private readonly ISet<Node> _listeners = new HashSet<Node>();
+        private long rank;
+        private readonly ISet<Node> listeners = new HashSet<Node>();
 
         public Node() 
             : this(0L)
@@ -16,12 +16,12 @@ namespace Sodium
 
         private Node(long rank)
         {
-            _rank = rank;
+            this.rank = rank;
         }
 
-        ///
-        /// @return true if any changes were made. 
-        ///
+        /// <summary>
+        /// </summary>
+        /// <returns>true if any changes were made. </returns>
         public bool LinkTo(Node target)
         {
             if (target == Null)
@@ -29,8 +29,8 @@ namespace Sodium
                 return false;
             }
 
-            bool changed = target.EnsureBiggerThan(_rank, new HashSet<Node>());
-            _listeners.Add(target);
+            bool changed = target.EnsureBiggerThan(rank, new HashSet<Node>());
+            listeners.Add(target);
             return changed;
         }
 
@@ -41,39 +41,29 @@ namespace Sodium
                 return;
             }
 
-            _listeners.Remove(target);
+            listeners.Remove(target);
         }
 
         private bool EnsureBiggerThan(long limit, ISet<Node> visited)
         {
-            if (_rank > limit || visited.Contains(this))
+            if (rank > limit || visited.Contains(this))
             { 
                 return false;
             }
 
             visited.Add(this);
-            _rank = limit + 1;
-            foreach (var l in _listeners)
+            rank = limit + 1;
+            foreach (var l in listeners)
             { 
-                l.EnsureBiggerThan(_rank, visited);
+                l.EnsureBiggerThan(rank, visited);
             }
 
             return true;
         }
 
-        public int CompareTo(Node o)
+        public int CompareTo(Node n)
         {
-            if (_rank < o._rank)
-            { 
-                return -1;
-            }
-
-            if (_rank > o._rank)
-            { 
-                return 1;
-            }
-
-            return 0;
+            return this.rank.CompareTo(n.rank);
         }
     }
 }
