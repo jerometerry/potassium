@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sodium", "sodium\Sodium.csproj", "{CC18D685-53D9-4A66-8CCA-3E8ED4EC8F13}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sodium", "Sodium\Sodium.csproj", "{CC18D685-53D9-4A66-8CCA-3E8ED4EC8F13}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sodium.Tests", "sodium.tests\Sodium.Tests.csproj", "{1D1FFCFA-CDD6-401A-BE6A-D079CC98200B}"
 EndProject

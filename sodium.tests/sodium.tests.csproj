@@ -7,8 +7,8 @@
     <ProjectGuid>{1D1FFCFA-CDD6-401A-BE6A-D079CC98200B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>sodium.tests</RootNamespace>
-    <AssemblyName>sodium.tests</AssemblyName>
+    <RootNamespace>Sodium.Tests</RootNamespace>
+    <AssemblyName>Sodium.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -49,7 +49,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\sodium\Sodium.csproj">
+    <ProjectReference Include="..\Sodium\Sodium.csproj">
       <Project>{cc18d685-53d9-4a66-8cca-3e8ed4ec8f13}</Project>
       <Name>Sodium</Name>
     </ProjectReference>
