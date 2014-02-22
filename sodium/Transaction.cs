@@ -18,7 +18,13 @@ namespace Sodium
         /// <summary>
         /// True if we need to re-generate the priority queue.
         /// </summary>
-        internal bool ToRegen = false;
+        private bool _toRegen = false;
+
+        internal bool ToRegen
+        {
+            get { return _toRegen; }
+            set { _toRegen = value; }
+        }
 
         private readonly PriorityQueue<Entry> _prioritized = new PriorityQueue<Entry>();
         private readonly ISet<Entry> _entries = new HashSet<Entry>();

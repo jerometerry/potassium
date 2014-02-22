@@ -4,6 +4,8 @@ namespace Sodium
     {
         public static readonly Unit unit = new Unit();
 
-        Unit() { }
+        private Unit() 
+        { 
+        }
     }
 }

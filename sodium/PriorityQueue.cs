@@ -106,18 +106,18 @@ namespace Sodium
                 return true;
             }
 
-            var li = _data.Count - 1; // last index
-            for (int pi = 0; pi < _data.Count; ++pi) // each parent index
+            var lastIndex = _data.Count - 1;
+            for (int parentIndex = 0; parentIndex < _data.Count; ++parentIndex)
             {
-                int lci = 2 * pi + 1; // left child index
-                int rci = 2 * pi + 2; // right child index
+                int leftChildIndex = (2 * parentIndex) + 1;
+                int rightChildIndex = (2 * parentIndex) + 2;
 
-                if (lci <= li && _data[pi].CompareTo(_data[lci]) > 0)
+                if (leftChildIndex <= lastIndex && _data[parentIndex].CompareTo(_data[leftChildIndex]) > 0)
                 { 
                     return false; // if lc exists and it's greater than parent then bad.
                 }
 
-                if (rci <= li && _data[pi].CompareTo(_data[rci]) > 0)
+                if (rightChildIndex <= lastIndex && _data[parentIndex].CompareTo(_data[rightChildIndex]) > 0)
                 { 
                     return false; // check the right child too.
                 }
