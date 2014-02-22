@@ -34,24 +34,6 @@ namespace Sodium
             }
         }
 
-        private void InitializeValue(Transaction t1)
-        {
-            var handler = new TransactionHandler<TA>((t2, a) =>
-            {
-                if (!valueUpdate.HasValue)
-                {
-                    t2.Last(new Runnable(() =>
-                    {
-                        value = valueUpdate.Value();
-                        valueUpdate = Maybe<TA>.Null;
-                    }));
-                }
-
-                valueUpdate = new Maybe<TA>(a);
-            });
-            listener = evt.Listen(Node.Null, t1, handler, false);
-        }
-
         protected Event<TA> Event
         {
             get { return evt; }
@@ -113,11 +95,10 @@ namespace Sodium
         /// <summary>
         /// Lift a ternary function into behaviors.
         /// </summary>
-        /// TODO
-        //public static Behavior<D> Lift<TA, B, C, D>(Lambda3<TA, B, C, D> f, Behavior<TA> a, Behavior<B> b, Behavior<C> c)
-        //{
-        //    return a.lift(f, b, c);
-        //}
+        public static Behavior<TD> Lift<TB, TC, TD>(Lambda3<TA, TB, TC, TD> f, Behavior<TA> a, Behavior<TB> b, Behavior<TC> c)
+        {
+            return a.Lift(f, b, c);
+        }
 
         /// <summary>
         /// Sample the behavior's current value.
@@ -204,27 +185,13 @@ namespace Sodium
         /// <summary>
         /// Lift a ternary function into behaviors.
         /// </summary>
-        /// TODO
-        //public Behavior<D> Lift<B, C, D>(Lambda3<TA, B, C, D> f, Behavior<B> b, Behavior<C> c)
-        //{
-        //    
-        //    Lambda1<TA, Lambda1<B, Lambda1<C, D>>> ffa = null;
-        //    //Lambda1<TA, Lambda1<B, Lambda1<C,D>>> ffa = new Lambda1<TA, Lambda1<B, Lambda1<C,D>>>() {
-        //    //    public Lambda1<B, Lambda1<C,D>> apply(final A aa) {
-        //    //        return new Lambda1<B, Lambda1<C,D>>() {
-        //    //            public Lambda1<C,D> apply(final B bb) {
-        //    //                return new Lambda1<C,D>() {
-        //    //                    public D apply(C cc) {
-        //    //                        return f.apply(aa,bb,cc);
-        //    //                    }
-        //    //                };
-        //    //            }
-        //    //        };
-        //    //    }
-        //    //};
-        //    Behavior<Lambda1<B, Lambda1<C, D>>> bf = map(ffa);
-        //    return apply(apply(bf, b), c);
-        //}
+        public Behavior<TD> Lift<TB, TC, TD>(Lambda3<TA, TB, TC, TD> f, Behavior<TB> b, Behavior<TC> c)
+        {
+            var ffa = TernaryLifter<TB, TC, TD>(f);
+            var bf = Map(ffa);
+            var l1 = Behavior<TB>.Apply<ILambda1<TC, TD>>(bf, b);
+            return Behavior<TC>.Apply<TD>(l1, c);
+        }
 
         /// <summary>
         /// </summary>
@@ -252,6 +219,39 @@ namespace Sodium
             var h1 = new EventSwitchHandler<TA>(bea, sink, t1, h2);
             var l1 = bea.Updates().Listen(sink.Node, t1, h1, false);
             return sink.RegisterListener(l1);
+        }
+
+        private static ILambda1<TA, ILambda1<TB, ILambda1<TC, TD>>> TernaryLifter<TB, TC, TD>(Lambda3<TA, TB, TC, TD> f)
+        {
+            var ffa = new Lambda1<TA, Lambda1<TB, ILambda1<TC, TD>>>((aa) =>
+            {
+                return new Lambda1<TB, ILambda1<TC, TD>>((bb) =>
+                {
+                    return new Lambda1<TC, TD>((cc) =>
+                    {
+                        return f.Apply(aa, bb, cc);
+                    });
+                });
+            });
+            return ffa;
+        }
+
+        private void InitializeValue(Transaction t1)
+        {
+            var handler = new TransactionHandler<TA>((t2, a) =>
+            {
+                if (!valueUpdate.HasValue)
+                {
+                    t2.Last(new Runnable(() =>
+                    {
+                        value = valueUpdate.Value();
+                        valueUpdate = Maybe<TA>.Null;
+                    }));
+                }
+
+                valueUpdate = new Maybe<TA>(a);
+            });
+            listener = evt.Listen(Node.Null, t1, handler, false);
         }
     }
 }

@@ -68,7 +68,7 @@ namespace Sodium
         /// <summary>
         /// Listen for firings of this event. The returned Listener has an unlisten()
         /// method to cause the listener to be removed. This is the observer pattern.
-        ///</summary>
+        /// </summary>
         public IListener Listen(IHandler<TA> action)
         {
             return Listen(Node.Null, new TransactionHandler<TA>((t, a) => action.Run(a)));
