@@ -13,6 +13,20 @@ namespace Sodium
             this.f = f;
         }
 
+        /// <summary>
+        /// Send the event if the predicate evaluates to true
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="t"></param>
+        /// <param name="a"></param>
+        public void Send(ILambda1<TA, bool> predicate, Transaction t, TA a)
+        {
+            if (f.Apply(a))
+            {
+                this.Send(t, a);
+            }
+        }
+
         protected internal override TA[] SampleNow()
         {
             var events = evt.SampleNow();

@@ -1,19 +1,19 @@
-using System;
-
 namespace Sodium
 {
+    using System;
+
     internal sealed class Runnable : IRunnable
     {
-        private readonly Action _action;
+        private readonly Action action;
 
         public Runnable(Action action)
         {
-            _action = action;
+            this.action = action;
         }
 
         public void Run()
         {
-            _action();
+            action();
         }
     }
 }

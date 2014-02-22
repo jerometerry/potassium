@@ -6,9 +6,16 @@ namespace Sodium
     {
         private static long nextSequence;
 
-        public readonly IHandler<Transaction> action;
+        private readonly IHandler<Transaction> action;
         private readonly Node rank;
         private readonly long sequence;
+        
+        public Entry(Node rank, IHandler<Transaction> action)
+        {
+            this.rank = rank;
+            this.action = action;
+            this.sequence = nextSequence++;
+        }
 
         public IHandler<Transaction> Action
         {
@@ -16,13 +23,6 @@ namespace Sodium
             {
                 return action;
             }
-        }
-
-        public Entry(Node rank, IHandler<Transaction> action)
-        {
-            this.rank = rank;
-            this.action = action;
-            this.sequence = nextSequence++;
         }
 
         public int CompareTo(Entry e)

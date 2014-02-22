@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
-
 namespace Sodium
 {
+    using System;
+    using System.Collections.Generic;
+
     public sealed class PriorityQueue<T> where T : IComparable<T>
     {
         private readonly List<T> data;
@@ -29,14 +29,6 @@ namespace Sodium
             }
         }
 
-        private void Swap(int index1, int index2)
-        {
-            T item1 = data[index1];
-            T item2 = data[index2];
-            data[index1] = item2;
-            data[index2] = item1;
-        }
-
         public T Remove()
         {
             // assumes pq is not empty; up to calling code
@@ -55,10 +47,10 @@ namespace Sodium
                     break;  // no children so done
                 }
 
-                var rightChild = childIndex + 1;     // right child
+                var rightChild = childIndex + 1; 
                 if (rightChild <= lastIndex && data[rightChild].CompareTo(data[childIndex]) < 0) 
+                {
                     // if there is a rc (ci + 1), and it is smaller than left child, use the rc instead
-                { 
                     childIndex = rightChild;
                 }
 
@@ -102,7 +94,7 @@ namespace Sodium
 
         public override string ToString()
         {
-            var s = "";
+            var s = string.Empty;
             for (int i = 0; i < data.Count; ++i)
             { 
                 s += data[i] + " ";
@@ -139,5 +131,13 @@ namespace Sodium
 
             return true; // passed all checks
         } // IsConsistent
+
+        private void Swap(int index1, int index2)
+        {
+            T item1 = data[index1];
+            T item2 = data[index2];
+            data[index1] = item2;
+            data[index2] = item1;
+        }
     }
 }

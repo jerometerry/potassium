@@ -5,9 +5,9 @@ namespace Sodium
 
     public sealed class Node : IComparable<Node>
     {
-        public readonly static Node Null = new Node(long.MaxValue);
-        private long rank;
+        public static readonly Node Null = new Node(long.MaxValue);
         private readonly ISet<Node> listeners = new HashSet<Node>();
+        private long rank;
 
         public Node() 
             : this(0L)
@@ -44,6 +44,11 @@ namespace Sodium
             listeners.Remove(target);
         }
 
+        public int CompareTo(Node n)
+        {
+            return this.rank.CompareTo(n.rank);
+        }
+
         private bool EnsureBiggerThan(long limit, ISet<Node> visited)
         {
             if (rank > limit || visited.Contains(this))
@@ -59,11 +64,6 @@ namespace Sodium
             }
 
             return true;
-        }
-
-        public int CompareTo(Node n)
-        {
-            return this.rank.CompareTo(n.rank);
         }
     }
 }

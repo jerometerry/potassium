@@ -17,6 +17,11 @@ namespace Sodium
             this.target = target;
         }
 
+        ~Listener()
+        {
+            Unlisten();
+        }
+
         public override void Unlisten()
         {
             lock (Transaction.ListenersLock)
@@ -24,11 +29,6 @@ namespace Sodium
                 evt.RemoveAction(action);
                 evt.Node.UnlinkTo(target);
             }
-        }
-
-        ~Listener()
-        {
-            Unlisten();
         }
     }
 }

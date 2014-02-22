@@ -2,12 +2,20 @@ namespace Sodium
 {
     internal sealed class BehaviorSwitchHandler<TA> : ITransactionHandler<Behavior<TA>>
     {
-        private IListener listener;
         private readonly EventSink<TA> sink;
+        private IListener listener;
 
         public BehaviorSwitchHandler(EventSink<TA> sink)
         {
             this.sink = sink;
+        }
+
+        ~BehaviorSwitchHandler()
+        {
+            if (listener != null)
+            {
+                listener.Unlisten();
+            }
         }
 
         public void Run(Transaction t, Behavior<TA> ba)
@@ -30,14 +38,6 @@ namespace Sodium
         private void Handler(Transaction t3, TA a)
         {
             sink.Send(t3, a);
-        }
-
-        ~BehaviorSwitchHandler()
-        {
-            if (listener != null)
-            { 
-                listener.Unlisten();
-            }
         }
     }
 }

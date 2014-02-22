@@ -7,14 +7,6 @@
         private readonly T value;
         private readonly bool hasValue;
 
-        public static Maybe<T> Null
-        {
-            get
-            {
-                return new Maybe<T>(default(T), false);
-            }
-        }
-
         public Maybe()
         {
             hasValue = false;
@@ -32,22 +24,20 @@
             this.hasValue = hasValue;
         }
 
+        public static Maybe<T> Null
+        {
+            get
+            {
+                return new Maybe<T>(default(T), false);
+            }
+        }
+
         public bool HasValue
         {
             get
             {
                 return hasValue;
             }
-        }
-
-        public T Value()
-        {
-            if (!HasValue)
-            {
-                throw new ArgumentException("Maybe doesn't contain a value!");
-            }
-
-            return value;
         }
 
         public static implicit operator T(Maybe<T> m)
@@ -58,6 +48,16 @@
         public static implicit operator Maybe<T>(T m)
         {
             return new Maybe<T>(m);
+        }
+
+        public T Value()
+        {
+            if (!HasValue)
+            {
+                throw new ArgumentException("Maybe doesn't contain a value!");
+            }
+
+            return value;
         }
 
         public override string ToString()

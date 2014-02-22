@@ -2,10 +2,10 @@ namespace Sodium
 {
     internal sealed class BehaviorApplyHandler<TA, TB> : IHandler<Transaction>
     {
-        private bool fired;
         private readonly EventSink<TB> evt;
         private readonly Behavior<ILambda1<TA, TB>> bf;
         private readonly Behavior<TA> ba;
+        private bool fired;
 
         public BehaviorApplyHandler(EventSink<TB> evt, Behavior<ILambda1<TA, TB>> bf, Behavior<TA> ba)
         {
@@ -22,14 +22,16 @@ namespace Sodium
             }
 
             fired = true;
-            t1.Prioritized(evt.Node, new Handler<Transaction>(t2 =>
-            {
-                var v = bf.NewValue();
-                var nv = ba.NewValue();
-                var b = v.Apply(nv);
-                evt.Send(t2, b);
-                fired = false;
-            }));
+            t1.Prioritized(evt.Node, new Handler<Transaction>(t2 => Send(t2)));
+        }
+
+        private void Send(Transaction t)
+        {
+            var v = bf.NewValue();
+            var nv = ba.NewValue();
+            var b = v.Apply(nv);
+            evt.Send(t, b);
+            fired = false;
         }
     }
 }

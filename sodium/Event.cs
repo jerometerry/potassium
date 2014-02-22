@@ -11,42 +11,48 @@ namespace Sodium
         private readonly Node node = new Node();
         private readonly List<TA> firings = new List<TA>();
 
+        ~Event()
+        {
+            foreach (var l in listeners)
+            {
+                l.Unlisten();
+            }
+        }
+
         internal Node Node
         {
             get { return node; }
         }
 
-        internal void RemoveAction(ITransactionHandler<TA> action)
+        /// <summary>
+        /// Merge two streams of events of the same type, combining simultaneous
+        /// event occurrences.
+        ///
+        /// In the case where multiple event occurrences are simultaneous (i.e. all
+        /// within the same transaction), they are combined using the same logic as
+        /// 'coalesce'.
+        /// </summary>
+        public static Event<TA> MergeWith(ILambda2<TA, TA, TA> f, Event<TA> ea, Event<TA> eb)
         {
-            actions.Remove(action);
+            return Merge(ea, eb).Coalesce(f);
         }
 
-        internal void Send(Transaction trans, TA a)
+        /// <summary>
+        /// Merge two streams of events of the same type.
+        ///
+        /// In the case where two event occurrences are simultaneous (i.e. both
+        /// within the same transaction), both will be delivered in the same
+        /// transaction. If the event firings are ordered for some reason, then
+        /// their ordering is retained. In many common cases the ordering will
+        /// be undefined.
+        /// </summary>
+        public static Event<TA> Merge(Event<TA> ea, Event<TA> eb)
         {
-            if (!firings.Any())
-            { 
-                trans.Last(new Runnable(() => firings.Clear()));
-            }
-
-            firings.Add(a);
-
-            var listeners = new List<ITransactionHandler<TA>>(actions);
-            foreach (var action in listeners)
-            {
-                try
-                {
-                    action.Run(trans, a);
-                }
-                catch (Exception t)
-                {
-                    System.Diagnostics.Debug.WriteLine("{0}", t);
-                }
-            }
-        }
-
-        protected internal virtual TA[] SampleNow()
-        {
-            return null;
+            var sink = new MergeEventSink<TA>(ea, eb);
+            var h = new TransactionHandler<TA>(sink.Send);
+            var l1 = ea.Listen(sink.Node, h);
+            var l2 = eb.Listen(sink.Node, h);
+            return sink.RegisterListener(l1).RegisterListener(l2);
         }
 
         /// <summary>
@@ -66,46 +72,6 @@ namespace Sodium
         public IListener Listen(IHandler<TA> action)
         {
             return Listen(Node.Null, new TransactionHandler<TA>((t, a) => action.Run(a)));
-        }
-
-        internal IListener Listen(Node target, ITransactionHandler<TA> action)
-        {
-            return Transaction.Apply(new Lambda1<Transaction, IListener>(t => Listen(target, t, action, false)));
-        }
-
-        internal IListener Listen(Node target, Transaction trans, ITransactionHandler<TA> action, bool suppressEarlierFirings)
-        {
-            lock (Transaction.ListenersLock)
-            {
-                if (Node.LinkTo(target))
-                { 
-                    trans.ToRegen = true;
-                }
-
-                actions.Add(action);
-            }
-
-            var aNow = SampleNow();
-            if (aNow != null)
-            {
-                // In cases like value(), we start with an initial value.
-                foreach (var t in aNow)
-                { 
-                    action.Run(trans, (TA)t); // <-- unchecked warning is here
-                }
-            }
-
-            if (!suppressEarlierFirings)
-            {
-                // Anything sent already in this transaction must be sent now so that
-                // there's no order dependency between send and listen.
-                foreach (var a in firings)
-                { 
-                    action.Run(trans, a);
-                }
-            }
-
-            return new Listener<TA>(this, action, target);
         }
 
         /// <summary>
@@ -163,42 +129,13 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Merge two streams of events of the same type.
-        ///
-        /// In the case where two event occurrences are simultaneous (i.e. both
-        /// within the same transaction), both will be delivered in the same
-        /// transaction. If the event firings are ordered for some reason, then
-        /// their ordering is retained. In many common cases the ordering will
-        /// be undefined.
-        /// </summary>
-        public static Event<TA> Merge(Event<TA> ea, Event<TA> eb)
-        {
-            var sink = new MergeEventSink<TA>(ea, eb);
-            var h = new TransactionHandler<TA>(sink.Send);
-            var l1 = ea.Listen(sink.Node, h);
-            var l2 = eb.Listen(sink.Node, h);
-            return sink.RegisterListener(l1).RegisterListener(l2);
-        }
-
-        /// <summary>
         /// Push each event occurrence onto a new transaction.
         /// </summary>
         public Event<TA> Delay()
         {
             var sink = new EventSink<TA>();
-            var l1 = Listen(sink.Node, new TransactionHandler<TA>((t, a) => t.Post(new Runnable(() =>
-            {
-                var trans = new Transaction();
-                try
-                {
-                    sink.Send(trans, a);
-                }
-                finally
-                {
-                    trans.Close();
-                }
-            }))));
-
+            var handler = new TransactionHandler<TA>((t, a) => t.Post(() => sink.Send(a)));
+            var l1 = Listen(sink.Node, handler);
             return sink.RegisterListener(l1);
         }
 
@@ -226,36 +163,6 @@ namespace Sodium
             return Transaction.Apply(new Lambda1<Transaction, Event<TA>>(t => Coalesce(t, f)));
         }
 
-        private Event<TA> Coalesce(Transaction t1, ILambda2<TA, TA, TA> f)
-        {
-            var ev = this;
-            var sink = new CoalesceEventSink<TA>(ev, f);
-            var h = new CoalesceHandler<TA>(sink, f);
-            var l = Listen(sink.Node, t1, h, false);
-            return sink.RegisterListener(l);
-        }
-
-        /// <summary>
-        /// Clean up the output by discarding any firing other than the last one. 
-        /// </summary>
-        internal Event<TA> LastFiringOnly(Transaction trans)
-        {
-            return Coalesce(trans, new Lambda2<TA, TA, TA>((a, b) => b));
-        }
-
-        /// <summary>
-        /// Merge two streams of events of the same type, combining simultaneous
-        /// event occurrences.
-        ///
-        /// In the case where multiple event occurrences are simultaneous (i.e. all
-        /// within the same transaction), they are combined using the same logic as
-        /// 'coalesce'.
-        /// </summary>
-        public static Event<TA> MergeWith(ILambda2<TA, TA, TA> f, Event<TA> ea, Event<TA> eb)
-        {
-            return Merge(ea, eb).Coalesce(f);
-        }
-
         /// <summary>
         /// Overload of filter that accepts a Func to support C# lambda expressions
         /// </summary>
@@ -269,17 +176,11 @@ namespace Sodium
         /// <summary>
         /// Only keep event occurrences for which the predicate returns true.
         /// </summary>
-        public Event<TA> Filter(ILambda1<TA, Boolean> f)
+        public Event<TA> Filter(ILambda1<TA, bool> predicate)
         {
             var ev = this;
-            var sink = new FilterEventSink<TA>(ev, f);
-            var l = Listen(sink.Node, new TransactionHandler<TA>((t, a) => 
-            { 
-                if (f.Apply(a))
-                { 
-                    sink.Send(t, a);
-                }
-            }));
+            var sink = new FilterEventSink<TA>(ev, predicate);
+            var l = Listen(sink.Node, new TransactionHandler<TA>((t, a) => sink.Send(predicate, t, a)));
             return sink.RegisterListener(l);
         }
 
@@ -288,7 +189,7 @@ namespace Sodium
         /// </summary>
         public Event<TA> FilterNotNull()
         {
-            return Filter(new Lambda1<TA, Boolean>(a => a != null));
+            return Filter(new Lambda1<TA, bool>(a => a != null));
         }
 
         /// <summary>
@@ -296,10 +197,10 @@ namespace Sodium
         /// Note that the behavior's value is as it was at the start of the transaction,
         /// that is, no state changes from the current transaction are taken into account.
         /// </summary>
-        public Event<TA> Gate(Behavior<Boolean> bPred)
+        public Event<TA> Gate(Behavior<bool> predicate)
         {
             var f = new Lambda2<TA, bool, Maybe<TA>>((a, pred) => pred ? new Maybe<TA>(a) : null);
-            return Snapshot(bPred, f).FilterNotNull().Map(a => a.Value());
+            return Snapshot(predicate, f).FilterNotNull().Map(a => a.Value());
         }
 
         /// <summary>
@@ -313,8 +214,8 @@ namespace Sodium
             var s = es.Hold(initState);
             var ebs = ea.Snapshot(s, f);
             var eb = ebs.Map(new Lambda1<Tuple2<TB, TS>, TB>(bs => bs.V1));
-            var esOut = ebs.Map(new Lambda1<Tuple2<TB, TS>, TS>(bs => bs.V2));
-            es.Loop(esOut);
+            var evt = ebs.Map(new Lambda1<Tuple2<TB, TS>, TS>(bs => bs.V2));
+            es.Loop(evt);
             return eb;
         }
 
@@ -331,9 +232,9 @@ namespace Sodium
             var ea = this;
             var es = new EventLoop<TS>();
             var s = es.Hold(initState);
-            var esOut = ea.Snapshot(s, f);
-            es.Loop(esOut);
-            return esOut.Hold(initState);
+            var evt = ea.Snapshot(s, f);
+            es.Loop(evt);
+            return evt.Hold(initState);
         }
 
         /// <summary>
@@ -343,20 +244,9 @@ namespace Sodium
         {
             // This is a bit long-winded but it's efficient because it deregisters
             // the listener.
-            var ev = this;
             var la = new IListener[1];
-            var sink = new OnceEventSink<TA>(ev, la);
-            la[0] = ev.Listen(sink.Node, new TransactionHandler<TA>((t, a) =>
-            {
-                sink.Send(t, a);
-                if (la[0] == null)
-                { 
-                    return;
-                }
-
-                la[0].Unlisten();
-                la[0] = null;
-            }));
+            var sink = new OnceEventSink<TA>(this, la);
+            la[0] = this.Listen(sink.Node, new TransactionHandler<TA>((t, a) => sink.Send(la, t, a)));
             return sink.RegisterListener(la[0]);
         }
 
@@ -366,12 +256,94 @@ namespace Sodium
             return this;
         }
 
-        ~Event()
+        internal void RemoveAction(ITransactionHandler<TA> action)
         {
-            foreach (var l in listeners)
-            { 
-                l.Unlisten();
+            actions.Remove(action);
+        }
+
+        internal void Send(Transaction trans, TA a)
+        {
+            if (!firings.Any())
+            {
+                trans.Last(new Runnable(() => firings.Clear()));
             }
+
+            firings.Add(a);
+
+            var listeners = new List<ITransactionHandler<TA>>(actions);
+            foreach (var action in listeners)
+            {
+                try
+                {
+                    action.Run(trans, a);
+                }
+                catch (Exception t)
+                {
+                    System.Diagnostics.Debug.WriteLine("{0}", t);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clean up the output by discarding any firing other than the last one. 
+        /// </summary>
+        internal Event<TA> LastFiringOnly(Transaction trans)
+        {
+            return Coalesce(trans, new Lambda2<TA, TA, TA>((a, b) => b));
+        }
+
+        internal IListener Listen(Node target, ITransactionHandler<TA> action)
+        {
+            return Transaction.Apply(new Lambda1<Transaction, IListener>(t => Listen(target, t, action, false)));
+        }
+
+        internal IListener Listen(Node target, Transaction trans, ITransactionHandler<TA> action, bool suppressEarlierFirings)
+        {
+            lock (Transaction.ListenersLock)
+            {
+                if (Node.LinkTo(target))
+                {
+                    trans.ToRegen = true;
+                }
+
+                actions.Add(action);
+            }
+
+            var events = SampleNow();
+            if (events != null)
+            {
+                // In cases like value(), we start with an initial value.
+                foreach (var t in events)
+                {
+                    action.Run(trans, t); // <-- unchecked warning is here
+                }
+            }
+
+            if (!suppressEarlierFirings)
+            {
+                // Anything sent already in this transaction must be sent now so that
+                // there's no order dependency between send and listen.
+                foreach (var a in firings)
+                {
+                    action.Run(trans, a);
+                }
+            }
+
+            return new Listener<TA>(this, action, target);
+        }
+
+        protected internal virtual TA[] SampleNow()
+        {
+            return null;
+        }
+
+        private Event<TA> Coalesce(Transaction t1, ILambda2<TA, TA, TA> f)
+        {
+            var ev = this;
+            var sink = new CoalesceEventSink<TA>(ev, f);
+            var h = new CoalesceHandler<TA>(sink, f);
+            var l = Listen(sink.Node, t1, h, false);
+            return sink.RegisterListener(l);
         }
     }
 }
