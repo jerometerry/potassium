@@ -45,6 +45,16 @@ namespace Sodium
             Run(new Handler<Transaction>((t) => code.Run()));
         }
 
+        /// <summary>
+        /// Overload of Prioritized to support C# lambdas
+        /// </summary>
+        /// <param name="rank"></param>
+        /// <param name="action"></param>
+        public void Prioritized(Node rank, Action<Transaction> action)
+        {
+            Prioritized(rank, new Handler<Transaction>(action));
+        }
+
         public void Prioritized(Node rank, IHandler<Transaction> action)
         {
             var e = new Entry(rank, action);
@@ -130,6 +140,15 @@ namespace Sodium
                     current = transWas;
                 }
             }
+        }
+
+        /// <summary>
+        /// Overload of Run to support C# lambdas
+        /// </summary>
+        /// <param name="code"></param>
+        internal static void Run(Action<Transaction> code)
+        {
+            Run(new Handler<Transaction>(code));
         }
 
         internal static void Run(IHandler<Transaction> code)

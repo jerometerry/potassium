@@ -4,7 +4,7 @@ namespace Sodium
     {
         public void Send(TA a)
         {
-            Transaction.Run(new Handler<Transaction>(t => Send(t, a)));
+            Transaction.Run(t => Send(t, a));
         }
     }
 }

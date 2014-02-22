@@ -22,7 +22,7 @@ namespace Sodium
             }
 
             fired = true;
-            t1.Prioritized(evt.Node, new Handler<Transaction>(t2 => Send(t2)));
+            t1.Prioritized(evt.Node, Send);
         }
 
         private void Send(Transaction t)

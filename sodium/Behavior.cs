@@ -23,24 +23,7 @@ namespace Sodium
             this.evt = evt;
             this.value = initValue;
             var behavior = this;
-
-            Transaction.Run(new Handler<Transaction>(t1 =>
-            {
-                var handler = new TransactionHandler<TA>((t2, a) =>
-                {
-                    if (!behavior.valueUpdate.HasValue)
-                    {
-                        t2.Last(new Runnable(() =>
-                        {
-                            behavior.value = behavior.valueUpdate.Value();
-                            behavior.valueUpdate = Maybe<TA>.Null;
-                        }));
-                    }
-
-                    valueUpdate = new Maybe<TA>(a);
-                });
-                listener = evt.Listen(Node.Null, t1, handler, false);
-            }));
+            Transaction.Run(InitializeValue);
         }
 
         ~Behavior()
@@ -49,6 +32,24 @@ namespace Sodium
             {
                 listener.Unlisten();
             }
+        }
+
+        private void InitializeValue(Transaction t1)
+        {
+            var handler = new TransactionHandler<TA>((t2, a) =>
+            {
+                if (!valueUpdate.HasValue)
+                {
+                    t2.Last(new Runnable(() =>
+                    {
+                        value = valueUpdate.Value();
+                        valueUpdate = Maybe<TA>.Null;
+                    }));
+                }
+
+                valueUpdate = new Maybe<TA>(a);
+            });
+            listener = evt.Listen(Node.Null, t1, handler, false);
         }
 
         protected Event<TA> Event

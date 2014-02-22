@@ -20,7 +20,7 @@ namespace Sodium
             }
             else
             {
-                t1.Prioritized(evt.Node, new Handler<Transaction>(t2 => Send(t2)));
+                t1.Prioritized(evt.Node, Send);
                 accum = new Maybe<TA>(a);
             }
         }
