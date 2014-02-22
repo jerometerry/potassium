@@ -113,8 +113,14 @@ namespace Sodium
         /// </summary>
         public TA Sample()
         {
-            // Since pointers in Java are atomic, we don't need to explicitly create a
-            // transaction.
+            // Here's the comment from the Java implementation:
+            // 
+            //     Since pointers in Java are atomic, we don't need to explicitly create a
+            //     transaction.
+            //
+            // In C# TA could be either a reference type or a value type. Question:
+            // Can we assume we don't require a transaction here?
+
             return value;
         }
 

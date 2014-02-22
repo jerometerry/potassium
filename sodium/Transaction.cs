@@ -63,6 +63,15 @@ namespace Sodium
         }
 
         /// <summary>
+        /// Overload of Last to support C# lambdas
+        /// </summary>
+        /// <param name="action"></param>
+        public void Last(Action action)
+        {
+            last.Add(new Runnable(action));
+        }
+
+        /// <summary>
         /// Add an action to run after all prioritized() actions.
         /// </summary>
         public void Last(IRunnable action)

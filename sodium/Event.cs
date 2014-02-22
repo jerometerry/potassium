@@ -104,7 +104,8 @@ namespace Sodium
         /// </summary>
         public Behavior<TA> Hold(TA initValue)
         {
-            return Transaction.Apply(new Lambda1<Transaction, Behavior<TA>>(t => new Behavior<TA>(LastFiringOnly(t), initValue)));
+            var action = new Lambda1<Transaction, Behavior<TA>>(t => new Behavior<TA>(LastFiringOnly(t), initValue));
+            return Transaction.Apply(action);
         }
 
         /// <summary>
@@ -122,9 +123,9 @@ namespace Sodium
         /// </summary>
         public Event<TC> Snapshot<TB, TC>(Behavior<TB> b, ILambda2<TA, TB, TC> f)
         {
-            var ev = this;
-            var sink = new SnapshotEventSink<TA, TB, TC>(ev, f, b);
-            var l = Listen(sink.Node, new TransactionHandler<TA>((t2, a) => sink.Send(t2, f.Apply(a, b.Sample()))));
+            var sink = new SnapshotEventSink<TA, TB, TC>(this, f, b);
+            var handler = new TransactionHandler<TA>((t2, a) => sink.Send(t2, f.Apply(a, b.Sample())));
+            var l = Listen(sink.Node, handler);
             return sink.RegisterListener(l);
         }
 
@@ -160,7 +161,8 @@ namespace Sodium
         /// </summary>
         public Event<TA> Coalesce(ILambda2<TA, TA, TA> f)
         {
-            return Transaction.Apply(new Lambda1<Transaction, Event<TA>>(t => Coalesce(t, f)));
+            var handler = new Lambda1<Transaction, Event<TA>>(t => Coalesce(t, f));
+            return Transaction.Apply(handler);
         }
 
         /// <summary>
@@ -178,18 +180,21 @@ namespace Sodium
         /// </summary>
         public Event<TA> Filter(ILambda1<TA, bool> predicate)
         {
-            var ev = this;
-            var sink = new FilterEventSink<TA>(ev, predicate);
-            var l = Listen(sink.Node, new TransactionHandler<TA>((t, a) => sink.Send(predicate, t, a)));
+            var sink = new FilterEventSink<TA>(this, predicate);
+            var handler = new TransactionHandler<TA>((t, a) => sink.Send(predicate, t, a));
+            var l = Listen(sink.Node, handler);
             return sink.RegisterListener(l);
         }
 
         /// <summary>
-        /// Filter out any event occurrences whose value is a Java null pointer.
+        /// Filter out any event occurrences whose value is null.
         /// </summary>
+        /// <remarks>For value types, comparison against null will always be false. 
+        /// FilterNotNull will not filter out any values for value types.</remarks>
         public Event<TA> FilterNotNull()
         {
-            return Filter(new Lambda1<TA, bool>(a => a != null));
+            var handler = new Lambda1<TA, bool>(a => a != null);
+            return Filter(handler);
         }
 
         /// <summary>
@@ -209,10 +214,9 @@ namespace Sodium
         /// </summary>
         public Event<TB> Collect<TB, TS>(TS initState, ILambda2<TA, TS, Tuple2<TB, TS>> f)
         {
-            var ea = this;
             var es = new EventLoop<TS>();
             var s = es.Hold(initState);
-            var ebs = ea.Snapshot(s, f);
+            var ebs = Snapshot(s, f);
             var eb = ebs.Map(new Lambda1<Tuple2<TB, TS>, TB>(bs => bs.V1));
             var evt = ebs.Map(new Lambda1<Tuple2<TB, TS>, TS>(bs => bs.V2));
             es.Loop(evt);
@@ -265,7 +269,7 @@ namespace Sodium
         {
             if (!firings.Any())
             {
-                trans.Last(new Runnable(() => firings.Clear()));
+                trans.Last(() => firings.Clear());
             }
 
             firings.Add(a);

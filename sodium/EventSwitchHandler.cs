@@ -23,7 +23,7 @@ namespace Sodium
 
         public void Run(Transaction t, Event<TA> e)
         {
-            t.Last(new Runnable(() =>
+            t.Last(() =>
             {
                 if (listener != null)
                 { 
@@ -31,7 +31,7 @@ namespace Sodium
                 }
 
                 listener = e.Listen(evt.Node, t, handler, true);
-            }));
+            });
         }
     }
 }
