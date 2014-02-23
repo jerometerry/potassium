@@ -4,7 +4,7 @@ namespace Sodium.Tests
 
     public class MemoryTest4
     {
-        public static void main(String[] args)
+        public static void main(string[] args)
         {
             //new Thread() {
             //    public void run()
@@ -21,18 +21,21 @@ namespace Sodium.Tests
             //    }
             //}.start();
 
-            EventSink<Int32> et = new EventSink<Int32>();
-            EventSink<Int32> eChange = new EventSink<Int32>();
-            Behavior<Event<Int32>> oout = eChange.Map(x => (Event<Int32>)et).Hold((Event<Int32>)et);
-            Event<Int32> o = Behavior<Int32>.SwitchE(oout);
-            IListener l = o.Listen(tt => {
+            EventSink<int> et = new EventSink<int>();
+            EventSink<int> evt = new EventSink<int>();
+            Behavior<Event<int>> oout = evt.Map(x => (Event<int>)et).Hold((Event<int>)et);
+            Event<int> o = Behavior<int>.SwitchE(oout);
+            IListener l = o.Listen(tt =>
+            {
                 Console.WriteLine("{0}", tt);
             });
             int i = 0;
-            while (i < 1000000000) {
-                eChange.Send(i);
+            while (i < 1000000000)
+            {
+                evt.Send(i);
                 i++;
             }
+
             l.Unlisten();
         }
     }

@@ -1,10 +1,9 @@
-using System.Globalization;
-
 namespace Sodium.Tests
 {
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
+    using NUnit.Framework;
 
     [TestFixture]
     public class EventTester : SodiumTestCase
@@ -12,22 +11,22 @@ namespace Sodium.Tests
         [Test]
         public void TestSendEvent()
         {
-            var e = new EventSink<Int32>();
-            var o = new List<Int32>();
+            var e = new EventSink<int>();
+            var o = new List<int>();
             var l = e.Listen(o.Add);
             e.Send(5);
             l.Unlisten();
-            AssertArraysEqual(Arrays<Int32>.AsList(5), o);
+            AssertArraysEqual(Arrays<int>.AsList(5), o);
             e.Send(6);
-            AssertArraysEqual(Arrays<Int32>.AsList(5), o);
+            AssertArraysEqual(Arrays<int>.AsList(5), o);
         }
 
         [Test]
         public void TestMap()
         {
-            var e = new EventSink<Int32>();
+            var e = new EventSink<int>();
             var m = e.Map(x => x.ToString(CultureInfo.InvariantCulture));
-            var o = new List<String>();
+            var o = new List<string>();
             var l = m.Listen(o.Add);
             e.Send(5);
             l.Unlisten();
@@ -37,44 +36,44 @@ namespace Sodium.Tests
         [Test]
         public void TestMergeNonSimultaneous()
         {
-            var e1 = new EventSink<Int32>();
-            var e2 = new EventSink<Int32>();
-            var o = new List<Int32>();
-            var l = Event<Int32>.Merge(e1, e2).Listen(o.Add);
+            var e1 = new EventSink<int>();
+            var e2 = new EventSink<int>();
+            var o = new List<int>();
+            var l = Event<int>.Merge(e1, e2).Listen(o.Add);
             e1.Send(7);
             e2.Send(9);
             e1.Send(8);
             l.Unlisten();
-            AssertArraysEqual(Arrays<Int32>.AsList(7, 9, 8), o);
+            AssertArraysEqual(Arrays<int>.AsList(7, 9, 8), o);
         }
 
         [Test]
         public void TestMergeSimultaneous()
         {
-            var e = new EventSink<Int32>();
-            var o = new List<Int32>();
-            var l = Event<Int32>.Merge(e, e).Listen(o.Add);
+            var e = new EventSink<int>();
+            var o = new List<int>();
+            var l = Event<int>.Merge(e, e).Listen(o.Add);
             e.Send(7);
             e.Send(9);
             l.Unlisten();
-            AssertArraysEqual(Arrays<Int32>.AsList(7, 7, 9, 9), o);
+            AssertArraysEqual(Arrays<int>.AsList(7, 7, 9, 9), o);
         }
 
         [Test]
         public void TestCoalesce()
         {
-            var e1 = new EventSink<Int32>();
-            var e2 = new EventSink<Int32>();
-            var o = new List<Int32>();
+            var e1 = new EventSink<int>();
+            var e2 = new EventSink<int>();
+            var o = new List<int>();
             IListener l =
-                 Event<Int32>.Merge(e1, Event<Int32>.Merge(e1.Map(x => x * 100), e2))
+                 Event<int>.Merge(e1, Event<int>.Merge(e1.Map(x => x * 100), e2))
                 .Coalesce((a, b) => a + b)
                 .Listen(o.Add);
             e1.Send(2);
             e1.Send(8);
             e2.Send(40);
             l.Unlisten();
-            AssertArraysEqual(Arrays<Int32>.AsList(202, 808, 40), o);
+            AssertArraysEqual(Arrays<int>.AsList(202, 808, 40), o);
         }
 
         [Test]
@@ -93,37 +92,37 @@ namespace Sodium.Tests
         [Test]
         public void TestFilterNotNull()
         {
-            var e = new EventSink<String>();
-            var o = new List<String>();
+            var e = new EventSink<string>();
+            var o = new List<string>();
             var l = e.FilterNotNull().Listen(o.Add);
             e.Send("tomato");
             e.Send(null);
             e.Send("peach");
             l.Unlisten();
-            AssertArraysEqual(Arrays<String>.AsList("tomato", "peach"), o);
+            AssertArraysEqual(Arrays<string>.AsList("tomato", "peach"), o);
         }
 
         [Test]
         public void TestLoopEvent()
         {
-            var ea = new EventSink<Int32>();
-            var eb = new EventLoop<Int32>();
-            var ec = Event<Int32>.MergeWith((x, y) => x + y, ea.Map(x => x % 10), eb);
+            var ea = new EventSink<int>();
+            var eb = new EventLoop<int>();
+            var ec = Event<int>.MergeWith((x, y) => x + y, ea.Map(x => x % 10), eb);
             var ebO = ea.Map(x => x / 10).Filter(x => x != 0);
             eb.Loop(ebO);
-            var o = new List<Int32>();
+            var o = new List<int>();
             var l = ec.Listen(o.Add);
             ea.Send(2);
             ea.Send(52);
             l.Unlisten();
-            AssertArraysEqual(Arrays<Int32>.AsList(2, 7), o);
+            AssertArraysEqual(Arrays<int>.AsList(2, 7), o);
         }
 
         [Test]
         public void TestGate()
         {
             var ec = new EventSink<char>();
-            var epred = new BehaviorSink<Boolean>(true);
+            var epred = new BehaviorSink<bool>(true);
             var o = new List<char>();
             var l = ec.Gate(epred).Listen(o.Add);
             ec.Send('H');
@@ -138,11 +137,10 @@ namespace Sodium.Tests
         [Test]
         public void TestCollect()
         {
-            var ea = new EventSink<Int32>();
-            var o = new List<Int32>();
+            var ea = new EventSink<int>();
+            var o = new List<int>();
             var sum = ea.Collect(100,
-                //(a,s) => new Tuple2(a+s, a+s)
-                new Lambda2<Int32, Int32, Tuple2<Int32, Int32>>((a, s) => new Tuple2<Int32, Int32>(a + s, a + s))
+                new Lambda2<int, int, Tuple2<int, int>>((a, s) => new Tuple2<int, int>(a + s, a + s))
             );
             var l = sum.Listen(o.Add);
             ea.Send(5);
@@ -151,14 +149,14 @@ namespace Sodium.Tests
             ea.Send(2);
             ea.Send(3);
             l.Unlisten();
-            AssertArraysEqual(Arrays<Int32>.AsList(105, 112, 113, 115, 118), o);
+            AssertArraysEqual(Arrays<int>.AsList(105, 112, 113, 115, 118), o);
         }
 
         [Test]
         public void TestAccum()
         {
-            var ea = new EventSink<Int32>();
-            var o = new List<Int32>();
+            var ea = new EventSink<int>();
+            var o = new List<int>();
             var sum = ea.Accum(100, (a, s) => a + s);
             var l = sum.Updates().Listen(o.Add);
             ea.Send(5);
@@ -167,7 +165,7 @@ namespace Sodium.Tests
             ea.Send(2);
             ea.Send(3);
             l.Unlisten();
-            AssertArraysEqual(Arrays<Int32>.AsList(105, 112, 113, 115, 118), o);
+            AssertArraysEqual(Arrays<int>.AsList(105, 112, 113, 115, 118), o);
         }
 
         [Test]
@@ -197,5 +195,4 @@ namespace Sodium.Tests
             AssertArraysEqual(Arrays<char>.AsList('C', 'B', 'A'), o);
         }
     }
-
 }
