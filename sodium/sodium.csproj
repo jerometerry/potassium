@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BehaviorApplyHandler.cs" />
+    <Compile Include="BehaviorLoop.cs" />
     <Compile Include="BehaviorSwitchHandler.cs" />
     <Compile Include="BehaviorValueEventSink.cs" />
     <Compile Include="CoalesceEventSink.cs" />

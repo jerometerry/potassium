@@ -24,6 +24,11 @@ namespace Sodium
             get { return node; }
         }
 
+        public static Event<TA> MergeWith(Func<TA, TA, TA> f, Event<TA> ea, Event<TA> eb)
+        {
+            return MergeWith(new Lambda2<TA, TA, TA>(f), ea, eb);
+        }
+
         /// <summary>
         /// Merge two streams of events of the same type, combining simultaneous
         /// event occurrences.
@@ -114,6 +119,11 @@ namespace Sodium
         public Event<TB> Snapshot<TB>(Behavior<TB> beh)
         {
             return Snapshot(beh, new Lambda2<TA, TB, TB>((a, b) => b));
+        }
+
+        public Event<TC> Snapshot<TB, TC>(Behavior<TB> b, Func<TA, TB, TC> f)
+        {
+            return Snapshot(b, new Lambda2<TA,TB,TC>(f));
         }
 
         /// <summary>

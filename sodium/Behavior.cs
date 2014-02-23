@@ -39,6 +39,11 @@ namespace Sodium
             get { return evt; }
         }
 
+        protected void SetValue(TA value)
+        {
+            this.value = value;
+        }
+
         /// <summary>
         /// Overload of lift that accepts binary function Func f and two behaviors, to enable C# lambdas
         /// </summary>

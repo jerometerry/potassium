@@ -3,7 +3,7 @@ namespace Sodium
     using System;
     using System.Collections.Generic;
 
-    internal sealed class Transaction
+    public sealed class Transaction
     {
         /// <summary>
         /// Fine-grained lock that protects listeners and nodes. 
@@ -155,7 +155,7 @@ namespace Sodium
         /// Overload of Run to support C# lambdas
         /// </summary>
         /// <param name="code"></param>
-        internal static void Run(Action<Transaction> code)
+        public static void Run(Action<Transaction> code)
         {
             Run(new Handler<Transaction>(code));
         }
