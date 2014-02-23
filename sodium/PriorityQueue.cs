@@ -5,11 +5,16 @@ namespace Sodium
 
     public sealed class PriorityQueue<T> where T : IComparable<T>
     {
-        private readonly List<T> data;
+        private readonly List<T> data = new List<T>();
 
-        public PriorityQueue()
+        public void Regenerate()
         {
-            data = new List<T>();
+            var entries = new List<T>(data);
+            Clear();
+            foreach (var e in entries)
+            {
+                Add(e);
+            }
         }
 
         public void Add(T item)

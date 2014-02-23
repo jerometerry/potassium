@@ -1,6 +1,5 @@
 namespace Sodium
 {
-
     public sealed class BehaviorLoop<TA> : Behavior<TA>
     {
         public BehaviorLoop()
@@ -15,5 +14,4 @@ namespace Sodium
             this.SetValue(v);
         }
     }
-
 }

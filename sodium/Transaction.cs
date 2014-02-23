@@ -9,11 +9,8 @@ namespace Sodium
         /// Fine-grained lock that protects listeners and nodes. 
         /// </summary>
         internal static readonly object ListenersLock = new object();
-
-        private static Transaction current;
         
         private readonly PriorityQueue<Entry> prioritized = new PriorityQueue<Entry>();
-        private readonly ISet<Entry> entries = new HashSet<Entry>();
         private readonly List<IRunnable> last = new List<IRunnable>();
         private readonly List<IRunnable> post = new List<IRunnable>();
 
@@ -21,12 +18,6 @@ namespace Sodium
         /// True if we need to re-generate the priority queue.
         /// </summary>
         private bool toRegen = false;
-
-        internal bool ToRegen
-        {
-            get { return toRegen; }
-            set { toRegen = value; }
-        }
 
         /// <summary>
         /// Run the specified code inside a single transaction.
@@ -38,6 +29,23 @@ namespace Sodium
         public static void Run(IRunnable code)
         {
             Run(new Handler<Transaction>((t) => code.Run()));
+        }
+
+        /// <summary>
+        /// Overload of Run to support C# lambdas
+        /// </summary>
+        /// <param name="code"></param>
+        public static void Run(Action<Transaction> code)
+        {
+            Run(new Handler<Transaction>(code));
+        }
+
+        public void LinkNodes(Node node, Node target)
+        {
+            if (node.LinkTo(target))
+            {
+                toRegen = true;
+            }
         }
 
         /// <summary>
@@ -54,7 +62,6 @@ namespace Sodium
         {
             var e = new Entry(rank, action);
             prioritized.Add(e);
-            entries.Add(e);
         }
 
         /// <summary>
@@ -94,10 +101,21 @@ namespace Sodium
         public void Close()
         {
             ClosePrioritizedActions();
-
             CloseLastActions();
-
             ClosePostActions();
+        }
+
+        internal static TA Apply<TA>(ILambda1<Transaction, TA> code)
+        {
+            var locker = new ApplyTransactionLocker<TA>(code);
+            locker.Run();
+            return locker.Result;
+        }
+
+        internal static void Run(IHandler<Transaction> code)
+        {
+            var locker = new RunTransactionLocker(code);
+            locker.Run();
         }
 
         private void ClosePrioritizedActions()
@@ -111,7 +129,6 @@ namespace Sodium
                 }
 
                 var e = prioritized.Remove();
-                entries.Remove(e);
                 e.Action.Run(this);
             }
         }
@@ -136,143 +153,16 @@ namespace Sodium
             post.Clear();
         }
 
-        internal static TA Apply<TA>(ILambda1<Transaction, TA> code)
-        {
-            var locker = new ApplyTransactionLocker<TA>(code);
-            locker.Run();
-            return locker.Result;
-        }
-
-        internal static void Run(IHandler<Transaction> code)
-        {
-            var locker = new RunTransactionLocker(code);
-            locker.Run();
-        }
-
-        /// <summary>
-        /// Overload of Run to support C# lambdas
-        /// </summary>
-        /// <param name="code"></param>
-        public static void Run(Action<Transaction> code)
-        {
-            Run(new Handler<Transaction>(code));
-        }
-
         /// <summary>
         /// If the priority queue has entries in it when we modify any of the nodes'
         /// ranks, then we need to re-generate it to make sure it's up-to-date.
         /// </summary>
         private void CheckRegen()
         {
-            if (ToRegen)
+            if (toRegen)
             {
-                ToRegen = false;
-                prioritized.Clear();
-                foreach (var e in entries)
-                {
-                    prioritized.Add(e);
-                }
-            }
-        }
-
-        private abstract class TransactionLocker
-        {
-            /// <summary>
-            /// Coarse-grained lock that's held during the whole transaction. 
-            /// </summary>
-            private static readonly object TransactionLock = new object();
-
-            private Transaction previous;
-            private Transaction transaction;
-            private bool newTransactionCreated;
-
-            public void Run()
-            {
-                lock (TransactionLock)
-                {
-                    try
-                    {
-                        Apply(OpenTransaction());
-                    }
-                    finally
-                    {
-                        CloseTransaction();
-                        RestoreTransaction();
-                    }
-                }
-            }
-
-            private Transaction OpenTransaction()
-            {
-                // If we are already inside a transaction (which must be on the same
-                // thread otherwise we wouldn't have acquired transactionLock), then
-                // keep using that same transaction.
-                previous = Transaction.current;
-
-                if (Transaction.current == null)
-                {
-                    transaction = new Transaction();
-                    Transaction.current = transaction;
-                    newTransactionCreated = true;
-                }
-                else
-                {
-                    transaction = Transaction.current;
-                }
-
-                return transaction;
-            }
-
-            private void CloseTransaction()
-            {
-                if (newTransactionCreated)
-                {
-                    current.Close();
-                }
-            }
-
-            private void RestoreTransaction()
-            {
-                Transaction.current = previous;
-            }
-
-            protected abstract void Apply(Transaction t);
-        }
-
-        private class ApplyTransactionLocker<TA> : TransactionLocker
-        {
-            private ILambda1<Transaction, TA> code;
-
-            private TA result;
-
-            public TA Result
-            {
-                get { return result; }
-            }
-
-            public ApplyTransactionLocker(ILambda1<Transaction, TA> code)
-            {
-                this.code = code;
-            }
-
-            protected override void Apply(Transaction t)
-            {
-                this.result = code.Apply(t);
-            }
-        }
-
-        private class RunTransactionLocker : TransactionLocker
-        {
-            private IHandler<Transaction> code;
-
-            public RunTransactionLocker(IHandler<Transaction> code)
-            {
-                this.code = code;
-            }
-
-            protected override void Apply(Transaction t)
-            {
-                code.Run(current);
+                toRegen = false;
+                prioritized.Regenerate();
             }
         }
     }

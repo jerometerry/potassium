@@ -123,7 +123,7 @@ namespace Sodium
 
         public Event<TC> Snapshot<TB, TC>(Behavior<TB> b, Func<TA, TB, TC> f)
         {
-            return Snapshot(b, new Lambda2<TA,TB,TC>(f));
+            return Snapshot(b, new Lambda2<TA, TB, TC>(f));
         }
 
         /// <summary>
@@ -315,11 +315,7 @@ namespace Sodium
         {
             lock (Transaction.ListenersLock)
             {
-                if (Node.LinkTo(target))
-                {
-                    trans.ToRegen = true;
-                }
-
+                trans.LinkNodes(this.node, target);
                 actions.Add(action);
             }
 

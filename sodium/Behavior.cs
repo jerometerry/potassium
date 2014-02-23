@@ -39,11 +39,6 @@ namespace Sodium
             get { return evt; }
         }
 
-        protected void SetValue(TA value)
-        {
-            this.value = value;
-        }
-
         /// <summary>
         /// Overload of lift that accepts binary function Func f and two behaviors, to enable C# lambdas
         /// </summary>
@@ -125,7 +120,6 @@ namespace Sodium
             //
             // In C# TA could be either a reference type or a value type. Question:
             // Can we assume we don't require a transaction here?
-
             return value;
         }
 
@@ -221,6 +215,11 @@ namespace Sodium
             return sink.RegisterListener(l)
                 .LastFiringOnly(t1);  // Needed in case of an initial value and an update
             // in the same transaction.
+        }
+
+        protected void SetValue(TA value)
+        {
+            this.value = value;
         }
 
         private static Event<TA> SwitchE(Transaction t1, Behavior<Event<TA>> bea)
