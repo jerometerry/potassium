@@ -3,6 +3,11 @@ namespace Sodium
     using System;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// PriorityQueue is adapted from the article Priority Queues with C# by James McCaffrey.
+    /// http://visualstudiomagazine.com/articles/2012/11/01/priority-queues-with-c.aspx?m=1
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public sealed class PriorityQueue<T> where T : IComparable<T>
     {
         private readonly List<T> data = new List<T>();
