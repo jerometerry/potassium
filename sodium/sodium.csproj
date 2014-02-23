@@ -50,7 +50,6 @@
     <Compile Include="BehaviorValueEventSink.cs" />
     <Compile Include="CoalesceEventSink.cs" />
     <Compile Include="CoalesceHandler.cs" />
-    <Compile Include="DualListener.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="EventSwitchHandler.cs" />
     <Compile Include="FilterEventSink.cs" />
@@ -72,9 +71,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Event.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ListenerBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EventSink.cs" />

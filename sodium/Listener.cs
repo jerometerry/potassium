@@ -1,11 +1,11 @@
 namespace Sodium
 {
-    internal sealed class Listener<TA> : ListenerBase
+    internal sealed class Listener<TA> : IListener
     {
-        ///
+        /// <summary>
         /// It's essential that we keep the listener alive while the caller holds
         /// the Listener, so that the finalizer doesn't get triggered.
-        ///
+        /// </summary>
         private readonly Event<TA> evt;
         private readonly ITransactionHandler<TA> action;
         private readonly Node target;
@@ -22,7 +22,7 @@ namespace Sodium
             Unlisten();
         }
 
-        public override void Unlisten()
+        public void Unlisten()
         {
             evt.Unlisten(action, target);
         }
