@@ -6,9 +6,11 @@ namespace Sodium
         /// It's essential that we keep the listener alive while the caller holds
         /// the Listener, so that the finalizer doesn't get triggered.
         /// </summary>
-        private readonly Event<TA> evt;
-        private readonly ITransactionHandler<TA> action;
-        private readonly Node target;
+        private Event<TA> evt;
+        private ITransactionHandler<TA> action;
+        private Node target;
+
+        private bool disposed;
 
         public Listener(Event<TA> evt, ITransactionHandler<TA> action, Node target)
         {
@@ -20,6 +22,18 @@ namespace Sodium
         ~Listener()
         {
             Unlisten();
+        }
+
+        public void Dispose()
+        {
+            if (!disposed)
+            {
+                this.Unlisten();
+                evt = null;
+                action = null;
+                target = null;
+                disposed = true;
+            }
         }
 
         public void Unlisten()
