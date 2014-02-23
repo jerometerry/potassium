@@ -2,7 +2,7 @@ namespace Sodium
 {
     public class Unit
     {
-        public static readonly Unit unit = new Unit();
+        public static readonly Unit Value = new Unit();
 
         private Unit() 
         { 

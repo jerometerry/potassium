@@ -44,7 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplyTransactionLocker.cs" />
     <Compile Include="BehaviorApplyHandler.cs" />
     <Compile Include="BehaviorLoop.cs" />
     <Compile Include="BehaviorSwitchHandler.cs" />
@@ -81,7 +80,6 @@
     <Compile Include="EventSink.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RunTransactionLocker.cs" />
     <Compile Include="SnapshotEventSink.cs" />
     <Compile Include="Transaction.cs" />
   </ItemGroup>

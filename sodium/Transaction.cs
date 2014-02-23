@@ -9,7 +9,12 @@ namespace Sodium
         /// Fine-grained lock that protects listeners and nodes. 
         /// </summary>
         internal static readonly object ListenersLock = new object();
-        
+
+        /// <summary>
+        /// Coarse-grained lock that's held during the whole transaction. 
+        /// </summary>
+        internal static readonly object TransactionLock = new object();
+
         private readonly PriorityQueue<Entry> prioritized = new PriorityQueue<Entry>();
         private readonly List<Action> last = new List<Action>();
         private readonly List<Action> post = new List<Action>();
@@ -20,6 +25,8 @@ namespace Sodium
         private bool nodeRanksModified;
 
         private bool disposed;
+
+        internal static Transaction Current { get; set; }
 
         /// <summary>
         /// Run the specified function inside a single transaction
@@ -32,9 +39,9 @@ namespace Sodium
         /// transaction automatically. It is useful where you want to run multiple
         /// reactive operations atomically.
         /// </remarks>
-        public static TA Apply<TA>(ILambda1<Transaction, TA> code)
+        public static TA Apply<TA>(Func<Transaction, TA> code)
         {
-            var locker = new ApplyTransactionLocker<TA>(code);
+            var locker = new TransactionLocker<TA>(code);
             locker.Run();
             return locker.Result;
         }
@@ -50,8 +57,7 @@ namespace Sodium
         /// </remarks>
         public static void Run(Action<Transaction> code)
         {
-            var locker = new RunTransactionLocker(code);
-            locker.Run();
+            Apply(t => { code(t); return Unit.Value; });
         }
 
         /// <summary>

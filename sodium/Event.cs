@@ -109,8 +109,7 @@ namespace Sodium
         /// </summary>
         public Behavior<TA> Hold(TA initValue)
         {
-            var action = new Lambda1<Transaction, Behavior<TA>>(t => new Behavior<TA>(LastFiringOnly(t), initValue));
-            return Transaction.Apply(action);
+            return Transaction.Apply(t => new Behavior<TA>(LastFiringOnly(t), initValue));
         }
 
         /// <summary>
@@ -171,8 +170,7 @@ namespace Sodium
         /// </summary>
         public Event<TA> Coalesce(ILambda2<TA, TA, TA> f)
         {
-            var handler = new Lambda1<Transaction, Event<TA>>(t => Coalesce(t, f));
-            return Transaction.Apply(handler);
+            return Transaction.Apply(t => Coalesce(t, f));
         }
 
         /// <summary>
@@ -317,7 +315,7 @@ namespace Sodium
 
         internal IListener Listen(Node target, ITransactionHandler<TA> action)
         {
-            return Transaction.Apply(new Lambda1<Transaction, IListener>(t => Listen(target, t, action, false)));
+            return Transaction.Apply(t => Listen(target, t, action, false));
         }
 
         internal IListener Listen(Node target, Transaction trans, ITransactionHandler<TA> action, bool suppressEarlierFirings)

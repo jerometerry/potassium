@@ -1,20 +1,30 @@
 ﻿namespace Sodium
 {
-    internal abstract class TransactionLocker
+    using System;
+
+    internal sealed class TransactionLocker<TA>
     {
-        /// <summary>
-        /// Coarse-grained lock that's held during the whole transaction. 
-        /// </summary>
-        private static readonly object TransactionLock = new object();
-        private static Transaction current;
+        private readonly Func<Transaction, TA> code;
 
         private Transaction previous;
         private Transaction transaction;
         private bool newTransactionCreated;
+        
+        private TA result;
+
+        public TransactionLocker(Func<Transaction, TA> code)
+        {
+            this.code = code;
+        }
+
+        public TA Result
+        {
+            get { return result; }
+        }
 
         public void Run()
         {
-            lock (TransactionLock)
+            lock (Transaction.TransactionLock)
             {
                 try
                 {
@@ -28,24 +38,27 @@
             }
         }
 
-        protected abstract void Apply(Transaction t);
+        private void Apply(Transaction t)
+        {
+            this.result = code(t);
+        }
 
         private Transaction OpenTransaction()
         {
             // If we are already inside a transaction (which must be on the same
             // thread otherwise we wouldn't have acquired transactionLock), then
             // keep using that same transaction.
-            previous = current;
+            previous = Transaction.Current;
 
-            if (current == null)
+            if (Transaction.Current == null)
             {
                 transaction = new Transaction();
-                current = transaction;
+                Transaction.Current = transaction;
                 newTransactionCreated = true;
             }
             else
             {
-                transaction = current;
+                transaction = Transaction.Current;
             }
 
             return transaction;
@@ -55,13 +68,13 @@
         {
             if (newTransactionCreated)
             {
-                current.Close();
+                Transaction.Current.Close();
             }
         }
 
         private void RestoreTransaction()
         {
-            current = previous;
+            Transaction.Current = previous;
         }
     }
 }

@@ -88,7 +88,7 @@ namespace Sodium
         /// </summary>
         public static Event<TA> SwitchE(Behavior<Event<TA>> bea)
         {
-            return Transaction.Apply(new Lambda1<Transaction, Event<TA>>(t => SwitchE(t, bea)));
+            return Transaction.Apply(t => SwitchE(t, bea));
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace Sodium
         /// </summary>
         public Event<TA> Value()
         {
-            return Transaction.Apply(new Lambda1<Transaction, Event<TA>>(Value));
+            return Transaction.Apply(Value);
         }
 
         /// <summary>
