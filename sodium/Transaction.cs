@@ -3,7 +3,7 @@ namespace Sodium
     using System;
     using System.Collections.Generic;
 
-    public sealed class Transaction
+    internal sealed class Transaction : IDisposable
     {
         /// <summary>
         /// Fine-grained lock that protects listeners and nodes. 
@@ -11,91 +11,83 @@ namespace Sodium
         internal static readonly object ListenersLock = new object();
         
         private readonly PriorityQueue<Entry> prioritized = new PriorityQueue<Entry>();
-        private readonly List<IRunnable> last = new List<IRunnable>();
-        private readonly List<IRunnable> post = new List<IRunnable>();
+        private readonly List<Action> last = new List<Action>();
+        private readonly List<Action> post = new List<Action>();
 
         /// <summary>
         /// True if we need to re-generate the priority queue.
         /// </summary>
-        private bool toRegen = false;
+        private bool nodeRanksModified;
+
+        private bool disposed;
 
         /// <summary>
-        /// Run the specified code inside a single transaction.
-        ///
+        /// Run the specified function inside a single transaction
+        /// </summary>
+        /// <typeparam name="TA"></typeparam>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        /// <remarks>
         /// In most cases this is not needed, because all APIs will create their own
         /// transaction automatically. It is useful where you want to run multiple
         /// reactive operations atomically.
-        /// </summary>
-        public static void Run(IRunnable code)
+        /// </remarks>
+        public static TA Apply<TA>(ILambda1<Transaction, TA> code)
         {
-            Run(new Handler<Transaction>((t) => code.Run()));
+            var locker = new ApplyTransactionLocker<TA>(code);
+            locker.Run();
+            return locker.Result;
         }
 
         /// <summary>
-        /// Overload of Run to support C# lambdas
+        /// Run the specified code inside a single transaction.
         /// </summary>
         /// <param name="code"></param>
+        /// <remarks>
+        /// In most cases this is not needed, because all APIs will create their own
+        /// transaction automatically. It is useful where you want to run multiple
+        /// reactive operations atomically.
+        /// </remarks>
         public static void Run(Action<Transaction> code)
         {
-            Run(new Handler<Transaction>(code));
+            var locker = new RunTransactionLocker(code);
+            locker.Run();
+        }
+
+        /// <summary>
+        /// Add an action to run before all Last() and Post() actions. Actions are prioritized by node rank.
+        /// </summary>
+        /// <param name="rank"></param>
+        /// <param name="action"></param>
+        public void Prioritized(Node rank, Action<Transaction> action)
+        {
+            prioritized.Add(new Entry(rank, action));
+        }
+
+        /// <summary>
+        /// Add an action to run after all Prioritized() actions.
+        /// </summary>
+        /// <param name="action"></param>
+        public void Last(Action action)
+        {
+            last.Add(action);
+        }
+
+        /// <summary>
+        /// Add an action to run after all last() actions.
+        /// </summary>
+        /// <param name="action"></param>
+        public void Post(Action action)
+        {
+            post.Add(action);
         }
 
         public void LinkNodes(Node node, Node target)
         {
             if (node.LinkTo(target))
             {
-                toRegen = true;
+                nodeRanksModified = true;
             }
-        }
-
-        /// <summary>
-        /// Overload of Prioritized to support C# lambdas
-        /// </summary>
-        /// <param name="rank"></param>
-        /// <param name="action"></param>
-        public void Prioritized(Node rank, Action<Transaction> action)
-        {
-            Prioritized(rank, new Handler<Transaction>(action));
-        }
-
-        public void Prioritized(Node rank, IHandler<Transaction> action)
-        {
-            var e = new Entry(rank, action);
-            prioritized.Add(e);
-        }
-
-        /// <summary>
-        /// Overload of Last to support C# lambdas
-        /// </summary>
-        /// <param name="action"></param>
-        public void Last(Action action)
-        {
-            last.Add(new Runnable(action));
-        }
-
-        /// <summary>
-        /// Add an action to run after all prioritized() actions.
-        /// </summary>
-        public void Last(IRunnable action)
-        {
-            last.Add(action);
-        }
-
-        /// <summary>
-        /// Overload of the Post method to support C# lambdas
-        /// </summary>
-        /// <param name="action"></param>
-        public void Post(Action action)
-        {
-            Post(new Runnable(action));
-        }
-
-        /// <summary>
-        /// Add an action to run after all last() actions.
-        /// </summary>
-        public void Post(IRunnable action)
-        {
-            post.Add(action);
         }
 
         public void Close()
@@ -105,31 +97,33 @@ namespace Sodium
             ClosePostActions();
         }
 
-        internal static TA Apply<TA>(ILambda1<Transaction, TA> code)
+        public void Dispose()
         {
-            var locker = new ApplyTransactionLocker<TA>(code);
-            locker.Run();
-            return locker.Result;
-        }
-
-        internal static void Run(IHandler<Transaction> code)
-        {
-            var locker = new RunTransactionLocker(code);
-            locker.Run();
+            if (!disposed)
+            {
+                this.Close();
+                this.disposed = true;
+            }
         }
 
         private void ClosePrioritizedActions()
         {
             while (true)
             {
-                CheckRegen();
+                // If the priority queue has entries in it when we modify any of the nodes'
+                // ranks, then we need to re-generate it to make sure it's up-to-date.
+                if (nodeRanksModified)
+                {
+                    nodeRanksModified = false;
+                    prioritized.Regenerate();
+                }
+
                 if (prioritized.IsEmpty())
                 {
                     break;
                 }
 
-                var e = prioritized.Remove();
-                e.Action.Run(this);
+                prioritized.Remove().Action(this);
             }
         }
 
@@ -137,7 +131,7 @@ namespace Sodium
         {
             foreach (var action in last)
             {
-                action.Run();
+                action();
             }
 
             last.Clear();
@@ -147,23 +141,10 @@ namespace Sodium
         {
             foreach (var action in post)
             {
-                action.Run();
+                action();
             }
 
             post.Clear();
-        }
-
-        /// <summary>
-        /// If the priority queue has entries in it when we modify any of the nodes'
-        /// ranks, then we need to re-generate it to make sure it's up-to-date.
-        /// </summary>
-        private void CheckRegen()
-        {
-            if (toRegen)
-            {
-                toRegen = false;
-                prioritized.Regenerate();
-            }
         }
     }
 }

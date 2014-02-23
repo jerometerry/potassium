@@ -264,6 +264,15 @@ namespace Sodium
             return sink.RegisterListener(la[0]);
         }
 
+        internal void Unlisten(ITransactionHandler<TA> action, Node target)
+        {
+            lock (Transaction.ListenersLock)
+            {
+                this.RemoveAction(action);
+                this.Node.UnlinkTo(target);
+            }
+        }
+
         internal Event<TA> RegisterListener(IListener listener)
         {
             listeners.Add(listener);
@@ -284,8 +293,8 @@ namespace Sodium
 
             firings.Add(a);
 
-            var listeners = new List<ITransactionHandler<TA>>(actions);
-            foreach (var action in listeners)
+            var clonedActions = new List<ITransactionHandler<TA>>(actions);
+            foreach (var action in clonedActions)
             {
                 try
                 {

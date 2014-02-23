@@ -24,11 +24,7 @@ namespace Sodium
 
         public override void Unlisten()
         {
-            lock (Transaction.ListenersLock)
-            {
-                evt.RemoveAction(action);
-                evt.Node.UnlinkTo(target);
-            }
+            evt.Unlisten(action, target);
         }
     }
 }

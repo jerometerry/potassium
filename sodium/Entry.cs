@@ -6,18 +6,18 @@ namespace Sodium
     {
         private static long nextSequence;
 
-        private readonly IHandler<Transaction> action;
+        private readonly Action<Transaction> action;
         private readonly Node rank;
         private readonly long sequence;
-        
-        public Entry(Node rank, IHandler<Transaction> action)
+
+        public Entry(Node rank, Action<Transaction> action)
         {
             this.rank = rank;
             this.action = action;
             this.sequence = nextSequence++;
         }
 
-        public IHandler<Transaction> Action
+        public Action<Transaction> Action
         {
             get
             {

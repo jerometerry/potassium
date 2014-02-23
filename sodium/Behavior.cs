@@ -22,7 +22,6 @@ namespace Sodium
         {
             this.evt = evt;
             this.value = initValue;
-            var behavior = this;
             Transaction.Run(InitializeValue);
         }
 
@@ -192,10 +191,10 @@ namespace Sodium
         /// </summary>
         public Behavior<TD> Lift<TB, TC, TD>(Lambda3<TA, TB, TC, TD> f, Behavior<TB> b, Behavior<TC> c)
         {
-            var ffa = TernaryLifter<TB, TC, TD>(f);
+            var ffa = TernaryLifter(f);
             var bf = Map(ffa);
-            var l1 = Behavior<TB>.Apply<ILambda1<TC, TD>>(bf, b);
-            return Behavior<TC>.Apply<TD>(l1, c);
+            var l1 = Behavior<TB>.Apply(bf, b);
+            return Behavior<TC>.Apply(l1, c);
         }
 
         /// <summary>
@@ -217,9 +216,9 @@ namespace Sodium
             // in the same transaction.
         }
 
-        protected void SetValue(TA value)
+        protected void SetValue(TA v)
         {
-            this.value = value;
+            value = v;
         }
 
         private static Event<TA> SwitchE(Transaction t1, Behavior<Event<TA>> bea)
@@ -233,17 +232,7 @@ namespace Sodium
 
         private static ILambda1<TA, ILambda1<TB, ILambda1<TC, TD>>> TernaryLifter<TB, TC, TD>(Lambda3<TA, TB, TC, TD> f)
         {
-            var ffa = new Lambda1<TA, Lambda1<TB, ILambda1<TC, TD>>>((aa) =>
-            {
-                return new Lambda1<TB, ILambda1<TC, TD>>((bb) =>
-                {
-                    return new Lambda1<TC, TD>((cc) =>
-                    {
-                        return f.Apply(aa, bb, cc);
-                    });
-                });
-            });
-            return ffa;
+            return new Lambda1<TA, Lambda1<TB, ILambda1<TC, TD>>>(aa => new Lambda1<TB, ILambda1<TC, TD>>(bb => new Lambda1<TC, TD>(cc => f.Apply(aa, bb, cc))));
         }
 
         private void InitializeValue(Transaction t1)
@@ -252,11 +241,11 @@ namespace Sodium
             {
                 if (!valueUpdate.HasValue)
                 {
-                    t2.Last(new Runnable(() =>
+                    t2.Last(() =>
                     {
                         value = valueUpdate.Value();
                         valueUpdate = Maybe<TA>.Null;
-                    }));
+                    });
                 }
 
                 valueUpdate = new Maybe<TA>(a);

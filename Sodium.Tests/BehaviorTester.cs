@@ -275,14 +275,6 @@ namespace Sodium.Tests
 	    }
 	
         [Test]
-	    public void TestTransaction() 
-        {
-            var calledBack = new bool[1];
-            Transaction.Run(trans => trans.Prioritized(Node.Null, trans2 => { calledBack[0] = true; }));
-           Assert.AreEqual(true, calledBack[0]);
-	    }
-
-        [Test]
 	    public void TestApply() 
         {
 		    var bf = new BehaviorSink<ILambda1<Int64, String>>(new Lambda1<Int64, String>(b => "1 "+b));

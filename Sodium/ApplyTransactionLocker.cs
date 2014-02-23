@@ -2,7 +2,7 @@
 {
     internal class ApplyTransactionLocker<TA> : TransactionLocker
     {
-        private ILambda1<Transaction, TA> code;
+        private readonly ILambda1<Transaction, TA> code;
         private TA result;
 
         public ApplyTransactionLocker(ILambda1<Transaction, TA> code)

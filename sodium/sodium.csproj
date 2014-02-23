@@ -81,8 +81,6 @@
     <Compile Include="EventSink.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IRunnable.cs" />
-    <Compile Include="Runnable.cs" />
     <Compile Include="RunTransactionLocker.cs" />
     <Compile Include="SnapshotEventSink.cs" />
     <Compile Include="Transaction.cs" />

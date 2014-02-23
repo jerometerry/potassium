@@ -1,17 +1,19 @@
 ﻿namespace Sodium
 {
+    using System;
+
     internal class RunTransactionLocker : TransactionLocker
     {
-        private IHandler<Transaction> code;
+        private Action<Transaction> code;
 
-        public RunTransactionLocker(IHandler<Transaction> code)
+        public RunTransactionLocker(Action<Transaction> code)
         {
             this.code = code;
         }
 
         protected override void Apply(Transaction t)
         {
-            code.Run(t);
+            code(t);
         }
     }
 }
