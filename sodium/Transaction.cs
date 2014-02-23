@@ -10,11 +10,6 @@ namespace Sodium
         /// </summary>
         internal static readonly object ListenersLock = new object();
 
-        /// <summary>
-        /// Coarse-grained lock that's held during the whole transaction. 
-        /// </summary>
-        private static readonly object TransactionLock = new object();
-
         private static Transaction current;
         
         private readonly PriorityQueue<Entry> prioritized = new PriorityQueue<Entry>();
@@ -98,11 +93,20 @@ namespace Sodium
 
         public void Close()
         {
+            ClosePrioritizedActions();
+
+            CloseLastActions();
+
+            ClosePostActions();
+        }
+
+        private void ClosePrioritizedActions()
+        {
             while (true)
             {
                 CheckRegen();
                 if (prioritized.IsEmpty())
-                { 
+                {
                     break;
                 }
 
@@ -110,45 +114,39 @@ namespace Sodium
                 entries.Remove(e);
                 e.Action.Run(this);
             }
+        }
 
+        private void CloseLastActions()
+        {
             foreach (var action in last)
-            { 
+            {
                 action.Run();
             }
 
             last.Clear();
-            
+        }
+
+        private void ClosePostActions()
+        {
             foreach (var action in post)
-            { 
+            {
                 action.Run();
             }
 
-            post.Clear();   
+            post.Clear();
         }
 
-        internal static A Apply<A>(ILambda1<Transaction, A> code)
+        internal static TA Apply<TA>(ILambda1<Transaction, TA> code)
         {
-            lock (TransactionLock)
-            {
-                // If we are already inside a transaction (which must be on the same
-                // thread otherwise we wouldn't have acquired transactionLock), then
-                // keep using that same transaction.
-                Transaction transWas = current;
-                try
-                {
-                    if (current == null)
-                    {
-                        current = new Transaction();
-                    }
+            var locker = new ApplyTransactionLocker<TA>(code);
+            locker.Run();
+            return locker.Result;
+        }
 
-                    return code.Apply(current);
-                }
-                finally
-                {
-                    current.Close();
-                    current = transWas;
-                }
-            }
+        internal static void Run(IHandler<Transaction> code)
+        {
+            var locker = new RunTransactionLocker(code);
+            locker.Run();
         }
 
         /// <summary>
@@ -158,35 +156,6 @@ namespace Sodium
         public static void Run(Action<Transaction> code)
         {
             Run(new Handler<Transaction>(code));
-        }
-
-        internal static void Run(IHandler<Transaction> code)
-        {
-            lock (TransactionLock)
-            {
-                // If we are already inside a transaction (which must be on the same
-                // thread otherwise we wouldn't have acquired transactionLock), then
-                // keep using that same transaction.
-                Transaction previous = current;
-                try
-                {
-                    if (current == null)
-                    {
-                        current = new Transaction();
-                    }
-
-                    code.Run(current);
-                }
-                finally
-                {
-                    if (previous == null)
-                    {
-                        current.Close();
-                    }
-
-                    current = previous;
-                }
-            }
         }
 
         /// <summary>
@@ -203,6 +172,107 @@ namespace Sodium
                 {
                     prioritized.Add(e);
                 }
+            }
+        }
+
+        private abstract class TransactionLocker
+        {
+            /// <summary>
+            /// Coarse-grained lock that's held during the whole transaction. 
+            /// </summary>
+            private static readonly object TransactionLock = new object();
+
+            private Transaction previous;
+            private Transaction transaction;
+            private bool newTransactionCreated;
+
+            public void Run()
+            {
+                lock (TransactionLock)
+                {
+                    try
+                    {
+                        Apply(OpenTransaction());
+                    }
+                    finally
+                    {
+                        CloseTransaction();
+                        RestoreTransaction();
+                    }
+                }
+            }
+
+            private Transaction OpenTransaction()
+            {
+                // If we are already inside a transaction (which must be on the same
+                // thread otherwise we wouldn't have acquired transactionLock), then
+                // keep using that same transaction.
+                previous = Transaction.current;
+
+                if (Transaction.current == null)
+                {
+                    transaction = new Transaction();
+                    Transaction.current = transaction;
+                    newTransactionCreated = true;
+                }
+                else
+                {
+                    transaction = Transaction.current;
+                }
+
+                return transaction;
+            }
+
+            private void CloseTransaction()
+            {
+                if (newTransactionCreated)
+                {
+                    current.Close();
+                }
+            }
+
+            private void RestoreTransaction()
+            {
+                Transaction.current = previous;
+            }
+
+            protected abstract void Apply(Transaction t);
+        }
+
+        private class ApplyTransactionLocker<TA> : TransactionLocker
+        {
+            private ILambda1<Transaction, TA> code;
+
+            private TA result;
+
+            public TA Result
+            {
+                get { return result; }
+            }
+
+            public ApplyTransactionLocker(ILambda1<Transaction, TA> code)
+            {
+                this.code = code;
+            }
+
+            protected override void Apply(Transaction t)
+            {
+                this.result = code.Apply(t);
+            }
+        }
+
+        private class RunTransactionLocker : TransactionLocker
+        {
+            private IHandler<Transaction> code;
+
+            public RunTransactionLocker(IHandler<Transaction> code)
+            {
+                this.code = code;
+            }
+
+            protected override void Apply(Transaction t)
+            {
+                code.Run(current);
             }
         }
     }
