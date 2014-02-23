@@ -41,9 +41,11 @@ namespace Sodium
         /// </remarks>
         public static TA Apply<TA>(Func<Transaction, TA> code)
         {
-            var locker = new TransactionLocker<TA>(code);
-            locker.Run();
-            return locker.Result;
+            using (var locker = new TransactionLocker<TA>(code))
+            {
+                locker.Run();
+                return locker.Result;
+            }
         }
 
         /// <summary>
