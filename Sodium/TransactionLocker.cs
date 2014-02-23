@@ -51,7 +51,7 @@
         {
             if (created != null)
             {
-                created.Close();
+                created.Dispose();
                 created = null;
             }
         
