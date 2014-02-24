@@ -1,5 +1,6 @@
 namespace Sodium.Tests
 {
+
     using System;
     using System.Threading;
 

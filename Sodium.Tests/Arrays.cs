@@ -1,5 +1,6 @@
 ﻿namespace Sodium.Tests
 {
+
     using System.Collections.Generic;
     using NUnit.Framework;
 
