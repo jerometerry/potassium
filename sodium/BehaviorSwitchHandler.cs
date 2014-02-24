@@ -12,9 +12,15 @@ namespace Sodium
 
         ~BehaviorSwitchHandler()
         {
+            Close();
+        }
+
+        public void Close()
+        {
             if (listener != null)
             {
                 listener.Unlisten();
+                listener = null;
             }
         }
 

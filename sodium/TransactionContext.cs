@@ -1,13 +1,10 @@
 ﻿namespace Sodium
 {
-    using System;
-
-    internal sealed class TransactionContext : IDisposable
+    internal sealed class TransactionContext
     {
         private static Transaction current;
         private Transaction previous;
         private Transaction created;
-        private bool disposed;
         private bool restored;
 
         public Transaction Transaction
@@ -18,20 +15,11 @@
             }
         }
 
-        public void Dispose()
-        {
-            if (!disposed)
-            {
-                Close();
-                disposed = true;
-            }
-        }
-
         public void Close()
         {
             if (created != null)
             {
-                created.Dispose();
+                created.Close();
                 created = null;
             }
         

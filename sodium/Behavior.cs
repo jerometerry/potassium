@@ -27,10 +27,7 @@ namespace Sodium
 
         ~Behavior()
         {
-            if (listener != null)
-            {
-                listener.Unlisten();
-            }
+            Close();
         }
 
         protected Event<TA> Event
@@ -85,6 +82,15 @@ namespace Sodium
         public static Behavior<TD> Lift<TB, TC, TD>(Func<TA, TB, TC, TD> f, Behavior<TA> a, Behavior<TB> b, Behavior<TC> c)
         {
             return a.Lift(f, b, c);
+        }
+
+        public void Close()
+        {
+            if (listener != null)
+            {
+                listener.Unlisten();
+                listener = null;
+            }
         }
 
         /// <summary>

@@ -13,10 +13,7 @@ namespace Sodium
 
         ~Event()
         {
-            foreach (var l in listeners)
-            {
-                l.Unlisten();
-            }
+            Close();
         }
 
         internal Node Node
@@ -53,6 +50,16 @@ namespace Sodium
             var l1 = ea.Listen(sink.Node, h);
             var l2 = eb.Listen(sink.Node, h);
             return sink.RegisterListener(l1).RegisterListener(l2);
+        }
+
+        public void Close()
+        {
+            foreach (var l in this.listeners)
+            {
+                l.Unlisten();
+            }
+
+            listeners.Clear();
         }
 
         /// <summary>

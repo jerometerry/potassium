@@ -15,9 +15,15 @@ namespace Sodium
 
         ~EventSwitchHandler()
         {
+            Close();
+        }
+
+        public void Close()
+        {
             if (listener != null)
             {
                 listener.Unlisten();
+                listener = null;
             }
         }
 

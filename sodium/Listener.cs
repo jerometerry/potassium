@@ -10,8 +10,6 @@ namespace Sodium
         private IHandler<TA> action;
         private Node target;
 
-        private bool disposed;
-
         public Listener(Event<TA> evt, IHandler<TA> action, Node target)
         {
             this.evt = evt;
@@ -24,21 +22,16 @@ namespace Sodium
             Unlisten();
         }
 
-        public void Dispose()
-        {
-            if (!disposed)
-            {
-                this.Unlisten();
-                evt = null;
-                action = null;
-                target = null;
-                disposed = true;
-            }
-        }
-
         public void Unlisten()
         {
-            evt.Unlisten(action, target);
+            if (evt != null)
+            {
+                evt.Unlisten(action, target);
+                evt = null;
+            }
+
+            action = null;
+            target = null;
         }
     }
 }

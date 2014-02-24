@@ -3,7 +3,7 @@ namespace Sodium
     using System;
     using System.Collections.Generic;
 
-    internal sealed class Transaction : IDisposable
+    internal sealed class Transaction
     {
         /// <summary>
         /// Fine-grained lock that protects listeners and nodes. 
@@ -24,8 +24,6 @@ namespace Sodium
         /// </summary>
         private bool nodeRanksModified;
 
-        private bool disposed;
-
         /// <summary>
         /// Run the specified function inside a single transaction
         /// </summary>
@@ -41,11 +39,17 @@ namespace Sodium
         {
             lock (TransactionLock)
             {
-                using (var context = new TransactionContext())
+                var context = new TransactionContext();
+                try
                 {
                     context.Open();
                     return code(context.Transaction);
                 }
+                finally
+                {
+                    context.Close();
+                }
+
             }
         }
 
@@ -60,14 +64,7 @@ namespace Sodium
         /// </remarks>
         public static void Run(Action<Transaction> code)
         {
-            lock (TransactionLock)
-            {
-                using (var context = new TransactionContext())
-                {
-                    context.Open();
-                    code(context.Transaction);
-                }
-            }
+            Apply(t => { code(t); return Unit.Value; });
         }
 
         /// <summary>
@@ -111,15 +108,6 @@ namespace Sodium
             ClosePrioritizedActions();
             CloseLastActions();
             ClosePostActions();
-        }
-
-        public void Dispose()
-        {
-            if (!disposed)
-            {
-                this.Close();
-                this.disposed = true;
-            }
         }
 
         private void ClosePrioritizedActions()

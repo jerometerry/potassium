@@ -1,8 +1,6 @@
 namespace Sodium
 {
-    using System;
-
-    public interface IListener : IDisposable
+    public interface IListener
     {
         void Unlisten();
     }
