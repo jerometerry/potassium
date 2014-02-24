@@ -1,13 +1,14 @@
 ﻿namespace Sodium
 {
+    using System;
     using System.Linq;
 
     internal sealed class MapEventSink<TA, TB> : EventSink<TB>
     {
         private readonly Event<TA> evt;
-        private readonly ILambda1<TA, TB> f;
+        private readonly Func<TA, TB> f;
 
-        public MapEventSink(Event<TA> evt, ILambda1<TA, TB> f)
+        public MapEventSink(Event<TA> evt, Func<TA, TB> f)
         {
             this.evt = evt;
             this.f = f;
@@ -21,8 +22,7 @@
                 return null;
             }
 
-            var results = events.Select(e => f.Apply(e));
-            return results.ToArray();
+            return events.Select(e => f(e)).ToArray();
         }
     }
 }

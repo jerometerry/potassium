@@ -1,5 +1,6 @@
 namespace Sodium.Tests
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using NUnit.Framework;
@@ -138,9 +139,7 @@ namespace Sodium.Tests
         {
             var ea = new EventSink<int>();
             var o = new List<int>();
-            var sum = ea.Collect(100,
-                new Lambda2<int, int, Tuple2<int, int>>((a, s) => new Tuple2<int, int>(a + s, a + s))
-            );
+            var sum = ea.Collect(100, (a, s) => new Tuple2<int, int>(a + s, a + s));
             var l = sum.Listen(o.Add);
             ea.Send(5);
             ea.Send(7);

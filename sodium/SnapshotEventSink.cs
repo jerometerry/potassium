@@ -6,10 +6,10 @@ namespace Sodium
     internal sealed class SnapshotEventSink<TA, TB, TC> : EventSink<TC>
     {
         private readonly Event<TA> evt;
-        private readonly ILambda2<TA, TB, TC> f;
+        private readonly Func<TA, TB, TC> f;
         private readonly Behavior<TB> b;
 
-        public SnapshotEventSink(Event<TA> ev, ILambda2<TA, TB, TC> f, Behavior<TB> b)
+        public SnapshotEventSink(Event<TA> ev, Func<TA, TB, TC> f, Behavior<TB> b)
         {
             this.evt = ev;
             this.f = f;
@@ -24,7 +24,7 @@ namespace Sodium
                 return null;
             }
             
-            var results = events.Select(e => f.Apply(e, b.Sample()));
+            var results = events.Select(e => f(e, b.Sample()));
             return results.ToArray();
         }
     }

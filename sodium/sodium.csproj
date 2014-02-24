@@ -54,9 +54,6 @@
     <Compile Include="EventSwitchHandler.cs" />
     <Compile Include="FilterEventSink.cs" />
     <Compile Include="IListener.cs" />
-    <Compile Include="Lambda1.cs" />
-    <Compile Include="Lambda2.cs" />
-    <Compile Include="Lambda3.cs" />
     <Compile Include="Listener.cs" />
     <Compile Include="MapEventSink.cs" />
     <Compile Include="Maybe.cs" />
@@ -79,16 +76,10 @@
     <Compile Include="Transaction.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ILambda1.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Node.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IHandler.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ILambda2.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Handler.cs" />
@@ -98,7 +89,6 @@
   <ItemGroup>
     <Compile Include="EventLoop.cs" />
     <Compile Include="BehaviorSink.cs" />
-    <Compile Include="ILambda3.cs" />
     <Compile Include="Tuple2.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

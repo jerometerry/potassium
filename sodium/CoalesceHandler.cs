@@ -1,12 +1,14 @@
 namespace Sodium
 {
+    using System;
+
     internal sealed class CoalesceHandler<TA> : IHandler<TA>
     {
-        private readonly ILambda2<TA, TA, TA> f;
+        private readonly Func<TA, TA, TA> f;
         private readonly EventSink<TA> evt;
         private Maybe<TA> accum = Maybe<TA>.Null;
 
-        public CoalesceHandler(EventSink<TA> evt, ILambda2<TA, TA, TA> f)
+        public CoalesceHandler(EventSink<TA> evt, Func<TA, TA, TA> f)
         {
             this.evt = evt;
             this.f = f;
@@ -16,7 +18,7 @@ namespace Sodium
         {
             if (accum.HasValue)
             {
-                accum = new Maybe<TA>(f.Apply(accum.Value(), a));
+                accum = new Maybe<TA>(f(accum.Value(), a));
             }
             else
             {

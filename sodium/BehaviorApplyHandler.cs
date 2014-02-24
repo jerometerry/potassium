@@ -1,13 +1,15 @@
 namespace Sodium
 {
+    using System;
+
     internal sealed class BehaviorApplyHandler<TA, TB> 
     {
         private readonly EventSink<TB> evt;
-        private readonly Behavior<ILambda1<TA, TB>> bf;
+        private readonly Behavior<Func<TA, TB>> bf;
         private readonly Behavior<TA> ba;
         private bool fired;
 
-        public BehaviorApplyHandler(EventSink<TB> evt, Behavior<ILambda1<TA, TB>> bf, Behavior<TA> ba)
+        public BehaviorApplyHandler(EventSink<TB> evt, Behavior<Func<TA, TB>> bf, Behavior<TA> ba)
         {
             this.evt = evt;
             this.bf = bf;
@@ -29,7 +31,7 @@ namespace Sodium
         {
             var v = bf.NewValue();
             var nv = ba.NewValue();
-            var b = v.Apply(nv);
+            var b = v(nv);
             evt.Send(t, b);
             fired = false;
         }

@@ -39,21 +39,9 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Overload of lift that accepts binary function Func f and two behaviors, to enable C# lambdas
-        /// </summary>
-        /// <param name="f"></param>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        public static Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> f, Behavior<TA> a, Behavior<TB> b)
-        {
-            return Lift(new Lambda2<TA, TB, TC>(f), a, b);
-        }
-
-        /// <summary>
         /// Lift a binary function into behaviors.
         /// </summary>
-        public static Behavior<TC> Lift<TB, TC>(ILambda2<TA, TB, TC> f, Behavior<TA> a, Behavior<TB> b)
+        public static Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> f, Behavior<TA> a, Behavior<TB> b)
         {
             return a.Lift(f, b);
         }
@@ -62,13 +50,13 @@ namespace Sodium
         /// Apply a value inside a behavior to a function inside a behavior. This is the
         /// primitive for all function lifting.
         /// </summary>
-        public static Behavior<TB> Apply<TB>(Behavior<ILambda1<TA, TB>> bf, Behavior<TA> ba)
+        public static Behavior<TB> Apply<TB>(Behavior<Func<TA, TB>> bf, Behavior<TA> ba)
         {
             var sink = new EventSink<TB>();
             var h = new BehaviorApplyHandler<TA, TB>(sink, bf, ba);
-            var l1 = bf.Updates().Listen(sink.Node, new Handler<ILambda1<TA, TB>>((t, f) => h.Run(t)));
+            var l1 = bf.Updates().Listen(sink.Node, new Handler<Func<TA, TB>>((t, f) => h.Run(t)));
             var l2 = ba.Updates().Listen(sink.Node, new Handler<TA>((t, a) => h.Run(t)));
-            return sink.RegisterListener(l1).RegisterListener(l2).Hold(bf.Sample().Apply(ba.Sample()));
+            return sink.RegisterListener(l1).RegisterListener(l2).Hold(bf.Sample()(ba.Sample()));
         }
 
         /// <summary>
@@ -94,7 +82,7 @@ namespace Sodium
         /// <summary>
         /// Lift a ternary function into behaviors.
         /// </summary>
-        public static Behavior<TD> Lift<TB, TC, TD>(Lambda3<TA, TB, TC, TD> f, Behavior<TA> a, Behavior<TB> b, Behavior<TC> c)
+        public static Behavior<TD> Lift<TB, TC, TD>(Func<TA, TB, TC, TD> f, Behavior<TA> a, Behavior<TB> b, Behavior<TC> c)
         {
             return a.Lift(f, b, c);
         }
@@ -142,29 +130,19 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Overload of map to support C# lambdas
-        /// </summary>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        public Behavior<TB> Map<TB>(Func<TA, TB> f)
-        {
-            return Map(new Lambda1<TA, TB>(f));
-        }
-
-        /// <summary>
         /// Transform the behavior's value according to the supplied function.
         /// </summary>
-        public Behavior<TB> Map<TB>(ILambda1<TA, TB> f)
+        public Behavior<TB> Map<TB>(Func<TA, TB> f)
         {
-            return Updates().Map(f).Hold(f.Apply(Sample()));
+            return Updates().Map(f).Hold(f(Sample()));
         }
 
         /// <summary>
         /// Lift a binary function into behaviors.
         /// </summary>
-        public Behavior<TC> Lift<TB, TC>(ILambda2<TA, TB, TC> f, Behavior<TB> b)
+        public Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> f, Behavior<TB> b)
         {
-            var ffa = new Lambda1<TA, ILambda1<TB, TC>>(aa => new Lambda1<TB, TC>(bb => f.Apply(aa, bb)));
+            Func<TA, Func<TB, TC>> ffa = aa => (bb => f(aa, bb));
             var bf = Map(ffa);
             return Behavior<TB>.Apply(bf, b);
         }
@@ -173,23 +151,23 @@ namespace Sodium
         /// Transform a behavior with a generalized state loop (a mealy machine). The function
         /// is passed the input and the old state and returns the new state and output value.
         /// </summary>
-        public Behavior<TB> Collect<TB, TS>(TS initState, ILambda2<TA, TS, Tuple2<TB, TS>> f)
+        public Behavior<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple2<TB, TS>> f)
         {
-            var ea = Updates().Coalesce(new Lambda2<TA, TA, TA>((a, b) => b));
+            var ea = Updates().Coalesce((a, b) => b);
             var za = Sample();
-            var zbs = f.Apply(za, initState);
+            var zbs = f(za, initState);
             var ebs = new EventLoop<Tuple2<TB, TS>>();
             var bbs = ebs.Hold(zbs);
-            var bs = bbs.Map(new Lambda1<Tuple2<TB, TS>, TS>(x => x.V2));
+            var bs = bbs.Map(x => x.V2);
             var ebsOut = ea.Snapshot(bs, f);
             ebs.Loop(ebsOut);
-            return bbs.Map(new Lambda1<Tuple2<TB, TS>, TB>(x => x.V1));
+            return bbs.Map(x => x.V1);
         }
 
         /// <summary>
         /// Lift a ternary function into behaviors.
         /// </summary>
-        public Behavior<TD> Lift<TB, TC, TD>(Lambda3<TA, TB, TC, TD> f, Behavior<TB> b, Behavior<TC> c)
+        public Behavior<TD> Lift<TB, TC, TD>(Func<TA, TB, TC, TD> f, Behavior<TB> b, Behavior<TC> c)
         {
             var ffa = TernaryLifter(f);
             var bf = Map(ffa);
@@ -230,9 +208,9 @@ namespace Sodium
             return sink.RegisterListener(l1);
         }
 
-        private static ILambda1<TA, ILambda1<TB, ILambda1<TC, TD>>> TernaryLifter<TB, TC, TD>(Lambda3<TA, TB, TC, TD> f)
+        private static Func<TA, Func<TB, Func<TC, TD>>> TernaryLifter<TB, TC, TD>(Func<TA, TB, TC, TD> f)
         {
-            return new Lambda1<TA, Lambda1<TB, ILambda1<TC, TD>>>(aa => new Lambda1<TB, ILambda1<TC, TD>>(bb => new Lambda1<TC, TD>(cc => f.Apply(aa, bb, cc))));
+            return aa => bb => cc => { return f(aa, bb, cc); };
         }
 
         private void InitializeValue(Transaction t1)
