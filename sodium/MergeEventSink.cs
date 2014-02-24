@@ -14,17 +14,17 @@ namespace Sodium
             this.evt2 = evt2;
         }
 
-        protected internal override TA[] SampleNow()
+        protected internal override TA[] InitialFirings()
         {
-            var events1 = evt1.SampleNow();
-            var events2 = evt2.SampleNow();
+            var firings1 = evt1.InitialFirings();
+            var firings2 = evt2.InitialFirings();
 
-            if (events1 != null && events2 != null)
+            if (firings1 != null && firings2 != null)
             {
-                return events1.Concat(events2).ToArray();
+                return firings1.Concat(firings2).ToArray();
             }
 
-            return events1 ?? events2;
+            return firings1 ?? firings2;
         }
     }
 }

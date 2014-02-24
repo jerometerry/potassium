@@ -1,16 +1,16 @@
 namespace Sodium
 {
-    internal sealed class BehaviorSwitchTrigger<TA> : ITrigger<Behavior<TA>>
+    internal sealed class BehaviorSwitchCallback<TA> : ICallback<Behavior<TA>>
     {
         private readonly EventSink<TA> sink;
         private IListener listener;
 
-        public BehaviorSwitchTrigger(EventSink<TA> sink)
+        public BehaviorSwitchCallback(EventSink<TA> sink)
         {
             this.sink = sink;
         }
 
-        ~BehaviorSwitchTrigger()
+        ~BehaviorSwitchCallback()
         {
             Close();
         }
@@ -24,12 +24,12 @@ namespace Sodium
             }
         }
 
-        public void Fire(Transaction t, Behavior<TA> ba)
+        public void Invoke(Transaction transaction, Behavior<TA> data)
         {
             // Note: If any switch takes place during a transaction, then the
-            // value().listen will always cause a sample to be fetched from the
+            // Value().Listen will always cause a sample to be fetched from the
             // one we just switched to. The caller will be fetching our output
-            // using value().listen, and value() throws away all firings except
+            // using Value().Listen, and Value() throws away all firings except
             // for the last one. Therefore, anything from the old input behaviour
             // that might have happened during this transaction will be suppressed.
             if (listener != null)
@@ -37,13 +37,8 @@ namespace Sodium
                 listener.Unlisten();
             }
 
-            var evt = ba.Value(t);
-            listener = evt.Listen(sink.Node, t, new Trigger<TA>(Handler), false);
-        }
-
-        private void Handler(Transaction t3, TA a)
-        {
-            sink.Send(t3, a);
+            var evt = data.Value(transaction);
+            listener = evt.ListenUnsuppressed(sink.Node, transaction, new Callback<TA>((t, a) => sink.Fire(t, a)));
         }
     }
 }

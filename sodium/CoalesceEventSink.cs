@@ -5,17 +5,17 @@ namespace Sodium
     internal sealed class CoalesceEventSink<TA> : EventSink<TA>
     {
         private readonly Event<TA> evt;
-        private readonly Func<TA, TA, TA> f;
+        private readonly Func<TA, TA, TA> coalesce;
 
-        public CoalesceEventSink(Event<TA> evt, Func<TA, TA, TA> f)
+        public CoalesceEventSink(Event<TA> evt, Func<TA, TA, TA> coalesce)
         {
             this.evt = evt;
-            this.f = f;
+            this.coalesce = coalesce;
         }
 
-        protected internal override TA[] SampleNow()
+        protected internal override TA[] InitialFirings()
         {
-            var events = evt.SampleNow();
+            var events = evt.InitialFirings();
             if (events == null)
             {
                 return null;
@@ -24,7 +24,7 @@ namespace Sodium
             var e = events[0];
             for (var i = 1; i < events.Length; i++)
             {
-                e = f(e, events[i]);
+                e = coalesce(e, events[i]);
             }
 
             return new[] { e };

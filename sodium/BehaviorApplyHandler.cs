@@ -24,15 +24,15 @@ namespace Sodium
             }
 
             fired = true;
-            t1.Prioritized(evt.Node, Send);
+            t1.Prioritized(evt.Node, Fire);
         }
 
-        private void Send(Transaction t)
+        private void Fire(Transaction t)
         {
             var v = bf.NewValue();
             var nv = ba.NewValue();
             var b = v(nv);
-            evt.Send(t, b);
+            evt.Fire(t, b);
             fired = false;
         }
     }

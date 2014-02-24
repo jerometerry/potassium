@@ -2,35 +2,35 @@ namespace Sodium
 {
     using System;
 
-    internal sealed class CoalesceTrigger<TA> : ITrigger<TA>
+    internal sealed class CoalesceCallback<TA> : ICallback<TA>
     {
-        private readonly Func<TA, TA, TA> f;
+        private readonly Func<TA, TA, TA> coalesce;
         private readonly EventSink<TA> evt;
         private Maybe<TA> accum = Maybe<TA>.Null;
 
-        public CoalesceTrigger(EventSink<TA> evt, Func<TA, TA, TA> f)
+        public CoalesceCallback(EventSink<TA> evt, Func<TA, TA, TA> coalesce)
         {
             this.evt = evt;
-            this.f = f;
+            this.coalesce = coalesce;
         }
 
-        public void Fire(Transaction t1, TA a)
+        public void Invoke(Transaction transaction, TA data)
         {
             if (accum.HasValue)
             {
-                accum = new Maybe<TA>(f(accum.Value(), a));
+                accum = new Maybe<TA>(coalesce(accum.Value(), data));
             }
             else
             {
-                t1.Prioritized(evt.Node, Send);
-                accum = new Maybe<TA>(a);
+                transaction.Prioritized(evt.Node, Fire);
+                accum = new Maybe<TA>(data);
             }
         }
 
-        private void Send(Transaction t)
+        private void Fire(Transaction transaction)
         {
-            evt.Send(t, this.accum.Value());
-            this.accum = Maybe<TA>.Null;
+            evt.Fire(transaction, accum.Value());
+            accum = Maybe<TA>.Null;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Sodium
         {
             this.evt = evt;
             this.value = initValue;
-            Transaction.Run(InitializeValue);
+            Transaction.Run(t => { InitializeValue(t); return Unit.Value; });
         }
 
         ~Behavior()
@@ -51,8 +51,8 @@ namespace Sodium
         {
             var sink = new EventSink<TB>();
             var h = new BehaviorApplyHandler<TA, TB>(sink, bf, ba);
-            var l1 = bf.Updates().Listen(sink.Node, new Trigger<Func<TA, TB>>((t, f) => h.Run(t)));
-            var l2 = ba.Updates().Listen(sink.Node, new Trigger<TA>((t, a) => h.Run(t)));
+            var l1 = bf.Updates().Listen(sink.Node, new Callback<Func<TA, TB>>((t, f) => h.Run(t)));
+            var l2 = ba.Updates().Listen(sink.Node, new Callback<TA>((t, a) => h.Run(t)));
             return sink.RegisterListener(l1).RegisterListener(l2).Hold(bf.Sample()(ba.Sample()));
         }
 
@@ -61,11 +61,11 @@ namespace Sodium
         /// </summary>
         public static Behavior<TA> SwitchB(Behavior<Behavior<TA>> bba)
         {
-            var za = bba.Sample().Sample();
+            var initValue = bba.Sample().Sample();
             var sink = new EventSink<TA>();
-            var h = new BehaviorSwitchTrigger<TA>(sink);
-            var l1 = bba.Value().Listen(sink.Node, h);
-            return sink.RegisterListener(l1).Hold(za);
+            var callback = new BehaviorSwitchCallback<TA>(sink);
+            var l1 = bba.Value().Listen(sink.Node, callback);
+            return sink.RegisterListener(l1).Hold(initValue);
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Sodium
         /// </summary>
         public static Event<TA> SwitchE(Behavior<Event<TA>> bea)
         {
-            return Transaction.Apply(t => SwitchE(t, bea));
+            return Transaction.Run(t => SwitchE(t, bea));
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Sodium
         /// </summary>
         public Event<TA> Value()
         {
-            return Transaction.Apply(Value);
+            return Transaction.Run(Value);
         }
 
         /// <summary>
@@ -194,12 +194,12 @@ namespace Sodium
         internal Event<TA> Value(Transaction transaction)
         {
             var sink = new BehaviorValueEventSink<TA>(this);
-            var trigger = new Trigger<TA>(sink.Send);
-            var l = Event.Listen(sink.Node, transaction, trigger, false);
+            var callback = new Callback<TA>(sink.Fire);
+            var l = Event.ListenUnsuppressed(sink.Node, transaction, callback);
 
             // Needed in case of an initial value and an update
             // in the same transaction.
-            return sink.RegisterListener(l).LastFiringOnly(transaction);  
+            return sink.RegisterListener(l).LastFiringOnly(transaction);
         }
 
         protected void SetValue(TA v)
@@ -210,9 +210,9 @@ namespace Sodium
         private static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior)
         {
             var sink = new EventSink<TA>();
-            var trigger = new Trigger<TA>(sink.Send);
-            var eventSwitchTrigger = new EventSwitchTrigger<TA>(behavior, sink, transaction, trigger);
-            var listener = behavior.Updates().Listen(sink.Node, transaction, eventSwitchTrigger, false);
+            var callback = new Callback<TA>(sink.Fire);
+            var eventSwitchCallback = new EventSwitchCallback<TA>(behavior, sink, transaction, callback);
+            var listener = behavior.Updates().ListenUnsuppressed(sink.Node, transaction, eventSwitchCallback);
             return sink.RegisterListener(listener);
         }
 
@@ -223,7 +223,7 @@ namespace Sodium
 
         private void InitializeValue(Transaction transaction)
         {
-            var trigger = new Trigger<TA>((t2, a) =>
+            var callback = new Callback<TA>((t2, a) =>
             {
                 if (!valueUpdate.HasValue)
                 {
@@ -236,7 +236,7 @@ namespace Sodium
 
                 valueUpdate = new Maybe<TA>(a);
             });
-            listener = evt.Listen(Node.Null, transaction, trigger, false);
+            listener = evt.ListenUnsuppressed(Node.Null, transaction, callback);
         }
     }
 }

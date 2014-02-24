@@ -16,18 +16,18 @@
 
         public void MapAndSend(Transaction trans, TA firing)
         {
-            this.Send(trans, this.map(firing));
+            Fire(trans, this.map(firing));
         }
 
-        protected internal override TB[] SampleNow()
+        protected internal override TB[] InitialFirings()
         {
-            var events = evt.SampleNow();
-            if (events == null)
+            var firings = evt.InitialFirings();
+            if (firings == null)
             { 
                 return null;
             }
 
-            return events.Select(e => this.map(e)).ToArray();
+            return firings.Select(e => map(e)).ToArray();
         }
     }
 }

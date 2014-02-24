@@ -11,7 +11,7 @@ namespace Sodium
         {
             ((EventLoop<TA>)Event).Loop(b.Updates());
             var v = b.Sample();
-            this.SetValue(v);
+            SetValue(v);
         }
     }
 }

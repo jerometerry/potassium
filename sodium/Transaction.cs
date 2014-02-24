@@ -35,7 +35,7 @@ namespace Sodium
         /// transaction automatically. It is useful where you want to run multiple
         /// reactive operations atomically.
         /// </remarks>
-        public static TA Apply<TA>(Func<Transaction, TA> code)
+        public static TA Run<TA>(Func<Transaction, TA> code)
         {
             lock (TransactionLock)
             {
@@ -49,22 +49,7 @@ namespace Sodium
                 {
                     context.Close();
                 }
-
             }
-        }
-
-        /// <summary>
-        /// Run the specified code inside a single transaction.
-        /// </summary>
-        /// <param name="code"></param>
-        /// <remarks>
-        /// In most cases this is not needed, because all APIs will create their own
-        /// transaction automatically. It is useful where you want to run multiple
-        /// reactive operations atomically.
-        /// </remarks>
-        public static void Run(Action<Transaction> code)
-        {
-            Apply(t => { code(t); return Unit.Value; });
         }
 
         /// <summary>
@@ -110,11 +95,11 @@ namespace Sodium
             ClosePostActions();
         }
 
-        internal void Fire<TA>(ITrigger<TA> trigger, IEnumerable<TA> firings)
+        internal void InvokeCallbacks<TA>(ICallback<TA> callback, IEnumerable<TA> payloads)
         {
-            foreach (var firing in firings)
+            foreach (var payload in payloads)
             {
-                trigger.Fire(this, firing);
+                callback.Invoke(this, payload);
             }
         }
 

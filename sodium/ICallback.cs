@@ -1,8 +1,8 @@
 namespace Sodium
 {
     // TODO - This could be replaced with Action<Transaction, TA>
-    internal interface ITrigger<in TA>
+    internal interface ICallback<in TA>
     {
-        void Fire(Transaction t, TA a);
+        void Invoke(Transaction transaction, TA data);
     }
 }

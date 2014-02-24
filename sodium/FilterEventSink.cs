@@ -15,21 +15,21 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Send the event if the predicate evaluates to true
+        /// Fire the event if the predicate evaluates to true
         /// </summary>
         /// <param name="t"></param>
         /// <param name="a"></param>
-        public void SendIfNotFiltered(Transaction t, TA a)
+        public void FireIfNotFiltered(Transaction t, TA a)
         {
             if (f(a))
             {
-                Send(t, a);
+                Fire(t, a);
             }
         }
 
-        protected internal override TA[] SampleNow()
+        protected internal override TA[] InitialFirings()
         {
-            var events = evt.SampleNow();
+            var events = evt.InitialFirings();
             if (events == null)
             {
                 return null;

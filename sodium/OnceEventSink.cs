@@ -13,9 +13,9 @@ namespace Sodium
             this.listeners = listeners;
         }
 
-        public void Send(IListener[] la, Transaction t, TA a)
+        public void Fire(IListener[] la, Transaction t, TA a)
         {
-            this.Send(t, a);
+            this.Fire(t, a);
             if (la[0] == null)
             {
                 return;
@@ -25,18 +25,18 @@ namespace Sodium
             la[0] = null;
         }
 
-        protected internal override TA[] SampleNow()
+        protected internal override TA[] InitialFirings()
         {
-            var events = evt.SampleNow();
-            if (events == null)
+            var firings = evt.InitialFirings();
+            if (firings == null)
             {
                 return null;
             }
 
-            var results = events;
+            var results = firings;
             if (results.Length > 1)
             { 
-                results = new[] { events[0] };
+                results = new[] { firings[0] };
             }
 
             if (listeners[0] != null)

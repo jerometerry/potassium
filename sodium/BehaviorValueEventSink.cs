@@ -11,7 +11,7 @@ namespace Sodium
             this.behavior = behavior;
         }
 
-        protected internal override TA[] SampleNow()
+        protected internal override TA[] InitialFirings()
         {
             return new[] { behavior.Sample() };
         }

@@ -18,12 +18,12 @@ namespace Sodium
 
         public void SnapshotAndSend(Transaction transaction, TA firing)
         {
-            this.Send(transaction, this.snapshot(firing, this.behavior.Sample()));
+            this.Fire(transaction, this.snapshot(firing, this.behavior.Sample()));
         }
 
-        protected internal override TC[] SampleNow()
+        protected internal override TC[] InitialFirings()
         {
-            var events = evt.SampleNow();
+            var events = evt.InitialFirings();
             if (events == null)
             {
                 return null;
