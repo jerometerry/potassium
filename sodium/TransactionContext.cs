@@ -2,38 +2,19 @@
 {
     using System;
 
-    internal sealed class TransactionLocker<TA> : IDisposable
+    internal sealed class TransactionContext : IDisposable
     {
-        private Func<Transaction, TA> code;
+        private static Transaction current;
         private Transaction previous;
         private Transaction created;
         private bool disposed;
         private bool restored;
-        private TA result;
 
-        public TransactionLocker(Func<Transaction, TA> code)
+        public Transaction Transaction
         {
-            this.code = code;
-        }
-
-        public TA Result
-        {
-            get { return result; }
-        }
-
-        public void Run()
-        {
-            lock (Transaction.TransactionLock)
+            get
             {
-                try
-                {
-                    Open();
-                    Apply();
-                }
-                finally
-                {
-                    this.Close();
-                }
+                return current;
             }
         }
 
@@ -42,12 +23,11 @@
             if (!disposed)
             {
                 Close();
-                code = null;
                 disposed = true;
             }
         }
 
-        private void Close()
+        public void Close()
         {
             if (created != null)
             {
@@ -57,29 +37,24 @@
         
             if (!restored)
             {
-                Transaction.Current = previous;
+                current = previous;
                 restored = true;
             }
             
             previous = null;
         }
 
-        private void Apply()
-        {
-            this.result = code(Transaction.Current);
-        }
-
-        private void Open()
+        public void Open()
         {
             // If we are already inside a transaction (which must be on the same
             // thread otherwise we wouldn't have acquired transactionLock), then
             // keep using that same transaction.
-            previous = Transaction.Current;
+            previous = current;
 
-            if (Transaction.Current == null)
+            if (current == null)
             {
                 created = new Transaction();
-                Transaction.Current = created;
+                current = created;
             }
         }
     }

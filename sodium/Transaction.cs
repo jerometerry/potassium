@@ -26,8 +26,6 @@ namespace Sodium
 
         private bool disposed;
 
-        internal static Transaction Current { get; set; }
-
         /// <summary>
         /// Run the specified function inside a single transaction
         /// </summary>
@@ -41,10 +39,13 @@ namespace Sodium
         /// </remarks>
         public static TA Apply<TA>(Func<Transaction, TA> code)
         {
-            using (var locker = new TransactionLocker<TA>(code))
+            lock (TransactionLock)
             {
-                locker.Run();
-                return locker.Result;
+                using (var context = new TransactionContext())
+                {
+                    context.Open();
+                    return code(context.Transaction);
+                }
             }
         }
 
@@ -59,7 +60,14 @@ namespace Sodium
         /// </remarks>
         public static void Run(Action<Transaction> code)
         {
-            Apply(t => { code(t); return Unit.Value; });
+            lock (TransactionLock)
+            {
+                using (var context = new TransactionContext())
+                {
+                    context.Open();
+                    code(context.Transaction);
+                }
+            }
         }
 
         /// <summary>

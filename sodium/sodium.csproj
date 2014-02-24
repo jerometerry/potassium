@@ -96,7 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TransactionHandler.cs" />
-    <Compile Include="TransactionLocker.cs" />
+    <Compile Include="TransactionContext.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>
   <ItemGroup>
