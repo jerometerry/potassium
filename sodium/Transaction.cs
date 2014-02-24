@@ -5,45 +5,37 @@ namespace Sodium
 
     internal sealed class Transaction
     {
-        /// <summary>
-        /// Fine-grained lock that protects listeners and nodes. 
-        /// </summary>
-        internal static readonly object ListenersLock = new object();
-
-        /// <summary>
-        /// Coarse-grained lock that's held during the whole transaction. 
-        /// </summary>
-        internal static readonly object TransactionLock = new object();
-
         private readonly PriorityQueue<Entry> prioritized = new PriorityQueue<Entry>();
+        
         private readonly List<Action> last = new List<Action>();
+        
         private readonly List<Action> post = new List<Action>();
 
         /// <summary>
         /// True if we need to re-generate the priority queue.
         /// </summary>
-        private bool nodeRanksModified;
+        public bool NodeRanksModified { get; set; }
 
         /// <summary>
         /// Run the specified function inside a single transaction
         /// </summary>
         /// <typeparam name="TA"></typeparam>
-        /// <param name="code"></param>
+        /// <param name="f">Function that accepts a transaction and returns a value</param>
         /// <returns></returns>
         /// <remarks>
         /// In most cases this is not needed, because all APIs will create their own
         /// transaction automatically. It is useful where you want to run multiple
         /// reactive operations atomically.
         /// </remarks>
-        public static TA Run<TA>(Func<Transaction, TA> code)
+        public static TA Run<TA>(Func<Transaction, TA> f)
         {
-            lock (TransactionLock)
+            lock (Constants.TransactionLock)
             {
                 var context = new TransactionContext();
                 try
                 {
                     context.Open();
-                    return code(context.Transaction);
+                    return f(context.Transaction);
                 }
                 finally
                 {
@@ -80,38 +72,22 @@ namespace Sodium
             post.Add(action);
         }
 
-        public void LinkNodes(Node node, Node target)
-        {
-            if (node.LinkTo(target))
-            {
-                nodeRanksModified = true;
-            }
-        }
-
         public void Close()
         {
-            ClosePrioritizedActions();
-            CloseLastActions();
-            ClosePostActions();
+            this.RunPrioritizedActions();
+            this.RunLastActions();
+            this.RunPostActions();
         }
 
-        internal void InvokeCallbacks<TA>(ICallback<TA> callback, IEnumerable<TA> payloads)
-        {
-            foreach (var payload in payloads)
-            {
-                callback.Invoke(this, payload);
-            }
-        }
-
-        private void ClosePrioritizedActions()
+        private void RunPrioritizedActions()
         {
             while (true)
             {
                 // If the priority queue has entries in it when we modify any of the nodes'
                 // ranks, then we need to re-generate it to make sure it's up-to-date.
-                if (nodeRanksModified)
+                if (this.NodeRanksModified)
                 {
-                    nodeRanksModified = false;
+                    this.NodeRanksModified = false;
                     prioritized.Regenerate();
                 }
 
@@ -120,11 +96,12 @@ namespace Sodium
                     break;
                 }
 
-                prioritized.Remove().Action(this);
+                var e = prioritized.Remove();
+                e.Action(this);
             }
         }
 
-        private void CloseLastActions()
+        private void RunLastActions()
         {
             foreach (var action in last)
             {
@@ -134,7 +111,7 @@ namespace Sodium
             last.Clear();
         }
 
-        private void ClosePostActions()
+        private void RunPostActions()
         {
             foreach (var action in post)
             {

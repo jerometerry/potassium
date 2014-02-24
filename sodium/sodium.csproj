@@ -50,6 +50,7 @@
     <Compile Include="BehaviorValueEventSink.cs" />
     <Compile Include="CoalesceEventSink.cs" />
     <Compile Include="CoalesceTrigger.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="EventSwitchCallback.cs" />
     <Compile Include="FilterEventSink.cs" />

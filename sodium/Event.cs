@@ -215,9 +215,17 @@ namespace Sodium
             listeners.Clear();
         }
 
+        internal static void InvokeCallbacks(Transaction transaction, ICallback<TA> callback, IEnumerable<TA> payloads)
+        {
+            foreach (var payload in payloads)
+            {
+                callback.Invoke(transaction, payload);
+            }
+        }
+
         internal void Unlisten(ICallback<TA> callback, Node target)
         {
-            lock (Transaction.ListenersLock)
+            lock (Constants.ListenersLock)
             {
                 RemoveCallback(callback);
                 Node.UnlinkTo(target);
@@ -293,9 +301,13 @@ namespace Sodium
 
         private void RegisterCallback(Node target, Transaction transaction, ICallback<TA> callback)
         {
-            lock (Transaction.ListenersLock)
+            lock (Constants.ListenersLock)
             {
-                transaction.LinkNodes(node, target);
+                if (node.LinkTo(target))
+                {
+                    transaction.NodeRanksModified = true;
+                }
+
                 callbacks.Add(callback);
             }
         }
@@ -305,7 +317,7 @@ namespace Sodium
             var payloads = InitialFirings();
             if (payloads != null)
             {
-                transaction.InvokeCallbacks(callback, payloads);
+                InvokeCallbacks(transaction, callback, payloads);
             }
         }
 
@@ -325,7 +337,7 @@ namespace Sodium
         /// <param name="callback"></param>
         private void Refire(Transaction transaction, ICallback<TA> callback)
         {
-            transaction.InvokeCallbacks(callback, firings);
+            InvokeCallbacks(transaction, callback, firings);
         }
     }
 }

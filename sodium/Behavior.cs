@@ -236,6 +236,7 @@ namespace Sodium
 
                 valueUpdate = new Maybe<TA>(a);
             });
+
             listener = evt.ListenUnsuppressed(Node.Null, transaction, callback);
         }
     }
