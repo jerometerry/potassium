@@ -15,7 +15,7 @@ namespace Sodium
 
             evt = e;
             var loop = this;
-            RegisterListener(e.Listen(this.Node, new TransactionHandler<TA>(loop.Send)));
+            RegisterListener(e.Listen(this.Node, new Handler<TA>(loop.Send)));
         }
     }
 }

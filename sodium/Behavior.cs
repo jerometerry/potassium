@@ -66,8 +66,8 @@ namespace Sodium
         {
             var sink = new EventSink<TB>();
             var h = new BehaviorApplyHandler<TA, TB>(sink, bf, ba);
-            var l1 = bf.Updates().Listen(sink.Node, new TransactionHandler<ILambda1<TA, TB>>((t, f) => h.Run(t)));
-            var l2 = ba.Updates().Listen(sink.Node, new TransactionHandler<TA>((t, a) => h.Run(t)));
+            var l1 = bf.Updates().Listen(sink.Node, new Handler<ILambda1<TA, TB>>((t, f) => h.Run(t)));
+            var l2 = ba.Updates().Listen(sink.Node, new Handler<TA>((t, a) => h.Run(t)));
             return sink.RegisterListener(l1).RegisterListener(l2).Hold(bf.Sample().Apply(ba.Sample()));
         }
 
@@ -210,7 +210,7 @@ namespace Sodium
         internal Event<TA> Value(Transaction t1)
         {
             var sink = new BehaviorValueEventSink<TA>(this);
-            var l = Event.Listen(sink.Node, t1, new TransactionHandler<TA>(sink.Send), false);
+            var l = Event.Listen(sink.Node, t1, new Handler<TA>(sink.Send), false);
             return sink.RegisterListener(l)
                 .LastFiringOnly(t1);  // Needed in case of an initial value and an update
             // in the same transaction.
@@ -224,7 +224,7 @@ namespace Sodium
         private static Event<TA> SwitchE(Transaction t1, Behavior<Event<TA>> bea)
         {
             var sink = new EventSink<TA>();
-            var h2 = new TransactionHandler<TA>(sink.Send);
+            var h2 = new Handler<TA>(sink.Send);
             var h1 = new EventSwitchHandler<TA>(bea, sink, t1, h2);
             var l1 = bea.Updates().Listen(sink.Node, t1, h1, false);
             return sink.RegisterListener(l1);
@@ -237,7 +237,7 @@ namespace Sodium
 
         private void InitializeValue(Transaction t1)
         {
-            var handler = new TransactionHandler<TA>((t2, a) =>
+            var handler = new Handler<TA>((t2, a) =>
             {
                 if (!valueUpdate.HasValue)
                 {

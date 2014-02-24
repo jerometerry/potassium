@@ -6,7 +6,7 @@ namespace Sodium
 
     public class Event<TA>
     {
-        private readonly List<ITransactionHandler<TA>> actions = new List<ITransactionHandler<TA>>();
+        private readonly List<IHandler<TA>> actions = new List<IHandler<TA>>();
         private readonly List<IListener> listeners = new List<IListener>();
         private readonly Node node = new Node();
         private readonly List<TA> firings = new List<TA>();
@@ -54,7 +54,7 @@ namespace Sodium
         public static Event<TA> Merge(Event<TA> ea, Event<TA> eb)
         {
             var sink = new MergeEventSink<TA>(ea, eb);
-            var h = new TransactionHandler<TA>(sink.Send);
+            var h = new Handler<TA>(sink.Send);
             var l1 = ea.Listen(sink.Node, h);
             var l2 = eb.Listen(sink.Node, h);
             return sink.RegisterListener(l1).RegisterListener(l2);
@@ -66,7 +66,7 @@ namespace Sodium
         /// </summary>
         public IListener Listen(Action<TA> action)
         {
-            return Listen(Node.Null, new TransactionHandler<TA>((t, a) => action(a)));
+            return Listen(Node.Null, new Handler<TA>((t, a) => action(a)));
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Sodium
         {
             var ev = this;
             var sink = new MapEventSink<TA, TB>(ev, f);
-            var l = Listen(sink.Node, new TransactionHandler<TA>((t, a) => sink.Send(t, f.Apply(a))));
+            var l = Listen(sink.Node, new Handler<TA>((t, a) => sink.Send(t, f.Apply(a))));
             return sink.RegisterListener(l);
         }
 
@@ -123,7 +123,7 @@ namespace Sodium
         public Event<TC> Snapshot<TB, TC>(Behavior<TB> b, ILambda2<TA, TB, TC> f)
         {
             var sink = new SnapshotEventSink<TA, TB, TC>(this, f, b);
-            var handler = new TransactionHandler<TA>((t2, a) => sink.Send(t2, f.Apply(a, b.Sample())));
+            var handler = new Handler<TA>((t2, a) => sink.Send(t2, f.Apply(a, b.Sample())));
             var l = Listen(sink.Node, handler);
             return sink.RegisterListener(l);
         }
@@ -134,7 +134,7 @@ namespace Sodium
         public Event<TA> Delay()
         {
             var sink = new EventSink<TA>();
-            var handler = new TransactionHandler<TA>((t, a) => t.Post(() => sink.Send(a)));
+            var handler = new Handler<TA>((t, a) => t.Post(() => sink.Send(a)));
             var l1 = Listen(sink.Node, handler);
             return sink.RegisterListener(l1);
         }
@@ -179,7 +179,7 @@ namespace Sodium
         public Event<TA> Filter(ILambda1<TA, bool> predicate)
         {
             var sink = new FilterEventSink<TA>(this, predicate);
-            var handler = new TransactionHandler<TA>((t, a) => sink.Send(predicate, t, a));
+            var handler = new Handler<TA>((t, a) => sink.Send(predicate, t, a));
             var l = Listen(sink.Node, handler);
             return sink.RegisterListener(l);
         }
@@ -248,11 +248,11 @@ namespace Sodium
             // the listener.
             var la = new IListener[1];
             var sink = new OnceEventSink<TA>(this, la);
-            la[0] = this.Listen(sink.Node, new TransactionHandler<TA>((t, a) => sink.Send(la, t, a)));
+            la[0] = this.Listen(sink.Node, new Handler<TA>((t, a) => sink.Send(la, t, a)));
             return sink.RegisterListener(la[0]);
         }
 
-        internal void Unlisten(ITransactionHandler<TA> action, Node target)
+        internal void Unlisten(IHandler<TA> action, Node target)
         {
             lock (Transaction.ListenersLock)
             {
@@ -267,7 +267,7 @@ namespace Sodium
             return this;
         }
 
-        internal void RemoveAction(ITransactionHandler<TA> action)
+        internal void RemoveAction(IHandler<TA> action)
         {
             actions.Remove(action);
         }
@@ -281,7 +281,7 @@ namespace Sodium
 
             firings.Add(a);
 
-            var clonedActions = new List<ITransactionHandler<TA>>(actions);
+            var clonedActions = new List<IHandler<TA>>(actions);
             foreach (var action in clonedActions)
             {
                 try
@@ -303,12 +303,12 @@ namespace Sodium
             return Coalesce(trans, new Lambda2<TA, TA, TA>((a, b) => b));
         }
 
-        internal IListener Listen(Node target, ITransactionHandler<TA> action)
+        internal IListener Listen(Node target, IHandler<TA> action)
         {
             return Transaction.Apply(t => Listen(target, t, action, false));
         }
 
-        internal IListener Listen(Node target, Transaction trans, ITransactionHandler<TA> action, bool suppressEarlierFirings)
+        internal IListener Listen(Node target, Transaction trans, IHandler<TA> action, bool suppressEarlierFirings)
         {
             lock (Transaction.ListenersLock)
             {

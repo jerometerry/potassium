@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    internal sealed class BehaviorSwitchHandler<TA> : ITransactionHandler<Behavior<TA>>
+    internal sealed class BehaviorSwitchHandler<TA> : IHandler<Behavior<TA>>
     {
         private readonly EventSink<TA> sink;
         private IListener listener;
@@ -32,7 +32,7 @@ namespace Sodium
             }
 
             var evt = ba.Value(t);
-            listener = evt.Listen(sink.Node, t, new TransactionHandler<TA>(Handler), false);
+            listener = evt.Listen(sink.Node, t, new Handler<TA>(Handler), false);
         }
 
         private void Handler(Transaction t3, TA a)

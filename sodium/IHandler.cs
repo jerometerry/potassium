@@ -1,7 +1,7 @@
 namespace Sodium
 {
-    public interface IHandler<in TA>
+    internal interface IHandler<in TA>
     {
-        void Run(TA a);
+        void Run(Transaction t, TA a);
     }
 }

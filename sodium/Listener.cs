@@ -7,12 +7,12 @@ namespace Sodium
         /// the Listener, so that the finalizer doesn't get triggered.
         /// </summary>
         private Event<TA> evt;
-        private ITransactionHandler<TA> action;
+        private IHandler<TA> action;
         private Node target;
 
         private bool disposed;
 
-        public Listener(Event<TA> evt, ITransactionHandler<TA> action, Node target)
+        public Listener(Event<TA> evt, IHandler<TA> action, Node target)
         {
             this.evt = evt;
             this.action = action;

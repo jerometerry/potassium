@@ -1,12 +1,12 @@
 namespace Sodium
 {
-    internal sealed class EventSwitchHandler<TA> : ITransactionHandler<Event<TA>>
+    internal sealed class EventSwitchHandler<TA> : IHandler<Event<TA>>
     {
         private readonly EventSink<TA> evt;
-        private readonly ITransactionHandler<TA> handler;
+        private readonly IHandler<TA> handler;
         private IListener listener;
 
-        public EventSwitchHandler(Behavior<Event<TA>> bea, EventSink<TA> evt, Transaction t, ITransactionHandler<TA> h)
+        public EventSwitchHandler(Behavior<Event<TA>> bea, EventSink<TA> evt, Transaction t, IHandler<TA> h)
         {
             this.evt = evt;
             this.handler = h;

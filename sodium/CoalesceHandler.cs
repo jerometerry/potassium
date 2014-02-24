@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    internal sealed class CoalesceHandler<TA> : ITransactionHandler<TA>
+    internal sealed class CoalesceHandler<TA> : IHandler<TA>
     {
         private readonly ILambda2<TA, TA, TA> f;
         private readonly EventSink<TA> evt;

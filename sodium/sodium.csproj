@@ -85,16 +85,13 @@
     <Compile Include="Node.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ITransactionHandler.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="IHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ILambda2.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TransactionHandler.cs" />
+    <Compile Include="Handler.cs" />
     <Compile Include="TransactionContext.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>
