@@ -61,22 +61,12 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Overload of the listen method that accepts and Action, to support C# lambda expressions
-        /// </summary>
-        /// <param name="action"></param>
-        /// <returns></returns>
-        public IListener Listen(Action<TA> action)
-        {
-            return Listen(new Handler<TA>(action));
-        }
-
-        /// <summary>
         /// Listen for firings of this event. The returned Listener has an unlisten()
         /// method to cause the listener to be removed. This is the observer pattern.
         /// </summary>
-        public IListener Listen(IHandler<TA> action)
+        public IListener Listen(Action<TA> action)
         {
-            return Listen(Node.Null, new TransactionHandler<TA>((t, a) => action.Run(a)));
+            return Listen(Node.Null, new TransactionHandler<TA>((t, a) => action(a)));
         }
 
         /// <summary>

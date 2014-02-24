@@ -53,7 +53,6 @@
     <Compile Include="Entry.cs" />
     <Compile Include="EventSwitchHandler.cs" />
     <Compile Include="FilterEventSink.cs" />
-    <Compile Include="Handler.cs" />
     <Compile Include="IListener.cs" />
     <Compile Include="Lambda1.cs" />
     <Compile Include="Lambda2.cs" />

@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    internal sealed class BehaviorApplyHandler<TA, TB> : IHandler<Transaction>
+    internal sealed class BehaviorApplyHandler<TA, TB> 
     {
         private readonly EventSink<TB> evt;
         private readonly Behavior<ILambda1<TA, TB>> bf;
