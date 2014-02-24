@@ -1,19 +1,19 @@
 namespace Sodium
 {
-    internal sealed class EventSwitchHandler<TA> : IHandler<Event<TA>>
+    internal sealed class EventSwitchTrigger<TA> : ITrigger<Event<TA>>
     {
         private readonly EventSink<TA> evt;
-        private readonly IHandler<TA> handler;
+        private readonly ITrigger<TA> trigger;
         private IListener listener;
 
-        public EventSwitchHandler(Behavior<Event<TA>> bea, EventSink<TA> evt, Transaction t, IHandler<TA> h)
+        public EventSwitchTrigger(Behavior<Event<TA>> bea, EventSink<TA> evt, Transaction t, ITrigger<TA> h)
         {
             this.evt = evt;
-            this.handler = h;
+            this.trigger = h;
             this.listener = bea.Sample().Listen(evt.Node, t, h, false);
         }
 
-        ~EventSwitchHandler()
+        ~EventSwitchTrigger()
         {
             Close();
         }
@@ -27,7 +27,7 @@ namespace Sodium
             }
         }
 
-        public void Run(Transaction t, Event<TA> e)
+        public void Fire(Transaction t, Event<TA> e)
         {
             t.Last(() =>
             {
@@ -36,7 +36,7 @@ namespace Sodium
                     listener.Unlisten();
                 }
 
-                listener = e.Listen(evt.Node, t, handler, true);
+                listener = e.Listen(evt.Node, t, this.trigger, true);
             });
         }
     }

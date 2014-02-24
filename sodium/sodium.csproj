@@ -46,12 +46,12 @@
   <ItemGroup>
     <Compile Include="BehaviorApplyHandler.cs" />
     <Compile Include="BehaviorLoop.cs" />
-    <Compile Include="BehaviorSwitchHandler.cs" />
+    <Compile Include="BehaviorSwitchTrigger.cs" />
     <Compile Include="BehaviorValueEventSink.cs" />
     <Compile Include="CoalesceEventSink.cs" />
-    <Compile Include="CoalesceHandler.cs" />
+    <Compile Include="CoalesceTrigger.cs" />
     <Compile Include="Entry.cs" />
-    <Compile Include="EventSwitchHandler.cs" />
+    <Compile Include="EventSwitchTrigger.cs" />
     <Compile Include="FilterEventSink.cs" />
     <Compile Include="IListener.cs" />
     <Compile Include="Listener.cs" />
@@ -79,10 +79,10 @@
     <Compile Include="Node.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IHandler.cs" />
+    <Compile Include="ITrigger.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Handler.cs" />
+    <Compile Include="Trigger.cs" />
     <Compile Include="TransactionContext.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>

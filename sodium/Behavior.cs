@@ -38,9 +38,9 @@ namespace Sodium
         /// <summary>
         /// Lift a binary function into behaviors.
         /// </summary>
-        public static Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> f, Behavior<TA> a, Behavior<TB> b)
+        public static Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> lift, Behavior<TA> a, Behavior<TB> b)
         {
-            return a.Lift(f, b);
+            return a.Lift(lift, b);
         }
 
         /// <summary>
@@ -51,8 +51,8 @@ namespace Sodium
         {
             var sink = new EventSink<TB>();
             var h = new BehaviorApplyHandler<TA, TB>(sink, bf, ba);
-            var l1 = bf.Updates().Listen(sink.Node, new Handler<Func<TA, TB>>((t, f) => h.Run(t)));
-            var l2 = ba.Updates().Listen(sink.Node, new Handler<TA>((t, a) => h.Run(t)));
+            var l1 = bf.Updates().Listen(sink.Node, new Trigger<Func<TA, TB>>((t, f) => h.Run(t)));
+            var l2 = ba.Updates().Listen(sink.Node, new Trigger<TA>((t, a) => h.Run(t)));
             return sink.RegisterListener(l1).RegisterListener(l2).Hold(bf.Sample()(ba.Sample()));
         }
 
@@ -63,7 +63,7 @@ namespace Sodium
         {
             var za = bba.Sample().Sample();
             var sink = new EventSink<TA>();
-            var h = new BehaviorSwitchHandler<TA>(sink);
+            var h = new BehaviorSwitchTrigger<TA>(sink);
             var l1 = bba.Value().Listen(sink.Node, h);
             return sink.RegisterListener(l1).Hold(za);
         }
@@ -138,45 +138,45 @@ namespace Sodium
         /// <summary>
         /// Transform the behavior's value according to the supplied function.
         /// </summary>
-        public Behavior<TB> Map<TB>(Func<TA, TB> f)
+        public Behavior<TB> Map<TB>(Func<TA, TB> map)
         {
-            return Updates().Map(f).Hold(f(Sample()));
+            return Updates().Map(map).Hold(map(Sample()));
         }
 
         /// <summary>
         /// Lift a binary function into behaviors.
         /// </summary>
-        public Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> f, Behavior<TB> b)
+        public Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> lift, Behavior<TB> behavior)
         {
-            Func<TA, Func<TB, TC>> ffa = aa => (bb => f(aa, bb));
+            Func<TA, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
             var bf = Map(ffa);
-            return Behavior<TB>.Apply(bf, b);
+            return Behavior<TB>.Apply(bf, behavior);
         }
 
         /// <summary>
         /// Transform a behavior with a generalized state loop (a mealy machine). The function
         /// is passed the input and the old state and returns the new state and output value.
         /// </summary>
-        public Behavior<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple2<TB, TS>> f)
+        public Behavior<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple2<TB, TS>> snapshot)
         {
-            var ea = Updates().Coalesce((a, b) => b);
-            var za = Sample();
-            var zbs = f(za, initState);
-            var ebs = new EventLoop<Tuple2<TB, TS>>();
-            var bbs = ebs.Hold(zbs);
-            var bs = bbs.Map(x => x.V2);
-            var ebsOut = ea.Snapshot(bs, f);
-            ebs.Loop(ebsOut);
-            return bbs.Map(x => x.V1);
+            var coalesceEvent = Updates().Coalesce((a, b) => b);
+            var currentValue = Sample();
+            var tuple = snapshot(currentValue, initState);
+            var loop = new EventLoop<Tuple2<TB, TS>>();
+            var loopBehavior = loop.Hold(tuple);
+            var snapshotBehavior = loopBehavior.Map(x => x.V2);
+            var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
+            loop.Loop(coalesceSnapshotEvent);
+            return loopBehavior.Map(x => x.V1);
         }
 
         /// <summary>
         /// Lift a ternary function into behaviors.
         /// </summary>
-        public Behavior<TD> Lift<TB, TC, TD>(Func<TA, TB, TC, TD> f, Behavior<TB> b, Behavior<TC> c)
+        public Behavior<TD> Lift<TB, TC, TD>(Func<TA, TB, TC, TD> lift, Behavior<TB> b, Behavior<TC> c)
         {
-            var ffa = TernaryLifter(f);
-            var bf = Map(ffa);
+            var map = TernaryLifter(lift);
+            var bf = Map(map);
             var l1 = Behavior<TB>.Apply(bf, b);
             return Behavior<TC>.Apply(l1, c);
         }
@@ -188,16 +188,18 @@ namespace Sodium
         /// </returns>
         internal TA NewValue()
         {
-            return !valueUpdate.HasValue ? value : valueUpdate.Value();
+            return valueUpdate.HasValue ? valueUpdate.Value() : value;
         }
 
-        internal Event<TA> Value(Transaction t1)
+        internal Event<TA> Value(Transaction transaction)
         {
             var sink = new BehaviorValueEventSink<TA>(this);
-            var l = Event.Listen(sink.Node, t1, new Handler<TA>(sink.Send), false);
-            return sink.RegisterListener(l)
-                .LastFiringOnly(t1);  // Needed in case of an initial value and an update
+            var trigger = new Trigger<TA>(sink.Send);
+            var l = Event.Listen(sink.Node, transaction, trigger, false);
+
+            // Needed in case of an initial value and an update
             // in the same transaction.
+            return sink.RegisterListener(l).LastFiringOnly(transaction);  
         }
 
         protected void SetValue(TA v)
@@ -205,23 +207,23 @@ namespace Sodium
             value = v;
         }
 
-        private static Event<TA> SwitchE(Transaction t1, Behavior<Event<TA>> bea)
+        private static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior)
         {
             var sink = new EventSink<TA>();
-            var h2 = new Handler<TA>(sink.Send);
-            var h1 = new EventSwitchHandler<TA>(bea, sink, t1, h2);
-            var l1 = bea.Updates().Listen(sink.Node, t1, h1, false);
-            return sink.RegisterListener(l1);
+            var trigger = new Trigger<TA>(sink.Send);
+            var eventSwitchTrigger = new EventSwitchTrigger<TA>(behavior, sink, transaction, trigger);
+            var listener = behavior.Updates().Listen(sink.Node, transaction, eventSwitchTrigger, false);
+            return sink.RegisterListener(listener);
         }
 
-        private static Func<TA, Func<TB, Func<TC, TD>>> TernaryLifter<TB, TC, TD>(Func<TA, TB, TC, TD> f)
+        private static Func<TA, Func<TB, Func<TC, TD>>> TernaryLifter<TB, TC, TD>(Func<TA, TB, TC, TD> lift)
         {
-            return aa => bb => cc => { return f(aa, bb, cc); };
+            return aa => bb => cc => { return lift(aa, bb, cc); };
         }
 
-        private void InitializeValue(Transaction t1)
+        private void InitializeValue(Transaction transaction)
         {
-            var handler = new Handler<TA>((t2, a) =>
+            var trigger = new Trigger<TA>((t2, a) =>
             {
                 if (!valueUpdate.HasValue)
                 {
@@ -234,7 +236,7 @@ namespace Sodium
 
                 valueUpdate = new Maybe<TA>(a);
             });
-            listener = evt.Listen(Node.Null, t1, handler, false);
+            listener = evt.Listen(Node.Null, transaction, trigger, false);
         }
     }
 }

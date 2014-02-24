@@ -110,6 +110,14 @@ namespace Sodium
             ClosePostActions();
         }
 
+        internal void Fire<TA>(ITrigger<TA> trigger, IEnumerable<TA> firings)
+        {
+            foreach (var firing in firings)
+            {
+                trigger.Fire(this, firing);
+            }
+        }
+
         private void ClosePrioritizedActions()
         {
             while (true)

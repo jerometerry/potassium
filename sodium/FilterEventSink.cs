@@ -19,11 +19,11 @@ namespace Sodium
         /// </summary>
         /// <param name="t"></param>
         /// <param name="a"></param>
-        internal override void Send(Transaction t, TA a)
+        public void SendIfNotFiltered(Transaction t, TA a)
         {
             if (f(a))
             {
-                base.Send(t, a);
+                Send(t, a);
             }
         }
 

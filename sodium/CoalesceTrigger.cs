@@ -2,19 +2,19 @@ namespace Sodium
 {
     using System;
 
-    internal sealed class CoalesceHandler<TA> : IHandler<TA>
+    internal sealed class CoalesceTrigger<TA> : ITrigger<TA>
     {
         private readonly Func<TA, TA, TA> f;
         private readonly EventSink<TA> evt;
         private Maybe<TA> accum = Maybe<TA>.Null;
 
-        public CoalesceHandler(EventSink<TA> evt, Func<TA, TA, TA> f)
+        public CoalesceTrigger(EventSink<TA> evt, Func<TA, TA, TA> f)
         {
             this.evt = evt;
             this.f = f;
         }
 
-        public void Run(Transaction t1, TA a)
+        public void Fire(Transaction t1, TA a)
         {
             if (accum.HasValue)
             {

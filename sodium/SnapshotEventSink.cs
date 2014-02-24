@@ -6,14 +6,19 @@ namespace Sodium
     internal sealed class SnapshotEventSink<TA, TB, TC> : EventSink<TC>
     {
         private readonly Event<TA> evt;
-        private readonly Func<TA, TB, TC> f;
-        private readonly Behavior<TB> b;
+        private readonly Func<TA, TB, TC> snapshot;
+        private readonly Behavior<TB> behavior;
 
-        public SnapshotEventSink(Event<TA> ev, Func<TA, TB, TC> f, Behavior<TB> b)
+        public SnapshotEventSink(Event<TA> ev, Func<TA, TB, TC> snapshot, Behavior<TB> behavior)
         {
             this.evt = ev;
-            this.f = f;
-            this.b = b;
+            this.snapshot = snapshot;
+            this.behavior = behavior;
+        }
+
+        public void SnapshotAndSend(Transaction transaction, TA firing)
+        {
+            this.Send(transaction, this.snapshot(firing, this.behavior.Sample()));
         }
 
         protected internal override TC[] SampleNow()
@@ -24,7 +29,7 @@ namespace Sodium
                 return null;
             }
             
-            var results = events.Select(e => f(e, b.Sample()));
+            var results = events.Select(e => this.snapshot(e, this.behavior.Sample()));
             return results.ToArray();
         }
     }

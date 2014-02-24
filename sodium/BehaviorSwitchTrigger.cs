@@ -1,16 +1,16 @@
 namespace Sodium
 {
-    internal sealed class BehaviorSwitchHandler<TA> : IHandler<Behavior<TA>>
+    internal sealed class BehaviorSwitchTrigger<TA> : ITrigger<Behavior<TA>>
     {
         private readonly EventSink<TA> sink;
         private IListener listener;
 
-        public BehaviorSwitchHandler(EventSink<TA> sink)
+        public BehaviorSwitchTrigger(EventSink<TA> sink)
         {
             this.sink = sink;
         }
 
-        ~BehaviorSwitchHandler()
+        ~BehaviorSwitchTrigger()
         {
             Close();
         }
@@ -24,7 +24,7 @@ namespace Sodium
             }
         }
 
-        public void Run(Transaction t, Behavior<TA> ba)
+        public void Fire(Transaction t, Behavior<TA> ba)
         {
             // Note: If any switch takes place during a transaction, then the
             // value().listen will always cause a sample to be fetched from the
@@ -38,7 +38,7 @@ namespace Sodium
             }
 
             var evt = ba.Value(t);
-            listener = evt.Listen(sink.Node, t, new Handler<TA>(Handler), false);
+            listener = evt.Listen(sink.Node, t, new Trigger<TA>(Handler), false);
         }
 
         private void Handler(Transaction t3, TA a)

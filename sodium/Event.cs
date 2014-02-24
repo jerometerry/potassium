@@ -6,10 +6,14 @@ namespace Sodium
 
     public class Event<TA>
     {
-        private readonly List<IHandler<TA>> actions = new List<IHandler<TA>>();
+        private readonly List<ITrigger<TA>> triggers = new List<ITrigger<TA>>();
+        private readonly List<TA> firings = new List<TA>();
         private readonly List<IListener> listeners = new List<IListener>();
         private readonly Node node = new Node();
-        private readonly List<TA> firings = new List<TA>();
+
+        internal Event()
+        {
+        }
 
         ~Event()
         {
@@ -29,9 +33,9 @@ namespace Sodium
         /// within the same transaction), they are combined using the same logic as
         /// 'coalesce'.
         /// </summary>
-        public static Event<TA> MergeWith(Func<TA, TA, TA> f, Event<TA> ea, Event<TA> eb)
+        public static Event<TA> MergeWith(Func<TA, TA, TA> f, Event<TA> event1, Event<TA> event2)
         {
-            return Merge(ea, eb).Coalesce(f);
+            return Merge(event1, event2).Coalesce(f);
         }
 
         /// <summary>
@@ -43,42 +47,31 @@ namespace Sodium
         /// their ordering is retained. In many common cases the ordering will
         /// be undefined.
         /// </summary>
-        public static Event<TA> Merge(Event<TA> ea, Event<TA> eb)
+        public static Event<TA> Merge(Event<TA> event1, Event<TA> event2)
         {
-            var sink = new MergeEventSink<TA>(ea, eb);
-            var h = new Handler<TA>(sink.Send);
-            var l1 = ea.Listen(sink.Node, h);
-            var l2 = eb.Listen(sink.Node, h);
+            var sink = new MergeEventSink<TA>(event1, event2);
+            var trigger = new Trigger<TA>(sink.Send);
+            var l1 = event1.Listen(sink.Node, trigger);
+            var l2 = event2.Listen(sink.Node, trigger);
             return sink.RegisterListener(l1).RegisterListener(l2);
-        }
-
-        public void Close()
-        {
-            foreach (var l in this.listeners)
-            {
-                l.Unlisten();
-            }
-
-            listeners.Clear();
         }
 
         /// <summary>
         /// Listen for firings of this event. The returned Listener has an unlisten()
         /// method to cause the listener to be removed. This is the observer pattern.
         /// </summary>
-        public IListener Listen(Action<TA> action)
+        public IListener Listen(Action<TA> trigger)
         {
-            return Listen(Node.Null, new Handler<TA>((t, a) => action(a)));
+            return Listen(Node.Null, new Trigger<TA>((t, a) => trigger(a)));
         }
 
         /// <summary>
         /// Transform the event's value according to the supplied function.
         /// </summary>
-        public Event<TB> Map<TB>(Func<TA, TB> f)
+        public Event<TB> Map<TB>(Func<TA, TB> map)
         {
-            var ev = this;
-            var sink = new MapEventSink<TA, TB>(ev, f);
-            var l = Listen(sink.Node, new Handler<TA>((t, a) => sink.Send(t, f(a))));
+            var sink = new MapEventSink<TA, TB>(this, map);
+            var l = Listen(sink.Node, new Trigger<TA>(sink.MapAndSend));
             return sink.RegisterListener(l);
         }
 
@@ -97,9 +90,9 @@ namespace Sodium
         /// <summary>
         /// Variant of snapshot that throws away the event's value and captures the behavior's.
         /// </summary>
-        public Event<TB> Snapshot<TB>(Behavior<TB> beh)
+        public Event<TB> Snapshot<TB>(Behavior<TB> behavior)
         {
-            return Snapshot(beh, (a, b) => b);
+            return Snapshot(behavior, (a, b) => b);
         }
 
         /// <summary>
@@ -107,12 +100,12 @@ namespace Sodium
         /// of the behavior that's sampled is the value as at the start of the transaction
         /// before any state changes of the current transaction are applied through 'hold's.
         /// </summary>
-        public Event<TC> Snapshot<TB, TC>(Behavior<TB> b, Func<TA, TB, TC> f)
+        public Event<TC> Snapshot<TB, TC>(Behavior<TB> behavior, Func<TA, TB, TC> snapshot)
         {
-            var sink = new SnapshotEventSink<TA, TB, TC>(this, f, b);
-            var handler = new Handler<TA>((t2, a) => sink.Send(t2, f(a, b.Sample())));
-            var l = Listen(sink.Node, handler);
-            return sink.RegisterListener(l);
+            var sink = new SnapshotEventSink<TA, TB, TC>(this, snapshot, behavior);
+            var trigger = new Trigger<TA>(sink.SnapshotAndSend);
+            var listener = Listen(sink.Node, trigger);
+            return sink.RegisterListener(listener);
         }
 
         /// <summary>
@@ -121,9 +114,9 @@ namespace Sodium
         public Event<TA> Delay()
         {
             var sink = new EventSink<TA>();
-            var handler = new Handler<TA>((t, a) => t.Post(() => sink.Send(a)));
-            var l1 = Listen(sink.Node, handler);
-            return sink.RegisterListener(l1);
+            var trigger = new Trigger<TA>((t, a) => t.Post(() => sink.Send(a)));
+            var listener = Listen(sink.Node, trigger);
+            return sink.RegisterListener(listener);
         }
 
         /// <summary>
@@ -135,9 +128,9 @@ namespace Sodium
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
         /// </summary>
-        public Event<TA> Coalesce(Func<TA, TA, TA> f)
+        public Event<TA> Coalesce(Func<TA, TA, TA> coalesce)
         {
-            return Transaction.Apply(t => Coalesce(t, f));
+            return Transaction.Apply(t => Coalesce(t, coalesce));
         }
 
         /// <summary>
@@ -146,7 +139,7 @@ namespace Sodium
         public Event<TA> Filter(Func<TA, bool> predicate)
         {
             var sink = new FilterEventSink<TA>(this, predicate);
-            var handler = new Handler<TA>(sink.Send);
+            var handler = new Trigger<TA>(sink.SendIfNotFiltered);
             var l = Listen(sink.Node, handler);
             return sink.RegisterListener(l);
         }
@@ -168,19 +161,19 @@ namespace Sodium
         /// </summary>
         public Event<TA> Gate(Behavior<bool> predicate)
         {
-            Func<TA, bool, Maybe<TA>> f = (a, pred) => pred ? new Maybe<TA>(a) : null;
-            return Snapshot(predicate, f).FilterNotNull().Map(a => a.Value());
+            Func<TA, bool, Maybe<TA>> snapshot = (a, p) => p ? new Maybe<TA>(a) : null;
+            return Snapshot(predicate, snapshot).FilterNotNull().Map(a => a.Value());
         }
 
         /// <summary>
         /// Transform an event with a generalized state loop (a mealy machine). The function
         /// is passed the input and the old state and returns the new state and output value.
         /// </summary>
-        public Event<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple2<TB, TS>> f)
+        public Event<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple2<TB, TS>> snapshot)
         {
             var es = new EventLoop<TS>();
             var s = es.Hold(initState);
-            var ebs = Snapshot(s, f);
+            var ebs = Snapshot(s, snapshot);
             var eb = ebs.Map(bs => bs.V1);
             var evt = ebs.Map(bs => bs.V2);
             es.Loop(evt);
@@ -190,14 +183,13 @@ namespace Sodium
         /// <summary>
         /// Accumulate on input event, outputting the new state each time.
         /// </summary>
-        public Behavior<TS> Accum<TS>(TS initState, Func<TA, TS, TS> f)
+        public Behavior<TS> Accum<TS>(TS initState, Func<TA, TS, TS> snapshot)
         {
-            var ea = this;
-            var es = new EventLoop<TS>();
-            var s = es.Hold(initState);
-            var evt = ea.Snapshot(s, f);
-            es.Loop(evt);
-            return evt.Hold(initState);
+            var loop = new EventLoop<TS>();
+            var behavior = loop.Hold(initState);
+            var snapshotEvent = Snapshot(behavior, snapshot);
+            loop.Loop(snapshotEvent);
+            return snapshotEvent.Hold(initState);
         }
 
         /// <summary>
@@ -209,15 +201,25 @@ namespace Sodium
             // the listener.
             var la = new IListener[1];
             var sink = new OnceEventSink<TA>(this, la);
-            la[0] = this.Listen(sink.Node, new Handler<TA>((t, a) => sink.Send(la, t, a)));
+            la[0] = this.Listen(sink.Node, new Trigger<TA>((t, a) => sink.Send(la, t, a)));
             return sink.RegisterListener(la[0]);
         }
 
-        internal void Unlisten(IHandler<TA> action, Node target)
+        public void Close()
+        {
+            foreach (var l in this.listeners)
+            {
+                l.Unlisten();
+            }
+
+            listeners.Clear();
+        }
+
+        internal void Unlisten(ITrigger<TA> trigger, Node target)
         {
             lock (Transaction.ListenersLock)
             {
-                this.RemoveAction(action);
+                this.RemoveTrigger(trigger);
                 this.Node.UnlinkTo(target);
             }
         }
@@ -228,76 +230,54 @@ namespace Sodium
             return this;
         }
 
-        internal void RemoveAction(IHandler<TA> action)
+        internal void RemoveTrigger(ITrigger<TA> trigger)
         {
-            actions.Remove(action);
+            this.triggers.Remove(trigger);
         }
 
-        internal virtual void Send(Transaction trans, TA a)
+        internal virtual void Send(Transaction transaction, TA firing)
         {
-            if (!firings.Any())
-            {
-                trans.Last(() => firings.Clear());
-            }
-
-            firings.Add(a);
-
-            var clonedActions = new List<IHandler<TA>>(actions);
-            foreach (var action in clonedActions)
-            {
-                try
-                {
-                    action.Run(trans, a);
-                }
-                catch (Exception t)
-                {
-                    System.Diagnostics.Debug.WriteLine("{0}", t);
-                }
-            }
+            this.ScheduleClearFirings(transaction);
+            this.RecordFiring(firing);
+            this.Fire(transaction, firing);
         }
 
         /// <summary>
         /// Clean up the output by discarding any firing other than the last one. 
         /// </summary>
-        internal Event<TA> LastFiringOnly(Transaction trans)
+        internal Event<TA> LastFiringOnly(Transaction transaction)
         {
-            return Coalesce(trans, (a, b) => b);
+            return Coalesce(transaction, (a, b) => b);
         }
 
-        internal IListener Listen(Node target, IHandler<TA> action)
+        internal IListener Listen(Node target, ITrigger<TA> trigger)
         {
-            return Transaction.Apply(t => Listen(target, t, action, false));
+            return Transaction.Apply(t => Listen(target, t, trigger, false));
         }
 
-        internal IListener Listen(Node target, Transaction trans, IHandler<TA> action, bool suppressEarlierFirings)
+        internal IListener Listen(Node target, Transaction transaction, ITrigger<TA> trigger, bool suppressEarlierFirings)
         {
             lock (Transaction.ListenersLock)
             {
-                trans.LinkNodes(this.node, target);
-                actions.Add(action);
+                transaction.LinkNodes(this.node, target);
+                this.triggers.Add(trigger);
             }
 
             var events = SampleNow();
             if (events != null)
             {
-                // In cases like value(), we start with an initial value.
-                foreach (var t in events)
-                {
-                    action.Run(trans, t); // <-- unchecked warning is here
-                }
+                // In cases like Value(), we start with an initial value.
+                transaction.Fire(trigger, events);
             }
 
             if (!suppressEarlierFirings)
             {
                 // Anything sent already in this transaction must be sent now so that
                 // there's no order dependency between send and listen.
-                foreach (var a in firings)
-                {
-                    action.Run(trans, a);
-                }
+                transaction.Fire(trigger, firings);
             }
 
-            return new Listener<TA>(this, action, target);
+            return new Listener<TA>(this, trigger, target);
         }
 
         protected internal virtual TA[] SampleNow()
@@ -305,13 +285,36 @@ namespace Sodium
             return null;
         }
 
-        private Event<TA> Coalesce(Transaction t1, Func<TA, TA, TA> f)
+        private Event<TA> Coalesce(Transaction transaction, Func<TA, TA, TA> coalesce)
         {
-            var ev = this;
-            var sink = new CoalesceEventSink<TA>(ev, f);
-            var h = new CoalesceHandler<TA>(sink, f);
-            var l = Listen(sink.Node, t1, h, false);
-            return sink.RegisterListener(l);
+            var sink = new CoalesceEventSink<TA>(this, coalesce);
+            var trigger = new CoalesceTrigger<TA>(sink, coalesce);
+            var listener = Listen(sink.Node, transaction, trigger, false);
+            return sink.RegisterListener(listener);
+        }
+
+        private void ScheduleClearFirings(Transaction transaction)
+        {
+            var noFirings = !this.firings.Any();
+            if (noFirings)
+            {
+                // clear any added firings during Transaction.CloseLastActions
+                transaction.Last(() => this.firings.Clear());
+            }
+        }
+
+        private void RecordFiring(TA firing)
+        {
+            firings.Add(firing);
+        }
+
+        private void Fire(Transaction transaction, TA firing)
+        {
+            var clone = new List<ITrigger<TA>>(this.triggers);
+            foreach (var trigger in clone)
+            {
+                trigger.Fire(transaction, firing);
+            }
         }
     }
 }
