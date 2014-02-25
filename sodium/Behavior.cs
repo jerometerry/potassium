@@ -19,10 +19,15 @@ namespace Sodium
         /// </summary>
         public Behavior(TA value)
         {
-            this.evt = new Event<TA>();
+            this.evt = new EventSink<TA>();
             this.value = value;
         }
 
+        /// <summary>
+        /// A behavior with a time varying value
+        /// </summary>
+        /// <param name="evt"></param>
+        /// <param name="initValue"></param>
         internal Behavior(Event<TA> evt, TA initValue)
         {
             this.evt = evt;

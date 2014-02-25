@@ -8,7 +8,7 @@ namespace Sodium
     /// An Event is a stream of discrete event occurrences
     /// </summary>
     /// <typeparam name="TA"></typeparam>
-    public class Event<TA>
+    public abstract class Event<TA>
     {
         private readonly List<ICallback<TA>> callbacks = new List<ICallback<TA>>();
         private readonly List<TA> firings = new List<TA>();
@@ -18,10 +18,6 @@ namespace Sodium
         /// The rank of the current Event. Default to rank zero
         /// </summary>
         private readonly Rank rank = new Rank();
-
-        internal Event()
-        {
-        }
 
         ~Event()
         {
