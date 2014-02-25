@@ -30,13 +30,11 @@
                 // If we are already inside a transaction (which must be on the same
                 // thread otherwise we wouldn't have acquired transactionLock), then
                 // keep using that same transaction.
-                var previous = current;
-                Transaction created = null;
-
+                var created = false;
                 if (current == null)
                 {
-                    created = new Transaction();
-                    current = created;
+                    current = new Transaction();
+                    created = true;
                 }
 
                 try
@@ -45,10 +43,10 @@
                 }
                 finally 
                 {
-                    if (created != null)
+                    if (created)
                     {
-                        created.Dispose();
-                        current = previous;
+                        current.Dispose();
+                        current = null;
                     }
                 }
             }
