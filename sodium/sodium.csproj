@@ -46,13 +46,15 @@
   <ItemGroup>
     <Compile Include="BehaviorApplyHandler.cs" />
     <Compile Include="BehaviorLoop.cs" />
-    <Compile Include="BehaviorSwitchCallback.cs" />
+    <Compile Include="DelayEvent.cs" />
+    <Compile Include="SwitchBehaviorCallback.cs" />
     <Compile Include="BehaviorValueEvent.cs" />
     <Compile Include="CoalesceEvent.cs" />
     <Compile Include="CoalesceCallback.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="PrioritizedAction.cs" />
-    <Compile Include="EventSwitchCallback.cs" />
+    <Compile Include="SwitchBehaviorEvent.cs" />
+    <Compile Include="SwitchEventCallback.cs" />
     <Compile Include="FilterEvent.cs" />
     <Compile Include="IListener.cs" />
     <Compile Include="Listener.cs" />
@@ -71,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SnapshotEvent.cs" />
+    <Compile Include="SwitchEvent.cs" />
     <Compile Include="Transaction.cs" />
   </ItemGroup>
   <ItemGroup>

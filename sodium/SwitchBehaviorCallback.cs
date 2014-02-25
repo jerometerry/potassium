@@ -1,16 +1,16 @@
 namespace Sodium
 {
-    internal sealed class BehaviorSwitchCallback<TA> : ICallback<Behavior<TA>>
+    internal sealed class SwitchBehaviorCallback<TA> : ICallback<Behavior<TA>>
     {
         private readonly Event<TA> sink;
         private IListener listener;
 
-        public BehaviorSwitchCallback(Event<TA> sink)
+        public SwitchBehaviorCallback(Event<TA> sink)
         {
             this.sink = sink;
         }
 
-        ~BehaviorSwitchCallback()
+        ~SwitchBehaviorCallback()
         {
             Close();
         }

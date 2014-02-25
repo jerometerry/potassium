@@ -12,6 +12,9 @@
         {
             this.evt = evt;
             this.map = map;
+
+            var l = evt.Listen(new Callback<TA>(this.Fire), this.Rank);
+            this.RegisterListener(l);
         }
 
         public void Fire(Transaction trans, TA firing)

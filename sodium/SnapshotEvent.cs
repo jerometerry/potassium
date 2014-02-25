@@ -14,6 +14,10 @@ namespace Sodium
             this.evt = ev;
             this.snapshot = snapshot;
             this.behavior = behavior;
+
+            var callback = new Callback<TA>(this.Fire);
+            var listener = ev.Listen(callback, this.Rank);
+            this.RegisterListener(listener);
         }
 
         public void Fire(Transaction transaction, TA firing)

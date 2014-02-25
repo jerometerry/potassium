@@ -12,6 +12,10 @@ namespace Sodium
         {
             this.evt = evt;
             this.f = f;
+
+            var callback = new Callback<TA>(this.Fire);
+            var l = evt.Listen(callback, this.Rank);
+            this.RegisterListener(l);
         }
 
         /// <summary>

@@ -78,10 +78,8 @@ namespace Sodium
         {
             var innerBehavior = bba.Sample();
             var initValue = innerBehavior.Sample();
-            var sink = new Event<TA>();
-            var callback = new BehaviorSwitchCallback<TA>(sink);
-            var l1 = bba.Value().Listen(callback, sink.Rank);
-            return sink.RegisterListener(l1).Hold(initValue);
+            var sink = new SwitchBehaviorEvent<TA>(bba);
+            return sink.Hold(initValue);
         }
 
         /// <summary>
@@ -235,11 +233,7 @@ namespace Sodium
 
         private static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior)
         {
-            var sink = new Event<TA>();
-            var callback = new Callback<TA>(sink.Fire);
-            var eventSwitchCallback = new EventSwitchCallback<TA>(behavior, sink, transaction, callback);
-            var listener = behavior.Updates().ListenUnsuppressed(transaction, eventSwitchCallback, sink.Rank);
-            return sink.RegisterListener(listener);
+            return new SwitchEvent<TA>(transaction, behavior);
         }
 
         private void InitializeValue(Transaction transaction)

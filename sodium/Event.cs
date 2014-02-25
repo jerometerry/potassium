@@ -55,11 +55,7 @@ namespace Sodium
         /// </remarks>
         public static Event<TA> Merge(Event<TA> event1, Event<TA> event2)
         {
-            var sink = new MergeEvent<TA>(event1, event2);
-            var callback = new Callback<TA>(sink.Fire);
-            var l1 = event1.Listen(callback, sink.Rank);
-            var l2 = event2.Listen(callback, sink.Rank);
-            return sink.RegisterListener(l1).RegisterListener(l2);
+            return new MergeEvent<TA>(event1, event2);
         }
 
         /// <summary>
@@ -85,9 +81,7 @@ namespace Sodium
         /// </summary>
         public Event<TB> Map<TB>(Func<TA, TB> map)
         {
-            var sink = new MapEvent<TA, TB>(this, map);
-            var l = Listen(new Callback<TA>(sink.Fire), sink.Rank);
-            return sink.RegisterListener(l);
+            return new MapEvent<TA, TB>(this, map);
         }
 
         /// <summary>
@@ -117,10 +111,7 @@ namespace Sodium
         /// </summary>
         public Event<TC> Snapshot<TB, TC>(Behavior<TB> behavior, Func<TA, TB, TC> snapshot)
         {
-            var sink = new SnapshotEvent<TA, TB, TC>(this, snapshot, behavior);
-            var callback = new Callback<TA>(sink.Fire);
-            var listener = Listen(callback, sink.Rank);
-            return sink.RegisterListener(listener);
+            return new SnapshotEvent<TA, TB, TC>(this, snapshot, behavior);
         }
 
         /// <summary>
@@ -128,10 +119,7 @@ namespace Sodium
         /// </summary>
         public Event<TA> Delay()
         {
-            var sink = new Event<TA>();
-            var callback = new Callback<TA>((t, a) => t.Post(() => sink.Fire(a)));
-            var listener = Listen(callback, sink.Rank);
-            return sink.RegisterListener(listener);
+            return new DelayEvent<TA>(this);
         }
 
         /// <summary>
@@ -154,10 +142,7 @@ namespace Sodium
         /// </summary>
         public Event<TA> Filter(Func<TA, bool> predicate)
         {
-            var sink = new FilterEvent<TA>(this, predicate);
-            var callback = new Callback<TA>(sink.Fire);
-            var l = Listen(callback, sink.Rank);
-            return sink.RegisterListener(l);
+            return new FilterEvent<TA>(this, predicate);
         }
 
         /// <summary>
@@ -178,7 +163,7 @@ namespace Sodium
         public Event<TA> Gate(Behavior<bool> predicate)
         {
             Func<TA, bool, Maybe<TA>> snapshot = (a, p) => p ? new Maybe<TA>(a) : null;
-            return Snapshot(predicate, snapshot).FilterNotNull().Map(a => a.Value());
+            return this.Snapshot(predicate, snapshot).FilterNotNull().Map(a => a.Value());
         }
 
         /// <summary>
@@ -213,12 +198,7 @@ namespace Sodium
         /// </summary>
         public Event<TA> Once()
         {
-            // This is a bit long-winded but it's efficient because it deregisters
-            // the listener.
-            var la = new IListener[1];
-            var sink = new OnceEvent<TA>(this, la);
-            la[0] = Listen(new Callback<TA>((t, a) => sink.Fire(la, t, a)), sink.Rank);
-            return sink.RegisterListener(la[0]);
+            return new OnceEvent<TA>(this);
         }
 
         /// <summary>
@@ -342,10 +322,7 @@ namespace Sodium
 
         private Event<TA> Coalesce(Transaction transaction, Func<TA, TA, TA> coalesce)
         {
-            var sink = new CoalesceEvent<TA>(this, coalesce);
-            var callback = new CoalesceCallback<TA>(sink, coalesce);
-            var listener = ListenUnsuppressed(transaction, callback, sink.Rank);
-            return sink.RegisterListener(listener);
+            return new CoalesceEvent<TA>(this, coalesce, transaction);
         }
 
         /// <summary>

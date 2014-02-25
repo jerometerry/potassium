@@ -1,16 +1,19 @@
 namespace Sodium
 {
-    using System;
-
     internal sealed class OnceEvent<TA> : Event<TA>
     {
         private readonly Event<TA> evt;
         private readonly IListener[] listeners;
 
-        public OnceEvent(Event<TA> evt, IListener[] listeners)
+        public OnceEvent(Event<TA> evt)
         {
             this.evt = evt;
-            this.listeners = listeners;
+
+            // This is a bit long-winded but it's efficient because it deregisters
+            // the listener.
+            this.listeners = new IListener[1];
+            this.listeners[0] = evt.Listen(new Callback<TA>((t, a) => this.Fire(this.listeners, t, a)), this.Rank);
+            this.RegisterListener(this.listeners[0]);
         }
 
         public void Fire(IListener[] la, Transaction t, TA a)
