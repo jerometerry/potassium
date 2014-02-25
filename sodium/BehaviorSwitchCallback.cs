@@ -24,7 +24,7 @@ namespace Sodium
             }
         }
 
-        public void Invoke(Transaction transaction, Behavior<TA> data)
+        public void Invoke(Transaction transaction, Behavior<TA> behavior)
         {
             // Note: If any switch takes place during a transaction, then the
             // Value().Listen will always cause a sample to be fetched from the
@@ -37,7 +37,7 @@ namespace Sodium
                 listener.Stop();
             }
 
-            var evt = data.Value(transaction);
+            var evt = behavior.Value(transaction);
             listener = evt.ListenUnsuppressed(transaction, new Callback<TA>((t, a) => sink.Fire(t, a)), sink.Rank);
         }
     }

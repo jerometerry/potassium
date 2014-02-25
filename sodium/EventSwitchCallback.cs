@@ -27,7 +27,7 @@ namespace Sodium
             }
         }
 
-        public void Invoke(Transaction transaction, Event<TA> data)
+        public void Invoke(Transaction transaction, Event<TA> evt)
         {
             transaction.Last(() =>
             {
@@ -36,7 +36,7 @@ namespace Sodium
                     listener.Stop();
                 }
 
-                listener = data.ListenSuppressed(transaction, callback, evt.Rank);
+                listener = evt.ListenSuppressed(transaction, callback, evt.Rank);
             });
         }
     }

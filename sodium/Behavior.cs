@@ -9,7 +9,7 @@ namespace Sodium
     /// <typeparam name="TA"></typeparam>
     public class Behavior<TA>
     {
-        private readonly Event<TA> evt;
+        private Event<TA> evt;
         private TA value;
         private Maybe<TA> valueUpdate = Maybe<TA>.Null;
         private IListener listener;
@@ -100,12 +100,21 @@ namespace Sodium
             return a.Lift(f, b, c);
         }
 
+        /// <summary>
+        /// Stop listening for event occurrences
+        /// </summary>
         public void Stop()
         {
             if (listener != null)
             {
                 listener.Stop();
                 listener = null;
+            }
+
+            if (evt != null)
+            {
+                evt.Stop();
+                evt = null;
             }
         }
 
@@ -192,7 +201,7 @@ namespace Sodium
         /// </summary>
         public Behavior<TD> Lift<TB, TC, TD>(Func<TA, TB, TC, TD> lift, Behavior<TB> b, Behavior<TC> c)
         {
-            var map = TernaryLifter(lift);
+            Func<TA, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
             var bf = Map(map);
             var l1 = Behavior<TB>.Apply(bf, b);
             return Behavior<TC>.Apply(l1, c);
@@ -233,28 +242,26 @@ namespace Sodium
             return sink.RegisterListener(listener);
         }
 
-        private static Func<TA, Func<TB, Func<TC, TD>>> TernaryLifter<TB, TC, TD>(Func<TA, TB, TC, TD> lift)
-        {
-            return aa => bb => cc => { return lift(aa, bb, cc); };
-        }
-
         private void InitializeValue(Transaction transaction)
         {
-            var callback = new Callback<TA>((t2, a) =>
-            {
-                if (!valueUpdate.HasValue)
-                {
-                    t2.Last(() =>
-                    {
-                        value = valueUpdate.Value();
-                        valueUpdate = Maybe<TA>.Null;
-                    });
-                }
-
-                valueUpdate = new Maybe<TA>(a);
-            });
-
+            var callback = new Callback<TA>(InitializeValueUpdate);
             listener = evt.ListenUnsuppressed(transaction, callback, Rank.Highest);
+        }
+
+        private void InitializeValueUpdate(Transaction transaction, TA update)
+        {
+            if (!valueUpdate.HasValue)
+            {
+                transaction.Last(ApplyValueUpdate);
+            }
+
+            valueUpdate = new Maybe<TA>(update);
+        }
+
+        private void ApplyValueUpdate()
+        {
+            value = valueUpdate.Value();
+            valueUpdate = Maybe<TA>.Null;
         }
     }
 }
