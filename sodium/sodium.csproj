@@ -49,7 +49,7 @@
     <Compile Include="BehaviorSwitchCallback.cs" />
     <Compile Include="BehaviorValueEventSink.cs" />
     <Compile Include="CoalesceEventSink.cs" />
-    <Compile Include="CoalesceTrigger.cs" />
+    <Compile Include="CoalesceCallback.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="PrioritizedAction.cs" />
     <Compile Include="EventSwitchCallback.cs" />
