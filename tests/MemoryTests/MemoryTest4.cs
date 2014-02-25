@@ -1,10 +1,15 @@
-namespace Sodium.Tests
+namespace Sodium.MemoryTests
 {
     using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using NUnit.Framework;
 
+    [TestFixture]
     public class MemoryTest4
     {
-        public static void main(string[] args)
+        [Test]
+        public void Test()
         {
             //new Thread() {
             //    public void run()

@@ -1,8 +1,15 @@
-namespace Sodium.Tests
+namespace Sodium.MemoryTests
 {
-    public class MemoryTest3
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using NUnit.Framework;
+
+    [TestFixture]
+    public class MemoryTest5
     {
-        public static void main(string[] args)
+        [Test]
+        public void Test()
         {
             //new Thread() {
             //    public void run()
@@ -19,11 +26,8 @@ namespace Sodium.Tests
             //    }
             //}.start();
 
-            EventSink<int> et = new EventSink<int>();
-            Behavior<int> t = et.Hold(0);
-            EventSink<int> evt = new EventSink<int>();
-            Behavior<Behavior<int>> oout = evt.Map(x => t).Hold(t);
-            Behavior<int> o = Behavior<int>.SwitchB(oout);
+            EventSink<int> eChange = new EventSink<int>();
+            Behavior<int> o = eChange.Hold(0);
             IListener l = o.Value().Listen(tt =>
             {
                 //System.out.println(tt)
@@ -31,7 +35,7 @@ namespace Sodium.Tests
             int i = 0;
             while (i < 1000000000)
             {
-                evt.Send(i);
+                eChange.Send(i);
                 i++;
             }
 
