@@ -315,7 +315,7 @@ namespace Sodium
             {
                 if (this.rank.AddSuperior(superior))
                 {
-                    transaction.RanksModified = true;
+                    transaction.Reprioritize = true;
                 }
 
                 callbacks.Add(callback);

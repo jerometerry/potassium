@@ -15,7 +15,7 @@ namespace Sodium
     {
         private readonly List<T> data = new List<T>();
 
-        public void Regenerate()
+        public void Reprioritize()
         {
             var entries = new List<T>(data);
             Clear();

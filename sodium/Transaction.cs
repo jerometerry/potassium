@@ -30,9 +30,10 @@ namespace Sodium
         }
 
         /// <summary>
-        /// True if we need to re-generate the priority queue.
+        /// If the Rank of any action is modified, set Reprioritize to true to reprioritize
+        /// the PriorityQueue before running the Prioritized Actions.
         /// </summary>
-        public bool RanksModified { get; set; }
+        public bool Reprioritize { get; set; }
 
         /// <summary>
         /// Add an action to run before all Last() and Post() actions. Actions are prioritized by rank.
@@ -102,10 +103,10 @@ namespace Sodium
             {
                 // If the priority queue has entries in it when we modify any of the nodes'
                 // ranks, then we need to re-generate it to make sure it's up-to-date.
-                if (this.RanksModified)
+                if (this.Reprioritize)
                 {
-                    this.RanksModified = false;
-                    prioritized.Regenerate();
+                    this.Reprioritize = false;
+                    prioritized.Reprioritize();
                 }
 
                 if (prioritized.IsEmpty())
