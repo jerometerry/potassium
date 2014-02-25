@@ -19,10 +19,10 @@ namespace Sodium
 
         ~Listener()
         {
-            Unlisten();
+            this.Stop();
         }
 
-        public void Unlisten()
+        public void Stop()
         {
             if (evt != null)
             {

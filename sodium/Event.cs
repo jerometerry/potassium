@@ -25,7 +25,7 @@ namespace Sodium
 
         ~Event()
         {
-            Close();
+            this.Stop();
         }
 
         internal Rank Rank
@@ -216,11 +216,14 @@ namespace Sodium
             return sink.RegisterListener(la[0]);
         }
 
-        public void Close()
+        /// <summary>
+        /// Stop all listeners from receiving events from the current Event
+        /// </summary>
+        public void Stop()
         {
             foreach (var l in listeners)
             {
-                l.Unlisten();
+                l.Stop();
             }
 
             listeners.Clear();

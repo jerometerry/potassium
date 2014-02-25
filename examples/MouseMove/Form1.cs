@@ -42,11 +42,11 @@
 
         private void Cleanup()
         {
-            listener.Unlisten();
+            listener.Stop();
             listener = null;
-            sink.Close();
+            sink.Stop();
             sink = null;
-            map.Close();
+            map.Stop();
             map = null;
         }
     }

@@ -2,6 +2,6 @@ namespace Sodium
 {
     public interface IListener
     {
-        void Unlisten();
+        void Stop();
     }
 }

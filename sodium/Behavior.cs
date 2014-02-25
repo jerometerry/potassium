@@ -32,7 +32,7 @@ namespace Sodium
 
         ~Behavior()
         {
-            Close();
+            this.Stop();
         }
 
         protected Event<TA> Event
@@ -95,11 +95,11 @@ namespace Sodium
             return a.Lift(f, b, c);
         }
 
-        public void Close()
+        public void Stop()
         {
             if (listener != null)
             {
-                listener.Unlisten();
+                listener.Stop();
                 listener = null;
             }
         }

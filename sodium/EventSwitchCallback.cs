@@ -22,7 +22,7 @@ namespace Sodium
         {
             if (listener != null)
             {
-                listener.Unlisten();
+                listener.Stop();
                 listener = null;
             }
         }
@@ -33,7 +33,7 @@ namespace Sodium
             {
                 if (listener != null)
                 { 
-                    listener.Unlisten();
+                    listener.Stop();
                 }
 
                 listener = data.ListenSuppressed(transaction, callback, evt.Rank);

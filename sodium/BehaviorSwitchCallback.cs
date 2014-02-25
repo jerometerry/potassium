@@ -19,7 +19,7 @@ namespace Sodium
         {
             if (listener != null)
             {
-                listener.Unlisten();
+                listener.Stop();
                 listener = null;
             }
         }
@@ -34,7 +34,7 @@ namespace Sodium
             // that might have happened during this transaction will be suppressed.
             if (listener != null)
             { 
-                listener.Unlisten();
+                listener.Stop();
             }
 
             var evt = data.Value(transaction);

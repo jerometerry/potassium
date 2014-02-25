@@ -17,7 +17,7 @@ namespace Sodium.Tests
             var listener = behavior.Updates().Listen(results.Add);
             evt.Send(2);
             evt.Send(9);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<int>.AsList(2, 9), results);
         }
 
@@ -36,7 +36,7 @@ namespace Sodium.Tests
             behavior.Send(9);
             behavior.Send(1);
             evt.Send(300L);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<string>.AsList("100 0", "200 2", "300 1"), results);
         }
 
@@ -48,7 +48,7 @@ namespace Sodium.Tests
             var listener = behavior.Value().Listen(results.Add);
             behavior.Send(2);
             behavior.Send(7);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<int>.AsList(9, 2, 7), results);
         }
 
@@ -58,7 +58,7 @@ namespace Sodium.Tests
             var behavior = new Behavior<int>(12);
             var results = new List<int>();
             var listener = behavior.Value().Listen(results.Add);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<int>.AsList(12), results);
         }
 
@@ -70,7 +70,7 @@ namespace Sodium.Tests
             var l = behavior.Value().Map(x => x + 100).Listen(results.Add);
             behavior.Send(2);
             behavior.Send(7);
-            l.Unlisten();
+            l.Stop();
             AssertArraysEqual(Arrays<int>.AsList(109, 102, 107), results);
         }
 
@@ -82,7 +82,7 @@ namespace Sodium.Tests
             var listener = DoubleUp(behavior.Value()).Map(x => x + 100).Listen(results.Add);
             behavior.Send(2);
             behavior.Send(7);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<int>.AsList(109, 109, 102, 102, 107, 107), results);
         }
 
@@ -94,7 +94,7 @@ namespace Sodium.Tests
             var listener = behavior.Value().Coalesce((fst, snd) => snd).Listen(results.Add);
             behavior.Send(2);
             behavior.Send(7);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<int>.AsList(9, 2, 7), results);
         }
 
@@ -106,7 +106,7 @@ namespace Sodium.Tests
             var listener = DoubleUp(behavior.Value()).Coalesce((fst, snd) => fst + snd).Listen(results.Add);
             behavior.Send(2);
             behavior.Send(7);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<int>.AsList(18, 4, 14), results);
         }
         
@@ -121,7 +121,7 @@ namespace Sodium.Tests
             behaviorInt32.Send(2);
             behaviorChar.Send('c');
             behaviorInt32.Send(7);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<char>.AsList('a', 'b', 'c'), results);
         }
         
@@ -136,7 +136,7 @@ namespace Sodium.Tests
             behaviorInt32.Send(2);
             behaviorChar.Send('c');
             behaviorInt32.Send(7);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<char>.AsList('a', 'a', 'b', 'b', 'c', 'c'), results);
         }
         
@@ -149,7 +149,7 @@ namespace Sodium.Tests
             var listener = Event<int>.MergeWith((x, y) => x + y, behavior1.Value(), behavior2.Value()).Listen(results.Add);
             behavior1.Send(1);
             behavior2.Send(4);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<int>.AsList(11, 1, 4), results);
         }
         
@@ -161,7 +161,7 @@ namespace Sodium.Tests
             var listener = behavior.Value().Filter(a => true).Listen(results.Add);
             behavior.Send(2);
             behavior.Send(7);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<int>.AsList(9, 2, 7), results);
         }
         
@@ -173,7 +173,7 @@ namespace Sodium.Tests
             var listener = DoubleUp(behavior.Value()).Filter(a => true).Listen(results.Add);
             behavior.Send(2);
             behavior.Send(7);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<int>.AsList(9, 9, 2, 2, 7, 7), results);
         }
         
@@ -185,7 +185,7 @@ namespace Sodium.Tests
             var listener = behavior.Value().Once().Listen(results.Add);
             behavior.Send(2);
             behavior.Send(7);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<int>.AsList(9), results);
         }
         
@@ -197,7 +197,7 @@ namespace Sodium.Tests
             var listener = DoubleUp(behavior.Value()).Once().Listen(results.Add);
             behavior.Send(2);
             behavior.Send(7);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<int>.AsList(9), results);
         }
 
@@ -210,7 +210,7 @@ namespace Sodium.Tests
             behavior.Send(8);
             var listener = value.Listen(results.Add);
             behavior.Send(2);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<int>.AsList(8, 2), results);
         }
 	
@@ -221,7 +221,7 @@ namespace Sodium.Tests
             var results = new List<string>();
             var listener = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture)).Value().Listen(results.Add);
             behavior.Send(8);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<string>.AsList("6", "8"), results);
         }
 
@@ -232,7 +232,7 @@ namespace Sodium.Tests
             var behavior1 = behavior.Map(x => x * 3);
             var results = new List<int>();
             var listener = behavior1.Value().Listen(results.Add);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<int>.AsList(3), results);
         }
 
@@ -244,7 +244,7 @@ namespace Sodium.Tests
             var results = new List<int>();
             var listener = behavior1.Value().Listen(results.Add);
             behavior.Send(2);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<int>.AsList(3, 6), results);
         }
 	
@@ -257,7 +257,7 @@ namespace Sodium.Tests
             behavior.Send(2);
             var listener = map.Value().Listen(results.Add);
             behavior.Send(8);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<string>.AsList("2", "8"), results);
         }
 
@@ -270,7 +270,7 @@ namespace Sodium.Tests
             var listener = Behavior<long>.Apply(bf, ba).Value().Listen(results.Add);
             bf.Send(b => "12 " + b);
             ba.Send(6L);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<string>.AsList("1 5", "12 5", "12 6"), results);
         }
 
@@ -284,7 +284,7 @@ namespace Sodium.Tests
             var listener = combinedBehavior.Value().Listen(results.Add);
             behavior1.Send(12);
             behavior2.Send(6L);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<string>.AsList("1 5", "12 5", "12 6"), results);
         }
 
@@ -298,7 +298,7 @@ namespace Sodium.Tests
             var combinedBehavior = Behavior<int>.Lift((x, y) => x + " " + y, mappedBehavior1, mappedBehavior2);
             var listener = combinedBehavior.Value().Listen(results.Add);
             behavior.Send(2);
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<string>.AsList("3 5", "6 10"), results);
         }
 
@@ -312,7 +312,7 @@ namespace Sodium.Tests
             var l = pair.Listen(o.Add);
             e.Send(2);
             e.Send(3);
-            l.Unlisten();
+            l.Stop();
             AssertArraysEqual(Arrays<string>.AsList("2 0", "3 2"), o);
         }
 
@@ -343,7 +343,7 @@ namespace Sodium.Tests
             sink.Send(new Sb('G','g',behaviorB));
             sink.Send(new Sb('H','h',behaviorA));
             sink.Send(new Sb('I','i',behaviorA));
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<char>.AsList('A','B','c','d','E','F','f','F','g','H','I'), results);
         }
 
@@ -365,7 +365,7 @@ namespace Sodium.Tests
                 results.Add(c.Value);
             });
             sink.Send(new Sb('B', 'b', null));
-            listener.Unlisten();
+            listener.Stop();
             AssertArraysEqual(Arrays<char>.AsList('A', 'B'), results);
         }
 
@@ -388,7 +388,7 @@ namespace Sodium.Tests
             ese.Send(new Se('G','g',eb));
             ese.Send(new Se('H','h',ea));
             ese.Send(new Se('I','i',ea));
-            l.Unlisten();
+            l.Stop();
             AssertArraysEqual(Arrays<char>.AsList('A','B','C','d','e','F','G','h','I'), o);
         }
 
@@ -404,7 +404,7 @@ namespace Sodium.Tests
             ea.Send(2);
             ea.Send(3);
             ea.Send(1);
-            l.Unlisten();
+            l.Stop();
             AssertArraysEqual(Arrays<int>.AsList(0,2,5,6), o);
             Assert.AreEqual(6, sum.Sample());
         }
@@ -421,7 +421,7 @@ namespace Sodium.Tests
             ea.Send(1);
             ea.Send(2);
             ea.Send(3);
-            l.Unlisten();
+            l.Stop();
             AssertArraysEqual(Arrays<int>.AsList(100, 105, 112, 113, 115, 118), o);
         }
 
@@ -437,7 +437,7 @@ namespace Sodium.Tests
             ea.Send(1);
             ea.Send(2);
             ea.Send(3);
-            l.Unlisten();
+            l.Stop();
             AssertArraysEqual(Arrays<int>.AsList(100,105,112,113,115,118), o);
         }
         
