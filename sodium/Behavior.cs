@@ -51,8 +51,8 @@ namespace Sodium
         {
             var sink = new EventSink<TB>();
             var h = new BehaviorApplyHandler<TA, TB>(sink, bf, ba);
-            var l1 = bf.Updates().Listen(sink.Node, new Callback<Func<TA, TB>>((t, f) => h.Run(t)));
-            var l2 = ba.Updates().Listen(sink.Node, new Callback<TA>((t, a) => h.Run(t)));
+            var l1 = bf.Updates().Listen(new Callback<Func<TA, TB>>((t, f) => h.Run(t)), sink.Rank);
+            var l2 = ba.Updates().Listen(new Callback<TA>((t, a) => h.Run(t)), sink.Rank);
             return sink.RegisterListener(l1).RegisterListener(l2).Hold(bf.Sample()(ba.Sample()));
         }
 
@@ -64,7 +64,7 @@ namespace Sodium
             var initValue = bba.Sample().Sample();
             var sink = new EventSink<TA>();
             var callback = new BehaviorSwitchCallback<TA>(sink);
-            var l1 = bba.Value().Listen(sink.Node, callback);
+            var l1 = bba.Value().Listen(callback, sink.Rank);
             return sink.RegisterListener(l1).Hold(initValue);
         }
 
@@ -195,7 +195,7 @@ namespace Sodium
         {
             var sink = new BehaviorValueEventSink<TA>(this);
             var callback = new Callback<TA>(sink.Fire);
-            var l = Event.ListenUnsuppressed(sink.Node, transaction, callback);
+            var l = Event.ListenUnsuppressed(transaction, callback, sink.Rank);
 
             // Needed in case of an initial value and an update
             // in the same transaction.
@@ -212,7 +212,7 @@ namespace Sodium
             var sink = new EventSink<TA>();
             var callback = new Callback<TA>(sink.Fire);
             var eventSwitchCallback = new EventSwitchCallback<TA>(behavior, sink, transaction, callback);
-            var listener = behavior.Updates().ListenUnsuppressed(sink.Node, transaction, eventSwitchCallback);
+            var listener = behavior.Updates().ListenUnsuppressed(transaction, eventSwitchCallback, sink.Rank);
             return sink.RegisterListener(listener);
         }
 
@@ -237,7 +237,7 @@ namespace Sodium
                 valueUpdate = new Maybe<TA>(a);
             });
 
-            listener = evt.ListenUnsuppressed(Node.Null, transaction, callback);
+            listener = evt.ListenUnsuppressed(transaction, callback, Rank.Null);
         }
     }
 }

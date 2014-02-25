@@ -9,7 +9,7 @@ namespace Sodium
         private readonly List<ICallback<TA>> callbacks = new List<ICallback<TA>>();
         private readonly List<TA> firings = new List<TA>();
         private readonly List<IListener> listeners = new List<IListener>();
-        private readonly Node node = new Node();
+        private readonly Rank rank = new Rank();
 
         internal Event()
         {
@@ -20,9 +20,9 @@ namespace Sodium
             Close();
         }
 
-        internal Node Node
+        internal Rank Rank
         {
-            get { return node; }
+            get { return this.rank; }
         }
 
         /// <summary>
@@ -51,8 +51,8 @@ namespace Sodium
         {
             var sink = new MergeEventSink<TA>(event1, event2);
             var callback = new Callback<TA>(sink.Fire);
-            var l1 = event1.Listen(sink.Node, callback);
-            var l2 = event2.Listen(sink.Node, callback);
+            var l1 = event1.Listen(callback, sink.Rank);
+            var l2 = event2.Listen(callback, sink.Rank);
             return sink.RegisterListener(l1).RegisterListener(l2);
         }
 
@@ -62,7 +62,7 @@ namespace Sodium
         /// </summary>
         public IListener Listen(Action<TA> callback)
         {
-            return Listen(Node.Null, new Callback<TA>((t, a) => callback(a)));
+            return Listen(new Callback<TA>((t, a) => callback(a)), Rank.Null);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace Sodium
         public Event<TB> Map<TB>(Func<TA, TB> map)
         {
             var sink = new MapEventSink<TA, TB>(this, map);
-            var l = Listen(sink.Node, new Callback<TA>(sink.MapAndSend));
+            var l = Listen(new Callback<TA>(sink.MapAndSend), sink.Rank);
             return sink.RegisterListener(l);
         }
 
@@ -104,7 +104,7 @@ namespace Sodium
         {
             var sink = new SnapshotEventSink<TA, TB, TC>(this, snapshot, behavior);
             var callback = new Callback<TA>(sink.SnapshotAndSend);
-            var listener = Listen(sink.Node, callback);
+            var listener = Listen(callback, sink.Rank);
             return sink.RegisterListener(listener);
         }
 
@@ -115,7 +115,7 @@ namespace Sodium
         {
             var sink = new EventSink<TA>();
             var callback = new Callback<TA>((t, a) => t.Post(() => sink.Send(a)));
-            var listener = Listen(sink.Node, callback);
+            var listener = Listen(callback, sink.Rank);
             return sink.RegisterListener(listener);
         }
 
@@ -139,8 +139,8 @@ namespace Sodium
         public Event<TA> Filter(Func<TA, bool> predicate)
         {
             var sink = new FilterEventSink<TA>(this, predicate);
-            var handler = new Callback<TA>(sink.FireIfNotFiltered);
-            var l = Listen(sink.Node, handler);
+            var callback = new Callback<TA>(sink.FireIfNotFiltered);
+            var l = Listen(callback, sink.Rank);
             return sink.RegisterListener(l);
         }
 
@@ -201,7 +201,7 @@ namespace Sodium
             // the listener.
             var la = new IListener[1];
             var sink = new OnceEventSink<TA>(this, la);
-            la[0] = Listen(sink.Node, new Callback<TA>((t, a) => sink.Fire(la, t, a)));
+            la[0] = Listen(new Callback<TA>((t, a) => sink.Fire(la, t, a)), sink.Rank);
             return sink.RegisterListener(la[0]);
         }
 
@@ -223,12 +223,12 @@ namespace Sodium
             }
         }
 
-        internal void Unlisten(ICallback<TA> callback, Node target)
+        internal void Unlisten(ICallback<TA> callback, Rank target)
         {
             lock (Constants.ListenersLock)
             {
                 RemoveCallback(callback);
-                Node.UnlinkTo(target);
+                this.Rank.UnlinkTo(target);
             }
         }
 
@@ -274,22 +274,22 @@ namespace Sodium
             return Coalesce(transaction, (a, b) => b);
         }
 
-        internal IListener Listen(Node target, ICallback<TA> callback)
+        internal IListener Listen(ICallback<TA> callback, Rank target)
         {
-            return Transaction.Run(t => ListenUnsuppressed(target, t, callback));
+            return Transaction.Run(t => ListenUnsuppressed(t, callback, target));
         }
 
-        internal IListener ListenUnsuppressed(Node target, Transaction transaction, ICallback<TA> callback)
+        internal IListener ListenUnsuppressed(Transaction transaction, ICallback<TA> callback, Rank target)
         {
-            RegisterCallback(target, transaction, callback);
+            RegisterCallback(transaction, callback, target);
             InitialFire(transaction, callback);
             Refire(transaction, callback);
             return new Listener<TA>(this, callback, target);
         }
 
-        internal IListener ListenSuppressed(Node target, Transaction transaction, ICallback<TA> callback)
+        internal IListener ListenSuppressed(Transaction transaction, ICallback<TA> callback, Rank target)
         {
-            RegisterCallback(target, transaction, callback);
+            RegisterCallback(transaction, callback, target);
             InitialFire(transaction, callback);
             return new Listener<TA>(this, callback, target);
         }
@@ -299,11 +299,11 @@ namespace Sodium
             return null;
         }
 
-        private void RegisterCallback(Node target, Transaction transaction, ICallback<TA> callback)
+        private void RegisterCallback(Transaction transaction, ICallback<TA> callback, Rank target)
         {
             lock (Constants.ListenersLock)
             {
-                if (node.LinkTo(target))
+                if (this.rank.LinkTo(target))
                 {
                     transaction.NodeRanksModified = true;
                 }
@@ -325,7 +325,7 @@ namespace Sodium
         {
             var sink = new CoalesceEventSink<TA>(this, coalesce);
             var callback = new CoalesceCallback<TA>(sink, coalesce);
-            var listener = ListenUnsuppressed(sink.Node, transaction, callback);
+            var listener = ListenUnsuppressed(transaction, callback, sink.Rank);
             return sink.RegisterListener(listener);
         }
 

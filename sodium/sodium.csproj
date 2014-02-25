@@ -51,7 +51,7 @@
     <Compile Include="CoalesceEventSink.cs" />
     <Compile Include="CoalesceTrigger.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Entry.cs" />
+    <Compile Include="PrioritizedAction.cs" />
     <Compile Include="EventSwitchCallback.cs" />
     <Compile Include="FilterEventSink.cs" />
     <Compile Include="IListener.cs" />
@@ -77,7 +77,7 @@
     <Compile Include="Transaction.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Node.cs" />
+    <Compile Include="Rank.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ICallback.cs" />

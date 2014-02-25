@@ -5,7 +5,7 @@ namespace Sodium
 
     internal sealed class Transaction
     {
-        private readonly PriorityQueue<Entry> prioritized = new PriorityQueue<Entry>();
+        private readonly PriorityQueue<PrioritizedAction> prioritized = new PriorityQueue<PrioritizedAction>();
         
         private readonly List<Action> last = new List<Action>();
         
@@ -45,13 +45,13 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Add an action to run before all Last() and Post() actions. Actions are prioritized by node rank.
+        /// Add an action to run before all Last() and Post() actions. Actions are prioritized by rank.
         /// </summary>
         /// <param name="rank"></param>
         /// <param name="action"></param>
-        public void Prioritized(Node rank, Action<Transaction> action)
+        public void Prioritize(Action<Transaction> action, Rank rank)
         {
-            prioritized.Add(new Entry(rank, action));
+            prioritized.Add(new PrioritizedAction(action, rank));
         }
 
         /// <summary>

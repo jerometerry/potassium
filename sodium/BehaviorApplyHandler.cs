@@ -24,7 +24,7 @@ namespace Sodium
             }
 
             fired = true;
-            t1.Prioritized(evt.Node, Fire);
+            t1.Prioritize(Fire, evt.Rank);
         }
 
         private void Fire(Transaction t)

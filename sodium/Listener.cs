@@ -8,13 +8,13 @@ namespace Sodium
         /// </summary>
         private Event<TA> evt;
         private ICallback<TA> action;
-        private Node target;
+        private Rank rank;
 
-        public Listener(Event<TA> evt, ICallback<TA> action, Node target)
+        public Listener(Event<TA> evt, ICallback<TA> action, Rank rank)
         {
             this.evt = evt;
             this.action = action;
-            this.target = target;
+            this.rank = rank;
         }
 
         ~Listener()
@@ -26,12 +26,12 @@ namespace Sodium
         {
             if (evt != null)
             {
-                evt.Unlisten(action, target);
+                evt.Unlisten(action, this.rank);
                 evt = null;
             }
 
             action = null;
-            target = null;
+            this.rank = null;
         }
     }
 }
