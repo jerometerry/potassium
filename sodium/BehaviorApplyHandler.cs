@@ -4,12 +4,12 @@ namespace Sodium
 
     internal sealed class BehaviorApplyHandler<TA, TB> 
     {
-        private readonly EventSink<TB> evt;
+        private readonly Event<TB> evt;
         private readonly Behavior<Func<TA, TB>> bf;
         private readonly Behavior<TA> ba;
         private bool fired;
 
-        public BehaviorApplyHandler(EventSink<TB> evt, Behavior<Func<TA, TB>> bf, Behavior<TA> ba)
+        public BehaviorApplyHandler(Event<TB> evt, Behavior<Func<TA, TB>> bf, Behavior<TA> ba)
         {
             this.evt = evt;
             this.bf = bf;

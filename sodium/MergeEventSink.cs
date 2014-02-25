@@ -3,7 +3,7 @@ namespace Sodium
     using System;
     using System.Linq;
 
-    internal sealed class MergeEventSink<TA> : EventSink<TA>
+    internal sealed class MergeEventSink<TA> : Event<TA>
     {
         private readonly Event<TA> evt1;
         private readonly Event<TA> evt2;

@@ -2,11 +2,11 @@ namespace Sodium
 {
     internal sealed class EventSwitchCallback<TA> : ICallback<Event<TA>>
     {
-        private readonly EventSink<TA> evt;
+        private readonly Event<TA> evt;
         private readonly ICallback<TA> callback;
         private IListener listener;
 
-        public EventSwitchCallback(Behavior<Event<TA>> bea, EventSink<TA> evt, Transaction t, ICallback<TA> h)
+        public EventSwitchCallback(Behavior<Event<TA>> bea, Event<TA> evt, Transaction t, ICallback<TA> h)
         {
             this.evt = evt;
             this.callback = h;
@@ -27,7 +27,7 @@ namespace Sodium
             }
         }
 
-        public void Invoke(Transaction transaction, Event<TA> evt)
+        public void Invoke(Transaction transaction, Event<TA> newEvent)
         {
             transaction.Last(() =>
             {
@@ -36,7 +36,7 @@ namespace Sodium
                     listener.Stop();
                 }
 
-                listener = evt.ListenSuppressed(transaction, callback, evt.Rank);
+                listener = newEvent.ListenSuppressed(transaction, callback, this.evt.Rank);
             });
         }
     }

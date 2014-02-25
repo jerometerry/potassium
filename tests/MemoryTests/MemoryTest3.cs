@@ -23,7 +23,7 @@ namespace Sodium.MemoryTests
             int i = 0;
             while (i < 1000000000)
             {
-                evt.Send(i);
+                evt.Fire(i);
                 i++;
             }
 

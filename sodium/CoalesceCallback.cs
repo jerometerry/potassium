@@ -5,10 +5,10 @@ namespace Sodium
     internal sealed class CoalesceCallback<TA> : ICallback<TA>
     {
         private readonly Func<TA, TA, TA> coalesce;
-        private readonly EventSink<TA> evt;
+        private readonly Event<TA> evt;
         private Maybe<TA> accum = Maybe<TA>.Null;
 
-        public CoalesceCallback(EventSink<TA> evt, Func<TA, TA, TA> coalesce)
+        public CoalesceCallback(Event<TA> evt, Func<TA, TA, TA> coalesce)
         {
             this.evt = evt;
             this.coalesce = coalesce;

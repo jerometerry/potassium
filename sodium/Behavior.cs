@@ -19,7 +19,7 @@ namespace Sodium
         /// </summary>
         public Behavior(TA value)
         {
-            this.evt = new EventSink<TA>();
+            this.evt = new Event<TA>();
             this.value = value;
         }
 
@@ -59,7 +59,7 @@ namespace Sodium
         /// </summary>
         public static Behavior<TB> Apply<TB>(Behavior<Func<TA, TB>> bf, Behavior<TA> ba)
         {
-            var sink = new EventSink<TB>();
+            var sink = new Event<TB>();
             var h = new BehaviorApplyHandler<TA, TB>(sink, bf, ba);
             var functionChanged = new Callback<Func<TA, TB>>((t, f) => h.Run(t));
             var valueChanged = new Callback<TA>((t, a) => h.Run(t));
@@ -78,7 +78,7 @@ namespace Sodium
         {
             var innerBehavior = bba.Sample();
             var initValue = innerBehavior.Sample();
-            var sink = new EventSink<TA>();
+            var sink = new Event<TA>();
             var callback = new BehaviorSwitchCallback<TA>(sink);
             var l1 = bba.Value().Listen(callback, sink.Rank);
             return sink.RegisterListener(l1).Hold(initValue);
@@ -235,7 +235,7 @@ namespace Sodium
 
         private static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior)
         {
-            var sink = new EventSink<TA>();
+            var sink = new Event<TA>();
             var callback = new Callback<TA>(sink.Fire);
             var eventSwitchCallback = new EventSwitchCallback<TA>(behavior, sink, transaction, callback);
             var listener = behavior.Updates().ListenUnsuppressed(transaction, eventSwitchCallback, sink.Rank);

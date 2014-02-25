@@ -26,7 +26,7 @@
 
         private void MouseMoveEvent(object sender, MouseEventArgs e)
         {
-            sink.Send(e);
+            sink.Fire(e);
         }
 
         private void DisplayMousePosition(Tuple<string, string> t)

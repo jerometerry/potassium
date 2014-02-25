@@ -8,7 +8,7 @@ namespace Sodium
     /// An Event is a stream of discrete event occurrences
     /// </summary>
     /// <typeparam name="TA"></typeparam>
-    public abstract class Event<TA>
+    public class Event<TA>
     {
         private readonly List<ICallback<TA>> callbacks = new List<ICallback<TA>>();
         private readonly List<TA> firings = new List<TA>();
@@ -63,7 +63,16 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Listen for firings of this event. The returned Listener has an unlisten()
+        /// Fire the given value to all registered listeners 
+        /// </summary>
+        /// <param name="a"></param>
+        public void Fire(TA a)
+        {
+            TransactionContext.Run(t => { Fire(t, a); return Unit.Value; });
+        }
+
+        /// <summary>
+        /// Listen for firings of this event. The returned Listener has an Unlisten()
         /// method to cause the listener to be removed. This is the observer pattern.
         /// </summary>
         public IListener Listen(Action<TA> callback)
@@ -119,8 +128,8 @@ namespace Sodium
         /// </summary>
         public Event<TA> Delay()
         {
-            var sink = new EventSink<TA>();
-            var callback = new Callback<TA>((t, a) => t.Post(() => sink.Send(a)));
+            var sink = new Event<TA>();
+            var callback = new Callback<TA>((t, a) => t.Post(() => sink.Fire(a)));
             var listener = Listen(callback, sink.Rank);
             return sink.RegisterListener(listener);
         }
@@ -254,10 +263,10 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Fire the given value to all 
+        /// Fire the given value to all registered callbacks
         /// </summary>
-        /// <param name="transaction"></param>
-        /// <param name="firing"></param>
+        /// <param name="transaction">The transaction to invoke the callbacks on</param>
+        /// <param name="firing">The value to fire to registerd callbacks</param>
         internal virtual void Fire(Transaction transaction, TA firing)
         {
             var noFirings = !firings.Any();

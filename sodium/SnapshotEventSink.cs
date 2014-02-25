@@ -3,7 +3,7 @@ namespace Sodium
     using System;
     using System.Linq;
 
-    internal sealed class SnapshotEventSink<TA, TB, TC> : EventSink<TC>
+    internal sealed class SnapshotEventSink<TA, TB, TC> : Event<TC>
     {
         private readonly Event<TA> evt;
         private readonly Func<TA, TB, TC> snapshot;

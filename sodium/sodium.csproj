@@ -70,9 +70,6 @@
     <Compile Include="Event.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EventSink.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="SnapshotEventSink.cs" />
     <Compile Include="Transaction.cs" />
   </ItemGroup>

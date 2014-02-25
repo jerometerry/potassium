@@ -3,7 +3,7 @@
     using System;
     using System.Linq;
 
-    internal sealed class MapEventSink<TA, TB> : EventSink<TB>
+    internal sealed class MapEventSink<TA, TB> : Event<TB>
     {
         private readonly Event<TA> evt;
         private readonly Func<TA, TB> map;
