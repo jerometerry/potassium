@@ -5,8 +5,8 @@ namespace Sodium
 
     public sealed class Rank : IComparable<Rank>
     {
-        public static readonly Rank Null = new Rank(long.MaxValue);
-        private readonly ISet<Rank> listeners = new HashSet<Rank>();
+        public static readonly Rank Highest = new Rank(long.MaxValue);
+        private readonly ISet<Rank> superiors = new HashSet<Rank>();
         private long priority;
 
         public Rank() 
@@ -19,51 +19,69 @@ namespace Sodium
             this.priority = priority;
         }
 
-        /// <summary>
-        /// </summary>
-        /// <returns>true if any changes were made. </returns>
-        public bool LinkTo(Rank target)
-        {
-            if (target == Null)
-            { 
-                return false;
-            }
-
-            var set = new HashSet<Rank>();
-            var changed = target.EnsureHigherPriorityThan(this.priority, set);
-            listeners.Add(target);
-            set.Clear();
-
-            return changed;
-        }
-
-        public void UnlinkTo(Rank target)
-        {
-            if (target == Null)
-            { 
-                return;
-            }
-
-            listeners.Remove(target);
-        }
-
         public int CompareTo(Rank n)
         {
             return this.priority.CompareTo(n.priority);
         }
 
-        private bool EnsureHigherPriorityThan(long limit, ISet<Rank> visited)
+        /// <summary>
+        /// Link the given Rank to the current Rank, ensuring that the 
+        /// given Rank always outranks the current rank
+        /// </summary>
+        /// <returns>True if any Rank priorities where changed.</returns>
+        public bool AddSuperior(Rank superior)
         {
-            if (this.priority > limit || visited.Contains(this))
+            if (superior == Highest)
+            { 
+                return false;
+            }
+
+            var visited = new HashSet<Rank>();
+            var changed = superior.Outrank(this, visited);
+            this.superiors.Add(superior);
+            visited.Clear();
+            return changed;
+        }
+
+        public void RemoveSuperior(Rank superior)
+        {
+            if (superior == Highest)
+            { 
+                return;
+            }
+
+            this.superiors.Remove(superior);
+        }
+
+        /// <summary>
+        /// Determine if the current Rank has a higher priority than the given Rank
+        /// </summary>
+        /// <param name="rank">The Rank to compare priority to</param>
+        /// <returns>True if the current Eank outranks the given Rank, false otherwise</returns>
+        public bool Outranks(Rank rank)
+        {
+            return this.priority > rank.priority;
+        }
+
+        /// <summary>
+        /// Ensure the current rank outranks the given rank
+        /// </summary>
+        /// <param name="rank">The rank that needs to be outranked</param>
+        /// <param name="visited">Set of Ranks, used to break out if a cycle is detected</param>
+        /// <returns>True if the current rank was increased, false otherwise</returns>
+        private bool Outrank(Rank rank, ISet<Rank> visited)
+        {
+            if (this.Outranks(rank) || visited.Contains(this))
             { 
                 return false;
             }
 
             visited.Add(this);
-            this.priority = limit + 1;
-            foreach (var l in listeners)
-            { 
-                l.EnsureHigherPriorityThan(this.priority, visited);
+            this.priority = rank.priority + 1;
+
+            foreach (var superior in this.superiors)
+            {
+                superior.Outrank(this, visited);
             }
 
             return true;

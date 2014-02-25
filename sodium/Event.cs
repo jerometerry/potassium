@@ -62,7 +62,7 @@ namespace Sodium
         /// </summary>
         public IListener Listen(Action<TA> callback)
         {
-            return Listen(new Callback<TA>((t, a) => callback(a)), Rank.Null);
+            return Listen(new Callback<TA>((t, a) => callback(a)), Rank.Highest);
         }
 
         /// <summary>
@@ -228,7 +228,7 @@ namespace Sodium
             lock (Constants.ListenersLock)
             {
                 RemoveCallback(callback);
-                this.Rank.UnlinkTo(target);
+                this.Rank.RemoveSuperior(target);
             }
         }
 
@@ -303,7 +303,7 @@ namespace Sodium
         {
             lock (Constants.ListenersLock)
             {
-                if (this.rank.LinkTo(target))
+                if (this.rank.AddSuperior(target))
                 {
                     transaction.NodeRanksModified = true;
                 }
