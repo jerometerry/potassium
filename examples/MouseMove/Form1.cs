@@ -7,13 +7,15 @@
     public partial class Form1 : Form
     {
         private EventSink<MouseEventArgs> sink;
+        private Event<Tuple<string, string>> map;
         private IListener listener;
 
         public Form1()
         {
             InitializeComponent();
             sink = new EventSink<MouseEventArgs>();
-            listener = sink.Map(ToTuple).Listen(DisplayMousePosition);
+            map = sink.Map(ToTuple);
+            listener = map.Listen(DisplayMousePosition);
         }
 
         private static Tuple<string, string> ToTuple(MouseEventArgs e)
@@ -44,6 +46,8 @@
             listener = null;
             sink.Close();
             sink = null;
+            map.Close();
+            map = null;
         }
     }
 }
