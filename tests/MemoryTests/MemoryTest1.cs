@@ -11,7 +11,7 @@ namespace Sodium.MemoryTests
         [Test]
         public void Test()
         {
-            EventSink<int?> et = new EventSink<int?>();
+            Event<int?> et = new Event<int?>();
             Behavior<int?> t = et.Hold(0);
             Event<int?> etens = et.Map(x => x / 10);
             Event<int?> changeTens = et.Snapshot(t, (neu, old) => neu.Equals(old) ? null : neu).FilterNotNull();

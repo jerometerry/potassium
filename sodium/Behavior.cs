@@ -219,7 +219,7 @@ namespace Sodium
 
         internal Event<TA> Value(Transaction transaction)
         {
-            var sink = new BehaviorValueEventSink<TA>(this);
+            var sink = new BehaviorValueEvent<TA>(this);
             var callback = new Callback<TA>(sink.Fire);
             var l = Event.ListenUnsuppressed(transaction, callback, sink.Rank);
 

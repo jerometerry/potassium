@@ -3,12 +3,12 @@ namespace Sodium
     using System;
     using System.Linq;
 
-    internal sealed class MergeEventSink<TA> : Event<TA>
+    internal sealed class MergeEvent<TA> : Event<TA>
     {
         private readonly Event<TA> evt1;
         private readonly Event<TA> evt2;
 
-        public MergeEventSink(Event<TA> evt1, Event<TA> evt2)
+        public MergeEvent(Event<TA> evt1, Event<TA> evt2)
         {
             this.evt1 = evt1;
             this.evt2 = evt2;

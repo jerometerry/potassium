@@ -11,9 +11,9 @@ namespace Sodium.MemoryTests
         [Test]
         public void Test()
         {
-            EventSink<int> et = new EventSink<int>();
+            Event<int> et = new Event<int>();
             Behavior<int> t = et.Hold(0);
-            EventSink<int> evt = new EventSink<int>();
+            Event<int> evt = new Event<int>();
             Behavior<Behavior<int>> oout = evt.Map(x => t).Hold(t);
             Behavior<int> o = Behavior<int>.SwitchB(oout);
             IListener l = o.Value().Listen(tt =>

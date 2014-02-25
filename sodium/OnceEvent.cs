@@ -2,12 +2,12 @@ namespace Sodium
 {
     using System;
 
-    internal sealed class OnceEventSink<TA> : Event<TA>
+    internal sealed class OnceEvent<TA> : Event<TA>
     {
         private readonly Event<TA> evt;
         private readonly IListener[] listeners;
 
-        public OnceEventSink(Event<TA> evt, IListener[] listeners)
+        public OnceEvent(Event<TA> evt, IListener[] listeners)
         {
             this.evt = evt;
             this.listeners = listeners;

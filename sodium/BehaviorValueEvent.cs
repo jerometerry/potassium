@@ -2,11 +2,11 @@ namespace Sodium
 {
     using System;
 
-    internal sealed class BehaviorValueEventSink<TA> : Event<TA>
+    internal sealed class BehaviorValueEvent<TA> : Event<TA>
     {
         private readonly Behavior<TA> behavior;
 
-        public BehaviorValueEventSink(Behavior<TA> behavior)
+        public BehaviorValueEvent(Behavior<TA> behavior)
         {
             this.behavior = behavior;
         }

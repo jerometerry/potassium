@@ -2,12 +2,12 @@ namespace Sodium
 {
     using System;
 
-    internal sealed class CoalesceEventSink<TA> : Event<TA>
+    internal sealed class CoalesceEvent<TA> : Event<TA>
     {
         private readonly Event<TA> evt;
         private readonly Func<TA, TA, TA> coalesce;
 
-        public CoalesceEventSink(Event<TA> evt, Func<TA, TA, TA> coalesce)
+        public CoalesceEvent(Event<TA> evt, Func<TA, TA, TA> coalesce)
         {
             this.evt = evt;
             this.coalesce = coalesce;

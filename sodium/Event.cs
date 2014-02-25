@@ -55,7 +55,7 @@ namespace Sodium
         /// </remarks>
         public static Event<TA> Merge(Event<TA> event1, Event<TA> event2)
         {
-            var sink = new MergeEventSink<TA>(event1, event2);
+            var sink = new MergeEvent<TA>(event1, event2);
             var callback = new Callback<TA>(sink.Fire);
             var l1 = event1.Listen(callback, sink.Rank);
             var l2 = event2.Listen(callback, sink.Rank);
@@ -85,8 +85,8 @@ namespace Sodium
         /// </summary>
         public Event<TB> Map<TB>(Func<TA, TB> map)
         {
-            var sink = new MapEventSink<TA, TB>(this, map);
-            var l = Listen(new Callback<TA>(sink.MapAndSend), sink.Rank);
+            var sink = new MapEvent<TA, TB>(this, map);
+            var l = Listen(new Callback<TA>(sink.Fire), sink.Rank);
             return sink.RegisterListener(l);
         }
 
@@ -117,8 +117,8 @@ namespace Sodium
         /// </summary>
         public Event<TC> Snapshot<TB, TC>(Behavior<TB> behavior, Func<TA, TB, TC> snapshot)
         {
-            var sink = new SnapshotEventSink<TA, TB, TC>(this, snapshot, behavior);
-            var callback = new Callback<TA>(sink.SnapshotAndSend);
+            var sink = new SnapshotEvent<TA, TB, TC>(this, snapshot, behavior);
+            var callback = new Callback<TA>(sink.Fire);
             var listener = Listen(callback, sink.Rank);
             return sink.RegisterListener(listener);
         }
@@ -154,8 +154,8 @@ namespace Sodium
         /// </summary>
         public Event<TA> Filter(Func<TA, bool> predicate)
         {
-            var sink = new FilterEventSink<TA>(this, predicate);
-            var callback = new Callback<TA>(sink.FireIfNotFiltered);
+            var sink = new FilterEvent<TA>(this, predicate);
+            var callback = new Callback<TA>(sink.Fire);
             var l = Listen(callback, sink.Rank);
             return sink.RegisterListener(l);
         }
@@ -216,7 +216,7 @@ namespace Sodium
             // This is a bit long-winded but it's efficient because it deregisters
             // the listener.
             var la = new IListener[1];
-            var sink = new OnceEventSink<TA>(this, la);
+            var sink = new OnceEvent<TA>(this, la);
             la[0] = Listen(new Callback<TA>((t, a) => sink.Fire(la, t, a)), sink.Rank);
             return sink.RegisterListener(la[0]);
         }
@@ -342,7 +342,7 @@ namespace Sodium
 
         private Event<TA> Coalesce(Transaction transaction, Func<TA, TA, TA> coalesce)
         {
-            var sink = new CoalesceEventSink<TA>(this, coalesce);
+            var sink = new CoalesceEvent<TA>(this, coalesce);
             var callback = new CoalesceCallback<TA>(sink, coalesce);
             var listener = ListenUnsuppressed(transaction, callback, sink.Rank);
             return sink.RegisterListener(listener);

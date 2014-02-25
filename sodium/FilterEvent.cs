@@ -3,12 +3,12 @@ namespace Sodium
     using System;
     using System.Linq;
 
-    internal sealed class FilterEventSink<TA> : Event<TA>
+    internal sealed class FilterEvent<TA> : Event<TA>
     {
         private readonly Event<TA> evt;
         private readonly Func<TA, bool> f;
 
-        public FilterEventSink(Event<TA> evt, Func<TA, bool> f)
+        public FilterEvent(Event<TA> evt, Func<TA, bool> f)
         {
             this.evt = evt;
             this.f = f;
@@ -19,11 +19,11 @@ namespace Sodium
         /// </summary>
         /// <param name="t"></param>
         /// <param name="a"></param>
-        public void FireIfNotFiltered(Transaction t, TA a)
+        internal override void Fire(Transaction t, TA a)
         {
             if (f(a))
             {
-                Fire(t, a);
+                base.Fire(t, a);
             }
         }
 

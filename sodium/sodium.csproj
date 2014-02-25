@@ -47,19 +47,19 @@
     <Compile Include="BehaviorApplyHandler.cs" />
     <Compile Include="BehaviorLoop.cs" />
     <Compile Include="BehaviorSwitchCallback.cs" />
-    <Compile Include="BehaviorValueEventSink.cs" />
-    <Compile Include="CoalesceEventSink.cs" />
+    <Compile Include="BehaviorValueEvent.cs" />
+    <Compile Include="CoalesceEvent.cs" />
     <Compile Include="CoalesceCallback.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="PrioritizedAction.cs" />
     <Compile Include="EventSwitchCallback.cs" />
-    <Compile Include="FilterEventSink.cs" />
+    <Compile Include="FilterEvent.cs" />
     <Compile Include="IListener.cs" />
     <Compile Include="Listener.cs" />
-    <Compile Include="MapEventSink.cs" />
+    <Compile Include="MapEvent.cs" />
     <Compile Include="Maybe.cs" />
-    <Compile Include="MergeEventSink.cs" />
-    <Compile Include="OnceEventSink.cs" />
+    <Compile Include="MergeEvent.cs" />
+    <Compile Include="OnceEvent.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -70,7 +70,7 @@
     <Compile Include="Event.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SnapshotEventSink.cs" />
+    <Compile Include="SnapshotEvent.cs" />
     <Compile Include="Transaction.cs" />
   </ItemGroup>
   <ItemGroup>
