@@ -2,6 +2,11 @@ namespace Sodium
 {
     using System;
 
+    /// <summary>
+    /// A Behavior is a time varying value
+    /// </summary>
+    /// <remarks>Behaviors generally change over time, but constant behaviors are ones that choose not to.</remarks>
+    /// <typeparam name="TA"></typeparam>
     public class Behavior<TA>
     {
         private readonly Event<TA> evt;
@@ -101,7 +106,8 @@ namespace Sodium
 
         /// <summary>
         /// Sample the behavior's current value.
-        ///
+        /// </summary>
+        /// <remarks>
         /// This should generally be avoided in favour of Value().Listen(..) so you don't
         /// miss any updates, but in many circumstances it makes sense.
         ///
@@ -109,7 +115,7 @@ namespace Sodium
         /// For example, a b.sample() inside an explicit transaction along with a
         /// b.Updates().Listen(..) will capture the current value and any updates without risk
         /// of missing any in between.
-        /// </summary>
+        /// </remarks>
         public TA Sample()
         {
             // Here's the comment from the Java implementation:

@@ -4,6 +4,10 @@ namespace Sodium
     using System.Collections.Generic;
     using System.Linq;
 
+    /// <summary>
+    /// An Event is a stream of discrete event occurrences
+    /// </summary>
+    /// <typeparam name="TA"></typeparam>
     public class Event<TA>
     {
         private readonly List<ICallback<TA>> callbacks = new List<ICallback<TA>>();
@@ -32,11 +36,12 @@ namespace Sodium
         /// <summary>
         /// Merge two streams of events of the same type, combining simultaneous
         /// event occurrences.
-        ///
+        /// </summary>
+        /// <remarks>
         /// In the case where multiple event occurrences are simultaneous (i.e. all
         /// within the same transaction), they are combined using the same logic as
         /// 'coalesce'.
-        /// </summary>
+        /// </remarks>
         public static Event<TA> MergeWith(Func<TA, TA, TA> f, Event<TA> event1, Event<TA> event2)
         {
             return Merge(event1, event2).Coalesce(f);
@@ -44,13 +49,14 @@ namespace Sodium
 
         /// <summary>
         /// Merge two streams of events of the same type.
-        ///
+        /// </summary>
+        /// <remarks>
         /// In the case where two event occurrences are simultaneous (i.e. both
         /// within the same transaction), both will be delivered in the same
         /// transaction. If the event firings are ordered for some reason, then
         /// their ordering is retained. In many common cases the ordering will
         /// be undefined.
-        /// </summary>
+        /// </remarks>
         public static Event<TA> Merge(Event<TA> event1, Event<TA> event2)
         {
             var sink = new MergeEventSink<TA>(event1, event2);
@@ -126,12 +132,13 @@ namespace Sodium
         /// <summary>
         /// If there's more than one firing in a single transaction, combine them into
         /// one using the specified combining function.
-        ///
+        /// </summary>
+        /// <remarks>
         /// If the event firings are ordered, then the first will appear at the left
         /// input of the combining function. In most common cases it's best not to
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
-        /// </summary>
+        /// </remarks>
         public Event<TA> Coalesce(Func<TA, TA, TA> coalesce)
         {
             return Transaction.Run(t => Coalesce(t, coalesce));
