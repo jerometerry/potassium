@@ -9,6 +9,10 @@ namespace Sodium
         private readonly List<ICallback<TA>> callbacks = new List<ICallback<TA>>();
         private readonly List<TA> firings = new List<TA>();
         private readonly List<IListener> listeners = new List<IListener>();
+        
+        /// <summary>
+        /// The rank of the current Event. Default to rank zero
+        /// </summary>
         private readonly Rank rank = new Rank();
 
         internal Event()
@@ -223,12 +227,12 @@ namespace Sodium
             }
         }
 
-        internal void Unlisten(ICallback<TA> callback, Rank target)
+        internal void Unlisten(ICallback<TA> callback, Rank superior)
         {
             lock (Constants.ListenersLock)
             {
                 RemoveCallback(callback);
-                this.Rank.RemoveSuperior(target);
+                this.Rank.RemoveSuperior(superior);
             }
         }
 
@@ -274,24 +278,24 @@ namespace Sodium
             return Coalesce(transaction, (a, b) => b);
         }
 
-        internal IListener Listen(ICallback<TA> callback, Rank target)
+        internal IListener Listen(ICallback<TA> callback, Rank superior)
         {
-            return Transaction.Run(t => ListenUnsuppressed(t, callback, target));
+            return Transaction.Run(t => ListenUnsuppressed(t, callback, superior));
         }
 
-        internal IListener ListenUnsuppressed(Transaction transaction, ICallback<TA> callback, Rank target)
+        internal IListener ListenUnsuppressed(Transaction transaction, ICallback<TA> callback, Rank superior)
         {
-            RegisterCallback(transaction, callback, target);
+            RegisterCallback(transaction, callback, superior);
             InitialFire(transaction, callback);
             Refire(transaction, callback);
-            return new Listener<TA>(this, callback, target);
+            return new Listener<TA>(this, callback, superior);
         }
 
-        internal IListener ListenSuppressed(Transaction transaction, ICallback<TA> callback, Rank target)
+        internal IListener ListenSuppressed(Transaction transaction, ICallback<TA> callback, Rank superior)
         {
-            RegisterCallback(transaction, callback, target);
+            RegisterCallback(transaction, callback, superior);
             InitialFire(transaction, callback);
-            return new Listener<TA>(this, callback, target);
+            return new Listener<TA>(this, callback, superior);
         }
 
         protected internal virtual TA[] InitialFirings()
@@ -299,11 +303,11 @@ namespace Sodium
             return null;
         }
 
-        private void RegisterCallback(Transaction transaction, ICallback<TA> callback, Rank target)
+        private void RegisterCallback(Transaction transaction, ICallback<TA> callback, Rank superior)
         {
             lock (Constants.ListenersLock)
             {
-                if (this.rank.AddSuperior(target))
+                if (this.rank.AddSuperior(superior))
                 {
                     transaction.NodeRanksModified = true;
                 }
