@@ -173,13 +173,13 @@ namespace Sodium
         /// Transform an event with a generalized state loop (a mealy machine). The function
         /// is passed the input and the old state and returns the new state and output value.
         /// </summary>
-        public Event<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple2<TB, TS>> snapshot)
+        public Event<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
         {
             var es = new EventLoop<TS>();
             var s = es.Hold(initState);
             var ebs = Snapshot(s, snapshot);
-            var eb = ebs.Map(bs => bs.V1);
-            var evt = ebs.Map(bs => bs.V2);
+            var eb = ebs.Map(bs => bs.Item1);
+            var evt = ebs.Map(bs => bs.Item2);
             es.Loop(evt);
             return eb;
         }

@@ -163,17 +163,17 @@ namespace Sodium
         /// Transform a behavior with a generalized state loop (a mealy machine). The function
         /// is passed the input and the old state and returns the new state and output value.
         /// </summary>
-        public Behavior<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple2<TB, TS>> snapshot)
+        public Behavior<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
         {
             var coalesceEvent = Updates().Coalesce((a, b) => b);
             var currentValue = Sample();
             var tuple = snapshot(currentValue, initState);
-            var loop = new EventLoop<Tuple2<TB, TS>>();
+            var loop = new EventLoop<Tuple<TB, TS>>();
             var loopBehavior = loop.Hold(tuple);
-            var snapshotBehavior = loopBehavior.Map(x => x.V2);
+            var snapshotBehavior = loopBehavior.Map(x => x.Item2);
             var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
             loop.Loop(coalesceSnapshotEvent);
-            return loopBehavior.Map(x => x.V1);
+            return loopBehavior.Map(x => x.Item1);
         }
 
         /// <summary>

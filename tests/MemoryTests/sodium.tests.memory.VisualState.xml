@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="false">
+  <TopNode>[0-1000]C:\dev\GitHub\sodium.net\tests\MemoryTests\sodium.tests.memory.nunit</TopNode>
+  <SelectedNode>[0-1000]C:\dev\GitHub\sodium.net\tests\MemoryTests\sodium.tests.memory.nunit</SelectedNode>
+  <ExcludeCategories>false</ExcludeCategories>
+  <Nodes>
+    <Node UniqueName="[0-1000]C:\dev\GitHub\sodium.net\tests\MemoryTests\sodium.tests.memory.nunit" Expanded="true" />
+    <Node UniqueName="[0-1009]C:\dev\GitHub\sodium.net\tests\MemoryTests\bin\Debug\Sodium.MemoryTests.dll" Expanded="true" />
+    <Node UniqueName="[0-1010]Sodium" Expanded="true" />
+    <Node UniqueName="[0-1011]Sodium.MemoryTests" Expanded="true" />
+    <Node UniqueName="[0-1001]Sodium.MemoryTests.MemoryTest1" Expanded="true" />
+    <Node UniqueName="[0-1003]Sodium.MemoryTests.MemoryTest3" Expanded="true" />
+    <Node UniqueName="[0-1005]Sodium.MemoryTests.MemoryTest4" Expanded="true" />
+    <Node UniqueName="[0-1007]Sodium.MemoryTests.MemoryTest5" Expanded="true" />
+  </Nodes>
+</VisualState>

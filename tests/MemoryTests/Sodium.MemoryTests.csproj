@@ -43,7 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="MemoryTest1.cs" />
     <Compile Include="MemoryTest3.cs" />
     <Compile Include="MemoryTest4.cs" />

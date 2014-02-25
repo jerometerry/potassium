@@ -11,21 +11,6 @@ namespace Sodium.MemoryTests
         [Test]
         public void Test()
         {
-            //new Thread() {
-            //    public void run()
-            //    {
-            //        try {
-            //            while (true) {
-            //                System.out.println("memory "+Runtime.getRuntime().totalMemory());
-            //                Thread.sleep(5000);
-            //            }
-            //        }
-            //        catch (InterruptedException e) {
-            //            System.out.println(e.toString());
-            //        }
-            //    }
-            //}.start();
-
             EventSink<int> et = new EventSink<int>();
             EventSink<int> evt = new EventSink<int>();
             Behavior<Event<int>> oout = evt.Map(x => (Event<int>)et).Hold((Event<int>)et);

@@ -139,7 +139,7 @@ namespace Sodium.Tests
         {
             var ea = new EventSink<int>();
             var o = new List<int>();
-            var sum = ea.Collect(100, (a, s) => new Tuple2<int, int>(a + s, a + s));
+            var sum = ea.Collect(100, (a, s) => new Tuple<int, int>(a + s, a + s));
             var l = sum.Listen(o.Add);
             ea.Send(5);
             ea.Send(7);

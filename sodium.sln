@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sodium.Tests", "tests\UnitT
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{019F3FF6-66A8-400C-92F8-7DE8FBF44851}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sodium.Examples.MouseMove", "examples\Sodium.Examples.MouseMove\Sodium.Examples.MouseMove.csproj", "{EA5D9EBC-4B79-4971-9E96-755B688B1825}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sodium.Examples.MouseMove", "examples\MouseMove\Sodium.Examples.MouseMove.csproj", "{EA5D9EBC-4B79-4971-9E96-755B688B1825}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3FF7AA6A-3EE2-435E-B28C-E2B6F065C474}"
 EndProject
