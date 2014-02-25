@@ -29,9 +29,9 @@ namespace Sodium
 
         private void Fire(Transaction t)
         {
-            var v = bf.NewValue();
-            var nv = ba.NewValue();
-            var b = v(nv);
+            var map = bf.NewValue();
+            var a = ba.NewValue();
+            var b = map(a);
             evt.Fire(t, b);
             fired = false;
         }

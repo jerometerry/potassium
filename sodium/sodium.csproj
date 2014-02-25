@@ -83,7 +83,7 @@
     <Compile Include="ICallback.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Trigger.cs" />
+    <Compile Include="Callback.cs" />
     <Compile Include="TransactionContext.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>

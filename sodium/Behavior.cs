@@ -51,9 +51,14 @@ namespace Sodium
         {
             var sink = new EventSink<TB>();
             var h = new BehaviorApplyHandler<TA, TB>(sink, bf, ba);
-            var l1 = bf.Updates().Listen(new Callback<Func<TA, TB>>((t, f) => h.Run(t)), sink.Rank);
-            var l2 = ba.Updates().Listen(new Callback<TA>((t, a) => h.Run(t)), sink.Rank);
-            return sink.RegisterListener(l1).RegisterListener(l2).Hold(bf.Sample()(ba.Sample()));
+            var functionChanged = new Callback<Func<TA, TB>>((t, f) => h.Run(t));
+            var valueChanged = new Callback<TA>((t, a) => h.Run(t));
+            var l1 = bf.Updates().Listen(functionChanged, sink.Rank);
+            var l2 = ba.Updates().Listen(valueChanged, sink.Rank);
+            var map = bf.Sample();
+            var valA = ba.Sample();
+            var valB = map(valA);
+            return sink.RegisterListener(l1).RegisterListener(l2).Hold(valB);
         }
 
         /// <summary>
@@ -61,7 +66,8 @@ namespace Sodium
         /// </summary>
         public static Behavior<TA> SwitchB(Behavior<Behavior<TA>> bba)
         {
-            var initValue = bba.Sample().Sample();
+            var innerBehavior = bba.Sample();
+            var initValue = innerBehavior.Sample();
             var sink = new EventSink<TA>();
             var callback = new BehaviorSwitchCallback<TA>(sink);
             var l1 = bba.Value().Listen(callback, sink.Rank);
