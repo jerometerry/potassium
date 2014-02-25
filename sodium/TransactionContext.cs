@@ -1,5 +1,7 @@
 ﻿namespace Sodium
 {
+    using System;
+
     /// <summary>
     /// TransactionContext is used by the Transaction.Run to ensure that only a
     /// single Transaction instance is created.
@@ -7,7 +9,7 @@
     /// <remarks>Transaction.Run may be invoked recursively indirectly. Hence the
     /// need to ensure that the root Transaction.Run is the only one to create
     /// a new Transaction object.</remarks>
-    internal sealed class TransactionContext
+    internal sealed class TransactionContext : IDisposable
     {
         /// <summary>
         /// Transaction for use by the static method Transaction.Run
@@ -26,6 +28,7 @@
         private Transaction previous;
         private Transaction created;
         private bool restored;
+        private bool disposed;
 
         public Transaction Transaction
         {
@@ -64,6 +67,17 @@
             }
             
             previous = null;
+        }
+
+        public void Dispose()
+        {
+            if (disposed)
+            {
+                return;
+            }
+
+            Close();
+            disposed = true;
         }
     }
 }

@@ -37,15 +37,10 @@ namespace Sodium
         {
             lock (Constants.TransactionLock)
             {
-                var context = new TransactionContext();
-                try
+                using (var context = new TransactionContext())
                 {
                     context.Open();
                     return f(context.Transaction);
-                }
-                finally
-                {
-                    context.Close();
                 }
             }
         }
