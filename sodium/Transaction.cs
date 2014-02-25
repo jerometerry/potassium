@@ -3,13 +3,19 @@ namespace Sodium
     using System;
     using System.Collections.Generic;
 
-    internal sealed class Transaction
+    internal sealed class Transaction : IDisposable
     {
-        private readonly PriorityQueue<PrioritizedAction> prioritized = new PriorityQueue<PrioritizedAction>();
-        
-        private readonly List<Action> last = new List<Action>();
-        
-        private readonly List<Action> post = new List<Action>();
+        private PriorityQueue<PrioritizedAction> prioritized;
+        private List<Action> last;
+        private List<Action> post;
+        private bool disposed;
+
+        public Transaction()
+        {
+            prioritized = new PriorityQueue<PrioritizedAction>();
+            last = new List<Action>();
+            post = new List<Action>();
+        }
 
         /// <summary>
         /// True if we need to re-generate the priority queue.
@@ -51,6 +57,7 @@ namespace Sodium
         /// <param name="action"></param>
         public void Prioritize(Action<Transaction> action, Rank rank)
         {
+            this.AssertNotDisposed();
             prioritized.Add(new PrioritizedAction(action, rank));
         }
 
@@ -60,6 +67,7 @@ namespace Sodium
         /// <param name="action"></param>
         public void Last(Action action)
         {
+            this.AssertNotDisposed();
             last.Add(action);
         }
 
@@ -69,14 +77,31 @@ namespace Sodium
         /// <param name="action"></param>
         public void Post(Action action)
         {
+            this.AssertNotDisposed();
             post.Add(action);
         }
 
-        public void Close()
+        public void Dispose()
         {
-            this.RunPrioritizedActions();
-            this.RunLastActions();
-            this.RunPostActions();
+            if (this.disposed)
+            {
+                return;
+            }
+
+            RunPrioritizedActions();
+            prioritized.Clear();
+            
+            RunLastActions();
+            last.Clear();
+
+            RunPostActions();
+            post.Clear();
+
+            prioritized = null;
+            last = null;
+            post = null;
+
+            this.disposed = true;
         }
 
         private void RunPrioritizedActions()
@@ -107,8 +132,6 @@ namespace Sodium
             {
                 action();
             }
-
-            last.Clear();
         }
 
         private void RunPostActions()
@@ -117,8 +140,14 @@ namespace Sodium
             {
                 action();
             }
+        }
 
-            post.Clear();
+        private void AssertNotDisposed()
+        {
+            if (this.disposed)
+            {
+                throw new ObjectDisposedException("Transaction used after being disposed");
+            }
         }
     }
 }

@@ -14,7 +14,7 @@
         /// </summary>
         /// <remarks>
         /// If the Open method initializes current, then the Close method will 
-        /// dispose of the new transactions. 
+        /// dispose of the created transaction.
         /// 
         /// If current is already initialized when the Open method is invoked,
         /// current is unmodified and the Close method will not dispose current.
@@ -53,7 +53,7 @@
         {
             if (created != null)
             {
-                created.Close();
+                created.Dispose();
                 created = null;
             }
         
