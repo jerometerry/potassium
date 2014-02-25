@@ -4,7 +4,7 @@ namespace Sodium
     {
         public void Send(TA a)
         {
-            Transaction.Run(t => { Fire(t, a); return Unit.Value; });
+            TransactionContext.Run(t => { Fire(t, a); return Unit.Value; });
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Sodium
         {
             this.evt = evt;
             this.value = initValue;
-            Transaction.Run(t => { InitializeValue(t); return Unit.Value; });
+            TransactionContext.Run(t => { InitializeValue(t); return Unit.Value; });
         }
 
         ~Behavior()
@@ -89,7 +89,7 @@ namespace Sodium
         /// </summary>
         public static Event<TA> SwitchE(Behavior<Event<TA>> bea)
         {
-            return Transaction.Run(t => SwitchE(t, bea));
+            return TransactionContext.Run(t => SwitchE(t, bea));
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace Sodium
         /// </summary>
         public Event<TA> Value()
         {
-            return Transaction.Run(Value);
+            return TransactionContext.Run(Value);
         }
 
         /// <summary>

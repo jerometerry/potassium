@@ -90,7 +90,7 @@ namespace Sodium
         /// </summary>
         public Behavior<TA> Hold(TA initValue)
         {
-            return Transaction.Run(t => new Behavior<TA>(LastFiringOnly(t), initValue));
+            return TransactionContext.Run(t => new Behavior<TA>(LastFiringOnly(t), initValue));
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace Sodium
         /// </remarks>
         public Event<TA> Coalesce(Func<TA, TA, TA> coalesce)
         {
-            return Transaction.Run(t => Coalesce(t, coalesce));
+            return TransactionContext.Run(t => Coalesce(t, coalesce));
         }
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace Sodium
 
         internal IListener Listen(ICallback<TA> callback, Rank superior)
         {
-            return Transaction.Run(t => ListenUnsuppressed(t, callback, superior));
+            return TransactionContext.Run(t => ListenUnsuppressed(t, callback, superior));
         }
 
         internal IListener ListenUnsuppressed(Transaction transaction, ICallback<TA> callback, Rank superior)
@@ -315,7 +315,7 @@ namespace Sodium
             {
                 if (this.rank.AddSuperior(superior))
                 {
-                    transaction.NodeRanksModified = true;
+                    transaction.RanksModified = true;
                 }
 
                 callbacks.Add(callback);

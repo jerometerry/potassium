@@ -7,6 +7,9 @@ namespace Sodium
     /// PriorityQueue is adapted from the article Priority Queues with C# by James McCaffrey.
     /// http://visualstudiomagazine.com/articles/2012/11/01/priority-queues-with-c.aspx?m=1
     /// </summary>
+    /// <remarks>PriorityQueue is implemented using a binary heap. 
+    /// http://en.wikipedia.org/wiki/Binary_heap
+    /// </remarks>
     /// <typeparam name="T"></typeparam>
     public sealed class PriorityQueue<T> where T : IComparable<T>
     {
@@ -25,10 +28,11 @@ namespace Sodium
         public void Add(T item)
         {
             data.Add(item);
-            int childIndex = data.Count - 1; // child index; start at end
+            var childIndex = data.Count - 1; // child index; start at end
+            
             while (childIndex > 0)
             {
-                int parentIndex = (childIndex - 1) / 2; // parent index
+                var parentIndex = (childIndex - 1) / 2; // parent index
                 if (data[childIndex].CompareTo(data[parentIndex]) >= 0)
                 { 
                     break; // child item is larger than (or equal) parent so we're done
@@ -41,9 +45,13 @@ namespace Sodium
 
         public T Remove()
         {
-            // assumes pq is not empty; up to calling code
+            // Assumes pq is not empty; up to calling code
             var lastIndex = data.Count - 1; // last index (before removal)
-            var frontItem = data[0];   // fetch the front
+            
+            // Get the item at the front
+            var frontItem = data[0];   
+            
+            // Replace the front item with the last item
             data[0] = data[lastIndex];
             data.RemoveAt(lastIndex);
 
@@ -69,12 +77,7 @@ namespace Sodium
                     break; // parent is smaller than (or equal to) smallest child so done
                 }
 
-                var tmp = data[parentIndex]; 
-                data[parentIndex] = data[childIndex]; 
-                data[childIndex] = tmp; // swap parent and child
-                parentIndex = childIndex;
-
-                Swap(parentIndex, childIndex);
+                Swap(childIndex, parentIndex);
                 parentIndex = childIndex;
             }
 
@@ -102,31 +105,22 @@ namespace Sodium
             return Count() == 0;
         }
 
-        public override string ToString()
-        {
-            var s = string.Empty;
-            for (int i = 0; i < data.Count; ++i)
-            { 
-                s += data[i] + " ";
-            }
-
-            s += "count = " + data.Count;
-            return s;
-        }
-
+        /// <summary>
+        /// Determine if the heap property true for all data
+        /// </summary>
+        /// <returns>If the heap property is true for all data, false otherwise</returns>
         public bool IsConsistent()
         {
-            // is the heap property true for all data?
             if (data.Count == 0)
             { 
                 return true;
             }
 
             var lastIndex = data.Count - 1;
-            for (int parentIndex = 0; parentIndex < data.Count; ++parentIndex)
+            for (var parentIndex = 0; parentIndex < data.Count; ++parentIndex)
             {
-                int leftChildIndex = (2 * parentIndex) + 1;
-                int rightChildIndex = (2 * parentIndex) + 2;
+                var leftChildIndex = (2 * parentIndex) + 1;
+                var rightChildIndex = (2 * parentIndex) + 2;
 
                 if (leftChildIndex <= lastIndex && data[parentIndex].CompareTo(data[leftChildIndex]) > 0)
                 { 
@@ -139,8 +133,8 @@ namespace Sodium
                 }
             }
 
-            return true; // passed all checks
-        } // IsConsistent
+            return true;
+        }
 
         private void Swap(int index1, int index2)
         {

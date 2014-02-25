@@ -30,11 +30,38 @@
         private bool restored;
         private bool disposed;
 
+        private TransactionContext()
+        {
+        }
+
         public Transaction Transaction
         {
             get
             {
                 return current;
+            }
+        }
+
+        /// <summary>
+        /// Run the specified function inside a single transaction
+        /// </summary>
+        /// <typeparam name="TA"></typeparam>
+        /// <param name="f">Function that accepts a transaction and returns a value</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// In most cases this is not needed, because all APIs will create their own
+        /// transaction automatically. It is useful where you want to run multiple
+        /// reactive operations atomically.
+        /// </remarks>
+        public static TA Run<TA>(Func<Transaction, TA> f)
+        {
+            lock (Constants.TransactionLock)
+            {
+                using (var context = new TransactionContext())
+                {
+                    context.Open();
+                    return f(context.Transaction);
+                }
             }
         }
 

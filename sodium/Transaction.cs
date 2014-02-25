@@ -3,7 +3,19 @@ namespace Sodium
     using System;
     using System.Collections.Generic;
 
-    internal sealed class Transaction : IDisposable
+    /// <summary>
+    /// A Transaction is used to order a stream of actions
+    /// </summary>
+    /// <remarks>
+    /// Transactions are run in the following order when the transaction is committed
+    /// 
+    ///     1. Prioritized actions
+    ///     2. Last actions
+    ///     3. Post actions
+    /// 
+    /// Prioritized actions are ordered by Rank using a Priority Queue 
+    /// </remarks>
+    public sealed class Transaction : IDisposable
     {
         private PriorityQueue<PrioritizedAction> prioritized;
         private List<Action> last;
@@ -20,30 +32,7 @@ namespace Sodium
         /// <summary>
         /// True if we need to re-generate the priority queue.
         /// </summary>
-        public bool NodeRanksModified { get; set; }
-
-        /// <summary>
-        /// Run the specified function inside a single transaction
-        /// </summary>
-        /// <typeparam name="TA"></typeparam>
-        /// <param name="f">Function that accepts a transaction and returns a value</param>
-        /// <returns></returns>
-        /// <remarks>
-        /// In most cases this is not needed, because all APIs will create their own
-        /// transaction automatically. It is useful where you want to run multiple
-        /// reactive operations atomically.
-        /// </remarks>
-        public static TA Run<TA>(Func<Transaction, TA> f)
-        {
-            lock (Constants.TransactionLock)
-            {
-                using (var context = new TransactionContext())
-                {
-                    context.Open();
-                    return f(context.Transaction);
-                }
-            }
-        }
+        public bool RanksModified { get; set; }
 
         /// <summary>
         /// Add an action to run before all Last() and Post() actions. Actions are prioritized by rank.
@@ -76,6 +65,21 @@ namespace Sodium
             post.Add(action);
         }
 
+        /// <summary>
+        /// Run all scheduled actions, in the correct order
+        /// </summary>
+        public void Commit()
+        {
+            this.RunPrioritizedActions();
+            this.prioritized.Clear();
+
+            this.RunLastActions();
+            this.last.Clear();
+
+            this.RunPostActions();
+            this.post.Clear();
+        }
+
         public void Dispose()
         {
             if (this.disposed)
@@ -83,14 +87,7 @@ namespace Sodium
                 return;
             }
 
-            RunPrioritizedActions();
-            prioritized.Clear();
-            
-            RunLastActions();
-            last.Clear();
-
-            RunPostActions();
-            post.Clear();
+            Commit();
 
             prioritized = null;
             last = null;
@@ -105,9 +102,9 @@ namespace Sodium
             {
                 // If the priority queue has entries in it when we modify any of the nodes'
                 // ranks, then we need to re-generate it to make sure it's up-to-date.
-                if (this.NodeRanksModified)
+                if (this.RanksModified)
                 {
-                    this.NodeRanksModified = false;
+                    this.RanksModified = false;
                     prioritized.Regenerate();
                 }
 
