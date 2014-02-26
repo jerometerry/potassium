@@ -5,7 +5,5 @@ namespace Sodium
     public interface IListener<TA> : IDisposable
     {
         Event<TA> Event { get; }
-
-        ICallback<TA> Action { get; }
     }
 }

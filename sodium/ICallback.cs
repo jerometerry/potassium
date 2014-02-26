@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    public interface ICallback<in TA>
+    internal interface ICallback<in TA>
     {
         void Invoke(Transaction transaction, TA data);
     }

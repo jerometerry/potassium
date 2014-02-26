@@ -98,6 +98,27 @@ namespace Sodium
         }
 
         /// <summary>
+        /// Stop the current listener from receiving updates from the current Event
+        /// </summary>
+        /// <param name="listener">The listener to remove</param>
+        /// <returns>True if the listener was removed, false otherwise</returns>
+        public bool RemoveListener(IListener<TA> listener)
+        {
+            AssertNotDisposed();
+            var l = listener as Listener<TA>;
+            if (l == null || l.Disposed)
+            {
+                return false;
+            }
+
+            lock (Constants.ListenersLock)
+            {
+                Rank.RemoveSuperior(l.Rank);
+                return this.listeners.Remove(l);
+            }
+        }
+
+        /// <summary>
         /// Map firings of the current event using the supplied mapping function.
         /// </summary>
         /// <param name="map">A map from TA -> TB</param>
@@ -261,7 +282,7 @@ namespace Sodium
             
             firings.Add(firing);
             
-            var clone = new List<IListener<TA>>(this.listeners);
+            var clone = new List<Listener<TA>>(this.listeners);
             foreach (var listener in clone)
             {
                 listener.Action.Invoke(transaction, firing);
@@ -345,7 +366,7 @@ namespace Sodium
             disposed = true;
         }
 
-        private static void Fire(Transaction transaction, IListener<TA> listener, IEnumerable<TA> firings)
+        private static void Fire(Transaction transaction, Listener<TA> listener, IEnumerable<TA> firings)
         {
             foreach (var firing in firings)
             {
@@ -366,7 +387,7 @@ namespace Sodium
             }
         }
 
-        internal IListener<TA> RegisterListener(Transaction transaction, ICallback<TA> action, Rank superior)
+        private Listener<TA> RegisterListener(Transaction transaction, ICallback<TA> action, Rank superior)
         {
             lock (Constants.ListenersLock)
             {
@@ -381,16 +402,7 @@ namespace Sodium
             }
         }
 
-        internal bool RemoveListener(Listener<TA> listener)
-        {
-            lock (Constants.ListenersLock)
-            {
-                Rank.RemoveSuperior(listener.Rank);
-                return this.listeners.Remove(listener);
-            }
-        }
-
-        private void InitialFire(Transaction transaction, IListener<TA> listener)
+        private void InitialFire(Transaction transaction, Listener<TA> listener)
         {
             var initialFirings = InitialFirings();
             if (initialFirings != null)
@@ -404,8 +416,8 @@ namespace Sodium
         /// there's no order dependency between send and listen.
         /// </summary>
         /// <param name="transaction"></param>
-        /// <param name="action"></param>
-        private void Refire(Transaction transaction, IListener<TA> listener)
+        /// <param name="listener"></param>
+        private void Refire(Transaction transaction, Listener<TA> listener)
         {
             Fire(transaction, listener, firings);
         }
