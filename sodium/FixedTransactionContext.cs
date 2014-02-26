@@ -14,13 +14,16 @@ namespace Sodium
 
         public override TA Run<TA>(Func<Transaction, TA> f)
         {
-            try
+            lock (Constants.TransactionLock)
             {
-                return f(this.transaction);
-            }
-            finally
-            {
-                transaction.Commit();
+                try
+                {
+                    return f(this.transaction);
+                }
+                finally
+                {
+                    transaction.Commit();
+                }
             }
         }
 
