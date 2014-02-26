@@ -2,12 +2,26 @@
 {
     internal class SwitchBehaviorEvent<TA> : Event<TA>
     {
-        private IListener listener;
+        private SwitchBehaviorCallback<TA> callback;
 
         public SwitchBehaviorEvent(Behavior<Behavior<TA>> bba)
         {
-            var callback = new SwitchBehaviorCallback<TA>(this);
-            listener = bba.Value().Listen(callback, this.Rank);
+            callback = new SwitchBehaviorCallback<TA>(this);
+            bba.Value().Listen(callback, this.Rank);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (callback != null)
+                {
+                    callback.Dispose();
+                    callback = null;
+                }
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

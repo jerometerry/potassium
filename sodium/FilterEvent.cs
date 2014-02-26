@@ -7,7 +7,6 @@ namespace Sodium
     {
         private readonly Event<TA> evt;
         private readonly Func<TA, bool> f;
-        private IListener listener;
 
         public FilterEvent(Event<TA> evt, Func<TA, bool> f)
         {
@@ -15,7 +14,7 @@ namespace Sodium
             this.f = f;
 
             var callback = new Callback<TA>(this.Fire);
-            listener = evt.Listen(callback, this.Rank);
+            evt.Listen(callback, this.Rank);
         }
 
         /// <summary>

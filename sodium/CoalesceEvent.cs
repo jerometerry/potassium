@@ -6,7 +6,6 @@ namespace Sodium
     {
         private readonly Event<TA> evt;
         private readonly Func<TA, TA, TA> coalesce;
-        private IListener listener;
 
         public CoalesceEvent(Event<TA> evt, Func<TA, TA, TA> coalesce, Transaction transaction)
         {
@@ -14,7 +13,7 @@ namespace Sodium
             this.coalesce = coalesce;
 
             var callback = new CoalesceCallback<TA>(this, coalesce);
-            listener = evt.Listen(transaction, callback, this.Rank);
+            evt.Listen(transaction, callback, this.Rank);
         }
 
         protected internal override TA[] InitialFirings()

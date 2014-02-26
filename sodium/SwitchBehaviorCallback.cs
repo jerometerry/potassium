@@ -1,22 +1,32 @@
 namespace Sodium
 {
-    internal sealed class SwitchBehaviorCallback<TA> : ICallback<Behavior<TA>>
+    using System;
+
+    internal sealed class SwitchBehaviorCallback<TA> : ICallback<Behavior<TA>>, IDisposable
     {
         private readonly Event<TA> sink;
         private IListener listener;
+        private bool disposed;
 
         public SwitchBehaviorCallback(Event<TA> sink)
         {
             this.sink = sink;
         }
 
-        public void Close()
+        public void Dispose()
         {
+            if (disposed)
+            {
+                return;
+            }
+
             if (listener != null)
             {
                 listener.Dispose();
                 listener = null;
             }
+
+            disposed = true;
         }
 
         public void Invoke(Transaction transaction, Behavior<TA> behavior)

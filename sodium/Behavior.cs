@@ -7,7 +7,7 @@ namespace Sodium
     /// </summary>
     /// <remarks>Behaviors generally change over time, but constant behaviors are ones that choose not to.</remarks>
     /// <typeparam name="TA"></typeparam>
-    public class Behavior<TA> : IDisposable
+    public sealed class Behavior<TA> : IDisposable
     {
         private TA value;
         private Maybe<TA> valueUpdate = Maybe<TA>.Null;
@@ -93,8 +93,7 @@ namespace Sodium
         {
             AssertNotDisposed();
             evt.Loop(b.Updates());
-            var v = b.Sample();
-            SetValue(v);
+            value = b.Sample();
         }
 
         public void Fire(TA a)
@@ -205,8 +204,18 @@ namespace Sodium
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            if (disposed)
+            {
+                return;
+            }
+
+            if (evt != null)
+            {
+                evt.Dispose();
+                evt = null;
+            }
+
+            disposed = true;
         }
 
         /// <summary>
@@ -226,30 +235,6 @@ namespace Sodium
             // Needed in case of an initial value and an update
             // in the same transaction.
             return sink.LastFiringOnly(transaction);
-        }
-
-        protected void SetValue(TA v)
-        {
-            value = v;
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                if (evt != null)
-                {
-                    evt.Dispose();
-                    evt = null;
-                }
-            }
-
-            disposed = true;
         }
 
         private static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior)

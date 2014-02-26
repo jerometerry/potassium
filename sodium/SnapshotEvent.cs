@@ -8,7 +8,6 @@ namespace Sodium
         private readonly Event<TA> evt;
         private readonly Func<TA, TB, TC> snapshot;
         private readonly Behavior<TB> behavior;
-        private IListener listener;
 
         public SnapshotEvent(Event<TA> ev, Func<TA, TB, TC> snapshot, Behavior<TB> behavior)
         {
@@ -17,7 +16,7 @@ namespace Sodium
             this.behavior = behavior;
 
             var callback = new Callback<TA>(this.Fire);
-            listener = ev.Listen(callback, this.Rank);
+            ev.Listen(callback, this.Rank);
         }
 
         public void Fire(Transaction transaction, TA firing)

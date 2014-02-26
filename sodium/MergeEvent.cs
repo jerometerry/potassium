@@ -1,6 +1,5 @@
 namespace Sodium
 {
-    using System;
     using System.Linq;
 
     internal sealed class MergeEvent<TA> : Event<TA>
