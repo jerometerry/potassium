@@ -70,8 +70,7 @@ namespace Sodium
 
             this.loop = le;
             var evt = this;
-            var listener = le.Listen(new Callback<TA>(evt.Fire), evt.Rank);
-            RegisterListener(listener);
+            le.Listen(new Callback<TA>(evt.Fire), evt.Rank);
         }
 
         /// <summary>
@@ -87,14 +86,17 @@ namespace Sodium
         /// Listen for firings of this event. The returned Listener has an Unlisten()
         /// method to cause the listener to be removed. This is the observer pattern.
         /// </summary>
+        /// <param name="callback">An Action to be invoked when the current Event fires.</param>
+        /// <returns>An IListener </returns>
         public IListener Listen(Action<TA> callback)
         {
             return Listen(new Callback<TA>((t, a) => callback(a)), Rank.Highest);
         }
 
         /// <summary>
-        /// Transform the event's value according to the supplied function.
+        /// Map firings of the current event using the supplied mapping function.
         /// </summary>
+        /// <param name="map">A map from TA -> TB</param>
         public Event<TB> Map<TB>(Func<TA, TB> map)
         {
             return new MapEvent<TA, TB>(this, map);
@@ -232,27 +234,14 @@ namespace Sodium
             listeners.Clear();
         }
 
-        internal void Unlisten(ICallback<TA> callback, Rank superior)
+        internal bool RemoveListener(Listener<TA> listener)
         {
             lock (Constants.ListenersLock)
             {
-                RemoveCallback(callback);
-                this.Rank.RemoveSuperior(superior);
+                RemoveCallback(listener.Action);
+                Rank.RemoveSuperior(listener.Rank);
+                return listeners.Remove(listener);
             }
-        }
-
-        /// <summary>
-        /// Register a listener so that it doesn't go out of scope until the 
-        /// current Event is Stopped.
-        /// </summary>
-        /// <param name="listener">The listener to register</param>
-        /// <returns>The current event, in monadic fashion</returns>
-        /// <remarks>When the current Event is stopped, all registered listeners 
-        /// are stopped as well, and removed from the registered listeners list.</remarks>
-        private IListener RegisterListener(IListener listener)
-        {
-            listeners.Add(listener);
-            return listener;
         }
 
         /// <summary>
@@ -303,7 +292,7 @@ namespace Sodium
             RegisterCallback(transaction, callback, superior);
             InitialFire(transaction, callback);
             Refire(transaction, callback);
-            return new Listener<TA>(this, callback, superior);
+            return RegisterListener(callback, superior);
         }
 
         /// <summary>
@@ -322,7 +311,7 @@ namespace Sodium
         {
             RegisterCallback(transaction, callback, superior);
             InitialFire(transaction, callback);
-            return new Listener<TA>(this, callback, superior);
+            return RegisterListener(callback, superior);
         }
 
         protected internal virtual TA[] InitialFirings()
@@ -336,6 +325,13 @@ namespace Sodium
             {
                 callback.Invoke(transaction, payload);
             }
+        }
+        
+        private IListener RegisterListener(ICallback<TA> callback, Rank superior)
+        {
+            var listener = new Listener<TA>(this, callback, superior);
+            listeners.Add(listener);
+            return listener;
         }
 
         private void RegisterCallback(Transaction transaction, ICallback<TA> callback, Rank superior)
@@ -351,9 +347,9 @@ namespace Sodium
             }
         }
 
-        private void RemoveCallback(ICallback<TA> callback)
+        private bool RemoveCallback(ICallback<TA> callback)
         {
-            callbacks.Remove(callback);
+            return callbacks.Remove(callback);
         }
 
         private void InitialFire(Transaction transaction, ICallback<TA> callback)

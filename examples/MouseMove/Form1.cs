@@ -6,48 +6,31 @@
 
     public partial class Form1 : Form
     {
-        private Event<MouseEventArgs> sink;
-        private Event<Tuple<string, string>> map;
-        private IListener listener;
+        private Event<MouseEventArgs> evt;
 
         public Form1()
         {
             InitializeComponent();
-            sink = new Event<MouseEventArgs>();
-            map = sink.Map(ToTuple);
-            listener = map.Listen(DisplayMousePosition);
+            InitializeMouseHandler();
         }
 
-        private static Tuple<string, string> ToTuple(MouseEventArgs e)
+        private static Tuple<string, string> Format(MouseEventArgs e)
         {
             var ci = CultureInfo.InvariantCulture;
             return new Tuple<string, string>(e.X.ToString(ci), e.Y.ToString(ci));
         }
 
-        private void MouseMoveEvent(object sender, MouseEventArgs e)
+        private void InitializeMouseHandler()
         {
-            sink.Fire(e);
+            evt = new Event<MouseEventArgs>();
+            MouseMove += (s, e) => evt.Fire(e);
+            evt.Map(Format).Listen(DisplayMousePosition);
         }
 
         private void DisplayMousePosition(Tuple<string, string> t)
         {
             x.Text = t.Item1;
             y.Text = t.Item2;
-        }
-
-        private void FormClosingEvent(object sender, FormClosingEventArgs e)
-        {
-            Cleanup();
-        }
-
-        private void Cleanup()
-        {
-            listener.Stop();
-            listener = null;
-            sink.Stop();
-            sink = null;
-            map.Stop();
-            map = null;
         }
     }
 }

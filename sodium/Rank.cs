@@ -44,14 +44,14 @@ namespace Sodium
             return changed;
         }
 
-        public void RemoveSuperior(Rank superior)
+        public bool RemoveSuperior(Rank superior)
         {
             if (superior == Highest)
             { 
-                return;
+                return false;
             }
 
-            this.superiors.Remove(superior);
+            return this.superiors.Remove(superior);
         }
 
         /// <summary>
