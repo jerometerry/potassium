@@ -2,7 +2,7 @@ namespace Sodium
 {
     using System;
 
-    internal sealed class Callback<TA> : ICallback<TA>
+    public sealed class Callback<TA> : ICallback<TA>
     {
         private readonly Action<Transaction, TA> action;
 

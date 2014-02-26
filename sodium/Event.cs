@@ -86,6 +86,28 @@ namespace Sodium
         }
 
         /// <summary>
+        /// Fire the given value to all registered callbacks
+        /// </summary>
+        /// <param name="transaction">The transaction to invoke the callbacks on</param>
+        /// <param name="firing">The value to fire to registerd callbacks</param>
+        public virtual void Fire(Transaction transaction, TA firing)
+        {
+            var noFirings = !firings.Any();
+            if (noFirings)
+            {
+                transaction.Last(() => firings.Clear());
+            }
+
+            firings.Add(firing);
+
+            var clone = new List<Listener<TA>>(this.listeners);
+            foreach (var listener in clone)
+            {
+                listener.Action.Invoke(transaction, firing);
+            }
+        }
+
+        /// <summary>
         /// Listen for firings of this event. The returned Listener has an Unlisten()
         /// method to cause the listener to be removed. This is the observer pattern.
         /// </summary>
@@ -95,6 +117,78 @@ namespace Sodium
         {
             AssertNotDisposed();
             return Listen(new Callback<TA>((t, a) => action(a)), Rank.Highest);
+        }
+
+        public IListener<TA> Listen(Transaction transaction, Action<TA> action)
+        {
+            AssertNotDisposed();
+            return Listen(transaction, new Callback<TA>((t, a) => action(a)), Rank.Highest);
+        }
+
+        /// <summary>
+        /// Listen for firings on the current event
+        /// </summary>
+        /// <param name="action">The action to invoke on a firing</param>
+        /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
+        /// <returns>An IListener to be used to stop listening for events</returns>
+        /// <remarks>TransactionContext.Run is used to invoke the overload of the 
+        /// Listen operation that takes a thread. This ensures that any other
+        /// actions triggered during Listen requiring a transaction all get the same instance.</remarks>
+        public IListener<TA> Listen(ICallback<TA> action, Rank superior)
+        {
+            return TransactionContext.Run(t => this.Listen(t, action, superior));
+        }
+
+        /// <summary>
+        /// Listen for firings on the current event
+        /// </summary>
+        /// <param name="transaction">Transaction to send any firings on</param>
+        /// <param name="action">The action to invoke on a firing</param>
+        /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
+        /// <returns>An IListener to be used to stop listening for events.</returns>
+        /// <remarks>Any firings that have occurred on the current transaction will be refired immediate after listening.</remarks>
+        public IListener<TA> Listen(Transaction transaction, ICallback<TA> action, Rank superior)
+        {
+            var listener = this.RegisterListener(transaction, action, superior);
+            InitialFire(transaction, listener);
+            Refire(transaction, listener);
+            return listener;
+        }
+
+        public IListener<TA> ListenSuppressed(Action<TA> action)
+        {
+            AssertNotDisposed();
+            return ListenSuppressed(new Callback<TA>((t, a) => action(a)), Rank.Highest);
+        }
+
+        public IListener<TA> ListenSuppressed(Transaction transaction, Action<TA> action)
+        {
+            AssertNotDisposed();
+            return ListenSuppressed(transaction, new Callback<TA>((t, a) => action(a)), Rank.Highest);
+        }
+
+        public IListener<TA> ListenSuppressed(ICallback<TA> action, Rank superior)
+        {
+            return TransactionContext.Run(t => this.ListenSuppressed(t, action, superior));
+        }
+
+        /// <summary>
+        /// Similar to Listener, except that previous firings will not be refired.
+        /// </summary>
+        /// <param name="transaction">Transaction to send any firings on</param>
+        /// <param name="action">The action to invoke on a firing</param>
+        /// <param name="superior">An IListener to be used to stop listening for events.</param>
+        /// <returns>An IListener to be used to stop listening for events.</returns>
+        /// <remarks>It's more common for the Listen method to be used instead of ListenSuppressed.
+        /// You may want to use ListenSuppressed if the action will be triggered as part of a call
+        /// to Listen.
+        /// 
+        /// The only present use of ListenSuppressed is in the call chain of Behavior.SwitchE.</remarks>
+        public IListener<TA> ListenSuppressed(Transaction transaction, ICallback<TA> action, Rank superior)
+        {
+            var listener = this.RegisterListener(transaction, action, superior);
+            InitialFire(transaction, listener);
+            return listener;
         }
 
         /// <summary>
@@ -144,6 +238,23 @@ namespace Sodium
         }
 
         /// <summary>
+        /// Create a behavior with the specified initial value, that gets updated
+        /// by the values coming through the event. The 'current value' of the behavior
+        /// is notionally the value as it was 'at the start of the transaction'.
+        /// That is, state updates caused by event firings get processed at the end of
+        /// the transaction.
+        /// </summary>
+        /// <param name="initValue"></param>
+        /// <param name="transaction"></param>
+        /// <returns>A Behavior that updates when the current event is fired,
+        /// having the specified initial value.</returns>
+        public Behavior<TA> Hold(TA initValue, Transaction transaction)
+        {
+            AssertNotDisposed();
+            return new Behavior<TA>(LastFiringOnly(transaction), initValue);
+        }
+
+        /// <summary>
         /// Variant of snapshot that throws away the event's value and captures the behavior's.
         /// </summary>
         public Event<TB> Snapshot<TB>(Behavior<TB> behavior)
@@ -176,6 +287,7 @@ namespace Sodium
         /// If there's more than one firing in a single transaction, combine them into
         /// one using the specified combining function.
         /// </summary>
+        /// <param name="coalesce"></param>
         /// <remarks>
         /// If the event firings are ordered, then the first will appear at the left
         /// input of the combining function. In most common cases it's best not to
@@ -186,6 +298,24 @@ namespace Sodium
         {
             AssertNotDisposed();
             return TransactionContext.Run(t => Coalesce(t, coalesce));
+        }
+
+        /// <summary>
+        /// If there's more than one firing in a single transaction, combine them into
+        /// one using the specified combining function.
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <param name="coalesce"></param>
+        /// <remarks>
+        /// If the event firings are ordered, then the first will appear at the left
+        /// input of the combining function. In most common cases it's best not to
+        /// make any assumptions about the ordering, and the combining function would
+        /// ideally be commutative.
+        /// </remarks>
+        public Event<TA> Coalesce(Transaction transaction, Func<TA, TA, TA> coalesce)
+        {
+            AssertNotDisposed();
+            return new CoalesceEvent<TA>(this, coalesce, transaction);
         }
 
         /// <summary>
@@ -268,73 +398,11 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Fire the given value to all registered callbacks
-        /// </summary>
-        /// <param name="transaction">The transaction to invoke the callbacks on</param>
-        /// <param name="firing">The value to fire to registerd callbacks</param>
-        internal virtual void Fire(Transaction transaction, TA firing)
-        {
-            var noFirings = !firings.Any();
-            if (noFirings)
-            {
-                transaction.Last(() => firings.Clear());
-            }
-            
-            firings.Add(firing);
-            
-            var clone = new List<Listener<TA>>(this.listeners);
-            foreach (var listener in clone)
-            {
-                listener.Action.Invoke(transaction, firing);
-            }
-        }
-
-        /// <summary>
         /// Clean up the output by discarding any firing other than the last one. 
         /// </summary>
         internal Event<TA> LastFiringOnly(Transaction transaction)
         {
             return Coalesce(transaction, (a, b) => b);
-        }
-
-        internal IListener<TA> Listen(ICallback<TA> action, Rank superior)
-        {
-            return TransactionContext.Run(t => this.Listen(t, action, superior));
-        }
-
-        /// <summary>
-        /// Listen for firings on the current event
-        /// </summary>
-        /// <param name="transaction">Transaction to send any firings on</param>
-        /// <param name="action">The action to invoke on a firing</param>
-        /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
-        /// <returns>An IListener to be used to stop listening for events.</returns>
-        /// <remarks>Any firings that have occurred on the current transaction will be refired immediate after listening.</remarks>
-        internal IListener<TA> Listen(Transaction transaction, ICallback<TA> action, Rank superior)
-        {
-            var listener = this.RegisterListener(transaction, action, superior);
-            InitialFire(transaction, listener);
-            Refire(transaction, listener);
-            return listener;
-        }
-
-        /// <summary>
-        /// Similar to Listener, except that previous firings will not be refired.
-        /// </summary>
-        /// <param name="transaction">Transaction to send any firings on</param>
-        /// <param name="action">The action to invoke on a firing</param>
-        /// <param name="superior">An IListener to be used to stop listening for events.</param>
-        /// <returns>An IListener to be used to stop listening for events.</returns>
-        /// <remarks>It's more common for the Listen method to be used instead of ListenSuppressed.
-        /// You may want to use ListenSuppressed if the action will be triggered as part of a call
-        /// to Listen.
-        /// 
-        /// The only present use of ListenSuppressed is in the call chain of Behavior.SwitchE.</remarks>
-        internal IListener<TA> ListenSuppressed(Transaction transaction, ICallback<TA> action, Rank superior)
-        {
-            var listener = this.RegisterListener(transaction, action, superior);
-            InitialFire(transaction, listener);
-            return listener;
         }
 
         /// <summary>
@@ -372,11 +440,6 @@ namespace Sodium
             {
                 listener.Action.Invoke(transaction, firing);
             }
-        }
-
-        private Event<TA> Coalesce(Transaction transaction, Func<TA, TA, TA> coalesce)
-        {
-            return new CoalesceEvent<TA>(this, coalesce, transaction);
         }
 
         private void AssertNotDisposed()

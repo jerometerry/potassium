@@ -29,11 +29,24 @@ namespace Sodium
         /// </summary>
         /// <param name="evt"></param>
         /// <param name="initValue"></param>
-        internal Behavior(Event<TA> evt, TA initValue)
+        public Behavior(Event<TA> evt, TA initValue)
         {
             this.evt = evt;
             this.value = initValue;
             ListenForEventFirings();
+        }
+
+        /// <summary>
+        /// A behavior with a time varying value
+        /// </summary>
+        /// <param name="evt"></param>
+        /// <param name="initValue"></param>
+        /// <param name="transaction"></param>
+        public Behavior(Event<TA> evt, TA initValue, Transaction transaction)
+        {
+            this.evt = evt;
+            this.value = initValue;
+            ListenForEventFirings(transaction);
         }
 
         /// <summary>
@@ -76,9 +89,25 @@ namespace Sodium
         /// <summary>
         /// Unwrap an event inside a behavior to give a time-varying event implementation.
         /// </summary>
-        public static Event<TA> SwitchE(Behavior<Event<TA>> bea)
+        /// <param name="behavior">The behavior that wraps the event</param>
+        /// <returns>The unwrapped event</returns>
+        /// <remarks>TransactionContext.Run is used to invoke the overload of the 
+        /// SwitchE operation that takes a thread. This ensures that any other
+        /// actions triggered during SwitchE requiring a transaction all get the same instance.</remarks>
+        public static Event<TA> SwitchE(Behavior<Event<TA>> behavior)
         {
-            return TransactionContext.Run(t => SwitchE(t, bea));
+            return TransactionContext.Run(t => SwitchE(t, behavior));
+        }
+
+        /// <summary>
+        /// Unwrap an event inside a behavior to give a time-varying event implementation.
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <param name="behavior">The behavior that wraps the event</param>
+        /// <returns>The unwrapped event</returns>
+        public static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior)
+        {
+            return new SwitchEvent<TA>(transaction, behavior);
         }
 
         /// <summary>
@@ -143,10 +172,32 @@ namespace Sodium
         /// the current value of the behavior, and thereafter behaves like updates(),
         /// firing for each update to the behavior's value.
         /// </summary>
+        /// <returns>An event that will fire when it's listened to, and every time it's 
+        /// value changes thereafter</returns>
+        /// <remarks>TransactionContext.Run is used to invoke the overload of the 
+        /// Value operation that takes a thread. This ensures that any other
+        /// actions triggered during Value requiring a transaction all get the same instance.</remarks>
         public Event<TA> Value()
         {
             AssertNotDisposed();
             return TransactionContext.Run(Value);
+        }
+
+        /// <summary>
+        /// An event that is guaranteed to fire once when you listen to it, giving
+        /// the current value of the behavior, and thereafter behaves like updates(),
+        /// firing for each update to the behavior's value.
+        /// </summary>
+        /// <param name="transaction">The transaction to run the Value operation on</param>
+        /// <returns>An event that will fire when it's listened to, and every time it's 
+        /// value changes thereafter</returns>
+        public Event<TA> Value(Transaction transaction)
+        {
+            var sink = new BehaviorValueEvent<TA>(this, evt, transaction);
+
+            // Needed in case of an initial value and an update
+            // in the same transaction.
+            return sink.LastFiringOnly(transaction);
         }
 
         /// <summary>
@@ -226,20 +277,6 @@ namespace Sodium
         internal TA NewValue()
         {
             return valueUpdate.HasValue ? valueUpdate.Value() : value;
-        }
-
-        internal Event<TA> Value(Transaction transaction)
-        {
-            var sink = new BehaviorValueEvent<TA>(this, evt, transaction);
-
-            // Needed in case of an initial value and an update
-            // in the same transaction.
-            return sink.LastFiringOnly(transaction);
-        }
-
-        private static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior)
-        {
-            return new SwitchEvent<TA>(transaction, behavior);
         }
 
         private void AssertNotDisposed()

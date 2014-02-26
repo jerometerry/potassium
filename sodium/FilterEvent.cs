@@ -22,7 +22,7 @@ namespace Sodium
         /// </summary>
         /// <param name="t"></param>
         /// <param name="a"></param>
-        internal override void Fire(Transaction t, TA a)
+        public override void Fire(Transaction t, TA a)
         {
             if (f(a))
             {
