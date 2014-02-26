@@ -108,3 +108,4 @@ Backup*/
 UpgradeLog*.XML
 sodium.VisualState.xml
 tests/UnitTests/sodium.tests.VisualState.xml
+*.chm

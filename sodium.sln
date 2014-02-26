@@ -17,6 +17,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MemoryTests", "MemoryTests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sodium.MemoryTests", "tests\MemoryTests\Sodium.MemoryTests.csproj", "{F6BA09F8-17E3-402C-86ED-A717804A3A14}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{F828071F-45D1-40DB-AEBA-7D12C2B12440}"
+EndProject
+Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "Sodium.Documentation", "documentation\Sodium.Documentation.shfbproj", "{08FCB85E-E1DE-4DAD-90CC-5652E7462451}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CC18D685-53D9-4A66-8CCA-3E8ED4EC8F13} = {CC18D685-53D9-4A66-8CCA-3E8ED4EC8F13}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +46,10 @@ Global
 		{F6BA09F8-17E3-402C-86ED-A717804A3A14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6BA09F8-17E3-402C-86ED-A717804A3A14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6BA09F8-17E3-402C-86ED-A717804A3A14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08FCB85E-E1DE-4DAD-90CC-5652E7462451}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08FCB85E-E1DE-4DAD-90CC-5652E7462451}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08FCB85E-E1DE-4DAD-90CC-5652E7462451}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08FCB85E-E1DE-4DAD-90CC-5652E7462451}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,5 +60,6 @@ Global
 		{EA5D9EBC-4B79-4971-9E96-755B688B1825} = {019F3FF6-66A8-400C-92F8-7DE8FBF44851}
 		{1D1FFCFA-CDD6-401A-BE6A-D079CC98200B} = {8371B92E-6AAD-4207-8F41-0EAC70D74AAA}
 		{F6BA09F8-17E3-402C-86ED-A717804A3A14} = {08AA5695-9AD5-4C0A-B6AE-175CF700A4F3}
+		{08FCB85E-E1DE-4DAD-90CC-5652E7462451} = {F828071F-45D1-40DB-AEBA-7D12C2B12440}
 	EndGlobalSection
 EndGlobal
