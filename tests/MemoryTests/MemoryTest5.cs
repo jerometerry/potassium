@@ -5,20 +5,20 @@ namespace Sodium.MemoryTests
     [TestFixture]
     public class MemoryTest5
     {
-        [Test]
-        public void Test()
+        [TestCase(1000000000)]
+        public void Test(int iterations)
         {
             var sink = new Event<int>();
-            var o = sink.Hold(0);
-            var l = o.Value().Listen(tt => { });
+            var obserable = sink.Hold(0);
+            var listener = obserable.Value().Listen(tt => { });
             var i = 0;
-            while (i < 1000000000)
+            while (i < iterations)
             {
                 sink.Fire(i);
                 i++;
             }
 
-            l.Stop();
+            listener.Stop();
         }
     }
 }
