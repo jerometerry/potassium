@@ -24,6 +24,12 @@ Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "Sodium.Documentation", "doc
 		{CC18D685-53D9-4A66-8CCA-3E8ED4EC8F13} = {CC18D685-53D9-4A66-8CCA-3E8ED4EC8F13}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{EEBE186B-7E77-42DA-81D8-F3380020373D}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
