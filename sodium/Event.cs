@@ -19,6 +19,8 @@ namespace Sodium
         /// </summary>
         private readonly Rank rank = new Rank();
 
+        private Event<TA> loopedEvent;
+
         ~Event()
         {
             this.Stop();
@@ -56,6 +58,18 @@ namespace Sodium
         public static Event<TA> Merge(Event<TA> event1, Event<TA> event2)
         {
             return new MergeEvent<TA>(event1, event2);
+        }
+
+        public void Loop(Event<TA> evt)
+        {
+            if (loopedEvent != null)
+            {
+                throw new ApplicationException("EventLoop looped more than once");
+            }
+
+            loopedEvent = evt;
+            var listener = evt.Listen(new Callback<TA>(Fire), this.Rank);
+            RegisterListener(listener);
         }
 
         /// <summary>
@@ -172,7 +186,7 @@ namespace Sodium
         /// </summary>
         public Event<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
         {
-            var es = new EventLoop<TS>();
+            var es = new Event<TS>();
             var s = es.Hold(initState);
             var ebs = Snapshot(s, snapshot);
             var eb = ebs.Map(bs => bs.Item1);
@@ -186,7 +200,7 @@ namespace Sodium
         /// </summary>
         public Behavior<TS> Accum<TS>(TS initState, Func<TA, TS, TS> snapshot)
         {
-            var loop = new EventLoop<TS>();
+            var loop = new Event<TS>();
             var behavior = loop.Hold(initState);
             var snapshotEvent = Snapshot(behavior, snapshot);
             loop.Loop(snapshotEvent);

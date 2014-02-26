@@ -45,7 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BehaviorApplyHandler.cs" />
-    <Compile Include="BehaviorLoop.cs" />
     <Compile Include="DelayEvent.cs" />
     <Compile Include="StaticEvent.cs" />
     <Compile Include="SwitchBehaviorCallback.cs" />
@@ -87,10 +86,6 @@
     <Compile Include="Callback.cs" />
     <Compile Include="TransactionContext.cs" />
     <Compile Include="Unit.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="EventLoop.cs" />
-    <Compile Include="BehaviorSink.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

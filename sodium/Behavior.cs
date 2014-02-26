@@ -14,11 +14,17 @@ namespace Sodium
         private Maybe<TA> valueUpdate = Maybe<TA>.Null;
         private IListener listener;
 
+        public Behavior()
+            : this(new Event<TA>(), default(TA))
+        {
+        }
+
         /// <summary>
-        /// A behavior with a constant value.
+        /// Constant valued Behavior
         /// </summary>
-        public Behavior(TA value)
-            : this(new StaticEvent<TA>(), value)
+        /// <param name="initValue"></param>
+        public Behavior(TA initValue)
+            : this(new StaticEvent<TA>(), initValue)
         {
         }
 
@@ -31,7 +37,7 @@ namespace Sodium
         {
             this.evt = evt;
             this.value = initValue;
-            TransactionContext.Run(t => { this.ListenForEventFirings(t); return Unit.Value; });
+            ListenForEventFirings();
         }
 
         ~Behavior()
@@ -42,6 +48,19 @@ namespace Sodium
         protected Event<TA> Event
         {
             get { return evt; }
+        }
+
+        /// <summary>
+        /// A behavior with a constant value.
+        /// </summary>
+        public static Behavior<TA> Constant(TA value)
+        {
+            return new Behavior<TA>(value);
+        }
+
+        public static Behavior<TA> Sink(TA value)
+        {
+            return new Behavior<TA>(new Event<TA>(), value);
         }
 
         /// <summary>
@@ -95,6 +114,18 @@ namespace Sodium
         public static Behavior<TD> Lift<TB, TC, TD>(Func<TA, TB, TC, TD> f, Behavior<TA> a, Behavior<TB> b, Behavior<TC> c)
         {
             return a.Lift(f, b, c);
+        }
+
+        public void Loop(Behavior<TA> b)
+        {
+            Event.Loop(b.Updates());
+            var v = b.Sample();
+            SetValue(v);
+        }
+
+        public void Fire(TA a)
+        {
+            this.Event.Fire(a);
         }
 
         /// <summary>
@@ -185,7 +216,7 @@ namespace Sodium
             var coalesceEvent = Updates().Coalesce((a, b) => b);
             var currentValue = Sample();
             var tuple = snapshot(currentValue, initState);
-            var loop = new EventLoop<Tuple<TB, TS>>();
+            var loop = new Event<Tuple<TB, TS>>();
             var loopBehavior = loop.Hold(tuple);
             var snapshotBehavior = loopBehavior.Map(x => x.Item2);
             var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
@@ -233,6 +264,18 @@ namespace Sodium
         private static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior)
         {
             return new SwitchEvent<TA>(transaction, behavior);
+        }
+
+        /// <summary>
+        /// Listen to the underlying event for firings
+        /// </summary>
+        private void ListenForEventFirings()
+        {
+            TransactionContext.Run(t =>
+            {
+                this.ListenForEventFirings(t);
+                return Unit.Value;
+            });
         }
 
         /// <summary>

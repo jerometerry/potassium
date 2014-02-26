@@ -106,7 +106,7 @@ namespace Sodium.Tests
         public void TestLoopEvent()
         {
             var ea = new Event<int>();
-            var eb = new EventLoop<int>();
+            var eb = new Event<int>();
             var ec = Event<int>.MergeWith((x, y) => x + y, ea.Map(x => x % 10), eb);
             var ebO = ea.Map(x => x / 10).Filter(x => x != 0);
             eb.Loop(ebO);
@@ -122,7 +122,7 @@ namespace Sodium.Tests
         public void TestGate()
         {
             var ec = new Event<char>();
-            var epred = new BehaviorSink<bool>(true);
+            var epred = Behavior<bool>.Sink(true);
             var o = new List<char>();
             var l = ec.Gate(epred).Listen(o.Add);
             ec.Fire('H');
