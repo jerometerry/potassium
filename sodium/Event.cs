@@ -207,10 +207,10 @@ namespace Sodium
         /// </summary>
         public Behavior<TS> Accum<TS>(TS initState, Func<TA, TS, TS> snapshot)
         {
-            var loop = new Event<TS>();
-            var behavior = loop.Hold(initState);
+            var evt = new Event<TS>();
+            var behavior = evt.Hold(initState);
             var snapshotEvent = Snapshot(behavior, snapshot);
-            loop.Loop(snapshotEvent);
+            evt.Loop(snapshotEvent);
             return snapshotEvent.Hold(initState);
         }
 
@@ -235,14 +235,6 @@ namespace Sodium
             listeners.Clear();
         }
 
-        internal static void InvokeCallbacks(Transaction transaction, ICallback<TA> callback, IEnumerable<TA> payloads)
-        {
-            foreach (var payload in payloads)
-            {
-                callback.Invoke(transaction, payload);
-            }
-        }
-
         internal void Unlisten(ICallback<TA> callback, Rank superior)
         {
             lock (Constants.ListenersLock)
@@ -252,15 +244,18 @@ namespace Sodium
             }
         }
 
+        /// <summary>
+        /// Register a listener so that it doesn't go out of scope until the 
+        /// current Event is Stopped.
+        /// </summary>
+        /// <param name="listener">The listener to register</param>
+        /// <returns>The current event, in monadic fashion</returns>
+        /// <remarks>When the current Event is stopped, all registered listeners 
+        /// are stopped as well, and removed from the registered listeners list.</remarks>
         internal Event<TA> RegisterListener(IListener listener)
         {
             listeners.Add(listener);
             return this;
-        }
-
-        internal void RemoveCallback(ICallback<TA> callback)
-        {
-            callbacks.Remove(callback);
         }
 
         /// <summary>
@@ -338,6 +333,14 @@ namespace Sodium
             return null;
         }
 
+        private static void InvokeCallbacks(Transaction transaction, ICallback<TA> callback, IEnumerable<TA> payloads)
+        {
+            foreach (var payload in payloads)
+            {
+                callback.Invoke(transaction, payload);
+            }
+        }
+
         private void RegisterCallback(Transaction transaction, ICallback<TA> callback, Rank superior)
         {
             lock (Constants.ListenersLock)
@@ -349,6 +352,11 @@ namespace Sodium
 
                 callbacks.Add(callback);
             }
+        }
+
+        private void RemoveCallback(ICallback<TA> callback)
+        {
+            callbacks.Remove(callback);
         }
 
         private void InitialFire(Transaction transaction, ICallback<TA> callback)

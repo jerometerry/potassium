@@ -30,7 +30,7 @@ namespace Sodium
         /// <param name="initValue"></param>
         internal Behavior(Event<TA> evt, TA initValue)
         {
-            this.evt= evt;
+            this.evt = evt;
             this.value = initValue;
             ListenForEventFirings();
         }
