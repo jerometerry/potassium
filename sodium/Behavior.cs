@@ -57,16 +57,8 @@ namespace Sodium
         /// </summary>
         public static Behavior<TB> Apply<TB>(Behavior<Func<TA, TB>> bf, Behavior<TA> ba)
         {
-            var sink = new Event<TB>();
-            var h = new BehaviorApplyHandler<TA, TB>(sink, bf, ba);
-            var functionChanged = new Callback<Func<TA, TB>>((t, f) => h.Run(t));
-            var valueChanged = new Callback<TA>((t, a) => h.Run(t));
-            var l1 = bf.Updates().Listen(functionChanged, sink.Rank);
-            var l2 = ba.Updates().Listen(valueChanged, sink.Rank);
-            var map = bf.Sample();
-            var valA = ba.Sample();
-            var valB = map(valA);
-            return sink.RegisterListener(l1).RegisterListener(l2).Hold(valB);
+            var sink = new BehaviorApplyEvent<TA,TB>(bf,ba);
+            return sink.Behavior;
         }
 
         /// <summary>
@@ -227,13 +219,10 @@ namespace Sodium
 
         internal Event<TA> Value(Transaction transaction)
         {
-            var sink = new BehaviorValueEvent<TA>(this);
-            var callback = new Callback<TA>(sink.Fire);
-            var l = evt.Listen(transaction, callback, sink.Rank);
-
+            var sink = new BehaviorValueEvent<TA>(this, evt, transaction);
             // Needed in case of an initial value and an update
             // in the same transaction.
-            return sink.RegisterListener(l).LastFiringOnly(transaction);
+            return sink.LastFiringOnly(transaction);
         }
 
         protected void SetValue(TA v)

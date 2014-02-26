@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BehaviorApplyEvent.cs" />
     <Compile Include="BehaviorApplyHandler.cs" />
     <Compile Include="DelayEvent.cs" />
     <Compile Include="StaticEvent.cs" />

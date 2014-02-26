@@ -4,6 +4,7 @@ namespace Sodium
     {
         private readonly Event<TA> evt;
         private readonly IListener[] listeners;
+        private IListener listener;
 
         public OnceEvent(Event<TA> evt)
         {
@@ -13,7 +14,7 @@ namespace Sodium
             // the listener.
             this.listeners = new IListener[1];
             this.listeners[0] = evt.Listen(new Callback<TA>((t, a) => this.Fire(this.listeners, t, a)), this.Rank);
-            this.RegisterListener(this.listeners[0]);
+            listener = this.listeners[0];
         }
 
         public void Fire(IListener[] la, Transaction t, TA a)
@@ -46,6 +47,12 @@ namespace Sodium
             {
                 listeners[0].Stop();
                 listeners[0] = null;
+            }
+
+            if (listener != null)
+            {
+                listener.Stop();
+                listener = null;
             }
 
             return results;

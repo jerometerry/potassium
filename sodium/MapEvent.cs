@@ -7,14 +7,13 @@
     {
         private readonly Event<TA> evt;
         private readonly Func<TA, TB> map;
+        private IListener listener;
 
         public MapEvent(Event<TA> evt, Func<TA, TB> map)
         {
             this.evt = evt;
             this.map = map;
-
-            var l = evt.Listen(new Callback<TA>(this.Fire), this.Rank);
-            this.RegisterListener(l);
+            listener = evt.Listen(new Callback<TA>(this.Fire), this.Rank);
         }
 
         public void Fire(Transaction trans, TA firing)

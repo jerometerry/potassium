@@ -247,10 +247,10 @@ namespace Sodium
         /// <returns>The current event, in monadic fashion</returns>
         /// <remarks>When the current Event is stopped, all registered listeners 
         /// are stopped as well, and removed from the registered listeners list.</remarks>
-        internal Event<TA> RegisterListener(IListener listener)
+        private IListener RegisterListener(IListener listener)
         {
             listeners.Add(listener);
-            return this;
+            return listener;
         }
 
         /// <summary>
