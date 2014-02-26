@@ -107,6 +107,8 @@ namespace Sodium
         /// That is, state updates caused by event firings get processed at the end of
         /// the transaction.
         /// </summary>
+        /// <returns>A Behavior that updates when the current event is fired,
+        /// having the specified initial value.</returns>
         public Behavior<TA> Hold(TA initValue)
         {
             return TransactionContext.Run(t => new Behavior<TA>(LastFiringOnly(t), initValue));

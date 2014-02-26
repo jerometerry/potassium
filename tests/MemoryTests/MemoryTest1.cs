@@ -11,26 +11,37 @@ namespace Sodium.MemoryTests
         [Test]
         public void Test()
         {
-            Event<int?> et = new Event<int?>();
-            Behavior<int?> t = et.Hold(0);
-            Event<int?> etens = et.Map(x => x / 10);
-            Event<int?> changeTens = et.Snapshot(t, (neu, old) => neu.Equals(old) ? null : neu).FilterNotNull();
-            Behavior<Behavior<Tuple<int?, int?>>> oout =
-                changeTens.Map(tens => t.Map(tt => new Tuple<int?, int?>(tens, tt)))
-                .Hold(t.Map(tt => new Tuple<int?, int?>(0, tt)));
-            Behavior<Tuple<int?, int?>> o = Behavior<Tuple<int?, int?>>.SwitchB(oout);
-            IListener l = o.Value().Listen(tu =>
-            {
-                //System.out.println(tu.a+","+tu.b);
-            });
+            var evt = new Event<int?>();
+            
+            // A new event that simply divides by ten
+            var etens = evt.Map(x => x / 10);
+
+            var behavior = evt.Hold(0);
+
+            // Event that is fired whenever the tens value changes
+            var changeTens = evt
+                .Snapshot(behavior, (neu, old) => neu.Equals(old) ? null : neu)
+                .FilterNotNull();
+
+            var tensTupleWrappedBehavior = changeTens
+                .Map(tens => behavior.Map(tt => new Tuple<int?, int?>(tens, tt)))
+                .Hold(behavior.Map(tt => new Tuple<int?, int?>(0, tt)));
+
+            // A behavior that updates whenver evt is fired that generates a new tens value.
+            // Each firing is a Tuple<int?,int?> containing value/10 along with the value.
+            var tensTupleBehavior = Behavior<Tuple<int?, int?>>.SwitchB(tensTupleWrappedBehavior);
+
+            var listener = tensTupleBehavior.Value().Listen(tu => { });
+            
             int i = 0;
+            
             while (i < 1000000000)
             {
-                et.Fire(i);
+                evt.Fire(i);
                 i++;
             }
 
-            l.Stop();
+            listener.Stop();
         }
     }
 }
