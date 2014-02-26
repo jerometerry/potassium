@@ -5,14 +5,14 @@ namespace Sodium
     internal sealed class SwitchEventCallback<TA> : ICallback<Event<TA>>, IDisposable
     {
         private readonly Event<TA> evt;
-        private readonly ICallback<TA> callback;
-        private IListener listener;
+        private readonly ICallback<TA> action;
+        private IListener<TA> listener;
         private bool disposed;
 
         public SwitchEventCallback(Behavior<Event<TA>> bea, Event<TA> evt, Transaction t, ICallback<TA> h)
         {
             this.evt = evt;
-            this.callback = h;
+            this.action = h;
             this.listener = bea.Sample().Listen(t, h, evt.Rank);
         }
 
@@ -41,7 +41,7 @@ namespace Sodium
                     listener.Dispose();
                 }
 
-                listener = newEvent.ListenSuppressed(transaction, callback, evt.Rank);
+                listener = newEvent.ListenSuppressed(transaction, this.action, evt.Rank);
             });
         }
     }

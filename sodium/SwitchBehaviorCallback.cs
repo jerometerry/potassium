@@ -5,7 +5,7 @@ namespace Sodium
     internal sealed class SwitchBehaviorCallback<TA> : ICallback<Behavior<TA>>, IDisposable
     {
         private readonly Event<TA> sink;
-        private IListener listener;
+        private IListener<TA> listener;
         private bool disposed;
 
         public SwitchBehaviorCallback(Event<TA> sink)

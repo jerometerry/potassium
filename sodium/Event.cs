@@ -10,9 +10,8 @@ namespace Sodium
     /// <typeparam name="TA"></typeparam>
     public class Event<TA> : IDisposable
     {
-        private readonly List<ICallback<TA>> callbacks = new List<ICallback<TA>>();
+        private readonly List<Listener<TA>> listeners = new List<Listener<TA>>();
         private readonly List<TA> firings = new List<TA>();
-        private readonly List<IListener> listeners = new List<IListener>();
         
         /// <summary>
         /// The rank of the current Event. Default to rank zero
@@ -90,12 +89,12 @@ namespace Sodium
         /// Listen for firings of this event. The returned Listener has an Unlisten()
         /// method to cause the listener to be removed. This is the observer pattern.
         /// </summary>
-        /// <param name="callback">An Action to be invoked when the current Event fires.</param>
+        /// <param name="action">An Action to be invoked when the current Event fires.</param>
         /// <returns>An IListener </returns>
-        public IListener Listen(Action<TA> callback)
+        public IListener<TA> Listen(Action<TA> action)
         {
             AssertNotDisposed();
-            return Listen(new Callback<TA>((t, a) => callback(a)), Rank.Highest);
+            return Listen(new Callback<TA>((t, a) => action(a)), Rank.Highest);
         }
 
         /// <summary>
@@ -247,16 +246,6 @@ namespace Sodium
             GC.SuppressFinalize(this);
         }
 
-        internal bool RemoveListener(Listener<TA> listener)
-        {
-            lock (Constants.ListenersLock)
-            {
-                RemoveCallback(listener.Action);
-                Rank.RemoveSuperior(listener.Rank);
-                return listeners.Remove(listener);
-            }
-        }
-
         /// <summary>
         /// Fire the given value to all registered callbacks
         /// </summary>
@@ -272,10 +261,10 @@ namespace Sodium
             
             firings.Add(firing);
             
-            var clone = new List<ICallback<TA>>(callbacks);
-            foreach (var callback in clone)
+            var clone = new List<IListener<TA>>(this.listeners);
+            foreach (var listener in clone)
             {
-                callback.Invoke(transaction, firing);
+                listener.Action.Invoke(transaction, firing);
             }
         }
 
@@ -287,46 +276,50 @@ namespace Sodium
             return Coalesce(transaction, (a, b) => b);
         }
 
-        internal IListener Listen(ICallback<TA> callback, Rank superior)
+        internal IListener<TA> Listen(ICallback<TA> action, Rank superior)
         {
-            return TransactionContext.Run(t => this.Listen(t, callback, superior));
+            return TransactionContext.Run(t => this.Listen(t, action, superior));
         }
 
         /// <summary>
         /// Listen for firings on the current event
         /// </summary>
         /// <param name="transaction">Transaction to send any firings on</param>
-        /// <param name="callback">The action to invoke on a firing</param>
+        /// <param name="action">The action to invoke on a firing</param>
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An IListener to be used to stop listening for events.</returns>
         /// <remarks>Any firings that have occurred on the current transaction will be refired immediate after listening.</remarks>
-        internal IListener Listen(Transaction transaction, ICallback<TA> callback, Rank superior)
+        internal IListener<TA> Listen(Transaction transaction, ICallback<TA> action, Rank superior)
         {
-            RegisterCallback(transaction, callback, superior);
-            InitialFire(transaction, callback);
-            Refire(transaction, callback);
-            return RegisterListener(callback, superior);
+            var listener = this.RegisterListener(transaction, action, superior);
+            InitialFire(transaction, listener);
+            Refire(transaction, listener);
+            return listener;
         }
 
         /// <summary>
         /// Similar to Listener, except that previous firings will not be refired.
         /// </summary>
         /// <param name="transaction">Transaction to send any firings on</param>
-        /// <param name="callback">The action to invoke on a firing</param>
+        /// <param name="action">The action to invoke on a firing</param>
         /// <param name="superior">An IListener to be used to stop listening for events.</param>
         /// <returns>An IListener to be used to stop listening for events.</returns>
         /// <remarks>It's more common for the Listen method to be used instead of ListenSuppressed.
-        /// You may want to use ListenSuppressed if the callback will be triggered as part of a call
+        /// You may want to use ListenSuppressed if the action will be triggered as part of a call
         /// to Listen.
         /// 
         /// The only present use of ListenSuppressed is in the call chain of Behavior.SwitchE.</remarks>
-        internal IListener ListenSuppressed(Transaction transaction, ICallback<TA> callback, Rank superior)
+        internal IListener<TA> ListenSuppressed(Transaction transaction, ICallback<TA> action, Rank superior)
         {
-            RegisterCallback(transaction, callback, superior);
-            InitialFire(transaction, callback);
-            return RegisterListener(callback, superior);
+            var listener = this.RegisterListener(transaction, action, superior);
+            InitialFire(transaction, listener);
+            return listener;
         }
 
+        /// <summary>
+        /// Gets the values that will be sent to newly added
+        /// </summary>
+        /// <returns>An Array of values that will be fired to all registered listeners</returns>
         protected internal virtual TA[] InitialFirings()
         {
             return null;
@@ -341,23 +334,28 @@ namespace Sodium
 
             if (disposing)
             {
-                foreach (var l in listeners)
+                foreach (var listener in this.listeners)
                 {
-                    l.Dispose();
+                    listener.Dispose();
                 }
 
-                listeners.Clear();
+                this.listeners.Clear();
             }
 
             disposed = true;
         }
 
-        private static void InvokeCallbacks(Transaction transaction, ICallback<TA> callback, IEnumerable<TA> payloads)
+        private static void Fire(Transaction transaction, IListener<TA> listener, IEnumerable<TA> firings)
         {
-            foreach (var payload in payloads)
+            foreach (var firing in firings)
             {
-                callback.Invoke(transaction, payload);
+                listener.Action.Invoke(transaction, firing);
             }
+        }
+
+        private Event<TA> Coalesce(Transaction transaction, Func<TA, TA, TA> coalesce)
+        {
+            return new CoalesceEvent<TA>(this, coalesce, transaction);
         }
 
         private void AssertNotDisposed()
@@ -367,15 +365,8 @@ namespace Sodium
                 throw new ObjectDisposedException("Event is being used after it's disposed");
             }
         }
-        
-        private IListener RegisterListener(ICallback<TA> callback, Rank superior)
-        {
-            var listener = new Listener<TA>(this, callback, superior);
-            listeners.Add(listener);
-            return listener;
-        }
 
-        private void RegisterCallback(Transaction transaction, ICallback<TA> callback, Rank superior)
+        internal IListener<TA> RegisterListener(Transaction transaction, ICallback<TA> action, Rank superior)
         {
             lock (Constants.ListenersLock)
             {
@@ -384,27 +375,28 @@ namespace Sodium
                     transaction.Reprioritize = true;
                 }
 
-                callbacks.Add(callback);
+                var listener = new Listener<TA>(this, action, superior);
+                this.listeners.Add(listener);
+                return listener;
             }
         }
 
-        private bool RemoveCallback(ICallback<TA> callback)
+        internal bool RemoveListener(Listener<TA> listener)
         {
-            return callbacks.Remove(callback);
-        }
-
-        private void InitialFire(Transaction transaction, ICallback<TA> callback)
-        {
-            var payloads = InitialFirings();
-            if (payloads != null)
+            lock (Constants.ListenersLock)
             {
-                InvokeCallbacks(transaction, callback, payloads);
+                Rank.RemoveSuperior(listener.Rank);
+                return this.listeners.Remove(listener);
             }
         }
 
-        private Event<TA> Coalesce(Transaction transaction, Func<TA, TA, TA> coalesce)
+        private void InitialFire(Transaction transaction, IListener<TA> listener)
         {
-            return new CoalesceEvent<TA>(this, coalesce, transaction);
+            var initialFirings = InitialFirings();
+            if (initialFirings != null)
+            {
+                Fire(transaction, listener, initialFirings);
+            }
         }
 
         /// <summary>
@@ -412,10 +404,10 @@ namespace Sodium
         /// there's no order dependency between send and listen.
         /// </summary>
         /// <param name="transaction"></param>
-        /// <param name="callback"></param>
-        private void Refire(Transaction transaction, ICallback<TA> callback)
+        /// <param name="action"></param>
+        private void Refire(Transaction transaction, IListener<TA> listener)
         {
-            InvokeCallbacks(transaction, callback, firings);
+            Fire(transaction, listener, firings);
         }
     }
 }

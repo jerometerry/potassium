@@ -3,8 +3,8 @@ namespace Sodium
     internal sealed class OnceEvent<TA> : Event<TA>
     {
         private readonly Event<TA> evt;
-        private readonly IListener[] listeners;
-        private IListener listener;
+        private readonly IListener<TA>[] listeners;
+        private IListener<TA> listener;
 
         public OnceEvent(Event<TA> evt)
         {
@@ -12,12 +12,12 @@ namespace Sodium
 
             // This is a bit long-winded but it's efficient because it deregisters
             // the listener.
-            this.listeners = new IListener[1];
+            this.listeners = new IListener<TA>[1];
             this.listeners[0] = evt.Listen(new Callback<TA>((t, a) => this.Fire(this.listeners, t, a)), this.Rank);
             listener = this.listeners[0];
         }
 
-        public void Fire(IListener[] la, Transaction t, TA a)
+        public void Fire(IListener<TA>[] la, Transaction t, TA a)
         {
             this.Fire(t, a);
             if (la[0] == null)

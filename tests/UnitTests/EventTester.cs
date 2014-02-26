@@ -65,7 +65,7 @@ namespace Sodium.Tests
             var e1 = new Event<int>();
             var e2 = new Event<int>();
             var o = new List<int>();
-            IListener l =
+            var l =
                  Event<int>.Merge(e1, Event<int>.Merge(e1.Map(x => x * 100), e2))
                 .Coalesce((a, b) => a + b)
                 .Listen(o.Add);

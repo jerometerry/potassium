@@ -7,8 +7,8 @@ namespace Sodium
         public BehaviorValueEvent(Behavior<TA> behavior, Event<TA> evt, Transaction transaction)
         {
             this.behavior = behavior;
-            var callback = new Callback<TA>(this.Fire);
-            evt.Listen(transaction, callback, this.Rank);
+            var action = new Callback<TA>(this.Fire);
+            evt.Listen(transaction, action, this.Rank);
         }
 
         protected internal override TA[] InitialFirings()

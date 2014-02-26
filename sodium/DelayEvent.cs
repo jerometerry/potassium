@@ -4,8 +4,8 @@
     {
         public DelayEvent(Event<TA> evt)
         {
-            var callback = new Callback<TA>((t, a) => t.Post(() => this.Fire(a)));
-            evt.Listen(callback, this.Rank);
+            var action = new Callback<TA>((t, a) => t.Post(() => this.Fire(a)));
+            evt.Listen(action, this.Rank);
         }
     }
 }

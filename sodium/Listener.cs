@@ -1,13 +1,12 @@
 namespace Sodium
 {
-    internal sealed class Listener<TA> : IListener
+    internal sealed class Listener<TA> : IListener<TA>
     {
-        private Event<TA> evt;
         private bool disposed;
 
         public Listener(Event<TA> evt, ICallback<TA> action, Rank rank)
         {
-            this.evt = evt;
+            this.Event = evt;
             this.Action = action;
             this.Rank = rank;
         }
@@ -16,6 +15,8 @@ namespace Sodium
 
         public Rank Rank { get; private set; }
 
+        public Event<TA> Event { get; private set; }
+
         public void Dispose()
         {
             if (disposed)
@@ -23,10 +24,10 @@ namespace Sodium
                 return;
             }
 
-            if (evt != null)
+            if (this.Event != null)
             {
-                evt.RemoveListener(this);
-                evt = null;
+                this.Event.RemoveListener(this);
+                this.Event = null;
             }
 
             Action = null;

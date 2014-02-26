@@ -12,9 +12,9 @@ namespace Sodium
             this.evt1 = evt1;
             this.evt2 = evt2;
 
-            var callback = new Callback<TA>(this.Fire);
-            evt1.Listen(callback, this.Rank);
-            evt2.Listen(callback, this.Rank);
+            var action = new Callback<TA>(this.Fire);
+            evt1.Listen(action, this.Rank);
+            evt2.Listen(action, this.Rank);
         }
 
         protected internal override TA[] InitialFirings()

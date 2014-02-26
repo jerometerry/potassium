@@ -12,8 +12,8 @@ namespace Sodium
             this.evt = evt;
             this.coalesce = coalesce;
 
-            var callback = new CoalesceCallback<TA>(this, coalesce);
-            evt.Listen(transaction, callback, this.Rank);
+            var action = new CoalesceCallback<TA>(this, coalesce);
+            evt.Listen(transaction, action, this.Rank);
         }
 
         protected internal override TA[] InitialFirings()
