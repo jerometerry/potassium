@@ -35,11 +35,6 @@ namespace Sodium
             ListenForEventFirings();
         }
 
-        ~Behavior()
-        {
-            this.Stop();
-        }
-
         /// <summary>
         /// A behavior with a constant value.
         /// </summary>

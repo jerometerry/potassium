@@ -17,11 +17,6 @@ namespace Sodium
             this.rank = rank;
         }
 
-        ~Listener()
-        {
-            this.Stop();
-        }
-
         public void Stop()
         {
             if (evt != null)

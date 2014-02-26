@@ -21,11 +21,6 @@ namespace Sodium
 
         private Event<TA> loop;
 
-        ~Event()
-        {
-            this.Stop();
-        }
-
         internal Rank Rank
         {
             get { return this.rank; }

@@ -13,11 +13,6 @@ namespace Sodium
             this.listener = bea.Sample().Listen(t, h, evt.Rank);
         }
 
-        ~SwitchEventCallback()
-        {
-            Close();
-        }
-
         public void Close()
         {
             if (listener != null)

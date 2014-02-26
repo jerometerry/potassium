@@ -10,11 +10,6 @@ namespace Sodium
             this.sink = sink;
         }
 
-        ~SwitchBehaviorCallback()
-        {
-            Close();
-        }
-
         public void Close()
         {
             if (listener != null)
