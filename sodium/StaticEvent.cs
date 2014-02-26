@@ -14,7 +14,7 @@
         /// </summary>
         /// <param name="transaction"></param>
         /// <param name="firing"></param>
-        public override void Fire(Transaction transaction, TA firing)
+        internal override void Fire(Transaction transaction, TA firing)
         {
         }
     }
