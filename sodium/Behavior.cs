@@ -18,9 +18,8 @@ namespace Sodium
         /// A behavior with a constant value.
         /// </summary>
         public Behavior(TA value)
+            : this(new StaticEvent<TA>(), value)
         {
-            this.evt = new Event<TA>();
-            this.value = value;
         }
 
         /// <summary>

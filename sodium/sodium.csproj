@@ -47,6 +47,7 @@
     <Compile Include="BehaviorApplyHandler.cs" />
     <Compile Include="BehaviorLoop.cs" />
     <Compile Include="DelayEvent.cs" />
+    <Compile Include="StaticEvent.cs" />
     <Compile Include="SwitchBehaviorCallback.cs" />
     <Compile Include="BehaviorValueEvent.cs" />
     <Compile Include="CoalesceEvent.cs" />
