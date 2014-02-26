@@ -88,7 +88,9 @@ namespace Sodium
                 return;
             }
 
-            Commit();
+            this.prioritized.Clear();
+            this.last.Clear();
+            this.post.Clear();
 
             prioritized = null;
             last = null;

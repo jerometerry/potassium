@@ -45,6 +45,7 @@ namespace Sodium
                 {
                     if (created)
                     {
+                        current.Commit();
                         current.Dispose();
                         current = null;
                     }

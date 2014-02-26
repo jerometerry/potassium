@@ -14,7 +14,14 @@ namespace Sodium
 
         public override TA Run<TA>(Func<Transaction, TA> f)
         {
-            return f(this.transaction);
+            try
+            {
+                return f(this.transaction);
+            }
+            finally
+            {
+                transaction.Commit();
+            }
         }
 
         public void Dispose()
