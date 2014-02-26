@@ -9,22 +9,17 @@ namespace Sodium
     /// <typeparam name="TA"></typeparam>
     public class Behavior<TA>
     {
-        private Event<TA> evt;
         private TA value;
         private Maybe<TA> valueUpdate = Maybe<TA>.Null;
         private IListener listener;
-
-        public Behavior()
-            : this(new Event<TA>(), default(TA))
-        {
-        }
+        private Event<TA> evt;
 
         /// <summary>
-        /// Constant valued Behavior
+        /// A behavior with a time varying value
         /// </summary>
         /// <param name="initValue"></param>
         public Behavior(TA initValue)
-            : this(new StaticEvent<TA>(), initValue)
+            : this(new Event<TA>(), initValue)
         {
         }
 
@@ -35,7 +30,7 @@ namespace Sodium
         /// <param name="initValue"></param>
         internal Behavior(Event<TA> evt, TA initValue)
         {
-            this.evt = evt;
+            this.evt= evt;
             this.value = initValue;
             ListenForEventFirings();
         }
@@ -45,22 +40,12 @@ namespace Sodium
             this.Stop();
         }
 
-        protected Event<TA> Event
-        {
-            get { return evt; }
-        }
-
         /// <summary>
         /// A behavior with a constant value.
         /// </summary>
-        public static Behavior<TA> Constant(TA value)
+        public static Behavior<TA> Constant(TA initValue)
         {
-            return new Behavior<TA>(value);
-        }
-
-        public static Behavior<TA> Sink(TA value)
-        {
-            return new Behavior<TA>(new Event<TA>(), value);
+            return new Behavior<TA>(new StaticEvent<TA>(), initValue);
         }
 
         /// <summary>
@@ -118,14 +103,14 @@ namespace Sodium
 
         public void Loop(Behavior<TA> b)
         {
-            Event.Loop(b.Updates());
+            evt.Loop(b.Updates());
             var v = b.Sample();
             SetValue(v);
         }
 
         public void Fire(TA a)
         {
-            this.Event.Fire(a);
+            evt.Fire(a);
         }
 
         /// <summary>
@@ -176,7 +161,7 @@ namespace Sodium
         /// </summary>
         public Event<TA> Updates()
         {
-            return Event;
+            return evt;
         }
 
         /// <summary>
@@ -249,7 +234,7 @@ namespace Sodium
         {
             var sink = new BehaviorValueEvent<TA>(this);
             var callback = new Callback<TA>(sink.Fire);
-            var l = Event.Listen(transaction, callback, sink.Rank);
+            var l = evt.Listen(transaction, callback, sink.Rank);
 
             // Needed in case of an initial value and an update
             // in the same transaction.

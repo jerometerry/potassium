@@ -122,7 +122,7 @@ namespace Sodium.Tests
         public void TestGate()
         {
             var ec = new Event<char>();
-            var epred = Behavior<bool>.Sink(true);
+            var epred = new Behavior<bool>(true);
             var o = new List<char>();
             var l = ec.Gate(epred).Listen(o.Add);
             ec.Fire('H');

@@ -19,7 +19,7 @@ namespace Sodium
         /// </summary>
         private readonly Rank rank = new Rank();
 
-        private Event<TA> loopedEvent;
+        private Event<TA> loop;
 
         ~Event()
         {
@@ -59,16 +59,23 @@ namespace Sodium
         {
             return new MergeEvent<TA>(event1, event2);
         }
-
-        public void Loop(Event<TA> evt)
+        
+        /// <summary>
+        /// Events fired on le will be forwarded to the current Event
+        /// </summary>
+        /// <param name="le">Event who's firings will be looped to the current Event</param>
+        /// <remarks>Loop can only be called once on an Event. If Loop is called multiple times,
+        /// an ApplicationException will be raised.</remarks>
+        public void Loop(Event<TA> le)
         {
-            if (loopedEvent != null)
+            if (this.loop != null)
             {
                 throw new ApplicationException("EventLoop looped more than once");
             }
 
-            loopedEvent = evt;
-            var listener = evt.Listen(new Callback<TA>(Fire), this.Rank);
+            this.loop = le;
+            var evt = this;
+            var listener = le.Listen(new Callback<TA>(evt.Fire), evt.Rank);
             RegisterListener(listener);
         }
 

@@ -24,7 +24,7 @@ namespace Sodium.Tests
         [Test]
         public void TestSnapshot()
         {
-            var behavior = Behavior<int>.Sink(0);
+            var behavior = new Behavior<int>(0);
             var evt = new Event<long>();
             var results = new List<string>();
             Func<long, int, string> snapshotFunction = (x, y) => string.Format("{0} {1}", x, y);
@@ -43,7 +43,7 @@ namespace Sodium.Tests
         [Test]
         public void TestValues()
         {
-            var behavior = Behavior<int>.Sink(9);
+            var behavior = new Behavior<int>(9);
             var results = new List<int>();
             var listener = behavior.Value().Listen(results.Add);
             behavior.Fire(2);
@@ -55,7 +55,7 @@ namespace Sodium.Tests
         [Test]
         public void TestConstantBehavior()
         {
-            var behavior = new Behavior<int>(12);
+            var behavior = Behavior<int>.Constant(12);
             var results = new List<int>();
             var listener = behavior.Value().Listen(results.Add);
             listener.Stop();
@@ -65,7 +65,7 @@ namespace Sodium.Tests
         [Test]
         public void TestValuesThenMap()
         {
-            var behavior = Behavior<int>.Sink(9);
+            var behavior = new Behavior<int>(9);
             var results = new List<int>();
             var l = behavior.Value().Map(x => x + 100).Listen(results.Add);
             behavior.Fire(2);
@@ -77,7 +77,7 @@ namespace Sodium.Tests
         [Test]
         public void TestValuesTwiceThenMap()
         {
-            var behavior = Behavior<int>.Sink(9);
+            var behavior = new Behavior<int>(9);
             var results = new List<int>();
             var listener = DoubleUp(behavior.Value()).Map(x => x + 100).Listen(results.Add);
             behavior.Fire(2);
@@ -89,7 +89,7 @@ namespace Sodium.Tests
         [Test]
         public void TestValuesThenCoalesce()
         {
-            var behavior = Behavior<int>.Sink(9);
+            var behavior = new Behavior<int>(9);
             var results = new List<int>();
             var listener = behavior.Value().Coalesce((fst, snd) => snd).Listen(results.Add);
             behavior.Fire(2);
@@ -101,7 +101,7 @@ namespace Sodium.Tests
         [Test]
         public void TestValuesTwiceThenCoalesce() 
         {
-            var behavior = Behavior<int>.Sink(9);
+            var behavior = new Behavior<int>(9);
             var results = new List<int>();
             var listener = DoubleUp(behavior.Value()).Coalesce((fst, snd) => fst + snd).Listen(results.Add);
             behavior.Fire(2);
@@ -113,8 +113,8 @@ namespace Sodium.Tests
         [Test]
         public void TestValuesThenSnapshot() 
         {
-            var behaviorInt32 = Behavior<int>.Sink(9);
-            var behaviorChar = Behavior<char>.Sink('a');
+            var behaviorInt32 = new Behavior<int>(9);
+            var behaviorChar = new Behavior<char>('a');
             var results = new List<char>();
             var listener = behaviorInt32.Value().Snapshot(behaviorChar).Listen(results.Add);
             behaviorChar.Fire('b');
@@ -128,8 +128,8 @@ namespace Sodium.Tests
         [Test]
         public void TestValuesTwiceThenSnapshot() 
         {
-            var behaviorInt32 = Behavior<int>.Sink(9);
-            var behaviorChar = Behavior<char>.Sink('a');
+            var behaviorInt32 = new Behavior<int>(9);
+            var behaviorChar = new Behavior<char>('a');
             var results = new List<char>();
             var listener = DoubleUp(behaviorInt32.Value()).Snapshot(behaviorChar).Listen(results.Add);
             behaviorChar.Fire('b');
@@ -143,8 +143,8 @@ namespace Sodium.Tests
         [Test]
         public void TestValuesThenMerge() 
         {
-            var behavior1 = Behavior<int>.Sink(9);
-            var behavior2 = Behavior<int>.Sink(2);
+            var behavior1 = new Behavior<int>(9);
+            var behavior2 = new Behavior<int>(2);
             var results = new List<int>();
             var listener = Event<int>.MergeWith((x, y) => x + y, behavior1.Value(), behavior2.Value()).Listen(results.Add);
             behavior1.Fire(1);
@@ -156,7 +156,7 @@ namespace Sodium.Tests
         [Test]
         public void TestValuesThenFilter() 
         {
-            var behavior = Behavior<int>.Sink(9);
+            var behavior = new Behavior<int>(9);
             var results = new List<int>();
             var listener = behavior.Value().Filter(a => true).Listen(results.Add);
             behavior.Fire(2);
@@ -168,7 +168,7 @@ namespace Sodium.Tests
         [Test]
         public void TestValuesTwiceThenFilter() 
         {
-            var behavior = Behavior<int>.Sink(9);
+            var behavior = new Behavior<int>(9);
             var results = new List<int>();
             var listener = DoubleUp(behavior.Value()).Filter(a => true).Listen(results.Add);
             behavior.Fire(2);
@@ -180,7 +180,7 @@ namespace Sodium.Tests
         [Test]
         public void TestValuesThenOnce() 
         {
-            var behavior = Behavior<int>.Sink(9);
+            var behavior = new Behavior<int>(9);
             var results = new List<int>();
             var listener = behavior.Value().Once().Listen(results.Add);
             behavior.Fire(2);
@@ -192,7 +192,7 @@ namespace Sodium.Tests
         [Test]
         public void TestValuesTwiceThenOnce() 
         {
-            var behavior = Behavior<int>.Sink(9);
+            var behavior = new Behavior<int>(9);
             var results = new List<int>();
             var listener = DoubleUp(behavior.Value()).Once().Listen(results.Add);
             behavior.Fire(2);
@@ -204,7 +204,7 @@ namespace Sodium.Tests
         [Test]
         public void TestValuesLateListen() 
         {
-            var behavior = Behavior<int>.Sink(9);
+            var behavior = new Behavior<int>(9);
             var results = new List<int>();
             var value = behavior.Value();
             behavior.Fire(8);
@@ -217,7 +217,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMapB() 
         {
-            var behavior = Behavior<int>.Sink(6);
+            var behavior = new Behavior<int>(6);
             var results = new List<string>();
             var listener = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture)).Value().Listen(results.Add);
             behavior.Fire(8);
@@ -228,7 +228,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMapB2()
         {
-            var behavior = Behavior<int>.Sink(1);
+            var behavior = new Behavior<int>(1);
             var behavior1 = behavior.Map(x => x * 3);
             var results = new List<int>();
             var listener = behavior1.Value().Listen(results.Add);
@@ -239,7 +239,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMapB3()
         {
-            var behavior = Behavior<int>.Sink(1);
+            var behavior = new Behavior<int>(1);
             var behavior1 = behavior.Map(x => x * 3);
             var results = new List<int>();
             var listener = behavior1.Value().Listen(results.Add);
@@ -251,7 +251,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMapBLateListen() 
         {
-            var behavior = Behavior<int>.Sink(6);
+            var behavior = new Behavior<int>(6);
             var results = new List<string>();
             var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
             behavior.Fire(2);
@@ -264,8 +264,8 @@ namespace Sodium.Tests
         [Test]
         public void TestApply()
         {
-            var bf = Behavior<Func<long, string>>.Sink(b => "1 " + b);
-            var ba = Behavior<long>.Sink(5L);
+            var bf = new Behavior<Func<long, string>>(b => "1 " + b);
+            var ba = new Behavior<long>(5L);
             var results = new List<string>();
             var listener = Behavior<long>.Apply(bf, ba).Value().Listen(results.Add);
             bf.Fire(b => "12 " + b);
@@ -277,8 +277,8 @@ namespace Sodium.Tests
         [Test]
         public void TestLift() 
         {
-            var behavior1 = Behavior<int>.Sink(1);
-            var behavior2 = Behavior<long>.Sink(5L);
+            var behavior1 = new Behavior<int>(1);
+            var behavior2 = new Behavior<long>(5L);
             var results = new List<string>();
             var combinedBehavior = Behavior<int>.Lift((x, y) => x + " " + y, behavior1, behavior2);
             var listener = combinedBehavior.Value().Listen(results.Add);
@@ -291,7 +291,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMapAndLift() 
         {
-            var behavior = Behavior<int>.Sink(1);
+            var behavior = new Behavior<int>(1);
             var mappedBehavior1 = behavior.Map(x => x * 3);
             var mappedBehavior2 = behavior.Map(x => x * 5);
             var results = new List<string>();
@@ -396,7 +396,7 @@ namespace Sodium.Tests
         public void TestLoopBehavior()
         {
             var ea = new Event<int>();
-            var sum = new Behavior<int>();
+            var sum = new Behavior<int>(0);
             var sumOut = ea.Snapshot(sum, (x, y) => x+y).Hold(0);
             sum.Loop(sumOut);
             var o = new List<int>();
