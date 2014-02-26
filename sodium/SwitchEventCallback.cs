@@ -10,7 +10,7 @@ namespace Sodium
         {
             this.evt = evt;
             this.callback = h;
-            this.listener = bea.Sample().ListenUnsuppressed(t, h, evt.Rank);
+            this.listener = bea.Sample().Listen(t, h, evt.Rank);
         }
 
         ~SwitchEventCallback()
@@ -36,7 +36,7 @@ namespace Sodium
                     listener.Stop();
                 }
 
-                listener = newEvent.ListenSuppressed(transaction, callback, this.evt.Rank);
+                listener = newEvent.ListenSuppressed(transaction, callback, evt.Rank);
             });
         }
     }

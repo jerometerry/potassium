@@ -6,7 +6,7 @@
         {
             var callback = new Callback<TA>(this.Fire);
             var eventSwitchCallback = new SwitchEventCallback<TA>(behavior, this, transaction, callback);
-            var listener = behavior.Updates().ListenUnsuppressed(transaction, eventSwitchCallback, this.Rank);
+            var listener = behavior.Updates().Listen(transaction, eventSwitchCallback, this.Rank);
             this.RegisterListener(listener);
         }
     }

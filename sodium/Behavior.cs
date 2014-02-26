@@ -32,7 +32,7 @@ namespace Sodium
         {
             this.evt = evt;
             this.value = initValue;
-            TransactionContext.Run(t => { InitializeValue(t); return Unit.Value; });
+            TransactionContext.Run(t => { this.ListenForEventFirings(t); return Unit.Value; });
         }
 
         ~Behavior()
@@ -219,7 +219,7 @@ namespace Sodium
         {
             var sink = new BehaviorValueEvent<TA>(this);
             var callback = new Callback<TA>(sink.Fire);
-            var l = Event.ListenUnsuppressed(transaction, callback, sink.Rank);
+            var l = Event.Listen(transaction, callback, sink.Rank);
 
             // Needed in case of an initial value and an update
             // in the same transaction.
@@ -236,13 +236,23 @@ namespace Sodium
             return new SwitchEvent<TA>(transaction, behavior);
         }
 
-        private void InitializeValue(Transaction transaction)
+        /// <summary>
+        /// Listen to the underlying event for firings
+        /// </summary>
+        /// <param name="transaction"></param>
+        private void ListenForEventFirings(Transaction transaction)
         {
-            var callback = new Callback<TA>(InitializeValueUpdate);
-            listener = evt.ListenUnsuppressed(transaction, callback, Rank.Highest);
+            var callback = new Callback<TA>(ScheduleApplyValueUpdate);
+            listener = evt.Listen(transaction, callback, Rank.Highest);
         }
 
-        private void InitializeValueUpdate(Transaction transaction, TA update)
+        /// <summary>
+        /// Store the updated value, and schedule a Transaction.Last action that will move the updated value 
+        /// into the current value.
+        /// </summary>
+        /// <param name="transaction">The transaction to schedule the value update on</param>
+        /// <param name="update">The updated value</param>
+        private void ScheduleApplyValueUpdate(Transaction transaction, TA update)
         {
             if (!valueUpdate.HasValue)
             {
@@ -252,6 +262,9 @@ namespace Sodium
             valueUpdate = new Maybe<TA>(update);
         }
 
+        /// <summary>
+        /// Store the updated value into the current value, and set the updated value to null.
+        /// </summary>
         private void ApplyValueUpdate()
         {
             value = valueUpdate.Value();

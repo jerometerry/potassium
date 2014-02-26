@@ -252,7 +252,6 @@ namespace Sodium
             var noFirings = !firings.Any();
             if (noFirings)
             {
-                // clear any added firings during Transaction.CloseLastActions
                 transaction.Last(() => firings.Clear());
             }
             
@@ -275,10 +274,18 @@ namespace Sodium
 
         internal IListener Listen(ICallback<TA> callback, Rank superior)
         {
-            return TransactionContext.Run(t => ListenUnsuppressed(t, callback, superior));
+            return TransactionContext.Run(t => this.Listen(t, callback, superior));
         }
 
-        internal IListener ListenUnsuppressed(Transaction transaction, ICallback<TA> callback, Rank superior)
+        /// <summary>
+        /// Listen for firings on the current event
+        /// </summary>
+        /// <param name="transaction">Transaction to send any firings on</param>
+        /// <param name="callback">The action to invoke on a firing</param>
+        /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
+        /// <returns>An IListener to be used to stop listening for events.</returns>
+        /// <remarks>Any firings that have occurred on the current transaction will be refired immediate after listening.</remarks>
+        internal IListener Listen(Transaction transaction, ICallback<TA> callback, Rank superior)
         {
             RegisterCallback(transaction, callback, superior);
             InitialFire(transaction, callback);
@@ -286,6 +293,18 @@ namespace Sodium
             return new Listener<TA>(this, callback, superior);
         }
 
+        /// <summary>
+        /// Similar to Listener, except that previous firings will not be refired.
+        /// </summary>
+        /// <param name="transaction">Transaction to send any firings on</param>
+        /// <param name="callback">The action to invoke on a firing</param>
+        /// <param name="superior">An IListener to be used to stop listening for events.</param>
+        /// <returns>An IListener to be used to stop listening for events.</returns>
+        /// <remarks>It's more common for the Listen method to be used instead of ListenSuppressed.
+        /// You may want to use ListenSuppressed if the callback will be triggered as part of a call
+        /// to Listen.
+        /// 
+        /// The only present use of ListenSuppressed is in the call chain of Behavior.SwitchE.</remarks>
         internal IListener ListenSuppressed(Transaction transaction, ICallback<TA> callback, Rank superior)
         {
             RegisterCallback(transaction, callback, superior);

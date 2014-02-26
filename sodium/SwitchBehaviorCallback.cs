@@ -38,7 +38,7 @@ namespace Sodium
             }
 
             var evt = behavior.Value(transaction);
-            listener = evt.ListenUnsuppressed(transaction, new Callback<TA>((t, a) => sink.Fire(t, a)), sink.Rank);
+            listener = evt.Listen(transaction, new Callback<TA>((t, a) => sink.Fire(t, a)), sink.Rank);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Sodium
             this.coalesce = coalesce;
 
             var callback = new CoalesceCallback<TA>(this, coalesce);
-            var listener = evt.ListenUnsuppressed(transaction, callback, this.Rank);
+            var listener = evt.Listen(transaction, callback, this.Rank);
             this.RegisterListener(listener);
         }
 
