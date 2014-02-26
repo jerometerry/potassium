@@ -15,7 +15,7 @@ namespace Sodium.Tests
             var o = new List<int>();
             var l = e.Listen(o.Add);
             e.Fire(5);
-            l.Stop();
+            l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(5), o);
             e.Fire(6);
             AssertArraysEqual(Arrays<int>.AsList(5), o);
@@ -29,7 +29,7 @@ namespace Sodium.Tests
             var o = new List<string>();
             var l = m.Listen(o.Add);
             e.Fire(5);
-            l.Stop();
+            l.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("5"), o);
         }
 
@@ -43,7 +43,7 @@ namespace Sodium.Tests
             e1.Fire(7);
             e2.Fire(9);
             e1.Fire(8);
-            l.Stop();
+            l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(7, 9, 8), o);
         }
 
@@ -55,7 +55,7 @@ namespace Sodium.Tests
             var l = Event<int>.Merge(e, e).Listen(o.Add);
             e.Fire(7);
             e.Fire(9);
-            l.Stop();
+            l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(7, 7, 9, 9), o);
         }
 
@@ -72,7 +72,7 @@ namespace Sodium.Tests
             e1.Fire(2);
             e1.Fire(8);
             e2.Fire(40);
-            l.Stop();
+            l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(202, 808, 40), o);
         }
 
@@ -85,7 +85,7 @@ namespace Sodium.Tests
             e.Fire('H');
             e.Fire('o');
             e.Fire('I');
-            l.Stop();
+            l.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('H', 'I'), o);
         }
 
@@ -98,7 +98,7 @@ namespace Sodium.Tests
             e.Fire("tomato");
             e.Fire(null);
             e.Fire("peach");
-            l.Stop();
+            l.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("tomato", "peach"), o);
         }
 
@@ -114,7 +114,7 @@ namespace Sodium.Tests
             var l = ec.Listen(o.Add);
             ea.Fire(2);
             ea.Fire(52);
-            l.Stop();
+            l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(2, 7), o);
         }
 
@@ -130,7 +130,7 @@ namespace Sodium.Tests
             ec.Fire('O');
             epred.Fire(true);
             ec.Fire('I');
-            l.Stop();
+            l.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('H', 'I'), o);
         }
 
@@ -146,7 +146,7 @@ namespace Sodium.Tests
             ea.Fire(1);
             ea.Fire(2);
             ea.Fire(3);
-            l.Stop();
+            l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(105, 112, 113, 115, 118), o);
         }
 
@@ -162,7 +162,7 @@ namespace Sodium.Tests
             ea.Fire(1);
             ea.Fire(2);
             ea.Fire(3);
-            l.Stop();
+            l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(105, 112, 113, 115, 118), o);
         }
 
@@ -175,7 +175,7 @@ namespace Sodium.Tests
             e.Fire('A');
             e.Fire('B');
             e.Fire('C');
-            l.Stop();
+            l.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('A'), o);
         }
 
@@ -189,7 +189,7 @@ namespace Sodium.Tests
             e.Fire('C');
             e.Fire('B');
             e.Fire('A');
-            l.Stop();
+            l.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('C', 'B', 'A'), o);
         }
     }

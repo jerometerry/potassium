@@ -17,7 +17,7 @@ namespace Sodium
         {
             if (listener != null)
             {
-                listener.Stop();
+                listener.Dispose();
                 listener = null;
             }
         }
@@ -28,7 +28,7 @@ namespace Sodium
             {
                 if (listener != null)
                 { 
-                    listener.Stop();
+                    listener.Dispose();
                 }
 
                 listener = newEvent.ListenSuppressed(transaction, callback, evt.Rank);

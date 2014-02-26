@@ -8,7 +8,7 @@ namespace Sodium
     /// An Event is a stream of discrete event occurrences
     /// </summary>
     /// <typeparam name="TA"></typeparam>
-    public class Event<TA>
+    public class Event<TA> : IDisposable
     {
         private readonly List<ICallback<TA>> callbacks = new List<ICallback<TA>>();
         private readonly List<TA> firings = new List<TA>();
@@ -20,6 +20,7 @@ namespace Sodium
         private readonly Rank rank = new Rank();
 
         private Event<TA> loop;
+        private bool disposed;
 
         internal Rank Rank
         {
@@ -63,6 +64,8 @@ namespace Sodium
         /// an ApplicationException will be raised.</remarks>
         public void Loop(Event<TA> le)
         {
+            AssertNotDisposed();
+
             if (this.loop != null)
             {
                 throw new ApplicationException("EventLoop looped more than once");
@@ -79,6 +82,7 @@ namespace Sodium
         /// <param name="a"></param>
         public void Fire(TA a)
         {
+            AssertNotDisposed();
             TransactionContext.Run(t => { Fire(t, a); return Unit.Value; });
         }
 
@@ -90,6 +94,7 @@ namespace Sodium
         /// <returns>An IListener </returns>
         public IListener Listen(Action<TA> callback)
         {
+            AssertNotDisposed();
             return Listen(new Callback<TA>((t, a) => callback(a)), Rank.Highest);
         }
 
@@ -99,6 +104,7 @@ namespace Sodium
         /// <param name="map">A map from TA -> TB</param>
         public Event<TB> Map<TB>(Func<TA, TB> map)
         {
+            AssertNotDisposed();
             return new MapEvent<TA, TB>(this, map);
         }
 
@@ -113,6 +119,7 @@ namespace Sodium
         /// having the specified initial value.</returns>
         public Behavior<TA> Hold(TA initValue)
         {
+            AssertNotDisposed();
             return TransactionContext.Run(t => new Behavior<TA>(LastFiringOnly(t), initValue));
         }
 
@@ -121,6 +128,7 @@ namespace Sodium
         /// </summary>
         public Event<TB> Snapshot<TB>(Behavior<TB> behavior)
         {
+            AssertNotDisposed();
             return Snapshot(behavior, (a, b) => b);
         }
 
@@ -131,6 +139,7 @@ namespace Sodium
         /// </summary>
         public Event<TC> Snapshot<TB, TC>(Behavior<TB> behavior, Func<TA, TB, TC> snapshot)
         {
+            AssertNotDisposed();
             return new SnapshotEvent<TA, TB, TC>(this, snapshot, behavior);
         }
 
@@ -139,6 +148,7 @@ namespace Sodium
         /// </summary>
         public Event<TA> Delay()
         {
+            AssertNotDisposed();
             return new DelayEvent<TA>(this);
         }
 
@@ -154,6 +164,7 @@ namespace Sodium
         /// </remarks>
         public Event<TA> Coalesce(Func<TA, TA, TA> coalesce)
         {
+            AssertNotDisposed();
             return TransactionContext.Run(t => Coalesce(t, coalesce));
         }
 
@@ -162,6 +173,7 @@ namespace Sodium
         /// </summary>
         public Event<TA> Filter(Func<TA, bool> predicate)
         {
+            AssertNotDisposed();
             return new FilterEvent<TA>(this, predicate);
         }
 
@@ -172,6 +184,7 @@ namespace Sodium
         /// FilterNotNull will not filter out any values for value types.</remarks>
         public Event<TA> FilterNotNull()
         {
+            AssertNotDisposed();
             return Filter(a => a != null);
         }
 
@@ -182,6 +195,7 @@ namespace Sodium
         /// </summary>
         public Event<TA> Gate(Behavior<bool> predicate)
         {
+            AssertNotDisposed();
             Func<TA, bool, Maybe<TA>> snapshot = (a, p) => p ? new Maybe<TA>(a) : null;
             return this.Snapshot(predicate, snapshot).FilterNotNull().Map(a => a.Value());
         }
@@ -192,6 +206,7 @@ namespace Sodium
         /// </summary>
         public Event<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
         {
+            AssertNotDisposed();
             var es = new Event<TS>();
             var s = es.Hold(initState);
             var ebs = Snapshot(s, snapshot);
@@ -206,6 +221,7 @@ namespace Sodium
         /// </summary>
         public Behavior<TS> Accum<TS>(TS initState, Func<TA, TS, TS> snapshot)
         {
+            AssertNotDisposed();
             var evt = new Event<TS>();
             var behavior = evt.Hold(initState);
             var snapshotEvent = Snapshot(behavior, snapshot);
@@ -218,20 +234,17 @@ namespace Sodium
         /// </summary>
         public Event<TA> Once()
         {
+            AssertNotDisposed();
             return new OnceEvent<TA>(this);
         }
 
         /// <summary>
         /// Stop all listeners from receiving events from the current Event
         /// </summary>
-        public void Stop()
+        public void Dispose()
         {
-            foreach (var l in listeners)
-            {
-                l.Stop();
-            }
-
-            listeners.Clear();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         internal bool RemoveListener(Listener<TA> listener)
@@ -319,11 +332,39 @@ namespace Sodium
             return null;
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                foreach (var l in listeners)
+                {
+                    l.Dispose();
+                }
+
+                listeners.Clear();
+            }
+
+            disposed = true;
+        }
+
         private static void InvokeCallbacks(Transaction transaction, ICallback<TA> callback, IEnumerable<TA> payloads)
         {
             foreach (var payload in payloads)
             {
                 callback.Invoke(transaction, payload);
+            }
+        }
+
+        private void AssertNotDisposed()
+        {
+            if (disposed)
+            {
+                throw new ObjectDisposedException("Event is being used after it's disposed");
             }
         }
         

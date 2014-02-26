@@ -25,7 +25,7 @@ namespace Sodium
                 return;
             }
 
-            la[0].Stop();
+            la[0].Dispose();
             la[0] = null;
         }
 
@@ -45,13 +45,13 @@ namespace Sodium
 
             if (listeners[0] != null)
             {
-                listeners[0].Stop();
+                listeners[0].Dispose();
                 listeners[0] = null;
             }
 
             if (listener != null)
             {
-                listener.Stop();
+                listener.Dispose();
                 listener = null;
             }
 

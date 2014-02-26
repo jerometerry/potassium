@@ -18,7 +18,7 @@ namespace Sodium.MemoryTests
                 i++;
             }
 
-            listener.Stop();
+            listener.Dispose();
         }
     }
 }

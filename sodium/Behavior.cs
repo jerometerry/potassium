@@ -7,12 +7,13 @@ namespace Sodium
     /// </summary>
     /// <remarks>Behaviors generally change over time, but constant behaviors are ones that choose not to.</remarks>
     /// <typeparam name="TA"></typeparam>
-    public class Behavior<TA>
+    public class Behavior<TA> : IDisposable
     {
         private TA value;
         private Maybe<TA> valueUpdate = Maybe<TA>.Null;
-        private IListener listener;
         private Event<TA> evt;
+
+        private bool disposed;
 
         /// <summary>
         /// A behavior with a time varying value
@@ -57,7 +58,7 @@ namespace Sodium
         /// </summary>
         public static Behavior<TB> Apply<TB>(Behavior<Func<TA, TB>> bf, Behavior<TA> ba)
         {
-            var sink = new BehaviorApplyEvent<TA,TB>(bf,ba);
+            var sink = new BehaviorApplyEvent<TA, TB>(bf, ba);
             return sink.Behavior;
         }
 
@@ -90,6 +91,7 @@ namespace Sodium
 
         public void Loop(Behavior<TA> b)
         {
+            AssertNotDisposed();
             evt.Loop(b.Updates());
             var v = b.Sample();
             SetValue(v);
@@ -97,25 +99,8 @@ namespace Sodium
 
         public void Fire(TA a)
         {
+            AssertNotDisposed();
             evt.Fire(a);
-        }
-
-        /// <summary>
-        /// Stop listening for event occurrences
-        /// </summary>
-        public void Stop()
-        {
-            if (listener != null)
-            {
-                listener.Stop();
-                listener = null;
-            }
-
-            if (evt != null)
-            {
-                evt.Stop();
-                evt = null;
-            }
         }
 
         /// <summary>
@@ -132,6 +117,8 @@ namespace Sodium
         /// </remarks>
         public TA Sample()
         {
+            AssertNotDisposed();
+
             // Here's the comment from the Java implementation:
             // 
             //     Since pointers in Java are atomic, we don't need to explicitly create a
@@ -148,6 +135,7 @@ namespace Sodium
         /// </summary>
         public Event<TA> Updates()
         {
+            AssertNotDisposed();
             return evt;
         }
 
@@ -158,6 +146,7 @@ namespace Sodium
         /// </summary>
         public Event<TA> Value()
         {
+            AssertNotDisposed();
             return TransactionContext.Run(Value);
         }
 
@@ -166,6 +155,7 @@ namespace Sodium
         /// </summary>
         public Behavior<TB> Map<TB>(Func<TA, TB> map)
         {
+            AssertNotDisposed();
             return Updates().Map(map).Hold(map(Sample()));
         }
 
@@ -174,6 +164,7 @@ namespace Sodium
         /// </summary>
         public Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> lift, Behavior<TB> behavior)
         {
+            AssertNotDisposed();
             Func<TA, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
             var bf = Map(ffa);
             return Behavior<TB>.Apply(bf, behavior);
@@ -185,6 +176,7 @@ namespace Sodium
         /// </summary>
         public Behavior<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
         {
+            AssertNotDisposed();
             var coalesceEvent = Updates().Coalesce((a, b) => b);
             var currentValue = Sample();
             var tuple = snapshot(currentValue, initState);
@@ -201,10 +193,20 @@ namespace Sodium
         /// </summary>
         public Behavior<TD> Lift<TB, TC, TD>(Func<TA, TB, TC, TD> lift, Behavior<TB> b, Behavior<TC> c)
         {
+            AssertNotDisposed();
             Func<TA, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
             var bf = Map(map);
             var l1 = Behavior<TB>.Apply(bf, b);
             return Behavior<TC>.Apply(l1, c);
+        }
+
+        /// <summary>
+        /// Stop listening for event occurrences
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -220,6 +222,7 @@ namespace Sodium
         internal Event<TA> Value(Transaction transaction)
         {
             var sink = new BehaviorValueEvent<TA>(this, evt, transaction);
+
             // Needed in case of an initial value and an update
             // in the same transaction.
             return sink.LastFiringOnly(transaction);
@@ -230,9 +233,36 @@ namespace Sodium
             value = v;
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                if (evt != null)
+                {
+                    evt.Dispose();
+                    evt = null;
+                }
+            }
+
+            disposed = true;
+        }
+
         private static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior)
         {
             return new SwitchEvent<TA>(transaction, behavior);
+        }
+
+        private void AssertNotDisposed()
+        {
+            if (disposed)
+            {
+                throw new ObjectDisposedException("Event is being used after it's disposed");
+            }
         }
 
         /// <summary>
@@ -254,7 +284,7 @@ namespace Sodium
         private void ListenForEventFirings(Transaction transaction)
         {
             var callback = new Callback<TA>(ScheduleApplyValueUpdate);
-            listener = evt.Listen(transaction, callback, Rank.Highest);
+            evt.Listen(transaction, callback, Rank.Highest);
         }
 
         /// <summary>
