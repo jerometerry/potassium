@@ -4,7 +4,7 @@
     {
         public DelayEvent(Event<TA> evt)
         {
-            var action = new Callback<TA>((t, a) => t.Post(() => this.Fire(a)));
+            var action = new SodiumAction<TA>((t, a) => t.Post(() => this.Fire(a)));
             evt.Listen(action, this.Rank);
         }
     }

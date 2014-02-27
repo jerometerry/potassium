@@ -2,7 +2,7 @@ namespace Sodium
 {
     using System;
 
-    internal sealed class SwitchBehaviorCallback<TA> : ICallback<Behavior<TA>>, IDisposable
+    internal sealed class SwitchBehaviorCallback<TA> : ISodiumAction<Behavior<TA>>, IDisposable
     {
         private readonly Event<TA> sink;
         private IListener<TA> listener;
@@ -43,7 +43,7 @@ namespace Sodium
             }
 
             var evt = behavior.Value(transaction);
-            listener = evt.Listen(transaction, new Callback<TA>((t, a) => sink.Fire(t, a)), sink.Rank);
+            listener = evt.Listen(transaction, new SodiumAction<TA>((t, a) => sink.Fire(t, a)), sink.Rank);
         }
     }
 }

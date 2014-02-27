@@ -13,7 +13,7 @@ namespace Sodium
             // This is a bit long-winded but it's efficient because it deregisters
             // the listener.
             this.listeners = new IListener<TA>[1];
-            this.listeners[0] = evt.Listen(new Callback<TA>((t, a) => this.Fire(this.listeners, t, a)), this.Rank);
+            this.listeners[0] = evt.Listen(new SodiumAction<TA>((t, a) => this.Fire(this.listeners, t, a)), this.Rank);
             listener = this.listeners[0];
         }
 

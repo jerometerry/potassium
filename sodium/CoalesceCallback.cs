@@ -2,7 +2,7 @@ namespace Sodium
 {
     using System;
 
-    internal sealed class CoalesceCallback<TA> : ICallback<TA>
+    internal sealed class CoalesceCallback<TA> : ISodiumAction<TA>
     {
         private readonly Func<TA, TA, TA> coalesce;
         private readonly Event<TA> evt;

@@ -292,7 +292,7 @@ namespace Sodium
         /// <param name="transaction"></param>
         private void ListenForEventFirings(Transaction transaction)
         {
-            var action = new Callback<TA>(ScheduleApplyValueUpdate);
+            var action = new SodiumAction<TA>(ScheduleApplyValueUpdate);
             evt.Listen(transaction, action, Rank.Highest);
         }
 

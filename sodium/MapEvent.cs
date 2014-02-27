@@ -12,7 +12,7 @@
         {
             this.evt = evt;
             this.map = map;
-            evt.Listen(new Callback<TA>(this.Fire), this.Rank);
+            evt.Listen(new SodiumAction<TA>(this.Fire), this.Rank);
         }
 
         public void Fire(Transaction trans, TA firing)

@@ -6,7 +6,7 @@
 
         public SwitchEvent(Transaction transaction, Behavior<Event<TA>> behavior)
         {
-            var action = new Callback<TA>(this.Fire);
+            var action = new SodiumAction<TA>(this.Fire);
             eventSwitchCallback = new SwitchEventCallback<TA>(behavior, this, transaction, action);
             behavior.Updates().Listen(transaction, eventSwitchCallback, this.Rank);
         }

@@ -85,10 +85,10 @@
     <Compile Include="Rank.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ICallback.cs" />
+    <Compile Include="ISodiumAction.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Callback.cs" />
+    <Compile Include="SodiumAction.cs" />
     <Compile Include="TransactionContext.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>

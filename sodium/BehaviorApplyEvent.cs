@@ -7,8 +7,8 @@
         public BehaviorApplyEvent(Behavior<Func<TA, TB>> bf, Behavior<TA> ba)
         {
             var h = new BehaviorApplyHandler<TA, TB>(this, bf, ba);
-            var functionChanged = new Callback<Func<TA, TB>>((t, f) => h.Run(t));
-            var valueChanged = new Callback<TA>((t, a) => h.Run(t));
+            var functionChanged = new SodiumAction<Func<TA, TB>>((t, f) => h.Run(t));
+            var valueChanged = new SodiumAction<TA>((t, a) => h.Run(t));
             bf.Updates().Listen(functionChanged, this.Rank);
             ba.Updates().Listen(valueChanged, this.Rank);
             var map = bf.Sample();
