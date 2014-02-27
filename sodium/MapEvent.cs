@@ -5,8 +5,8 @@
 
     internal sealed class MapEvent<TA, TB> : Event<TB>
     {
-        private readonly Event<TA> evt;
-        private readonly Func<TA, TB> map;
+        private Event<TA> evt;
+        private Func<TA, TB> map;
         private IEventListener<TA> listener;
 
         public MapEvent(Event<TA> evt, Func<TA, TB> map)
@@ -34,10 +34,21 @@
 
         protected override void Dispose(bool disposing)
         {
-            if (listener != null)
+            if (disposing)
             {
-                listener.Dispose();
-                listener = null;
+                if (listener != null)
+                {
+                    listener.Dispose();
+                    listener = null;
+                }
+
+                if (evt != null)
+                {
+                    evt.Dispose();
+                    evt = null;
+                }
+
+                map = null;
             }
 
             base.Dispose(disposing);

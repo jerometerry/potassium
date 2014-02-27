@@ -4,8 +4,8 @@ namespace Sodium
 
     internal sealed class CoalesceEvent<TA> : Event<TA>
     {
-        private readonly Event<TA> evt;
-        private readonly Func<TA, TA, TA> coalesce;
+        private Event<TA> evt;
+        private Func<TA, TA, TA> coalesce;
         private IEventListener<TA> listener;
         private Maybe<TA> accumulatedValue = Maybe<TA>.Null;
 
@@ -37,10 +37,21 @@ namespace Sodium
 
         protected override void Dispose(bool disposing)
         {
-            if (listener != null)
+            if (disposing)
             {
-                listener.Dispose();
-                listener = null;
+                if (listener != null)
+                {
+                    listener.Dispose();
+                    listener = null;
+                }
+
+                if (evt != null)
+                {
+                    evt.Dispose();
+                    evt = null;
+                }
+
+                coalesce = null;
             }
 
             base.Dispose(disposing);

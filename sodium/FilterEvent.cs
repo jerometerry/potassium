@@ -5,8 +5,8 @@ namespace Sodium
 
     internal sealed class FilterEvent<TA> : Event<TA>
     {
-        private readonly Event<TA> evt;
-        private readonly Func<TA, bool> f;
+        private Event<TA> evt;
+        private Func<TA, bool> f;
         private IEventListener<TA> listener;
 
         public FilterEvent(Event<TA> evt, Func<TA, bool> f)
@@ -50,10 +50,21 @@ namespace Sodium
 
         protected override void Dispose(bool disposing)
         {
-            if (listener != null)
+            if (disposing)
             {
-                listener.Dispose();
-                listener = null;
+                if (listener != null)
+                {
+                    listener.Dispose();
+                    listener = null;
+                }
+
+                if (evt != null)
+                {
+                    evt.Dispose();
+                    evt = null;
+                }
+
+                f = null;
             }
 
             base.Dispose(disposing);

@@ -4,13 +4,15 @@ namespace Sodium
 
     internal sealed class SwitchEventAction<TA> : ISodiumAction<Event<TA>>, IDisposable
     {
-        private readonly Event<TA> evt;
-        private readonly ISodiumAction<TA> action;
+        private Event<TA> evt;
+        private ISodiumAction<TA> action;
         private IEventListener<TA> eventListener;
+        private Behavior<Event<TA>> bea;
         private bool disposed;
 
         public SwitchEventAction(Behavior<Event<TA>> bea, Event<TA> evt, Transaction t, ISodiumAction<TA> h)
         {
+            this.bea = bea;
             this.evt = evt;
             this.action = h;
             this.eventListener = bea.Sample().Listen(t, h, evt.Rank);
@@ -28,6 +30,20 @@ namespace Sodium
                 this.eventListener.Dispose();
                 this.eventListener = null;
             }
+
+            if (evt != null)
+            {
+                evt.Dispose();
+                evt = null;
+            }
+
+            if (bea != null)
+            {
+                bea.Dispose();
+                bea = null;
+            }
+
+            action = null;
 
             disposed = true;
         }

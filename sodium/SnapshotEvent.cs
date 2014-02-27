@@ -5,9 +5,9 @@ namespace Sodium
 
     internal sealed class SnapshotEvent<TA, TB, TC> : Event<TC>
     {
-        private readonly Event<TA> evt;
-        private readonly Func<TA, TB, TC> snapshot;
-        private readonly Behavior<TB> behavior;
+        private Event<TA> evt;
+        private Func<TA, TB, TC> snapshot;
+        private Behavior<TB> behavior;
         private IEventListener<TA> listener;
 
         public SnapshotEvent(Event<TA> ev, Func<TA, TB, TC> snapshot, Behavior<TB> behavior)
@@ -39,10 +39,27 @@ namespace Sodium
 
         protected override void Dispose(bool disposing)
         {
-            if (listener != null)
+            if (disposing)
             {
-                listener.Dispose();
-                listener = null;
+                if (listener != null)
+                {
+                    listener.Dispose();
+                    listener = null;
+                }
+
+                if (evt != null)
+                {
+                    evt.Dispose();
+                    evt = null;
+                }
+
+                if (behavior != null)
+                {
+                    behavior.Dispose();
+                    behavior = null;
+                }
+
+                snapshot = null;
             }
 
             base.Dispose(disposing);

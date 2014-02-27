@@ -2,7 +2,7 @@ namespace Sodium
 {
     internal sealed class BehaviorValueEvent<TA> : Event<TA>
     {
-        private readonly Behavior<TA> behavior;
+        private Behavior<TA> behavior;
         private IEventListener<TA> listener;
 
         public BehaviorValueEvent(Behavior<TA> behavior, Event<TA> evt, Transaction transaction)
@@ -25,6 +25,12 @@ namespace Sodium
                 {
                     listener.Dispose();
                     listener = null;
+                }
+
+                if (this.behavior != null)
+                {
+                    behavior.Dispose();
+                    behavior = null;
                 }
             }
 

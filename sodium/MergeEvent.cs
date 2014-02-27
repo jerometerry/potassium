@@ -4,8 +4,8 @@ namespace Sodium
 
     internal sealed class MergeEvent<TA> : Event<TA>
     {
-        private readonly Event<TA> evt1;
-        private readonly Event<TA> evt2;
+        private Event<TA> evt1;
+        private Event<TA> evt2;
         private IEventListener<TA> l1;
         private IEventListener<TA> l2;
 
@@ -34,16 +34,31 @@ namespace Sodium
 
         protected override void Dispose(bool disposing)
         {
-            if (l1 != null)
+            if (disposing)
             {
-                l1.Dispose();
-                l1 = null;
-            }
+                if (l1 != null)
+                {
+                    l1.Dispose();
+                    l1 = null;
+                }
 
-            if (l2 != null)
-            {
-                l2.Dispose();
-                l2 = null;
+                if (l2 != null)
+                {
+                    l2.Dispose();
+                    l2 = null;
+                }
+
+                if (evt1 != null)
+                {
+                    evt1.Dispose();
+                    evt1 = null;
+                }
+
+                if (evt2 != null)
+                {
+                    evt2.Dispose();
+                    evt2 = null;
+                }
             }
 
             base.Dispose(disposing);

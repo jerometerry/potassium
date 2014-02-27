@@ -12,10 +12,13 @@
 
         protected override void Dispose(bool disposing)
         {
-            if (listener != null)
+            if (disposing)
             {
-                listener.Dispose();
-                listener = null;
+                if (listener != null)
+                {
+                    listener.Dispose();
+                    listener = null;
+                }
             }
 
             base.Dispose(disposing);

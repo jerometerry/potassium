@@ -2,8 +2,8 @@ namespace Sodium
 {
     internal sealed class OnceEvent<TA> : Event<TA>
     {
-        private readonly Event<TA> evt;
-        private readonly IEventListener<TA>[] eventListeners;
+        private Event<TA> evt;
+        private IEventListener<TA>[] eventListeners;
         private IEventListener<TA> eventListener;
 
         public OnceEvent(Event<TA> evt)
@@ -56,6 +56,34 @@ namespace Sodium
             }
 
             return results;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (this.eventListeners[0] != null)
+                {
+                    this.eventListeners[0].Dispose();
+                    this.eventListeners[0] = null;
+                }
+
+                if (this.eventListener != null)
+                {
+                    this.eventListener.Dispose();
+                    this.eventListener = null;
+                }
+
+                if (evt != null)
+                {
+                    evt.Dispose();
+                    evt = null;
+                }
+
+                eventListeners = null;
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

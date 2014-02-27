@@ -263,11 +263,13 @@ namespace Sodium
         /// value changes thereafter</returns>
         internal Event<TA> Value(Transaction transaction)
         {
-            var sink = new BehaviorValueEvent<TA>(this, this.Event, transaction);
+            var valueEvent = new BehaviorValueEvent<TA>(this, this.Event, transaction);
 
             // Needed in case of an initial value and an update
             // in the same transaction.
-            return sink.LastFiringOnly(transaction);
+            var valueEventLast = valueEvent.LastFiringOnly(transaction);
+
+            return valueEventLast;
         }
 
         protected virtual void Dispose(bool disposing)
