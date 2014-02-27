@@ -19,6 +19,7 @@ namespace Sodium
         private readonly Rank rank = new Rank();
 
         private Event<TA> loop;
+        private IEventListener<TA> loopListener;
         private bool disposed;
 
         /// <summary>
@@ -80,7 +81,7 @@ namespace Sodium
 
             this.loop = eventToLoop;
             var evt = this;
-            eventToLoop.Listen(new SodiumAction<TA>(evt.Fire), evt.Rank);
+            this.loopListener = eventToLoop.Listen(new SodiumAction<TA>(evt.Fire), evt.Rank);
         }
 
         /// <summary>
@@ -394,6 +395,12 @@ namespace Sodium
 
             if (disposing)
             {
+                if (this.loopListener != null)
+                {
+                    this.loopListener.Dispose();
+                    this.loopListener = null;
+                }
+
                 foreach (var listener in this.listeners)
                 {
                     listener.Dispose();

@@ -7,6 +7,7 @@ namespace Sodium
     {
         private readonly Event<TA> evt;
         private readonly Func<TA, bool> f;
+        private IEventListener<TA> listener;
 
         public FilterEvent(Event<TA> evt, Func<TA, bool> f)
         {
@@ -14,7 +15,7 @@ namespace Sodium
             this.f = f;
 
             var action = new SodiumAction<TA>(this.Fire);
-            evt.Listen(action, this.Rank);
+            this.listener = evt.Listen(action, this.Rank);
         }
 
         /// <summary>
@@ -45,6 +46,17 @@ namespace Sodium
             }
 
             return filtered.ToArray();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (listener != null)
+            {
+                listener.Dispose();
+                listener = null;
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

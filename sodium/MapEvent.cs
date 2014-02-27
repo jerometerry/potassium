@@ -7,12 +7,13 @@
     {
         private readonly Event<TA> evt;
         private readonly Func<TA, TB> map;
+        private IEventListener<TA> listener;
 
         public MapEvent(Event<TA> evt, Func<TA, TB> map)
         {
             this.evt = evt;
             this.map = map;
-            evt.Listen(new SodiumAction<TA>(this.Fire), this.Rank);
+            this.listener = evt.Listen(new SodiumAction<TA>(this.Fire), this.Rank);
         }
 
         public void Fire(Transaction trans, TA firing)
@@ -29,6 +30,17 @@
             }
 
             return firings.Select(e => map(e)).ToArray();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (listener != null)
+            {
+                listener.Dispose();
+                listener = null;
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

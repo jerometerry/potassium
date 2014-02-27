@@ -18,8 +18,7 @@ namespace Sodium
         private Maybe<TA> valueUpdate = Maybe<TA>.Null;
         
         private Event<TA> evt;
-
-        private bool disposed;
+        private IEventListener<TA> eventListener;
 
         /// <summary>
         /// A behavior with a time varying value
@@ -39,16 +38,13 @@ namespace Sodium
         {
             this.evt = evt;
             this.value = initValue;
-            ListenForEventFirings();
+            this.eventListener = ListenForEventFirings();
         }
 
         /// <summary>
         /// Gets whether the current Behavior has been disposed
         /// </summary>
-        public bool Disposed
-        {
-            get { return disposed; }
-        }
+        public bool Disposed { get; private set; }
 
         /// <summary>
         /// A behavior with a constant value.
@@ -238,9 +234,15 @@ namespace Sodium
         /// </summary>
         public void Dispose()
         {
-            if (disposed)
+            if (this.Disposed)
             {
                 return;
+            }
+
+            if (this.eventListener != null)
+            {
+                eventListener.Dispose();
+                eventListener = null;
             }
 
             if (evt != null)
@@ -249,7 +251,7 @@ namespace Sodium
                 evt = null;
             }
 
-            disposed = true;
+            this.Disposed = true;
         }
 
         /// <summary>
@@ -298,7 +300,7 @@ namespace Sodium
 
         private void AssertNotDisposed()
         {
-            if (disposed)
+            if (this.Disposed)
             {
                 throw new ObjectDisposedException("Event is being used after it's disposed");
             }
@@ -307,23 +309,21 @@ namespace Sodium
         /// <summary>
         /// Listen to the underlying event for firings
         /// </summary>
-        private void ListenForEventFirings()
+        /// <returns>The IEventListener registered with the underlying event.</returns>
+        private IEventListener<TA> ListenForEventFirings()
         {
-            TransactionContext.Current.Run(t =>
-            {
-                this.ListenForEventFirings(t);
-                return Unit.Value;
-            });
+            return TransactionContext.Current.Run(this.ListenForEventFirings);
         }
 
         /// <summary>
         /// Listen to the underlying event for firings
         /// </summary>
-        /// <param name="transaction"></param>
-        private void ListenForEventFirings(Transaction transaction)
+        /// <param name="transaction">The transaction to schedule the listen on.</param>
+        /// <returns>The IEventListener registered with the underlying event.</returns>
+        private IEventListener<TA> ListenForEventFirings(Transaction transaction)
         {
             var action = new SodiumAction<TA>(ScheduleApplyValueUpdate);
-            evt.Listen(transaction, action, Rank.Highest);
+            return evt.Listen(transaction, action, Rank.Highest);
         }
 
         /// <summary>

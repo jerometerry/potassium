@@ -6,6 +6,8 @@ namespace Sodium
     {
         private readonly Event<TA> evt1;
         private readonly Event<TA> evt2;
+        private IEventListener<TA> l1;
+        private IEventListener<TA> l2;
 
         public MergeEvent(Event<TA> evt1, Event<TA> evt2)
         {
@@ -13,8 +15,8 @@ namespace Sodium
             this.evt2 = evt2;
 
             var action = new SodiumAction<TA>(this.Fire);
-            evt1.Listen(action, this.Rank);
-            evt2.Listen(action, this.Rank);
+            l1 = evt1.Listen(action, this.Rank);
+            l2 = evt2.Listen(action, this.Rank);
         }
 
         protected internal override TA[] InitialFirings()
@@ -28,6 +30,23 @@ namespace Sodium
             }
 
             return firings1 ?? firings2;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (l1 != null)
+            {
+                l1.Dispose();
+                l1 = null;
+            }
+
+            if (l2 != null)
+            {
+                l2.Dispose();
+                l2 = null;
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Sodium
         private readonly Event<TA> evt;
         private readonly Func<TA, TB, TC> snapshot;
         private readonly Behavior<TB> behavior;
+        private IEventListener<TA> listener;
 
         public SnapshotEvent(Event<TA> ev, Func<TA, TB, TC> snapshot, Behavior<TB> behavior)
         {
@@ -16,7 +17,7 @@ namespace Sodium
             this.behavior = behavior;
 
             var action = new SodiumAction<TA>(this.Fire);
-            ev.Listen(action, this.Rank);
+            this.listener = ev.Listen(action, this.Rank);
         }
 
         public void Fire(Transaction transaction, TA firing)
@@ -34,6 +35,17 @@ namespace Sodium
             
             var results = events.Select(e => this.snapshot(e, this.behavior.Sample()));
             return results.ToArray();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (listener != null)
+            {
+                listener.Dispose();
+                listener = null;
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

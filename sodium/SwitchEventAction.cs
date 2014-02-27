@@ -39,6 +39,7 @@ namespace Sodium
                 if (this.eventListener != null)
                 { 
                     this.eventListener.Dispose();
+                    this.eventListener = null;
                 }
 
                 this.eventListener = newEvent.ListenSuppressed(transaction, this.action, evt.Rank);

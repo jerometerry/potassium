@@ -6,6 +6,7 @@ namespace Sodium
     {
         private readonly Event<TA> evt;
         private readonly Func<TA, TA, TA> coalesce;
+        private IEventListener<TA> listener;
 
         public CoalesceEvent(Event<TA> evt, Func<TA, TA, TA> coalesce, Transaction transaction)
         {
@@ -13,7 +14,7 @@ namespace Sodium
             this.coalesce = coalesce;
 
             var action = new CoalesceAction<TA>(this, coalesce);
-            evt.Listen(transaction, action, this.Rank);
+            this.listener = evt.Listen(transaction, action, this.Rank);
         }
 
         protected internal override TA[] InitialFirings()
@@ -31,6 +32,17 @@ namespace Sodium
             }
 
             return new[] { e };
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (listener != null)
+            {
+                listener.Dispose();
+                listener = null;
+            }
+
+            base.Dispose(disposing);
         }
     }
 }
