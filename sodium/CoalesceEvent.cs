@@ -7,13 +7,14 @@ namespace Sodium
         private readonly Event<TA> evt;
         private readonly Func<TA, TA, TA> coalesce;
         private IEventListener<TA> listener;
+        private Maybe<TA> accumulatedValue = Maybe<TA>.Null;
 
         public CoalesceEvent(Event<TA> evt, Func<TA, TA, TA> coalesce, Transaction transaction)
         {
             this.evt = evt;
             this.coalesce = coalesce;
 
-            var action = new CoalesceAction<TA>(this, coalesce);
+            var action = new SodiumAction<TA>(this.Accumulate);
             this.listener = evt.Listen(transaction, action, this.Rank);
         }
 
@@ -43,6 +44,25 @@ namespace Sodium
             }
 
             base.Dispose(disposing);
+        }
+
+        private void Accumulate(Transaction transaction, TA data)
+        {
+            if (this.accumulatedValue.HasValue)
+            {
+                this.accumulatedValue = new Maybe<TA>(coalesce(this.accumulatedValue.Value(), data));
+            }
+            else
+            {
+                transaction.Priority(Fire, this.Rank);
+                this.accumulatedValue = new Maybe<TA>(data);
+            }
+        }
+
+        private void Fire(Transaction transaction)
+        {
+            this.Fire(transaction, this.accumulatedValue.Value());
+            this.accumulatedValue = Maybe<TA>.Null;
         }
     }
 }

@@ -56,7 +56,6 @@
     <Compile Include="SwitchBehaviorAction.cs" />
     <Compile Include="BehaviorValueEvent.cs" />
     <Compile Include="CoalesceEvent.cs" />
-    <Compile Include="CoalesceAction.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="PrioritizedAction.cs" />
     <Compile Include="SwitchBehaviorEvent.cs" />
