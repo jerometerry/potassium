@@ -7,7 +7,7 @@ namespace Sodium
     /// </summary>
     /// <remarks>Behaviors generally change over time, but constant behaviors are ones that choose not to.</remarks>
     /// <typeparam name="TA">The type of values that will be fired through the behavior.</typeparam>
-    public sealed class Behavior<TA> : IDisposable
+    public class Behavior<TA> : IDisposable
     {
         private TA value;
         
@@ -16,8 +16,7 @@ namespace Sodium
         /// moved into the current value of the Behavior.
         /// </summary>
         private Maybe<TA> valueUpdate = Maybe<TA>.Null;
-        
-        private Event<TA> evt;
+
         private IEventListener<TA> eventListener;
 
         /// <summary>
@@ -36,7 +35,7 @@ namespace Sodium
         /// <param name="initValue"></param>
         public Behavior(Event<TA> evt, TA initValue)
         {
-            this.evt = evt;
+            this.Event = evt;
             this.value = initValue;
             this.eventListener = ListenForEventFirings();
         }
@@ -45,6 +44,8 @@ namespace Sodium
         /// Gets whether the current Behavior has been disposed
         /// </summary>
         public bool Disposed { get; private set; }
+
+        protected Event<TA> Event { get; private set; }
 
         /// <summary>
         /// A behavior with a constant value.
@@ -105,26 +106,13 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Firings on b will be forwarded to the current Behavior
-        /// </summary>
-        /// <param name="b">Behavior who's firings will be looped to the current Behavior</param>
-        /// <remarks>Loop can only be called once on a Behavior. If Loop is called multiple times,
-        /// an ApplicationException will be raised.</remarks>
-        public void Loop(Behavior<TA> b)
-        {
-            AssertNotDisposed();
-            evt.Loop(b.Updates());
-            value = b.Sample();
-        }
-
-        /// <summary>
         /// Fire the given value to all registered listeners 
         /// </summary>
         /// <param name="a">The value to be fired</param>
         public void Fire(TA a)
         {
             AssertNotDisposed();
-            evt.Fire(a);
+            this.Event.Fire(a);
         }
 
         /// <summary>
@@ -160,7 +148,7 @@ namespace Sodium
         public Event<TA> Updates()
         {
             AssertNotDisposed();
-            return evt;
+            return this.Event;
         }
 
         /// <summary>
@@ -209,7 +197,7 @@ namespace Sodium
             var coalesceEvent = Updates().Coalesce((a, b) => b);
             var currentValue = Sample();
             var tuple = snapshot(currentValue, initState);
-            var loop = new Event<Tuple<TB, TS>>();
+            var loop = new EventLoop<Tuple<TB, TS>>();
             var loopBehavior = loop.Hold(tuple);
             var snapshotBehavior = loopBehavior.Map(x => x.Item2);
             var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
@@ -234,24 +222,8 @@ namespace Sodium
         /// </summary>
         public void Dispose()
         {
-            if (this.Disposed)
-            {
-                return;
-            }
-
-            if (this.eventListener != null)
-            {
-                eventListener.Dispose();
-                eventListener = null;
-            }
-
-            if (evt != null)
-            {
-                evt.Dispose();
-                evt = null;
-            }
-
-            this.Disposed = true;
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -291,14 +263,39 @@ namespace Sodium
         /// value changes thereafter</returns>
         internal Event<TA> Value(Transaction transaction)
         {
-            var sink = new BehaviorValueEvent<TA>(this, evt, transaction);
+            var sink = new BehaviorValueEvent<TA>(this, this.Event, transaction);
 
             // Needed in case of an initial value and an update
             // in the same transaction.
             return sink.LastFiringOnly(transaction);
         }
 
-        private void AssertNotDisposed()
+        protected virtual void Dispose(bool disposing)
+        {
+            if (this.Disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                if (this.eventListener != null)
+                {
+                    eventListener.Dispose();
+                    eventListener = null;
+                }
+
+                if (this.Event != null)
+                {
+                    this.Event.Dispose();
+                    this.Event = null;
+                }
+            }
+
+            this.Disposed = true;
+        }
+
+        protected void AssertNotDisposed()
         {
             if (this.Disposed)
             {
@@ -323,7 +320,7 @@ namespace Sodium
         private IEventListener<TA> ListenForEventFirings(Transaction transaction)
         {
             var action = new SodiumAction<TA>(ScheduleApplyValueUpdate);
-            return evt.Listen(transaction, action, Rank.Highest);
+            return this.Event.Listen(transaction, action, Rank.Highest);
         }
 
         /// <summary>

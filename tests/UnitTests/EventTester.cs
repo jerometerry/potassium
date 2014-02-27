@@ -106,7 +106,7 @@ namespace Sodium.Tests
         public void TestLoopEvent()
         {
             var ea = new Event<int>();
-            var eb = new Event<int>();
+            var eb = new EventLoop<int>();
             var ec = Event<int>.MergeWith((x, y) => x + y, ea.Map(x => x % 10), eb);
             var ebO = ea.Map(x => x / 10).Filter(x => x != 0);
             eb.Loop(ebO);

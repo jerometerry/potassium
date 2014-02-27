@@ -17,9 +17,6 @@ namespace Sodium
         /// The rank of the current Event. Default to rank zero
         /// </summary>
         private readonly Rank rank = new Rank();
-
-        private Event<TA> loop;
-        private IEventListener<TA> loopListener;
         private bool disposed;
 
         /// <summary>
@@ -64,25 +61,7 @@ namespace Sodium
             return new MergeEvent<TA>(event1, event2);
         }
         
-        /// <summary>
-        /// Firings on the given Event will be forwarded to the current Event
-        /// </summary>
-        /// <param name="eventToLoop">Event who's firings will be looped to the current Event</param>
-        /// <remarks>Loop can only be called once on an Event. If Loop is called multiple times,
-        /// an ApplicationException will be raised.</remarks>
-        public void Loop(Event<TA> eventToLoop)
-        {
-            AssertNotDisposed();
-
-            if (this.loop != null)
-            {
-                throw new ApplicationException("EventLoop looped more than once");
-            }
-
-            this.loop = eventToLoop;
-            var evt = this;
-            this.loopListener = eventToLoop.Listen(new SodiumAction<TA>(evt.Fire), evt.Rank);
-        }
+        
 
         /// <summary>
         /// Fire the given value to all registered listeners 
@@ -229,7 +208,7 @@ namespace Sodium
         public Event<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
         {
             AssertNotDisposed();
-            var es = new Event<TS>();
+            var es = new EventLoop<TS>();
             var s = es.Hold(initState);
             var ebs = Snapshot(s, snapshot);
             var eb = ebs.Map(bs => bs.Item1);
@@ -244,7 +223,7 @@ namespace Sodium
         public Behavior<TS> Accum<TS>(TS initState, Func<TA, TS, TS> snapshot)
         {
             AssertNotDisposed();
-            var evt = new Event<TS>();
+            var evt = new EventLoop<TS>();
             var behavior = evt.Hold(initState);
             var snapshotEvent = Snapshot(behavior, snapshot);
             evt.Loop(snapshotEvent);
@@ -395,11 +374,7 @@ namespace Sodium
 
             if (disposing)
             {
-                if (this.loopListener != null)
-                {
-                    this.loopListener.Dispose();
-                    this.loopListener = null;
-                }
+                
 
                 foreach (var listener in this.listeners)
                 {
@@ -410,6 +385,14 @@ namespace Sodium
             }
 
             disposed = true;
+        }
+
+        protected void AssertNotDisposed()
+        {
+            if (disposed)
+            {
+                throw new ObjectDisposedException("Event is being used after it's disposed");
+            }
         }
 
         private static void Fire(Transaction transaction, EventListener<TA> eventListener, IEnumerable<TA> firings)
@@ -436,14 +419,6 @@ namespace Sodium
         {
             AssertNotDisposed();
             return new CoalesceEvent<TA>(this, coalesce, transaction);
-        }
-
-        private void AssertNotDisposed()
-        {
-            if (disposed)
-            {
-                throw new ObjectDisposedException("Event is being used after it's disposed");
-            }
         }
 
         private EventListener<TA> CreateListener(Transaction transaction, ISodiumAction<TA> action, Rank superior)
