@@ -18,6 +18,8 @@ namespace Sodium.Tests
             evt.Fire(2);
             evt.Fire(9);
             listener.Dispose();
+            evt.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(2, 9), results);
         }
 
@@ -37,6 +39,8 @@ namespace Sodium.Tests
             behavior.Fire(1);
             evt.Fire(300L);
             listener.Dispose();
+            behavior.Dispose();
+            evt.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("100 0", "200 2", "300 1"), results);
         }
 
@@ -49,6 +53,7 @@ namespace Sodium.Tests
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(9, 2, 7), results);
         }
 
@@ -59,6 +64,7 @@ namespace Sodium.Tests
             var results = new List<int>();
             var listener = behavior.Value().Listen(results.Add);
             listener.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(12), results);
         }
 
@@ -71,6 +77,7 @@ namespace Sodium.Tests
             behavior.Fire(2);
             behavior.Fire(7);
             l.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(109, 102, 107), results);
         }
 
@@ -83,6 +90,7 @@ namespace Sodium.Tests
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(109, 109, 102, 102, 107, 107), results);
         }
 
@@ -95,6 +103,7 @@ namespace Sodium.Tests
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(9, 2, 7), results);
         }
 
@@ -107,6 +116,7 @@ namespace Sodium.Tests
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(18, 4, 14), results);
         }
 
@@ -122,6 +132,8 @@ namespace Sodium.Tests
             behaviorChar.Fire('c');
             behaviorInt32.Fire(7);
             listener.Dispose();
+            behaviorInt32.Dispose();
+            behaviorChar.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('a', 'b', 'c'), results);
         }
 
@@ -137,6 +149,8 @@ namespace Sodium.Tests
             behaviorChar.Fire('c');
             behaviorInt32.Fire(7);
             listener.Dispose();
+            behaviorInt32.Dispose();
+            behaviorChar.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('a', 'a', 'b', 'b', 'c', 'c'), results);
         }
 
@@ -150,6 +164,8 @@ namespace Sodium.Tests
             behavior1.Fire(1);
             behavior2.Fire(4);
             listener.Dispose();
+            behavior1.Dispose();
+            behavior2.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(11, 1, 4), results);
         }
 
@@ -162,6 +178,7 @@ namespace Sodium.Tests
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(9, 2, 7), results);
         }
 
@@ -174,6 +191,7 @@ namespace Sodium.Tests
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(9, 9, 2, 2, 7, 7), results);
         }
 
@@ -186,6 +204,7 @@ namespace Sodium.Tests
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(9), results);
         }
 
@@ -198,6 +217,7 @@ namespace Sodium.Tests
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(9), results);
         }
 
@@ -211,6 +231,7 @@ namespace Sodium.Tests
             var listener = value.Listen(results.Add);
             behavior.Fire(2);
             listener.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(8, 2), results);
         }
 
@@ -222,6 +243,7 @@ namespace Sodium.Tests
             var listener = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture)).Value().Listen(results.Add);
             behavior.Fire(8);
             listener.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("6", "8"), results);
         }
 
@@ -233,6 +255,7 @@ namespace Sodium.Tests
             var results = new List<int>();
             var listener = behavior1.Value().Listen(results.Add);
             listener.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(3), results);
         }
 
@@ -245,6 +268,7 @@ namespace Sodium.Tests
             var listener = behavior1.Value().Listen(results.Add);
             behavior.Fire(2);
             listener.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(3, 6), results);
         }
 
@@ -258,6 +282,7 @@ namespace Sodium.Tests
             var listener = map.Value().Listen(results.Add);
             behavior.Fire(8);
             listener.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("2", "8"), results);
         }
 
@@ -271,6 +296,8 @@ namespace Sodium.Tests
             bf.Fire(b => "12 " + b);
             ba.Fire(6L);
             listener.Dispose();
+            bf.Dispose();
+            ba.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("1 5", "12 5", "12 6"), results);
         }
 
@@ -285,6 +312,8 @@ namespace Sodium.Tests
             behavior1.Fire(12);
             behavior2.Fire(6L);
             listener.Dispose();
+            behavior1.Dispose();
+            behavior2.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("1 5", "12 5", "12 6"), results);
         }
 
@@ -299,21 +328,25 @@ namespace Sodium.Tests
             var listener = combinedBehavior.Value().Listen(results.Add);
             behavior.Fire(2);
             listener.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("3 5", "6 10"), results);
         }
 
         [Test]
         public void TestHoldIsDelayed()
         {
-            var e = new Event<int>();
-            var h = e.Hold(0);
-            var pair = e.Snapshot(h, (a, b) => a + " " + b);
-            var o = new List<string>();
-            var l = pair.Listen(o.Add);
-            e.Fire(2);
-            e.Fire(3);
-            l.Dispose();
-            AssertArraysEqual(Arrays<string>.AsList("2 0", "3 2"), o);
+            var evt = new Event<int>();
+            var behavior = evt.Hold(0);
+            var pair = evt.Snapshot(behavior, (a, b) => a + " " + b);
+            var results = new List<string>();
+            var listener = pair.Listen(results.Add);
+            evt.Fire(2);
+            evt.Fire(3);
+            listener.Dispose();
+            evt.Dispose();
+            behavior.Dispose();
+            pair.Dispose();
+            AssertArraysEqual(Arrays<string>.AsList("2 0", "3 2"), results);
         }
 
         [Test]
@@ -321,7 +354,7 @@ namespace Sodium.Tests
         {
             var sink = new Event<Sb>();
 
-            // Split each field o of SB so we can update multiple behaviours in a
+            // Split each field o of SB so we can update multiple behaviors in a
             // single transaction.
             var behaviorA = sink.Map(s => s.C1).FilterNotNull().Hold('A');
             var behaviorB = sink.Map(s => s.C2).FilterNotNull().Hold('a');
@@ -344,29 +377,11 @@ namespace Sodium.Tests
             sink.Fire(new Sb('H', 'h', behaviorA));
             sink.Fire(new Sb('I', 'i', behaviorA));
             listener.Dispose();
+            behaviorA.Dispose();
+            behaviorB.Dispose();
+            bsw.Dispose();
+            behavior.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('A', 'B', 'c', 'd', 'E', 'F', 'f', 'F', 'g', 'H', 'I'), results);
-        }
-
-        [Test]
-        public void TestSwitchB1()
-        {
-            var sink = new Event<Sb>();
-
-            // Split each field o of SB so we can update multiple behaviours in a
-            // single transaction.
-            var behaviorA = sink.Map(s => s.C1).FilterNotNull().Hold('A');
-            var behaviorB = sink.Map(s => s.C2).FilterNotNull().Hold('a');
-            var bsw = sink.Map(s => s.Behavior).FilterNotNull().Hold(behaviorA);
-            var behavior = Behavior<char?>.SwitchB(bsw);
-            var results = new List<char>();
-            var listener = behavior.Value().Listen(c =>
-            {
-                Assert.IsNotNull(c, "c != null");
-                results.Add(c.Value);
-            });
-            sink.Fire(new Sb('B', 'b', null));
-            listener.Dispose();
-            AssertArraysEqual(Arrays<char>.AsList('A', 'B'), results);
         }
 
         [Test]
@@ -389,6 +404,11 @@ namespace Sodium.Tests
             ese.Fire(new Se('H', 'h', ea));
             ese.Fire(new Se('I', 'i', ea));
             l.Dispose();
+            ese.Dispose();
+            ea.Dispose();
+            eb.Dispose();
+            bsw.Dispose();
+            eo.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('A', 'B', 'C', 'd', 'e', 'F', 'G', 'h', 'I'), o);
         }
 
@@ -404,9 +424,13 @@ namespace Sodium.Tests
             ea.Fire(2);
             ea.Fire(3);
             ea.Fire(1);
+            var sample = sum.Sample();
             l.Dispose();
+            ea.Dispose();
+            sum.Dispose();
+            sumOut.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(0, 2, 5, 6), o);
-            Assert.AreEqual(6, sum.Sample());
+            Assert.AreEqual(6, sample);
         }
 
         [Test]
@@ -422,6 +446,8 @@ namespace Sodium.Tests
             ea.Fire(2);
             ea.Fire(3);
             l.Dispose();
+            ea.Dispose();
+            sum.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(100, 105, 112, 113, 115, 118), o);
         }
 
@@ -438,6 +464,8 @@ namespace Sodium.Tests
             ea.Fire(2);
             ea.Fire(3);
             l.Dispose();
+            ea.Dispose();
+            sum.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(100, 105, 112, 113, 115, 118), o);
         }
 

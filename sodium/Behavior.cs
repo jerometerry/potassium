@@ -279,6 +279,7 @@ namespace Sodium
                 return;
             }
 
+            this.Disposed = true;
             if (disposing)
             {
                 if (this.eventListener != null)
@@ -293,8 +294,6 @@ namespace Sodium
                     this.Event = null;
                 }
             }
-
-            this.Disposed = true;
         }
 
         protected void AssertNotDisposed()

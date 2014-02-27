@@ -339,17 +339,27 @@ namespace Sodium
         /// <returns>True if the listener was removed, false otherwise</returns>
         internal bool RemoveListener(EventListener<TA> eventListener)
         {
-            AssertNotDisposed();
-            if (eventListener == null || eventListener.Disposed)
+            if (disposed || eventListener == null || eventListener.Disposed)
             {
                 return false;
             }
 
+            var previousCount = this.listeners.Count;
+
+            bool removed;
             lock (Constants.ListenersLock)
             {
                 Rank.RemoveSuperior(eventListener.Rank);
-                return this.listeners.Remove(eventListener);
+                removed = this.listeners.Remove(eventListener);
             }
+
+            var newCount = this.listeners.Count;
+            if (newCount == 0 && newCount < previousCount)
+            {
+                this.Dispose();
+            }
+
+            return removed;
         }
 
         /// <summary>
@@ -372,19 +382,16 @@ namespace Sodium
                 return;
             }
 
+            disposed = true;
             if (disposing)
             {
-                
-
-                foreach (var listener in this.listeners)
+                var clone = new List<IEventListener<TA>>(this.listeners);
+                this.listeners.Clear();
+                foreach (var listener in clone)
                 {
                     listener.Dispose();
                 }
-
-                this.listeners.Clear();
             }
-
-            disposed = true;
         }
 
         protected void AssertNotDisposed()
