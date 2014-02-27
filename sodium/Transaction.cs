@@ -9,7 +9,7 @@ namespace Sodium
     /// <remarks>
     /// Transactions are run in the following order when the transaction is committed
     /// 
-    ///     1. Prioritized actions
+    ///     1. Priority actions
     ///     2. Last actions
     ///     3. Post actions
     /// 
@@ -40,7 +40,7 @@ namespace Sodium
         /// </summary>
         /// <param name="rank"></param>
         /// <param name="action"></param>
-        public void Prioritize(Action<Transaction> action, Rank rank)
+        public void Priority(Action<Transaction> action, Rank rank)
         {
             this.AssertNotDisposed();
             prioritized.Add(new PrioritizedAction(action, rank));
@@ -71,7 +71,7 @@ namespace Sodium
         /// </summary>
         public void Commit()
         {
-            this.RunPrioritizedActions();
+            this.RunPriorityActions();
             this.prioritized.Clear();
 
             this.RunLastActions();
@@ -81,6 +81,9 @@ namespace Sodium
             this.post.Clear();
         }
 
+        /// <summary>
+        /// Clean up the current Transaction, purging any actions wihtout firing
+        /// </summary>
         public void Dispose()
         {
             if (this.disposed)
@@ -99,7 +102,7 @@ namespace Sodium
             this.disposed = true;
         }
 
-        private void RunPrioritizedActions()
+        private void RunPriorityActions()
         {
             while (true)
             {

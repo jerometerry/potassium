@@ -22,7 +22,7 @@ namespace Sodium
             }
             else
             {
-                transaction.Prioritize(Fire, evt.Rank);
+                transaction.Priority(Fire, evt.Rank);
                 accum = new Maybe<TA>(data);
             }
         }

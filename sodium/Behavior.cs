@@ -10,7 +10,13 @@ namespace Sodium
     public sealed class Behavior<TA> : IDisposable
     {
         private TA value;
+        
+        /// <summary>
+        /// Holding tank for updates from the underlying Event, waiting to be 
+        /// moved into the current value of the Behavior.
+        /// </summary>
         private Maybe<TA> valueUpdate = Maybe<TA>.Null;
+        
         private Event<TA> evt;
 
         private bool disposed;
@@ -258,10 +264,16 @@ namespace Sodium
         }
 
         /// <summary>
+        /// Gets the updated value of the Behavior that has not yet been moved to the
+        /// current value of the Behavior. 
         /// </summary>
         /// <returns>
-        /// The value including any updates that have happened in this transaction.
+        /// The updated value, if any, otherwise the current value
         /// </returns>
+        /// <remarks>As the underlying event is fired, the current behavior is 
+        /// updated with the value of the firing. However, it doesn't go directly to the
+        /// value field. Instead, the value is put into newValue, and a Last Action is
+        /// scheduled to move the value from newValue to value.</remarks>
         internal TA NewValue()
         {
             return valueUpdate.HasValue ? valueUpdate.Value() : value;
