@@ -22,9 +22,12 @@
 
         private void InitializeMouseHandler()
         {
+            // Initialize the Sodium Event
             evt = new Event<MouseEventArgs>();
-            MouseMove += (s, e) => evt.Fire(e);
             evt.Map(Format).Listen(DisplayMousePosition);
+
+            // Register the mouse move event to fire on the Sodium.Event
+            MouseMove += (s, e) => evt.Fire(e);
         }
 
         private void DisplayMousePosition(Tuple<string, string> t)

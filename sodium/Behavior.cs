@@ -129,7 +129,7 @@ namespace Sodium
         /// Sample the behavior's current value.
         /// </summary>
         /// <remarks>
-        /// This should generally be avoided in favour of Value().Listen(..) so you don't
+        /// This should generally be avoided in favor of Value().Listen(..) so you don't
         /// miss any updates, but in many circumstances it makes sense.
         ///
         /// It can be best to use it inside an explicit transaction (using Transaction.Run()).

@@ -2,8 +2,7 @@
 <topic id="89e8c167-b620-4a41-9657-af64fb0101ce" revisionNumber="1">
 	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
 		<introduction>
-			<para>This is a sample conceptual topic.  You can use this as a starting point for adding more conceptual
-content to your help project.</para>
+			<para>Sodium.net is a C# implementation of <externalLink><linkText>Sodium</linkText><linkUri>https://github.com/kentuckyfriedtakahe/sodium</linkUri></externalLink> </para>
 		</introduction>
 
 		<section>

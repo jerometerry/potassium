@@ -64,12 +64,12 @@ namespace Sodium
         }
         
         /// <summary>
-        /// Firings on le will be forwarded to the current Event
+        /// Firings on the given Event will be forwarded to the current Event
         /// </summary>
-        /// <param name="le">Event who's firings will be looped to the current Event</param>
+        /// <param name="eventToLoop">Event who's firings will be looped to the current Event</param>
         /// <remarks>Loop can only be called once on an Event. If Loop is called multiple times,
         /// an ApplicationException will be raised.</remarks>
-        public void Loop(Event<TA> le)
+        public void Loop(Event<TA> eventToLoop)
         {
             AssertNotDisposed();
 
@@ -78,9 +78,9 @@ namespace Sodium
                 throw new ApplicationException("EventLoop looped more than once");
             }
 
-            this.loop = le;
+            this.loop = eventToLoop;
             var evt = this;
-            le.Listen(new SodiumAction<TA>(evt.Fire), evt.Rank);
+            eventToLoop.Listen(new SodiumAction<TA>(evt.Fire), evt.Rank);
         }
 
         /// <summary>
@@ -94,11 +94,10 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Listen for firings of this event. The returned Listener has an Unlisten()
-        /// method to cause the listener to be removed. This is the observer pattern.
+        /// Listen for firings of this event.
         /// </summary>
         /// <param name="action">An Action to be invoked when the current Event fires.</param>
-        /// <returns>An IListener </returns>
+        /// <returns>An IListener, that should be Disposed when no longer needed. </returns>
         public IListener<TA> Listen(Action<TA> action)
         {
             AssertNotDisposed();
@@ -145,23 +144,6 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Create a behavior with the specified initial value, that gets updated
-        /// by the values coming through the event. The 'current value' of the behavior
-        /// is notionally the value as it was 'at the start of the transaction'.
-        /// That is, state updates caused by event firings get processed at the end of
-        /// the transaction.
-        /// </summary>
-        /// <param name="initValue"></param>
-        /// <param name="transaction"></param>
-        /// <returns>A Behavior that updates when the current event is fired,
-        /// having the specified initial value.</returns>
-        public Behavior<TA> Hold(TA initValue, Transaction transaction)
-        {
-            AssertNotDisposed();
-            return new Behavior<TA>(LastFiringOnly(transaction), initValue);
-        }
-
-        /// <summary>
         /// Variant of snapshot that throws away the event's value and captures the behavior's.
         /// </summary>
         public Event<TB> Snapshot<TB>(Behavior<TB> behavior)
@@ -205,24 +187,6 @@ namespace Sodium
         {
             AssertNotDisposed();
             return TransactionContext.Current.Run(t => Coalesce(t, coalesce));
-        }
-
-        /// <summary>
-        /// If there's more than one firing in a single transaction, combine them into
-        /// one using the specified combining function.
-        /// </summary>
-        /// <param name="transaction"></param>
-        /// <param name="coalesce"></param>
-        /// <remarks>
-        /// If the event firings are ordered, then the first will appear at the left
-        /// input of the combining function. In most common cases it's best not to
-        /// make any assumptions about the ordering, and the combining function would
-        /// ideally be commutative.
-        /// </remarks>
-        public Event<TA> Coalesce(Transaction transaction, Func<TA, TA, TA> coalesce)
-        {
-            AssertNotDisposed();
-            return new CoalesceEvent<TA>(this, coalesce, transaction);
         }
 
         /// <summary>
@@ -316,7 +280,7 @@ namespace Sodium
         /// Fire the given value to all registered callbacks
         /// </summary>
         /// <param name="transaction">The transaction to invoke the callbacks on</param>
-        /// <param name="firing">The value to fire to registerd callbacks</param>
+        /// <param name="firing">The value to fire to registered callbacks</param>
         internal virtual void Fire(Transaction transaction, TA firing)
         {
             var noFirings = !firings.Any();
@@ -417,6 +381,10 @@ namespace Sodium
             return null;
         }
 
+        /// <summary>
+        /// Cleanup the current Event, disposing of any listeners.
+        /// </summary>
+        /// <param name="disposing">Whether to dispose of the listeners or not.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposed)
@@ -443,6 +411,24 @@ namespace Sodium
             {
                 listener.Action.Invoke(transaction, firing);
             }
+        }
+
+        /// <summary>
+        /// If there's more than one firing in a single transaction, combine them into
+        /// one using the specified combining function.
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <param name="coalesce"></param>
+        /// <remarks>
+        /// If the event firings are ordered, then the first will appear at the left
+        /// input of the combining function. In most common cases it's best not to
+        /// make any assumptions about the ordering, and the combining function would
+        /// ideally be commutative.
+        /// </remarks>
+        private Event<TA> Coalesce(Transaction transaction, Func<TA, TA, TA> coalesce)
+        {
+            AssertNotDisposed();
+            return new CoalesceEvent<TA>(this, coalesce, transaction);
         }
 
         private void AssertNotDisposed()
@@ -478,7 +464,7 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Anything fired already in this transaction must be refired now so that
+        /// Anything fired already in this transaction must be re-fired now so that
         /// there's no order dependency between send and listen.
         /// </summary>
         /// <param name="transaction"></param>

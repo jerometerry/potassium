@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Sodium.MemoryTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Desire2Learn")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Sodium.MemoryTests")]
-[assembly: AssemblyCopyright("Copyright © Desire2Learn 2014")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

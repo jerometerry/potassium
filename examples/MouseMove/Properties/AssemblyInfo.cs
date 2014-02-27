@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Sodium.Examples.MouseMove")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Desire2Learn")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Sodium.Examples.MouseMove")]
-[assembly: AssemblyCopyright("Copyright © Desire2Learn 2014")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
