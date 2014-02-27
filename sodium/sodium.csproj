@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BehaviorApplyEvent.cs" />
-    <Compile Include="BehaviorApplyHandler.cs" />
     <Compile Include="DelayEvent.cs" />
     <Compile Include="FixedTransactionContext.cs" />
     <Compile Include="SingleTransactionContext.cs" />
