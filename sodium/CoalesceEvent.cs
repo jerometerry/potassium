@@ -12,7 +12,7 @@ namespace Sodium
             this.evt = evt;
             this.coalesce = coalesce;
 
-            var action = new CoalesceCallback<TA>(this, coalesce);
+            var action = new CoalesceAction<TA>(this, coalesce);
             evt.Listen(transaction, action, this.Rank);
         }
 

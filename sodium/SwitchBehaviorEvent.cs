@@ -2,11 +2,11 @@
 {
     internal class SwitchBehaviorEvent<TA> : Event<TA>
     {
-        private SwitchBehaviorCallback<TA> action;
+        private SwitchBehaviorAction<TA> action;
 
         public SwitchBehaviorEvent(Behavior<Behavior<TA>> bba)
         {
-            this.action = new SwitchBehaviorCallback<TA>(this);
+            this.action = new SwitchBehaviorAction<TA>(this);
             bba.Value().Listen(this.action, this.Rank);
         }
 

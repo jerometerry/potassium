@@ -7,8 +7,6 @@
     public partial class Form1 : Form
     {
         private Event<MouseEventArgs> evt;
-        private Transaction transaction;
-        private TransactionContext context;
 
         public Form1()
         {
@@ -24,10 +22,6 @@
 
         private void InitializeMouseHandler()
         {
-            transaction = new Transaction();
-            context = new FixedTransactionContext(transaction);
-            TransactionContext.Current = context;
-
             evt = new Event<MouseEventArgs>();
             MouseMove += (s, e) => evt.Fire(e);
             evt.Map(Format).Listen(DisplayMousePosition);

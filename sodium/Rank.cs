@@ -3,12 +3,24 @@ namespace Sodium
     using System;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// Rank is used to prioritize actions. A Rank has a priority, along with a set of
+    /// superior Ranks. The class invariant is that all superiors must have a higher rank
+    /// than their subordinates.
+    /// </summary>
     public sealed class Rank : IComparable<Rank>
     {
+        /// <summary>
+        /// The Highest Rank possible.
+        /// </summary>
         public static readonly Rank Highest = new Rank(long.MaxValue);
+        
         private readonly ISet<Rank> superiors = new HashSet<Rank>();
         private long priority;
 
+        /// <summary>
+        /// Constructs a new Rank, of priority zero.
+        /// </summary>
         public Rank() 
             : this(0L)
         {
@@ -19,6 +31,21 @@ namespace Sodium
             this.priority = priority;
         }
 
+        /// <summary>
+        /// Gets the priority of the current Rank
+        /// </summary>
+        public long Priority
+        {
+            get { return priority; }
+        }
+
+        /// <summary>
+        /// Compare two Ranks, by comparing their priorities.
+        /// </summary>
+        /// <param name="rank">The Rank to compare against the current Rank</param>
+        /// <returns>Negative value if the current rank is less than the given rank,
+        /// positive value if the current rank is greater than the given rank, zero
+        /// if the priorities are equal.</returns>
         public int CompareTo(Rank rank)
         {
             return this.priority.CompareTo(rank.priority);
@@ -44,6 +71,11 @@ namespace Sodium
             return changed;
         }
 
+        /// <summary>
+        /// Remove the given rank from the list of superiors of the current Rank
+        /// </summary>
+        /// <param name="superior">Rank to be removed as a superior of the current Rank</param>
+        /// <returns>True if the superior was removed, false otherwise</returns>
         public bool RemoveSuperior(Rank superior)
         {
             if (superior == Highest)

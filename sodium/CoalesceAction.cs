@@ -2,13 +2,13 @@ namespace Sodium
 {
     using System;
 
-    internal sealed class CoalesceCallback<TA> : ISodiumAction<TA>
+    internal sealed class CoalesceAction<TA> : ISodiumAction<TA>
     {
         private readonly Func<TA, TA, TA> coalesce;
         private readonly Event<TA> evt;
         private Maybe<TA> accum = Maybe<TA>.Null;
 
-        public CoalesceCallback(Event<TA> evt, Func<TA, TA, TA> coalesce)
+        public CoalesceAction(Event<TA> evt, Func<TA, TA, TA> coalesce)
         {
             this.evt = evt;
             this.coalesce = coalesce;

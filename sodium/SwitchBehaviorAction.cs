@@ -2,13 +2,13 @@ namespace Sodium
 {
     using System;
 
-    internal sealed class SwitchBehaviorCallback<TA> : ISodiumAction<Behavior<TA>>, IDisposable
+    internal sealed class SwitchBehaviorAction<TA> : ISodiumAction<Behavior<TA>>, IDisposable
     {
         private readonly Event<TA> sink;
         private IListener<TA> listener;
         private bool disposed;
 
-        public SwitchBehaviorCallback(Event<TA> sink)
+        public SwitchBehaviorAction(Event<TA> sink)
         {
             this.sink = sink;
         }

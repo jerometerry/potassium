@@ -6,7 +6,7 @@ namespace Sodium
     /// A Behavior is a time varying value
     /// </summary>
     /// <remarks>Behaviors generally change over time, but constant behaviors are ones that choose not to.</remarks>
-    /// <typeparam name="TA"></typeparam>
+    /// <typeparam name="TA">The type of values that will be fired through the behavior.</typeparam>
     public sealed class Behavior<TA> : IDisposable
     {
         private TA value;
@@ -34,6 +34,14 @@ namespace Sodium
             this.evt = evt;
             this.value = initValue;
             ListenForEventFirings();
+        }
+
+        /// <summary>
+        /// Gets whether the current Behavior has been disposed
+        /// </summary>
+        public bool Disposed
+        {
+            get { return disposed; }
         }
 
         /// <summary>
@@ -94,6 +102,12 @@ namespace Sodium
             return a.Lift(f, b, c);
         }
 
+        /// <summary>
+        /// Firings on b will be forwarded to the current Behavior
+        /// </summary>
+        /// <param name="b">Behavior who's firings will be looped to the current Behavior</param>
+        /// <remarks>Loop can only be called once on a Behavior. If Loop is called multiple times,
+        /// an ApplicationException will be raised.</remarks>
         public void Loop(Behavior<TA> b)
         {
             AssertNotDisposed();
@@ -101,6 +115,10 @@ namespace Sodium
             value = b.Sample();
         }
 
+        /// <summary>
+        /// Fire the given value to all registered listeners 
+        /// </summary>
+        /// <param name="a">The value to be fired</param>
         public void Fire(TA a)
         {
             AssertNotDisposed();

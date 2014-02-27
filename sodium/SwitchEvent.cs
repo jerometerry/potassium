@@ -2,12 +2,12 @@
 {
     internal class SwitchEvent<TA> : Event<TA>
     {
-        private SwitchEventCallback<TA> eventSwitchCallback;
+        private SwitchEventAction<TA> eventSwitchCallback;
 
         public SwitchEvent(Transaction transaction, Behavior<Event<TA>> behavior)
         {
             var action = new SodiumAction<TA>(this.Fire);
-            eventSwitchCallback = new SwitchEventCallback<TA>(behavior, this, transaction, action);
+            eventSwitchCallback = new SwitchEventAction<TA>(behavior, this, transaction, action);
             behavior.Updates().Listen(transaction, eventSwitchCallback, this.Rank);
         }
 

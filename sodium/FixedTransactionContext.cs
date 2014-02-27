@@ -2,16 +2,30 @@ namespace Sodium
 {
     using System;
 
+    /// <summary>
+    /// FixedTransactionContext is a TransactionContext that uses a single (fixed) Transaction
+    /// throughout it's lifetime.
+    /// </summary>
     public sealed class FixedTransactionContext : TransactionContext, IDisposable
     {
         private Transaction transaction;
         private bool disposed;
 
+        /// <summary>
+        /// Creates a new FixedTransactionContext
+        /// </summary>
+        /// <param name="transaction">The fixed Transaction</param>
         public FixedTransactionContext(Transaction transaction)
         {
             this.transaction = transaction;
         }
 
+        /// <summary>
+        /// Run the given function on the fixed transaction
+        /// </summary>
+        /// <typeparam name="TA">The return value of the supplied function</typeparam>
+        /// <param name="f">The function to run on the fixed Transaction</param>
+        /// <returns>The result of calling the specified function</returns>
         public override TA Run<TA>(Func<Transaction, TA> f)
         {
             lock (Constants.TransactionLock)
@@ -27,6 +41,9 @@ namespace Sodium
             }
         }
 
+        /// <summary>
+        /// Releases the current FixedTransactionContext, and it's fixed Transaction.
+        /// </summary>
         public void Dispose()
         {
             if (this.disposed)

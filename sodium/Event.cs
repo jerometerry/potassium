@@ -7,7 +7,7 @@ namespace Sodium
     /// <summary>
     /// An Event is a stream of discrete event occurrences
     /// </summary>
-    /// <typeparam name="TA"></typeparam>
+    /// <typeparam name="TA">The type of values that will be fired through the event.</typeparam>
     public class Event<TA> : IDisposable
     {
         private readonly List<Listener<TA>> listeners = new List<Listener<TA>>();
@@ -20,6 +20,14 @@ namespace Sodium
 
         private Event<TA> loop;
         private bool disposed;
+
+        /// <summary>
+        /// Gets whether the current Event has been disposed
+        /// </summary>
+        public bool Disposed
+        {
+            get { return disposed; }
+        }
 
         internal Rank Rank
         {
@@ -56,7 +64,7 @@ namespace Sodium
         }
         
         /// <summary>
-        /// Events fired on le will be forwarded to the current Event
+        /// Firings on le will be forwarded to the current Event
         /// </summary>
         /// <param name="le">Event who's firings will be looped to the current Event</param>
         /// <remarks>Loop can only be called once on an Event. If Loop is called multiple times,
@@ -78,7 +86,7 @@ namespace Sodium
         /// <summary>
         /// Fire the given value to all registered listeners 
         /// </summary>
-        /// <param name="a"></param>
+        /// <param name="a">The value to be fired</param>
         public void Fire(TA a)
         {
             AssertNotDisposed();
@@ -97,31 +105,18 @@ namespace Sodium
             return Listen(new SodiumAction<TA>((t, a) => action(a)), Rank.Highest);
         }
 
+        /// <summary>
+        /// Similar to Listener, except that previous firings will not be re-fired.
+        /// </summary>
+        /// <param name="action">The action to invoke on a firing</param>
+        /// <returns>An IListener to be used to stop listening for events.</returns>
+        /// <remarks>It's more common for the Listen method to be used instead of ListenSuppressed.
+        /// You may want to use ListenSuppressed if the action will be triggered as part of a call
+        /// to Listen.</remarks>
         public IListener<TA> ListenSuppressed(Action<TA> action)
         {
             AssertNotDisposed();
             return ListenSuppressed(new SodiumAction<TA>((t, a) => action(a)), Rank.Highest);
-        }
-
-        /// <summary>
-        /// Stop the current listener from receiving updates from the current Event
-        /// </summary>
-        /// <param name="listener">The listener to remove</param>
-        /// <returns>True if the listener was removed, false otherwise</returns>
-        public bool RemoveListener(IListener<TA> listener)
-        {
-            AssertNotDisposed();
-            var l = listener as Listener<TA>;
-            if (l == null || l.Disposed)
-            {
-                return false;
-            }
-
-            lock (Constants.ListenersLock)
-            {
-                Rank.RemoveSuperior(l.Rank);
-                return this.listeners.Remove(l);
-            }
         }
 
         /// <summary>
@@ -374,7 +369,7 @@ namespace Sodium
         /// <remarks>Any firings that have occurred on the current transaction will be re-fired immediate after listening.</remarks>
         internal IListener<TA> Listen(Transaction transaction, ISodiumAction<TA> action, Rank superior)
         {
-            var listener = this.RegisterListener(transaction, action, superior);
+            var listener = this.CreateListener(transaction, action, superior);
             InitialFire(transaction, listener);
             Refire(transaction, listener);
             return listener;
@@ -386,23 +381,31 @@ namespace Sodium
             return ListenSuppressed(transaction, new SodiumAction<TA>((t, a) => action(a)), Rank.Highest);
         }
 
-        /// <summary>
-        /// Similar to Listener, except that previous firings will not be re-fired.
-        /// </summary>
-        /// <param name="transaction">Transaction to send any firings on</param>
-        /// <param name="action">The action to invoke on a firing</param>
-        /// <param name="superior">An IListener to be used to stop listening for events.</param>
-        /// <returns>An IListener to be used to stop listening for events.</returns>
-        /// <remarks>It's more common for the Listen method to be used instead of ListenSuppressed.
-        /// You may want to use ListenSuppressed if the action will be triggered as part of a call
-        /// to Listen.
-        /// 
-        /// The only present use of ListenSuppressed is in the call chain of Behavior.SwitchE.</remarks>
         internal IListener<TA> ListenSuppressed(Transaction transaction, ISodiumAction<TA> action, Rank superior)
         {
-            var listener = this.RegisterListener(transaction, action, superior);
+            var listener = this.CreateListener(transaction, action, superior);
             InitialFire(transaction, listener);
             return listener;
+        }
+
+        /// <summary>
+        /// Stop the given listener from receiving updates from the current Event
+        /// </summary>
+        /// <param name="listener">The listener to remove</param>
+        /// <returns>True if the listener was removed, false otherwise</returns>
+        internal bool RemoveListener(Listener<TA> listener)
+        {
+            AssertNotDisposed();
+            if (listener == null || listener.Disposed)
+            {
+                return false;
+            }
+
+            lock (Constants.ListenersLock)
+            {
+                Rank.RemoveSuperior(listener.Rank);
+                return this.listeners.Remove(listener);
+            }
         }
 
         /// <summary>
@@ -450,7 +453,7 @@ namespace Sodium
             }
         }
 
-        private Listener<TA> RegisterListener(Transaction transaction, ISodiumAction<TA> action, Rank superior)
+        private Listener<TA> CreateListener(Transaction transaction, ISodiumAction<TA> action, Rank superior)
         {
             lock (Constants.ListenersLock)
             {
