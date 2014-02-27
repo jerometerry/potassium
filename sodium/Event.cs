@@ -10,7 +10,7 @@ namespace Sodium
     /// <typeparam name="TA">The type of values that will be fired through the event.</typeparam>
     public class Event<TA> : IDisposable
     {
-        private readonly List<Listener<TA>> listeners = new List<Listener<TA>>();
+        private readonly List<EventListener<TA>> listeners = new List<EventListener<TA>>();
         private readonly List<TA> firings = new List<TA>();
         
         /// <summary>
@@ -98,7 +98,7 @@ namespace Sodium
         /// </summary>
         /// <param name="action">An Action to be invoked when the current Event fires.</param>
         /// <returns>An IListener, that should be Disposed when no longer needed. </returns>
-        public IListener<TA> Listen(Action<TA> action)
+        public IEventListener<TA> Listen(Action<TA> action)
         {
             AssertNotDisposed();
             return Listen(new SodiumAction<TA>((t, a) => action(a)), Rank.Highest);
@@ -112,7 +112,7 @@ namespace Sodium
         /// <remarks>It's more common for the Listen method to be used instead of ListenSuppressed.
         /// You may want to use ListenSuppressed if the action will be triggered as part of a call
         /// to Listen.</remarks>
-        public IListener<TA> ListenSuppressed(Action<TA> action)
+        public IEventListener<TA> ListenSuppressed(Action<TA> action)
         {
             AssertNotDisposed();
             return ListenSuppressed(new SodiumAction<TA>((t, a) => action(a)), Rank.Highest);
@@ -291,7 +291,7 @@ namespace Sodium
 
             firings.Add(firing);
 
-            var clone = new List<Listener<TA>>(this.listeners);
+            var clone = new List<EventListener<TA>>(this.listeners);
             foreach (var listener in clone)
             {
                 listener.Action.Invoke(transaction, firing);
@@ -307,17 +307,17 @@ namespace Sodium
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Listen operation that takes a thread. This ensures that any other
         /// actions triggered during Listen requiring a transaction all get the same instance.</remarks>
-        internal IListener<TA> Listen(ISodiumAction<TA> action, Rank superior)
+        internal IEventListener<TA> Listen(ISodiumAction<TA> action, Rank superior)
         {
             return TransactionContext.Current.Run(t => this.Listen(t, action, superior));
         }
 
-        internal IListener<TA> ListenSuppressed(ISodiumAction<TA> action, Rank superior)
+        internal IEventListener<TA> ListenSuppressed(ISodiumAction<TA> action, Rank superior)
         {
             return TransactionContext.Current.Run(t => this.ListenSuppressed(t, action, superior));
         }
 
-        internal IListener<TA> Listen(Transaction transaction, Action<TA> action)
+        internal IEventListener<TA> Listen(Transaction transaction, Action<TA> action)
         {
             AssertNotDisposed();
             return Listen(transaction, new SodiumAction<TA>((t, a) => action(a)), Rank.Highest);
@@ -331,7 +331,7 @@ namespace Sodium
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An IListener to be used to stop listening for events.</returns>
         /// <remarks>Any firings that have occurred on the current transaction will be re-fired immediate after listening.</remarks>
-        internal IListener<TA> Listen(Transaction transaction, ISodiumAction<TA> action, Rank superior)
+        internal IEventListener<TA> Listen(Transaction transaction, ISodiumAction<TA> action, Rank superior)
         {
             var listener = this.CreateListener(transaction, action, superior);
             InitialFire(transaction, listener);
@@ -339,13 +339,13 @@ namespace Sodium
             return listener;
         }
 
-        internal IListener<TA> ListenSuppressed(Transaction transaction, Action<TA> action)
+        internal IEventListener<TA> ListenSuppressed(Transaction transaction, Action<TA> action)
         {
             AssertNotDisposed();
             return ListenSuppressed(transaction, new SodiumAction<TA>((t, a) => action(a)), Rank.Highest);
         }
 
-        internal IListener<TA> ListenSuppressed(Transaction transaction, ISodiumAction<TA> action, Rank superior)
+        internal IEventListener<TA> ListenSuppressed(Transaction transaction, ISodiumAction<TA> action, Rank superior)
         {
             var listener = this.CreateListener(transaction, action, superior);
             InitialFire(transaction, listener);
@@ -355,20 +355,20 @@ namespace Sodium
         /// <summary>
         /// Stop the given listener from receiving updates from the current Event
         /// </summary>
-        /// <param name="listener">The listener to remove</param>
+        /// <param name="eventListener">The listener to remove</param>
         /// <returns>True if the listener was removed, false otherwise</returns>
-        internal bool RemoveListener(Listener<TA> listener)
+        internal bool RemoveListener(EventListener<TA> eventListener)
         {
             AssertNotDisposed();
-            if (listener == null || listener.Disposed)
+            if (eventListener == null || eventListener.Disposed)
             {
                 return false;
             }
 
             lock (Constants.ListenersLock)
             {
-                Rank.RemoveSuperior(listener.Rank);
-                return this.listeners.Remove(listener);
+                Rank.RemoveSuperior(eventListener.Rank);
+                return this.listeners.Remove(eventListener);
             }
         }
 
@@ -405,11 +405,11 @@ namespace Sodium
             disposed = true;
         }
 
-        private static void Fire(Transaction transaction, Listener<TA> listener, IEnumerable<TA> firings)
+        private static void Fire(Transaction transaction, EventListener<TA> eventListener, IEnumerable<TA> firings)
         {
             foreach (var firing in firings)
             {
-                listener.Action.Invoke(transaction, firing);
+                eventListener.Action.Invoke(transaction, firing);
             }
         }
 
@@ -439,7 +439,7 @@ namespace Sodium
             }
         }
 
-        private Listener<TA> CreateListener(Transaction transaction, ISodiumAction<TA> action, Rank superior)
+        private EventListener<TA> CreateListener(Transaction transaction, ISodiumAction<TA> action, Rank superior)
         {
             lock (Constants.ListenersLock)
             {
@@ -448,18 +448,18 @@ namespace Sodium
                     transaction.Reprioritize = true;
                 }
 
-                var listener = new Listener<TA>(this, action, superior);
+                var listener = new EventListener<TA>(this, action, superior);
                 this.listeners.Add(listener);
                 return listener;
             }
         }
 
-        private void InitialFire(Transaction transaction, Listener<TA> listener)
+        private void InitialFire(Transaction transaction, EventListener<TA> eventListener)
         {
             var initialFirings = InitialFirings();
             if (initialFirings != null)
             {
-                Fire(transaction, listener, initialFirings);
+                Fire(transaction, eventListener, initialFirings);
             }
         }
 
@@ -468,10 +468,10 @@ namespace Sodium
         /// there's no order dependency between send and listen.
         /// </summary>
         /// <param name="transaction"></param>
-        /// <param name="listener"></param>
-        private void Refire(Transaction transaction, Listener<TA> listener)
+        /// <param name="eventListener"></param>
+        private void Refire(Transaction transaction, EventListener<TA> eventListener)
         {
-            Fire(transaction, listener, firings);
+            Fire(transaction, eventListener, firings);
         }
     }
 }

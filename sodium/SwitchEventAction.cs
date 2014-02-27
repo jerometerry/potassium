@@ -6,14 +6,14 @@ namespace Sodium
     {
         private readonly Event<TA> evt;
         private readonly ISodiumAction<TA> action;
-        private IListener<TA> listener;
+        private IEventListener<TA> eventListener;
         private bool disposed;
 
         public SwitchEventAction(Behavior<Event<TA>> bea, Event<TA> evt, Transaction t, ISodiumAction<TA> h)
         {
             this.evt = evt;
             this.action = h;
-            this.listener = bea.Sample().Listen(t, h, evt.Rank);
+            this.eventListener = bea.Sample().Listen(t, h, evt.Rank);
         }
 
         public void Dispose()
@@ -23,10 +23,10 @@ namespace Sodium
                 return;
             }
 
-            if (listener != null)
+            if (this.eventListener != null)
             {
-                listener.Dispose();
-                listener = null;
+                this.eventListener.Dispose();
+                this.eventListener = null;
             }
 
             disposed = true;
@@ -36,12 +36,12 @@ namespace Sodium
         {
             transaction.Last(() =>
             {
-                if (listener != null)
+                if (this.eventListener != null)
                 { 
-                    listener.Dispose();
+                    this.eventListener.Dispose();
                 }
 
-                listener = newEvent.ListenSuppressed(transaction, this.action, evt.Rank);
+                this.eventListener = newEvent.ListenSuppressed(transaction, this.action, evt.Rank);
             });
         }
     }

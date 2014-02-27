@@ -3,8 +3,8 @@ namespace Sodium
     internal sealed class OnceEvent<TA> : Event<TA>
     {
         private readonly Event<TA> evt;
-        private readonly IListener<TA>[] listeners;
-        private IListener<TA> listener;
+        private readonly IEventListener<TA>[] eventListeners;
+        private IEventListener<TA> eventListener;
 
         public OnceEvent(Event<TA> evt)
         {
@@ -12,12 +12,12 @@ namespace Sodium
 
             // This is a bit long-winded but it's efficient because it deregisters
             // the listener.
-            this.listeners = new IListener<TA>[1];
-            this.listeners[0] = evt.Listen(new SodiumAction<TA>((t, a) => this.Fire(this.listeners, t, a)), this.Rank);
-            listener = this.listeners[0];
+            this.eventListeners = new IEventListener<TA>[1];
+            this.eventListeners[0] = evt.Listen(new SodiumAction<TA>((t, a) => this.Fire(this.eventListeners, t, a)), this.Rank);
+            this.eventListener = this.eventListeners[0];
         }
 
-        public void Fire(IListener<TA>[] la, Transaction t, TA a)
+        public void Fire(IEventListener<TA>[] la, Transaction t, TA a)
         {
             this.Fire(t, a);
             if (la[0] == null)
@@ -43,16 +43,16 @@ namespace Sodium
                 results = new[] { firings[0] };
             }
 
-            if (listeners[0] != null)
+            if (this.eventListeners[0] != null)
             {
-                listeners[0].Dispose();
-                listeners[0] = null;
+                this.eventListeners[0].Dispose();
+                this.eventListeners[0] = null;
             }
 
-            if (listener != null)
+            if (this.eventListener != null)
             {
-                listener.Dispose();
-                listener = null;
+                this.eventListener.Dispose();
+                this.eventListener = null;
             }
 
             return results;

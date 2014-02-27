@@ -61,8 +61,8 @@
     <Compile Include="SwitchBehaviorEvent.cs" />
     <Compile Include="SwitchEventAction.cs" />
     <Compile Include="FilterEvent.cs" />
-    <Compile Include="IListener.cs" />
-    <Compile Include="Listener.cs" />
+    <Compile Include="IEventListener.cs" />
+    <Compile Include="EventListener.cs" />
     <Compile Include="MapEvent.cs" />
     <Compile Include="Maybe.cs" />
     <Compile Include="MergeEvent.cs" />

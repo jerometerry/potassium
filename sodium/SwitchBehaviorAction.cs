@@ -5,7 +5,7 @@ namespace Sodium
     internal sealed class SwitchBehaviorAction<TA> : ISodiumAction<Behavior<TA>>, IDisposable
     {
         private readonly Event<TA> sink;
-        private IListener<TA> listener;
+        private IEventListener<TA> eventListener;
         private bool disposed;
 
         public SwitchBehaviorAction(Event<TA> sink)
@@ -20,10 +20,10 @@ namespace Sodium
                 return;
             }
 
-            if (listener != null)
+            if (this.eventListener != null)
             {
-                listener.Dispose();
-                listener = null;
+                this.eventListener.Dispose();
+                this.eventListener = null;
             }
 
             disposed = true;
@@ -37,13 +37,13 @@ namespace Sodium
             // using Value().Listen, and Value() throws away all firings except
             // for the last one. Therefore, anything from the old input behaviour
             // that might have happened during this transaction will be suppressed.
-            if (listener != null)
+            if (this.eventListener != null)
             { 
-                listener.Dispose();
+                this.eventListener.Dispose();
             }
 
             var evt = behavior.Value(transaction);
-            listener = evt.Listen(transaction, new SodiumAction<TA>((t, a) => sink.Fire(t, a)), sink.Rank);
+            this.eventListener = evt.Listen(transaction, new SodiumAction<TA>((t, a) => sink.Fire(t, a)), sink.Rank);
         }
     }
 }
