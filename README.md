@@ -11,6 +11,4 @@ Check out the [wiki](https://github.com/jerometerry/sodium.net/wiki) for more in
 
 Sodium.net API [documentation](http://jterry.azurewebsites.net/sodium.net/)
 
-Below is the Copyright from the Sodium Project
-==========
-[Copyright (c) 2012, Stephen Blackheath and Anthony Jones All rights reserved.](https://github.com/kentuckyfriedtakahe/sodium/blob/master/COPYING)
+[Sodium](https://github.com/kentuckyfriedtakahe/sodium) [Copyright](https://github.com/kentuckyfriedtakahe/sodium/blob/master/COPYING)
