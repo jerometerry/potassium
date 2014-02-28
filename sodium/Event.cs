@@ -149,7 +149,14 @@ namespace Sodium
         {
             AssertNotDisposed();
             var evt = this;
-            return TransactionContext.Current.Run(t => new Behavior<TA>(evt.LastFiringOnly(t, true), initValue, allowAutoDispose) { Originator = evt });
+            return TransactionContext.Current.Run(t =>
+                {
+                    var f = evt.LastFiringOnly(t, false);
+                    var b = new Behavior<TA>(f, initValue, allowAutoDispose)
+                        { Originator = evt };
+                    b.RegisterFinalizer(f);
+                    return b;
+                });
         }
 
         /// <summary>
@@ -284,10 +291,10 @@ namespace Sodium
             var evt = ebs.Map(bs => bs.Item2, true);
             es.Loop(evt);
             
-            eb.RegisterFinalizer(es);
-            eb.RegisterFinalizer(s);
-            eb.RegisterFinalizer(ebs);
-            eb.RegisterFinalizer(evt);
+            eb.RegisterAutoFinalizer(es);
+            eb.RegisterAutoFinalizer(s);
+            eb.RegisterAutoFinalizer(ebs);
+            eb.RegisterAutoFinalizer(evt);
             
             return eb;
         }
@@ -310,9 +317,9 @@ namespace Sodium
             
             var result = snapshotEvent.Hold(initState, allowAutoDispose);
 
-            result.RegisterFinalizer(evt);
-            result.RegisterFinalizer(behavior);
-            result.RegisterFinalizer(snapshotEvent);
+            result.RegisterAutoFinalizer(evt);
+            result.RegisterAutoFinalizer(behavior);
+            result.RegisterAutoFinalizer(snapshotEvent);
 
             return result;
         }
@@ -466,6 +473,8 @@ namespace Sodium
                     listener.AutoDispose();
                 }
             }
+
+            base.Dispose(disposing);
         }
 
         private static void Fire(Transaction transaction, EventListener<TA> eventListener, IEnumerable<TA> firings)

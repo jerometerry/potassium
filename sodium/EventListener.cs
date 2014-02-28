@@ -29,6 +29,8 @@ namespace Sodium
                 Action = null;
                 Rank = null;
             }
+
+            base.Dispose(disposing);
         }
     }
 }

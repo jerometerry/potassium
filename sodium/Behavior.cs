@@ -88,7 +88,7 @@ namespace Sodium
         {
             var sink = new BehaviorApplyEvent<TA, TB>(bf, ba, true, allowAutoDispose);
             var behavior = sink.Behavior;
-            behavior.RegisterFinalizer(sink);
+            behavior.RegisterAutoFinalizer(sink);
             return behavior;
         }
 
@@ -106,7 +106,7 @@ namespace Sodium
             var initValue = innerBehavior.Sample();
             var sink = new SwitchBehaviorEvent<TA>(bba, true);
             var result = sink.Hold(initValue, allowAutoDispose);
-            result.RegisterFinalizer(sink);
+            result.RegisterAutoFinalizer(sink);
             return result;
         }
 
@@ -236,7 +236,7 @@ namespace Sodium
             // Creates a new Behavior and a new Event
             var behavior = mapEvent.Hold(mappedValue, allowAutoDispose);
             
-            behavior.RegisterFinalizer(mapEvent);
+            behavior.RegisterAutoFinalizer(mapEvent);
 
             return behavior;
         }
@@ -255,7 +255,7 @@ namespace Sodium
             Func<TA, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
             var bf = Map(ffa, true);
             var result = Behavior<TB>.Apply(bf, behavior, allowAutoDispose);
-            result.RegisterFinalizer(bf);
+            result.RegisterAutoFinalizer(bf);
             return result;
         }
 
@@ -281,11 +281,11 @@ namespace Sodium
             loop.Loop(coalesceSnapshotEvent);
             
             var result = loopBehavior.Map(x => x.Item1, allowAutoDispose);
-            result.RegisterFinalizer(coalesceEvent);
-            result.RegisterFinalizer(loop);
-            result.RegisterFinalizer(loopBehavior);
-            result.RegisterFinalizer(snapshotBehavior);
-            result.RegisterFinalizer(coalesceSnapshotEvent);
+            result.RegisterAutoFinalizer(coalesceEvent);
+            result.RegisterAutoFinalizer(loop);
+            result.RegisterAutoFinalizer(loopBehavior);
+            result.RegisterAutoFinalizer(snapshotBehavior);
+            result.RegisterAutoFinalizer(coalesceSnapshotEvent);
 
             return result;
         }
@@ -301,8 +301,8 @@ namespace Sodium
             var l1 = Behavior<TB>.Apply(bf, b, true);
 
             var result = Behavior<TC>.Apply(l1, c, allowAutoDispose);
-            result.RegisterFinalizer(bf);
-            result.RegisterFinalizer(l1);
+            result.RegisterAutoFinalizer(bf);
+            result.RegisterAutoFinalizer(l1);
             return result;
         }
 
@@ -348,7 +348,7 @@ namespace Sodium
             // Needed in case of an initial value and an update
             // in the same transaction.
             var result = valueEvent.LastFiringOnly(transaction, allowAutoDispose);
-            result.RegisterFinalizer(valueEvent);
+            result.RegisterAutoFinalizer(valueEvent);
             return result;
         }
 
@@ -370,6 +370,8 @@ namespace Sodium
                     this.Event = null;
                 }
             }
+
+            base.Dispose(disposing);
         }
 
         /// <summary>

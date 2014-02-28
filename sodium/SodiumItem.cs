@@ -10,7 +10,10 @@
     {
         private static long sequence = 1;
 
-        private readonly long id;
+        /// <summary>
+        /// List of items that will be auto disposed of when the current SodiumItem is disposed
+        /// </summary>
+        private List<SodiumItem> autoFinalizers;
 
         /// <summary>
         /// List of items that will be disposed of when the current SodiumItem is disposed
@@ -19,12 +22,15 @@
 
         protected SodiumItem(bool allowAutoDispose)
         {
-            id = sequence++;
-            finalizers = new List<SodiumItem>();
+            this.Id = sequence++;
+            this.autoFinalizers = new List<SodiumItem>();
+            this.finalizers = new List<SodiumItem>();
             Metrics.LiveItems.Add(this);
             AllowAutoDispose = allowAutoDispose;
             Metrics.ItemAllocations++;
         }
+
+        public long Id { get; private set; }
 
         public SodiumItem Originator { get; set; }
 
@@ -52,7 +58,12 @@
 
         public override int GetHashCode()
         {
-            return this.id.GetHashCode();
+            return this.Id.GetHashCode();
+        }
+
+        public void RegisterAutoFinalizer(SodiumItem item)
+        {
+            this.autoFinalizers.Add(item);
         }
 
         public void RegisterFinalizer(SodiumItem item)
@@ -62,7 +73,7 @@
 
         public override bool Equals(object obj)
         {
-            return this.id == ((SodiumItem)obj).id;
+            return this.Id == ((SodiumItem)obj).Id;
         }
 
         /// <summary>
@@ -112,14 +123,25 @@
         {
             if (disposing)
             {
-                if (finalizers != null && finalizers.Count > 0)
+                if (this.autoFinalizers != null && this.autoFinalizers.Count > 0)
                 {
-                    var clone = new List<SodiumItem>(finalizers);
-                    finalizers.Clear();
-                    finalizers = null;
+                    var clone = new List<SodiumItem>(this.autoFinalizers);
+                    this.autoFinalizers.Clear();
+                    this.autoFinalizers = null;
                     foreach (var item in clone)
                     {
                         item.AutoDispose();
+                    }
+                }
+
+                if (this.finalizers != null && this.finalizers.Count > 0)
+                {
+                    var clone = new List<SodiumItem>(this.finalizers);
+                    this.finalizers.Clear();
+                    this.finalizers = null;
+                    foreach (var item in clone)
+                    {
+                        item.Dispose();
                     }
                 }
             }
