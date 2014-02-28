@@ -60,7 +60,7 @@
         /// Get the list of items created that have not been disposed.
         /// </summary>
         /// <returns>An IEnumerable of live items</returns>
-        public static IEnumerable<SodiumItem> GetLiveItems()
+        public static SodiumItem[] GetLiveItems()
         {
             return LiveItems.ToArray();
         }

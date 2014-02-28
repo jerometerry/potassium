@@ -7,7 +7,6 @@ namespace Sodium.MemoryTests
     [TestFixture]
     public class MemoryTest1
     {
-        [TestCase(100)]
         [TestCase(1000000000)]
         public void Test(int iterations)
         {
@@ -75,12 +74,34 @@ namespace Sodium.MemoryTests
                 i++;
             }
 
+            listener.Dispose();
+
             DisposeFinalizers(finalizers);
             DisposeFinalizers(behaviorMapFinalizers);
 
-            listener.Dispose();
-            
-            //Assert.AreEqual(0, Metrics.LiveItemCount);
+            DumpLIveItems();
+
+            Assert.AreEqual(0, Metrics.LiveItemCount);
+        }
+
+        private static void DumpLIveItems()
+        {
+            var live = Metrics.GetLiveItems();
+            if (live != null && live.Length > 0)
+            {
+                OutputMessage("The following SodiumItems were not disposed during this test");
+                foreach (var item in live)
+                {
+                    var msg = string.Format("{0} {1} {2}", item.Id, item.GetType(), item.Description);
+                    OutputMessage(msg);
+                }
+            }
+        }
+
+        private static void OutputMessage(string msg)
+        {
+            System.Diagnostics.Debug.WriteLine(msg);
+            Console.WriteLine(msg);
         }
 
         private static void DisposeFinalizers(List<SodiumItem> items)
@@ -89,6 +110,7 @@ namespace Sodium.MemoryTests
             {
                 item.Dispose();
             }
+
             items.Clear();
         }
 
@@ -98,6 +120,7 @@ namespace Sodium.MemoryTests
             {
                 item.AutoDispose();
             }
+
             items.Clear();
         }
     }
