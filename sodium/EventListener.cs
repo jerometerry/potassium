@@ -2,8 +2,7 @@ namespace Sodium
 {
     internal sealed class EventListener<TA> : SodiumItem, IEventListener<TA>
     {
-        public EventListener(Event<TA> evt, ISodiumAction<TA> action, Rank rank, bool allowAutoDispose)
-            : base(allowAutoDispose)
+        public EventListener(Event<TA> evt, ISodiumAction<TA> action, Rank rank)
         {
             this.Event = evt;
             this.Action = action;
@@ -16,21 +15,18 @@ namespace Sodium
 
         public Event<TA> Event { get; private set; }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
+            if (this.Event != null)
             {
-                if (this.Event != null)
-                {
-                    this.Event.RemoveListener(this);
-                    this.Event = null;
-                }
-
-                Action = null;
-                Rank = null;
+                this.Event.RemoveListener(this);
+                this.Event = null;
             }
 
-            base.Dispose(disposing);
+            Action = null;
+            Rank = null;
+
+            base.Close();
         }
     }
 }

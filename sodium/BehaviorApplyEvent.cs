@@ -14,8 +14,7 @@
         /// </summary>
         private bool fired;
 
-        public BehaviorApplyEvent(Behavior<Func<TA, TB>> bf, Behavior<TA> ba, bool allowAutoDispose, bool allowBehaviorAutoDispose)
-            : base(allowAutoDispose)
+        public BehaviorApplyEvent(Behavior<Func<TA, TB>> bf, Behavior<TA> ba)
         {
             this.bf = bf;
             this.ba = ba;
@@ -23,44 +22,40 @@
             var functionChanged = new SodiumAction<Func<TA, TB>>((t, f) => ScheduledPrioritizedFire(t));
             var valueChanged = new SodiumAction<TA>((t, a) => ScheduledPrioritizedFire(t));
 
-            l1 = bf.Updates().Listen(functionChanged, this.Rank, true);
-            l2 = ba.Updates().Listen(valueChanged, this.Rank, true);
+            l1 = bf.Updates().Listen(functionChanged, this.Rank);
+            l2 = ba.Updates().Listen(valueChanged, this.Rank);
 
             var map = bf.Sample();
             var valA = ba.Sample();
             var valB = map(valA);
-            this.Behavior = this.Hold(valB, allowBehaviorAutoDispose);
+            this.Behavior = this.Hold(valB);
         }
 
         public Behavior<TB> Behavior { get; private set; }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
+            if (this.Behavior != null)
             {
-                if (this.Behavior != null)
-                {
-                    this.Behavior.AutoDispose();
-                    this.Behavior = null;
-                }
-
-                if (l1 != null)
-                {
-                    l1.AutoDispose();
-                    l1 = null;
-                }
-
-                if (l2 != null)
-                {
-                    l2.AutoDispose();
-                    l2 = null;
-                }
-
-                bf = null;
-                ba = null;
+                this.Behavior = null;
             }
 
-            base.Dispose(disposing);
+            if (l1 != null)
+            {
+                l1.Close();
+                l1 = null;
+            }
+
+            if (l2 != null)
+            {
+                l2.Close();
+                l2 = null;
+            }
+
+            bf = null;
+            ba = null;
+
+            base.Close();
         }
 
         /// <summary>

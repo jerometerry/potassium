@@ -4,25 +4,21 @@
     {
         private IEventListener<TA> listener;
 
-        public DelayEvent(Event<TA> evt, bool allowAutoDispose)
-            : base(allowAutoDispose)
+        public DelayEvent(Event<TA> evt)
         {
             var action = new SodiumAction<TA>((t, a) => t.Post(() => this.Fire(a)));
-            this.listener = evt.Listen(action, this.Rank, true);
+            this.listener = evt.Listen(action, this.Rank);
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
+            if (listener != null)
             {
-                if (listener != null)
-                {
-                    listener.AutoDispose();
-                    listener = null;
-                }
+                listener.Close();
+                listener = null;
             }
 
-            base.Dispose(disposing);
+            base.Close();
         }
     }
 }

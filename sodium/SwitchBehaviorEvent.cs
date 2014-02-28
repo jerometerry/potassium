@@ -7,14 +7,12 @@
         private Behavior<Behavior<TA>> bba;
         private Event<TA> valueEvent; 
 
-        public SwitchBehaviorEvent(Behavior<Behavior<TA>> bba, bool allowAutoDispose)
-            : base(allowAutoDispose)
+        public SwitchBehaviorEvent(Behavior<Behavior<TA>> bba)
         {
             this.bba = bba;
             var action = new SodiumAction<Behavior<TA>>(this.Invoke);
-            var v = bba.Value(true);
-            this.RegisterAutoFinalizer(v);
-            this.listener = v.Listen(action, this.Rank, true);
+            var v = bba.Value();
+            this.listener = v.Listen(action, this.Rank);
         }
 
         public void Invoke(Transaction transaction, Behavior<TA> behavior)
@@ -27,50 +25,27 @@
             // that might have happened during this transaction will be suppressed.
             if (this.eventListener != null)
             {
-                this.eventListener.AutoDispose();
+                this.eventListener.Close();
                 this.eventListener = null;
             }
 
-            if (this.valueEvent != null)
-            {
-                this.valueEvent.AutoDispose();
-                this.valueEvent = null;
-            }
-
-            this.valueEvent = behavior.Value(transaction, true);
-            this.eventListener = valueEvent.Listen(transaction, new SodiumAction<TA>(Fire), Rank, true);
+            this.valueEvent = behavior.Value(transaction);
+            this.eventListener = valueEvent.Listen(transaction, new SodiumAction<TA>(Fire), Rank);
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
+            if (this.listener != null)
             {
-                if (this.listener != null)
-                {
-                    this.listener.AutoDispose();
-                    this.listener = null;
-                }
-
-                if (this.eventListener != null)
-                {
-                    this.eventListener.AutoDispose();
-                    this.eventListener = null;
-                }
-
-                if (this.bba != null)
-                {
-                    this.bba.AutoDispose();
-                    this.bba = null;
-                }
-
-                if (this.valueEvent != null)
-                {
-                    this.valueEvent.AutoDispose();
-                    this.valueEvent = null;
-                }
+                this.listener.Close();
+                this.listener = null;
             }
 
-            base.Dispose(disposing);
+            this.eventListener = null;
+            this.bba = null;
+            this.valueEvent = null;
+
+            base.Close();
         }
     }
 }

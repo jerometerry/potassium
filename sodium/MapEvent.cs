@@ -9,12 +9,11 @@
         private Func<TA, TB> map;
         private IEventListener<TA> listener;
 
-        public MapEvent(Event<TA> evt, Func<TA, TB> map, bool allowAutoDispose)
-            : base(allowAutoDispose)
+        public MapEvent(Event<TA> evt, Func<TA, TB> map)
         {
             this.evt = evt;
             this.map = map;
-            this.listener = evt.Listen(new SodiumAction<TA>(this.Fire), this.Rank, true);
+            this.listener = evt.Listen(new SodiumAction<TA>(this.Fire), this.Rank);
         }
 
         public void Fire(Transaction trans, TA firing)
@@ -24,7 +23,6 @@
 
         protected internal override TB[] InitialFirings()
         {
-            this.AssertNotDisposed();
             var firings = evt.InitialFirings();
             if (firings == null)
             { 
@@ -34,26 +32,22 @@
             return firings.Select(e => map(e)).ToArray();
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
+            if (listener != null)
             {
-                if (listener != null)
-                {
-                    listener.AutoDispose();
-                    listener = null;
-                }
-
-                if (evt != null)
-                {
-                    evt.AutoDispose();
-                    evt = null;
-                }
-
-                map = null;
+                listener.Close();
+                listener = null;
             }
 
-            base.Dispose(disposing);
+            if (evt != null)
+            {
+                evt = null;
+            }
+
+            map = null;
+
+            base.Close();
         }
     }
 }

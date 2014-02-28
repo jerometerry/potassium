@@ -8,13 +8,6 @@
         private IEventListener<TA> loopListener;
 
         public EventLoop()
-            : this(false)
-        {
-            
-        }
-
-        public EventLoop(bool allowAutoDispose)
-            : base(allowAutoDispose)
         {
         }
 
@@ -26,8 +19,6 @@
         /// an ApplicationException will be raised.</remarks>
         public Event<TA> Loop(Event<TA> eventToLoop)
         {
-            AssertNotDisposed();
-
             if (this.loop != null)
             {
                 throw new ApplicationException("EventLoop looped more than once");
@@ -35,25 +26,24 @@
 
             this.loop = eventToLoop;
             var evt = this;
-            this.loopListener = eventToLoop.Listen(new SodiumAction<TA>(evt.Fire), evt.Rank, true);
+            this.loopListener = eventToLoop.Listen(new SodiumAction<TA>(evt.Fire), evt.Rank);
             return this;
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
             if (this.loopListener != null)
             {
-                this.loopListener.AutoDispose();
+                this.loopListener.Close();
                 this.loopListener = null;
             }
 
             if (this.loop != null)
             {
-                this.loop.AutoDispose();
                 this.loop = null;
             }
 
-            base.Dispose(disposing);
+            base.Close();
         }
     }
 }

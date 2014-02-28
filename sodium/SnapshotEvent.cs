@@ -10,15 +10,14 @@ namespace Sodium
         private Behavior<TB> behavior;
         private IEventListener<TA> listener;
 
-        public SnapshotEvent(Event<TA> ev, Func<TA, TB, TC> snapshot, Behavior<TB> behavior, bool allowAutoDispose)
-            : base(allowAutoDispose)
+        public SnapshotEvent(Event<TA> ev, Func<TA, TB, TC> snapshot, Behavior<TB> behavior)
         {
             this.evt = ev;
             this.snapshot = snapshot;
             this.behavior = behavior;
 
             var action = new SodiumAction<TA>(this.Fire);
-            this.listener = ev.Listen(action, this.Rank, true);
+            this.listener = ev.Listen(action, this.Rank);
         }
 
         public void Fire(Transaction transaction, TA firing)
@@ -28,7 +27,6 @@ namespace Sodium
 
         protected internal override TC[] InitialFirings()
         {
-            this.AssertNotDisposed();
             var events = evt.InitialFirings();
             if (events == null)
             {
@@ -39,32 +37,26 @@ namespace Sodium
             return results.ToArray();
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
+            if (listener != null)
             {
-                if (listener != null)
-                {
-                    listener.AutoDispose();
-                    listener = null;
-                }
-
-                if (evt != null)
-                {
-                    evt.AutoDispose();
-                    evt = null;
-                }
-
-                if (behavior != null)
-                {
-                    behavior.AutoDispose();
-                    behavior = null;
-                }
-
-                snapshot = null;
+                listener = null;
             }
 
-            base.Dispose(disposing);
+            if (evt != null)
+            {
+                evt = null;
+            }
+
+            if (behavior != null)
+            {
+                behavior = null;
+            }
+
+            snapshot = null;
+
+            base.Close();
         }
     }
 }

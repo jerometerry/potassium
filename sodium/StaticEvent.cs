@@ -9,11 +9,6 @@
     /// valued Behavior.</remarks>
     internal sealed class StaticEvent<TA> : Event<TA>
     {
-        public StaticEvent(bool allowAutoDispose)
-            : base(allowAutoDispose)
-        {
-        }
-
         /// <summary>
         /// Swallow the Firing of events
         /// </summary>

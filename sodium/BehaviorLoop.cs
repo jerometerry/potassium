@@ -3,12 +3,7 @@
     public sealed class BehaviorLoop<TA> : Behavior<TA>
     {
         public BehaviorLoop()
-            : this(false)
-        {
-        }
-
-        public BehaviorLoop(bool allowAutoDispose)
-            : base(new EventLoop<TA>(true), default(TA), allowAutoDispose)
+            : base(new EventLoop<TA>(), default(TA))
         {
         }
 
@@ -24,16 +19,6 @@
             var loop = (EventLoop<TA>)Event;
             loop.Loop(b.Updates());
             return this;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (this.Event != null)
-            {
-                this.Event.AutoDispose();
-            }
-
-            base.Dispose(disposing);
         }
     }
 }

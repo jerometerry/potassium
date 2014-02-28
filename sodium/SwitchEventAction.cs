@@ -7,13 +7,12 @@ namespace Sodium
         private IEventListener<TA> eventListener;
         private Behavior<Event<TA>> bea;
 
-        public SwitchEventAction(Behavior<Event<TA>> bea, Event<TA> evt, Transaction t, ISodiumAction<TA> h, bool allowAutoDispose)
-            : base(allowAutoDispose)
+        public SwitchEventAction(Behavior<Event<TA>> bea, Event<TA> evt, Transaction t, ISodiumAction<TA> h)
         {
             this.bea = bea;
             this.evt = evt;
             this.action = h;
-            this.eventListener = bea.Sample().Listen(t, h, evt.Rank, true);
+            this.eventListener = bea.Sample().Listen(t, h, evt.Rank);
         }
 
         public void Invoke(Transaction transaction, Event<TA> newEvent)
@@ -22,40 +21,22 @@ namespace Sodium
             {
                 if (this.eventListener != null)
                 { 
-                    this.eventListener.AutoDispose();
+                    this.eventListener.Close();
                     this.eventListener = null;
                 }
 
-                this.eventListener = newEvent.ListenSuppressed(transaction, this.action, evt.Rank, true);
+                this.eventListener = newEvent.ListenSuppressed(transaction, this.action, evt.Rank);
             });
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
-            {
-                if (this.eventListener != null)
-                {
-                    this.eventListener.AutoDispose();
-                    this.eventListener = null;
-                }
+            eventListener = null;
+            evt = null;
+            bea = null;
+            action = null;
 
-                if (evt != null)
-                {
-                    evt.AutoDispose();
-                    evt = null;
-                }
-
-                if (bea != null)
-                {
-                    bea.AutoDispose();
-                    bea = null;
-                }
-
-                action = null;
-            }
-
-            base.Dispose(disposing);
+            base.Close();
         }
     }
 }

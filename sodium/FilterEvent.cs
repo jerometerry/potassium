@@ -9,14 +9,13 @@ namespace Sodium
         private Func<TA, bool> f;
         private IEventListener<TA> listener;
 
-        public FilterEvent(Event<TA> evt, Func<TA, bool> f, bool allowAutoDispose)
-            : base(allowAutoDispose)
+        public FilterEvent(Event<TA> evt, Func<TA, bool> f)
         {
             this.evt = evt;
             this.f = f;
 
             var action = new SodiumAction<TA>(this.Fire);
-            this.listener = evt.Listen(action, this.Rank, true);
+            this.listener = evt.Listen(action, this.Rank);
         }
 
         /// <summary>
@@ -34,7 +33,6 @@ namespace Sodium
 
         protected internal override TA[] InitialFirings()
         {
-            this.AssertNotDisposed();
             var events = evt.InitialFirings();
             if (events == null)
             {
@@ -50,26 +48,22 @@ namespace Sodium
             return filtered.ToArray();
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
+            if (listener != null)
             {
-                if (listener != null)
-                {
-                    listener.AutoDispose();
-                    listener = null;
-                }
-
-                if (evt != null)
-                {
-                    evt.AutoDispose();
-                    evt = null;
-                }
-
-                f = null;
+                listener.Close();
+                listener = null;
             }
 
-            base.Dispose(disposing);
+            if (evt != null)
+            {
+                evt = null;
+            }
+
+            f = null;
+
+            base.Close();
         }
     }
 }

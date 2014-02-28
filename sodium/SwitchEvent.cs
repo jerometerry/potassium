@@ -7,46 +7,23 @@
         private Event<Event<TA>> updates;
         private Behavior<Event<TA>> behavior;
 
-        public SwitchEvent(Transaction transaction, Behavior<Event<TA>> behavior, bool allowAutoDispose)
-            : base(allowAutoDispose)
+        public SwitchEvent(Transaction transaction, Behavior<Event<TA>> behavior)
         {
             this.behavior = behavior;
             var action = new SodiumAction<TA>(this.Fire);
-            this.eventSwitchCallback = new SwitchEventAction<TA>(behavior, this, transaction, action, true);
+            this.eventSwitchCallback = new SwitchEventAction<TA>(behavior, this, transaction, action);
             this.updates = behavior.Updates();
-            this.listener = updates.Listen(transaction, eventSwitchCallback, this.Rank, true);
+            this.listener = updates.Listen(transaction, eventSwitchCallback, this.Rank);
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
-            {
-                if (this.listener != null)
-                {
-                    this.listener.AutoDispose();
-                    this.listener = null;
-                }
+            this.listener = null;
+            eventSwitchCallback = null;
+            updates = null;
+            this.behavior = null;
 
-                if (eventSwitchCallback != null)
-                {
-                    eventSwitchCallback.AutoDispose();
-                    eventSwitchCallback = null;
-                }
-
-                if (updates != null)
-                {
-                    updates.AutoDispose();
-                    updates = null;
-                }
-
-                if (this.behavior != null)
-                {
-                    this.behavior.AutoDispose();
-                    this.behavior = null;
-                }
-            }
-
-            base.Dispose(disposing);
+            base.Close();
         }
     }
 }
