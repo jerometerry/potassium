@@ -3,20 +3,23 @@
     using System;
 
     /// <summary>
-    /// Base class for Events and Behaviors
+    /// Base class for Events, Behaviors, and Listeners
     /// </summary>
-    public class Observable : IDisposable
+    public class SodiumItem : IDisposable
     {
         private static long sequence = 1;
 
         private readonly long id;
 
-        protected Observable()
+        protected SodiumItem()
         {
             id = sequence++;
-            Metrics.LiveObserables.Add(this);
-            Metrics.ObservableAllocations++;
+            Metrics.LiveItems.Add(this);
+            AllowAutoDispose = true;
+            Metrics.ItemAllocations++;
         }
+
+        public bool AllowAutoDispose { get; set; }
 
         /// <summary>
         /// Gets / sets a description for the current Observable
@@ -33,6 +36,8 @@
         /// </summary>
         public bool Disposingg { get; private set; }
 
+        public bool AutoDisposing { get; private set; }
+
         public override int GetHashCode()
         {
             return this.id.GetHashCode();
@@ -40,7 +45,7 @@
 
         public override bool Equals(object obj)
         {
-            return this.id == ((Observable)obj).id;
+            return this.id == ((SodiumItem)obj).id;
         }
 
         /// <summary>
@@ -53,14 +58,28 @@
                 return;
             }
 
-            Metrics.ObservableDeallocations++;
+            Metrics.ItemDeallocations++;
             Dispose(true);
             GC.SuppressFinalize(this);
 
             this.Disposed = true;
             this.Disposingg = false;
 
-            Metrics.LiveObserables.Remove(this);
+            Metrics.LiveItems.Remove(this);
+        }
+
+        /// <summary>
+        /// Dispose of the current SodiumItem, if AllowAutoDispose is enabled.
+        /// </summary>
+        public void AutoDispose()
+        {
+            if (!this.AllowAutoDispose)
+            {
+                return;
+            }
+
+            this.AutoDisposing = true;
+            this.Dispose();
         }
 
         protected void AssertNotDisposed()

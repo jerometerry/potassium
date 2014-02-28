@@ -7,7 +7,7 @@ namespace Sodium
     /// </summary>
     /// <remarks>Behaviors generally change over time, but constant behaviors are ones that choose not to.</remarks>
     /// <typeparam name="TA">The type of values that will be fired through the behavior.</typeparam>
-    public class Behavior<TA> : Observable
+    public class Behavior<TA> : SodiumItem
     {
         private TA value;
         

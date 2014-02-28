@@ -8,7 +8,7 @@ namespace Sodium
     /// An Event is a stream of discrete event occurrences
     /// </summary>
     /// <typeparam name="TA">The type of values that will be fired through the event.</typeparam>
-    public class Event<TA> : Observable
+    public class Event<TA> : SodiumItem
     {
         private readonly List<EventListener<TA>> listeners = new List<EventListener<TA>>();
         private readonly List<TA> firings = new List<TA>();
