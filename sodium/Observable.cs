@@ -7,33 +7,60 @@
     /// </summary>
     public class Observable : IDisposable
     {
-        private bool isDisposed;
-        private bool isDisposing;
+        private static long sequence = 1;
+
+        private readonly long id;
+
+        protected Observable()
+        {
+            id = sequence++;
+            Metrics.LiveObserables.Add(this);
+            Metrics.ObservableAllocations++;
+        }
+
+        /// <summary>
+        /// Gets / sets a description for the current Observable
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Gets whether the current Event has been disposed
+        /// </summary>
+        public bool Disposed { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool Disposingg { get; private set; }
+
+        public override int GetHashCode()
+        {
+            return this.id.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return this.id == ((Observable)obj).id;
+        }
 
         /// <summary>
         /// Stop all listeners from receiving events from the current Event
         /// </summary>
         public void Dispose()
         {
-            //Metrics.EventDeallocations++;
+            if (this.Disposed || this.Disposingg)
+            {
+                return;
+            }
+
+            Metrics.ObservableDeallocations++;
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
 
-        /// <summary>
-        /// Gets whether the current Event has been disposed
-        /// </summary>
-        public bool Disposed
-        {
-            get { return isDisposed; }
-        }
+            this.Disposed = true;
+            this.Disposingg = false;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool Disposingg
-        {
-            get { return isDisposing; }
+            Metrics.LiveObserables.Remove(this);
         }
 
         protected void AssertNotDisposed()
@@ -46,19 +73,6 @@
 
         protected virtual void Dispose(bool disposing)
         {
-            if (isDisposed)
-            {
-                return;
-            }
-
-            disposing = true;
-
-            if (disposing)
-            {
-            }
-
-            isDisposed = true;
-            isDisposing = false;
         }
     }
 }

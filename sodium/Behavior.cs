@@ -278,19 +278,23 @@ namespace Sodium
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposing)
             {
-                if (this.eventListener != null)
-                {
-                    eventListener.Dispose();
-                    eventListener = null;
-                }
+                return;
+            }
 
-                if (this.Event != null)
-                {
-                    this.Event.Dispose();
-                    this.Event = null;
-                }
+            Metrics.BehaviorDeallocations++;
+
+            if (this.eventListener != null)
+            {
+                this.eventListener.Dispose();
+                this.eventListener = null;
+            }
+
+            if (this.Event != null)
+            {
+                this.Event.Dispose();
+                this.Event = null;
             }
         }
 

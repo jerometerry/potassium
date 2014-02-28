@@ -17,8 +17,10 @@ namespace Sodium
         /// The rank of the current Event. Default to rank zero
         /// </summary>
         private readonly Rank rank = new Rank();
-        
 
+        /// <summary>
+        /// Constructs an pass-through Event
+        /// </summary>
         public Event()
         {
             Metrics.EventAllocations++;
@@ -327,7 +329,7 @@ namespace Sodium
         /// <returns>True if the listener was removed, false otherwise</returns>
         internal bool RemoveListener(EventListener<TA> eventListener)
         {
-            if (Disposed || eventListener == null || eventListener.Disposed)
+            if (Disposed || Disposingg || eventListener == null || eventListener.Disposed)
             {
                 return false;
             }
@@ -354,14 +356,18 @@ namespace Sodium
         /// <param name="disposing">Whether to dispose of the listeners or not.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposing)
             {
-                var clone = new List<IEventListener<TA>>(this.listeners);
-                this.listeners.Clear();
-                foreach (var listener in clone)
-                {
-                    listener.Dispose();
-                }
+                return;
+            }
+
+            Metrics.EventDeallocations++;
+
+            var clone = new List<IEventListener<TA>>(this.listeners);
+            this.listeners.Clear();
+            foreach (var listener in clone)
+            {
+                listener.Dispose();
             }
         }
 
