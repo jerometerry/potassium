@@ -24,7 +24,12 @@ namespace Sodium
         /// </summary>
         /// <param name="initValue"></param>
         public Behavior(TA initValue)
-            : this(new Event<TA>(), initValue)
+            : this(initValue, false)
+        {
+        }
+
+        public Behavior(TA initValue, bool allowAutoDispose)
+            : this(new Event<TA>(true), initValue, allowAutoDispose)
         {
         }
 
@@ -33,11 +38,12 @@ namespace Sodium
         /// </summary>
         /// <param name="evt"></param>
         /// <param name="initValue"></param>
-        public Behavior(Event<TA> evt, TA initValue)
+        public Behavior(Event<TA> evt, TA initValue, bool allowAutoDispose)
+            : base(allowAutoDispose)
         {
             this.Event = evt;
             this.value = initValue;
-            this.eventListener = ListenForEventFirings();
+            this.eventListener = ListenForEventFirings(true);
             Metrics.BehaviorAllocations++;
         }
 
@@ -48,7 +54,12 @@ namespace Sodium
         /// </summary>
         public static Behavior<TA> Constant(TA initValue)
         {
-            return new Behavior<TA>(new StaticEvent<TA>(), initValue);
+            return Constant(initValue, true);
+        }
+
+        public static Behavior<TA> Constant(TA initValue, bool allowAutoDispose)
+        {
+            return new Behavior<TA>(new StaticEvent<TA>(true), initValue, allowAutoDispose);
         }
 
         /// <summary>
@@ -56,7 +67,12 @@ namespace Sodium
         /// </summary>
         public static Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> lift, Behavior<TA> a, Behavior<TB> b)
         {
-            return a.Lift(lift, b);
+            return Lift(lift, a, b, true);
+        }
+
+        public static Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> lift, Behavior<TA> a, Behavior<TB> b, bool allowAutoDispose)
+        {
+            return a.Lift(lift, b, allowAutoDispose);
         }
 
         /// <summary>
@@ -65,7 +81,12 @@ namespace Sodium
         /// </summary>
         public static Behavior<TB> Apply<TB>(Behavior<Func<TA, TB>> bf, Behavior<TA> ba)
         {
-            var sink = new BehaviorApplyEvent<TA, TB>(bf, ba);
+            return Apply(bf, ba, true);
+        }
+
+        public static Behavior<TB> Apply<TB>(Behavior<Func<TA, TB>> bf, Behavior<TA> ba, bool allowAutoDispose)
+        {
+            var sink = new BehaviorApplyEvent<TA, TB>(bf, ba, true, allowAutoDispose);
             return sink.Behavior;
         }
 
@@ -74,10 +95,15 @@ namespace Sodium
         /// </summary>
         public static Behavior<TA> SwitchB(Behavior<Behavior<TA>> bba)
         {
+            return SwitchB(bba, true);
+        }
+
+        public static Behavior<TA> SwitchB(Behavior<Behavior<TA>> bba, bool allowAutoDispose)
+        {
             var innerBehavior = bba.Sample();
             var initValue = innerBehavior.Sample();
-            var sink = new SwitchBehaviorEvent<TA>(bba);
-            return sink.Hold(initValue);
+            var sink = new SwitchBehaviorEvent<TA>(bba, true);
+            return sink.Hold(initValue, allowAutoDispose);
         }
 
         /// <summary>
@@ -90,7 +116,12 @@ namespace Sodium
         /// actions triggered during SwitchE requiring a transaction all get the same instance.</remarks>
         public static Event<TA> SwitchE(Behavior<Event<TA>> behavior)
         {
-            return TransactionContext.Current.Run(t => SwitchE(t, behavior));
+            return SwitchE(behavior, true);
+        }
+
+        public static Event<TA> SwitchE(Behavior<Event<TA>> behavior, bool allowAutoDispose)
+        {
+            return TransactionContext.Current.Run(t => SwitchE(t, behavior, allowAutoDispose));
         }
 
         /// <summary>
@@ -98,7 +129,12 @@ namespace Sodium
         /// </summary>
         public static Behavior<TD> Lift<TB, TC, TD>(Func<TA, TB, TC, TD> f, Behavior<TA> a, Behavior<TB> b, Behavior<TC> c)
         {
-            return a.Lift(f, b, c);
+            return Lift(f, a, b, c, true);
+        }
+
+        public static Behavior<TD> Lift<TB, TC, TD>(Func<TA, TB, TC, TD> f, Behavior<TA> a, Behavior<TB> b, Behavior<TC> c, bool allowAutoDispose)
+        {
+            return a.Lift(f, b, c, allowAutoDispose);
         }
 
         /// <summary>
@@ -159,8 +195,13 @@ namespace Sodium
         /// actions triggered during Value requiring a transaction all get the same instance.</remarks>
         public Event<TA> Value()
         {
+            return this.Value(true);
+        }
+        
+        public Event<TA> Value(bool allowAutoDispose)
+        {
             AssertNotDisposed();
-            return TransactionContext.Current.Run(Value);
+            return TransactionContext.Current.Run(t => Value(t, allowAutoDispose));
         }
 
         /// <summary>
@@ -168,13 +209,18 @@ namespace Sodium
         /// </summary>
         public Behavior<TB> Map<TB>(Func<TA, TB> map)
         {
+            return Map(map, true);
+        }
+
+        public Behavior<TB> Map<TB>(Func<TA, TB> map, bool allowAutoDispose)
+        {
             AssertNotDisposed();
             
             // No allocations. Just returns the underlying event
             var underlyingEvent = Updates();
 
             // Creates a new MapEvent
-            var mapEvent = underlyingEvent.Map(map);
+            var mapEvent = underlyingEvent.Map(map, true);
 
             // No allocations. Just returns the current value
             var currentValue = Sample();
@@ -184,7 +230,7 @@ namespace Sodium
             var mappedValue = map(currentValue);
             
             // Creates a new Behavior and a new Event
-            var behavior = mapEvent.Hold(mappedValue);
+            var behavior = mapEvent.Hold(mappedValue, allowAutoDispose);
             
             return behavior;
         }
@@ -194,10 +240,15 @@ namespace Sodium
         /// </summary>
         public Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> lift, Behavior<TB> behavior)
         {
+            return Lift(lift, behavior, true);
+        }
+
+        public Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> lift, Behavior<TB> behavior, bool allowAutoDispose)
+        {
             AssertNotDisposed();
             Func<TA, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
-            var bf = Map(ffa);
-            return Behavior<TB>.Apply(bf, behavior);
+            var bf = Map(ffa, true);
+            return Behavior<TB>.Apply(bf, behavior, allowAutoDispose);
         }
 
         /// <summary>
@@ -206,28 +257,33 @@ namespace Sodium
         /// </summary>
         public Behavior<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
         {
+            return Collect(initState, snapshot, true);
+        }
+
+        public Behavior<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot, bool allowAutoDispose)
+        {
             AssertNotDisposed();
-            var coalesceEvent = Updates().Coalesce((a, b) => b);
+            var coalesceEvent = Updates().Coalesce((a, b) => b, true);
             var currentValue = Sample();
             var tuple = snapshot(currentValue, initState);
-            var loop = new EventLoop<Tuple<TB, TS>>();
-            var loopBehavior = loop.Hold(tuple);
-            var snapshotBehavior = loopBehavior.Map(x => x.Item2);
-            var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
+            var loop = new EventLoop<Tuple<TB, TS>>(true);
+            var loopBehavior = loop.Hold(tuple, true);
+            var snapshotBehavior = loopBehavior.Map(x => x.Item2, true);
+            var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot, true);
             loop.Loop(coalesceSnapshotEvent);
-            return loopBehavior.Map(x => x.Item1);
+            return loopBehavior.Map(x => x.Item1, allowAutoDispose);
         }
 
         /// <summary>
         /// Lift a ternary function into behaviors.
         /// </summary>
-        public Behavior<TD> Lift<TB, TC, TD>(Func<TA, TB, TC, TD> lift, Behavior<TB> b, Behavior<TC> c)
+        public Behavior<TD> Lift<TB, TC, TD>(Func<TA, TB, TC, TD> lift, Behavior<TB> b, Behavior<TC> c, bool allowAutoDispose)
         {
             AssertNotDisposed();
             Func<TA, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
-            var bf = Map(map);
-            var l1 = Behavior<TB>.Apply(bf, b);
-            return Behavior<TC>.Apply(l1, c);
+            var bf = Map(map, true);
+            var l1 = Behavior<TB>.Apply(bf, b, true);
+            return Behavior<TC>.Apply(l1, c, allowAutoDispose);
         }
 
         /// <summary>
@@ -236,9 +292,9 @@ namespace Sodium
         /// <param name="transaction"></param>
         /// <param name="behavior">The behavior that wraps the event</param>
         /// <returns>The unwrapped event</returns>
-        internal static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior)
+        internal static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior, bool allowAutoDispose)
         {
-            return new SwitchEvent<TA>(transaction, behavior);
+            return new SwitchEvent<TA>(transaction, behavior, allowAutoDispose);
         }
 
         /// <summary>
@@ -265,15 +321,13 @@ namespace Sodium
         /// <param name="transaction">The transaction to run the Value operation on</param>
         /// <returns>An event that will fire when it's listened to, and every time it's 
         /// value changes thereafter</returns>
-        internal Event<TA> Value(Transaction transaction)
+        internal Event<TA> Value(Transaction transaction, bool allowAutoDispose)
         {
-            var valueEvent = new BehaviorValueEvent<TA>(this, this.Event, transaction);
+            var valueEvent = new BehaviorValueEvent<TA>(this, this.Event, transaction, true);
 
             // Needed in case of an initial value and an update
             // in the same transaction.
-            var valueEventLast = valueEvent.LastFiringOnly(transaction);
-
-            return valueEventLast;
+            return valueEvent.LastFiringOnly(transaction, allowAutoDispose);
         }
 
         protected override void Dispose(bool disposing)
@@ -300,9 +354,9 @@ namespace Sodium
         /// Listen to the underlying event for firings
         /// </summary>
         /// <returns>The IEventListener registered with the underlying event.</returns>
-        private IEventListener<TA> ListenForEventFirings()
+        private IEventListener<TA> ListenForEventFirings(bool allowAutoDispose)
         {
-            return TransactionContext.Current.Run(this.ListenForEventFirings);
+            return TransactionContext.Current.Run(t => this.ListenForEventFirings(t, allowAutoDispose));
         }
 
         /// <summary>
@@ -310,10 +364,10 @@ namespace Sodium
         /// </summary>
         /// <param name="transaction">The transaction to schedule the listen on.</param>
         /// <returns>The IEventListener registered with the underlying event.</returns>
-        private IEventListener<TA> ListenForEventFirings(Transaction transaction)
+        private IEventListener<TA> ListenForEventFirings(Transaction transaction, bool allowAutoDispose)
         {
             var action = new SodiumAction<TA>(ScheduleApplyValueUpdate);
-            return this.Event.Listen(transaction, action, Rank.Highest);
+            return this.Event.Listen(transaction, action, Rank.Highest, allowAutoDispose);
         }
 
         /// <summary>

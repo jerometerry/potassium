@@ -3,7 +3,12 @@
     public sealed class BehaviorLoop<TA> : Behavior<TA>
     {
         public BehaviorLoop()
-            : base(new EventLoop<TA>(), default(TA))
+            : this(false)
+        {
+        }
+
+        public BehaviorLoop(bool allowAutoDispose)
+            : base(new EventLoop<TA>(true), default(TA), allowAutoDispose)
         {
         }
 

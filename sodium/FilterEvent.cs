@@ -9,13 +9,14 @@ namespace Sodium
         private Func<TA, bool> f;
         private IEventListener<TA> listener;
 
-        public FilterEvent(Event<TA> evt, Func<TA, bool> f)
+        public FilterEvent(Event<TA> evt, Func<TA, bool> f, bool allowAutoDispose)
+            : base(allowAutoDispose)
         {
             this.evt = evt;
             this.f = f;
 
             var action = new SodiumAction<TA>(this.Fire);
-            this.listener = evt.Listen(action, this.Rank);
+            this.listener = evt.Listen(action, this.Rank, true);
         }
 
         /// <summary>

@@ -10,14 +10,15 @@ namespace Sodium
         private Behavior<TB> behavior;
         private IEventListener<TA> listener;
 
-        public SnapshotEvent(Event<TA> ev, Func<TA, TB, TC> snapshot, Behavior<TB> behavior)
+        public SnapshotEvent(Event<TA> ev, Func<TA, TB, TC> snapshot, Behavior<TB> behavior, bool allowAutoDispose)
+            : base(allowAutoDispose)
         {
             this.evt = ev;
             this.snapshot = snapshot;
             this.behavior = behavior;
 
             var action = new SodiumAction<TA>(this.Fire);
-            this.listener = ev.Listen(action, this.Rank);
+            this.listener = ev.Listen(action, this.Rank, true);
         }
 
         public void Fire(Transaction transaction, TA firing)

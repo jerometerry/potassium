@@ -14,7 +14,8 @@
         /// </summary>
         private bool fired;
 
-        public BehaviorApplyEvent(Behavior<Func<TA, TB>> bf, Behavior<TA> ba)
+        public BehaviorApplyEvent(Behavior<Func<TA, TB>> bf, Behavior<TA> ba, bool allowAutoDispose, bool allowBehaviorAutoDispose)
+            : base(allowAutoDispose)
         {
             this.bf = bf;
             this.ba = ba;
@@ -22,13 +23,13 @@
             var functionChanged = new SodiumAction<Func<TA, TB>>((t, f) => ScheduledPrioritizedFire(t));
             var valueChanged = new SodiumAction<TA>((t, a) => ScheduledPrioritizedFire(t));
 
-            l1 = bf.Updates().Listen(functionChanged, this.Rank);
-            l2 = ba.Updates().Listen(valueChanged, this.Rank);
+            l1 = bf.Updates().Listen(functionChanged, this.Rank, true);
+            l2 = ba.Updates().Listen(valueChanged, this.Rank, true);
 
             var map = bf.Sample();
             var valA = ba.Sample();
             var valB = map(valA);
-            this.Behavior = this.Hold(valB);
+            this.Behavior = this.Hold(valB, allowBehaviorAutoDispose);
         }
 
         public Behavior<TB> Behavior { get; private set; }

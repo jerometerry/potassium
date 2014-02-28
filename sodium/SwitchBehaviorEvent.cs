@@ -7,11 +7,12 @@
         private Behavior<Behavior<TA>> bba;
         private Event<TA> valueEvent; 
 
-        public SwitchBehaviorEvent(Behavior<Behavior<TA>> bba)
+        public SwitchBehaviorEvent(Behavior<Behavior<TA>> bba, bool allowAutoDispose)
+            : base(allowAutoDispose)
         {
             this.bba = bba;
             var action = new SodiumAction<Behavior<TA>>(this.Invoke);
-            this.listener = bba.Value().Listen(action, this.Rank);
+            this.listener = bba.Value(true).Listen(action, this.Rank, true);
         }
 
         public void Invoke(Transaction transaction, Behavior<TA> behavior)
@@ -34,8 +35,8 @@
                 this.valueEvent = null;
             }
 
-            this.valueEvent = behavior.Value(transaction);
-            this.eventListener = valueEvent.Listen(transaction, new SodiumAction<TA>(Fire), Rank);
+            this.valueEvent = behavior.Value(transaction, true);
+            this.eventListener = valueEvent.Listen(transaction, new SodiumAction<TA>(Fire), Rank, true);
         }
 
         protected override void Dispose(bool disposing)

@@ -6,14 +6,15 @@ namespace Sodium
         private IEventListener<TA>[] eventListeners;
         private IEventListener<TA> eventListener;
 
-        public OnceEvent(Event<TA> evt)
+        public OnceEvent(Event<TA> evt, bool allowAutoDispose)
+            : base(allowAutoDispose)
         {
             this.evt = evt;
 
             // This is a bit long-winded but it's efficient because it deregisters
             // the listener.
             this.eventListeners = new IEventListener<TA>[1];
-            this.eventListeners[0] = evt.Listen(new SodiumAction<TA>((t, a) => this.Fire(this.eventListeners, t, a)), this.Rank);
+            this.eventListeners[0] = evt.Listen(new SodiumAction<TA>((t, a) => this.Fire(this.eventListeners, t, a)), this.Rank, true);
             this.eventListener = this.eventListeners[0];
         }
 

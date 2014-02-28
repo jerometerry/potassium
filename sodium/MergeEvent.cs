@@ -9,14 +9,15 @@ namespace Sodium
         private IEventListener<TA> l1;
         private IEventListener<TA> l2;
 
-        public MergeEvent(Event<TA> evt1, Event<TA> evt2)
+        public MergeEvent(Event<TA> evt1, Event<TA> evt2, bool allowAutoDispose)
+            : base(allowAutoDispose)
         {
             this.evt1 = evt1;
             this.evt2 = evt2;
 
             var action = new SodiumAction<TA>(this.Fire);
-            l1 = evt1.Listen(action, this.Rank);
-            l2 = evt2.Listen(action, this.Rank);
+            l1 = evt1.Listen(action, this.Rank, true);
+            l2 = evt2.Listen(action, this.Rank, true);
         }
 
         protected internal override TA[] InitialFirings()

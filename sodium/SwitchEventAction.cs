@@ -7,12 +7,13 @@ namespace Sodium
         private IEventListener<TA> eventListener;
         private Behavior<Event<TA>> bea;
 
-        public SwitchEventAction(Behavior<Event<TA>> bea, Event<TA> evt, Transaction t, ISodiumAction<TA> h)
+        public SwitchEventAction(Behavior<Event<TA>> bea, Event<TA> evt, Transaction t, ISodiumAction<TA> h, bool allowAutoDispose)
+            : base(allowAutoDispose)
         {
             this.bea = bea;
             this.evt = evt;
             this.action = h;
-            this.eventListener = bea.Sample().Listen(t, h, evt.Rank);
+            this.eventListener = bea.Sample().Listen(t, h, evt.Rank, true);
         }
 
         public void Invoke(Transaction transaction, Event<TA> newEvent)
@@ -25,7 +26,7 @@ namespace Sodium
                     this.eventListener = null;
                 }
 
-                this.eventListener = newEvent.ListenSuppressed(transaction, this.action, evt.Rank);
+                this.eventListener = newEvent.ListenSuppressed(transaction, this.action, evt.Rank, true);
             });
         }
 

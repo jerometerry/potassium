@@ -11,6 +11,7 @@ namespace Sodium
     public class Event<TA> : SodiumItem
     {
         private readonly List<EventListener<TA>> listeners = new List<EventListener<TA>>();
+
         private readonly List<TA> firings = new List<TA>();
 
         /// <summary>
@@ -22,13 +23,23 @@ namespace Sodium
         /// Constructs an pass-through Event
         /// </summary>
         public Event()
+            : this(false)
+        {
+            
+        }
+
+        public Event(bool allowAutoDispose)
+            : base(allowAutoDispose)
         {
             Metrics.EventAllocations++;
         }
 
         internal Rank Rank
         {
-            get { return this.rank; }
+            get
+            {
+                return this.rank;
+            }
         }
 
         /// <summary>
@@ -42,7 +53,12 @@ namespace Sodium
         /// </remarks>
         public static Event<TA> MergeWith(Func<TA, TA, TA> f, Event<TA> event1, Event<TA> event2)
         {
-            return Merge(event1, event2).Coalesce(f);
+            return MergeWith(f, event1, event2, true);
+        }
+
+        public static Event<TA> MergeWith(Func<TA, TA, TA> f, Event<TA> event1, Event<TA> event2, bool allowAutoDispose)
+        {
+            return Merge(event1, event2, true).Coalesce(f, allowAutoDispose);
         }
 
         /// <summary>
@@ -57,7 +73,12 @@ namespace Sodium
         /// </remarks>
         public static Event<TA> Merge(Event<TA> event1, Event<TA> event2)
         {
-            return new MergeEvent<TA>(event1, event2);
+            return Merge(event1, event2, true);
+        }
+
+        public static Event<TA> Merge(Event<TA> event1, Event<TA> event2, bool allowAutoDispose)
+        {
+            return new MergeEvent<TA>(event1, event2, allowAutoDispose);
         }
 
         /// <summary>
@@ -78,7 +99,7 @@ namespace Sodium
         public IEventListener<TA> Listen(Action<TA> action)
         {
             AssertNotDisposed();
-            return Listen(new SodiumAction<TA>((t, a) => action(a)), Rank.Highest);
+            return Listen(new SodiumAction<TA>((t, a) => action(a)), Rank.Highest, true);
         }
 
         /// <summary>
@@ -92,7 +113,7 @@ namespace Sodium
         public IEventListener<TA> ListenSuppressed(Action<TA> action)
         {
             AssertNotDisposed();
-            return ListenSuppressed(new SodiumAction<TA>((t, a) => action(a)), Rank.Highest);
+            return ListenSuppressed(new SodiumAction<TA>((t, a) => action(a)), Rank.Highest, true);
         }
 
         /// <summary>
@@ -101,8 +122,13 @@ namespace Sodium
         /// <param name="map">A map from TA -> TB</param>
         public Event<TB> Map<TB>(Func<TA, TB> map)
         {
+            return Map(map, true);
+        }
+
+        public Event<TB> Map<TB>(Func<TA, TB> map, bool allowAutoDispose)
+        {
             AssertNotDisposed();
-            return new MapEvent<TA, TB>(this, map);
+            return new MapEvent<TA, TB>(this, map, allowAutoDispose);
         }
 
         /// <summary>
@@ -116,9 +142,14 @@ namespace Sodium
         /// having the specified initial value.</returns>
         public Behavior<TA> Hold(TA initValue)
         {
+            return Hold(initValue, true);
+        }
+
+        public Behavior<TA> Hold(TA initValue, bool allowAutoDispose)
+        {
             AssertNotDisposed();
             var evt = this;
-            return TransactionContext.Current.Run((t) => new Behavior<TA>(evt.LastFiringOnly(t), initValue) { Originator = evt });
+            return TransactionContext.Current.Run(t => new Behavior<TA>(evt.LastFiringOnly(t, true), initValue, allowAutoDispose) { Originator = evt });
         }
 
         /// <summary>
@@ -126,8 +157,13 @@ namespace Sodium
         /// </summary>
         public Event<TB> Snapshot<TB>(Behavior<TB> behavior)
         {
+            return Snapshot(behavior, true);
+        }
+
+        public Event<TB> Snapshot<TB>(Behavior<TB> behavior, bool allowAutoDispose)
+        {
             AssertNotDisposed();
-            return Snapshot(behavior, (a, b) => b);
+            return Snapshot(behavior, (a, b) => b, allowAutoDispose);
         }
 
         /// <summary>
@@ -137,8 +173,13 @@ namespace Sodium
         /// </summary>
         public Event<TC> Snapshot<TB, TC>(Behavior<TB> behavior, Func<TA, TB, TC> snapshot)
         {
+            return Snapshot(behavior, snapshot, true);
+        }
+
+        public Event<TC> Snapshot<TB, TC>(Behavior<TB> behavior, Func<TA, TB, TC> snapshot, bool allowAutoDispose)
+        {
             AssertNotDisposed();
-            return new SnapshotEvent<TA, TB, TC>(this, snapshot, behavior);
+            return new SnapshotEvent<TA, TB, TC>(this, snapshot, behavior, allowAutoDispose);
         }
 
         /// <summary>
@@ -146,8 +187,13 @@ namespace Sodium
         /// </summary>
         public Event<TA> Delay()
         {
+            return this.Delay(true);
+        }
+
+        public Event<TA> Delay(bool allowAutoDispose)
+        {
             AssertNotDisposed();
-            return new DelayEvent<TA>(this);
+            return new DelayEvent<TA>(this, allowAutoDispose);
         }
 
         /// <summary>
@@ -163,8 +209,13 @@ namespace Sodium
         /// </remarks>
         public Event<TA> Coalesce(Func<TA, TA, TA> coalesce)
         {
+            return Coalesce(coalesce, true);
+        }
+
+        public Event<TA> Coalesce(Func<TA, TA, TA> coalesce, bool allowAutoDispose)
+        {
             AssertNotDisposed();
-            return TransactionContext.Current.Run(t => Coalesce(t, coalesce));
+            return TransactionContext.Current.Run(t => Coalesce(t, coalesce, allowAutoDispose));
         }
 
         /// <summary>
@@ -172,8 +223,13 @@ namespace Sodium
         /// </summary>
         public Event<TA> Filter(Func<TA, bool> predicate)
         {
+            return Filter(predicate, true);
+        }
+
+        public Event<TA> Filter(Func<TA, bool> predicate, bool allowAutoDispose)
+        {
             AssertNotDisposed();
-            return new FilterEvent<TA>(this, predicate);
+            return new FilterEvent<TA>(this, predicate, allowAutoDispose);
         }
 
         /// <summary>
@@ -183,8 +239,13 @@ namespace Sodium
         /// FilterNotNull will not filter out any values for value types.</remarks>
         public Event<TA> FilterNotNull()
         {
+            return this.FilterNotNull(true);
+        }
+
+        public Event<TA> FilterNotNull(bool allowAutoDispose)
+        {
             AssertNotDisposed();
-            return Filter(a => a != null);
+            return Filter(a => a != null, allowAutoDispose);
         }
 
         /// <summary>
@@ -194,9 +255,14 @@ namespace Sodium
         /// </summary>
         public Event<TA> Gate(Behavior<bool> predicate)
         {
+            return Gate(predicate, true);
+        }
+
+        public Event<TA> Gate(Behavior<bool> predicate, bool allowAutoDispose)
+        {
             AssertNotDisposed();
             Func<TA, bool, Maybe<TA>> snapshot = (a, p) => p ? new Maybe<TA>(a) : null;
-            return this.Snapshot(predicate, snapshot).FilterNotNull().Map(a => a.Value());
+            return this.Snapshot(predicate, snapshot, true).FilterNotNull(true).Map(a => a.Value(), allowAutoDispose);
         }
 
         /// <summary>
@@ -205,12 +271,17 @@ namespace Sodium
         /// </summary>
         public Event<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
         {
+            return Collect(initState, snapshot, true);
+        }
+
+        public Event<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot, bool allowAutoDispose)
+        {
             AssertNotDisposed();
-            var es = new EventLoop<TS>();
-            var s = es.Hold(initState);
-            var ebs = Snapshot(s, snapshot);
-            var eb = ebs.Map(bs => bs.Item1);
-            var evt = ebs.Map(bs => bs.Item2);
+            var es = new EventLoop<TS>(true);
+            var s = es.Hold(initState, true);
+            var ebs = Snapshot(s, snapshot, true);
+            var eb = ebs.Map(bs => bs.Item1, allowAutoDispose);
+            var evt = ebs.Map(bs => bs.Item2, true);
             es.Loop(evt);
             return eb;
         }
@@ -220,12 +291,17 @@ namespace Sodium
         /// </summary>
         public Behavior<TS> Accum<TS>(TS initState, Func<TA, TS, TS> snapshot)
         {
+            return Accum(initState, snapshot, true);
+        }
+
+        public Behavior<TS> Accum<TS>(TS initState, Func<TA, TS, TS> snapshot, bool allowAutoDispose)
+        {
             AssertNotDisposed();
-            var evt = new EventLoop<TS>();
-            var behavior = evt.Hold(initState);
-            var snapshotEvent = Snapshot(behavior, snapshot);
+            var evt = new EventLoop<TS>(true);
+            var behavior = evt.Hold(initState, true);
+            var snapshotEvent = Snapshot(behavior, snapshot, true);
             evt.Loop(snapshotEvent);
-            return snapshotEvent.Hold(initState);
+            return snapshotEvent.Hold(initState, allowAutoDispose);
         }
 
         /// <summary>
@@ -233,16 +309,21 @@ namespace Sodium
         /// </summary>
         public Event<TA> Once()
         {
+            return this.Once(true);
+        }
+
+        public Event<TA> Once(bool allowAutoDispose)
+        {
             AssertNotDisposed();
-            return new OnceEvent<TA>(this);
+            return new OnceEvent<TA>(this, allowAutoDispose);
         }
 
         /// <summary>
         /// Clean up the output by discarding any firing other than the last one. 
         /// </summary>
-        internal Event<TA> LastFiringOnly(Transaction transaction)
+        internal Event<TA> LastFiringOnly(Transaction transaction, bool allowAutoDispose)
         {
-            return Coalesce(transaction, (a, b) => b);
+            return Coalesce(transaction, (a, b) => b, true);
         }
 
         /// <summary>
@@ -281,20 +362,20 @@ namespace Sodium
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Listen operation that takes a thread. This ensures that any other
         /// actions triggered during Listen requiring a transaction all get the same instance.</remarks>
-        internal IEventListener<TA> Listen(ISodiumAction<TA> action, Rank superior)
+        internal IEventListener<TA> Listen(ISodiumAction<TA> action, Rank superior, bool allowAutoDispose)
         {
-            return TransactionContext.Current.Run(t => this.Listen(t, action, superior));
+            return TransactionContext.Current.Run(t => this.Listen(t, action, superior, allowAutoDispose));
         }
 
-        internal IEventListener<TA> ListenSuppressed(ISodiumAction<TA> action, Rank superior)
+        internal IEventListener<TA> ListenSuppressed(ISodiumAction<TA> action, Rank superior, bool allowAutoDispose)
         {
-            return TransactionContext.Current.Run(t => this.ListenSuppressed(t, action, superior));
+            return TransactionContext.Current.Run(t => this.ListenSuppressed(t, action, superior, allowAutoDispose));
         }
 
-        internal IEventListener<TA> Listen(Transaction transaction, Action<TA> action)
+        internal IEventListener<TA> Listen(Transaction transaction, Action<TA> action, bool allowAutoDispose)
         {
             AssertNotDisposed();
-            return Listen(transaction, new SodiumAction<TA>((t, a) => action(a)), Rank.Highest);
+            return Listen(transaction, new SodiumAction<TA>((t, a) => action(a)), Rank.Highest, allowAutoDispose);
         }
 
         /// <summary>
@@ -305,23 +386,23 @@ namespace Sodium
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An IListener to be used to stop listening for events.</returns>
         /// <remarks>Any firings that have occurred on the current transaction will be re-fired immediate after listening.</remarks>
-        internal IEventListener<TA> Listen(Transaction transaction, ISodiumAction<TA> action, Rank superior)
+        internal IEventListener<TA> Listen(Transaction transaction, ISodiumAction<TA> action, Rank superior, bool allowAutoDispose)
         {
-            var listener = this.CreateListener(transaction, action, superior);
+            var listener = this.CreateListener(transaction, action, superior, allowAutoDispose);
             InitialFire(transaction, listener);
             Refire(transaction, listener);
             return listener;
         }
 
-        internal IEventListener<TA> ListenSuppressed(Transaction transaction, Action<TA> action)
+        internal IEventListener<TA> ListenSuppressed(Transaction transaction, Action<TA> action, bool allowAutoDispose)
         {
             AssertNotDisposed();
-            return ListenSuppressed(transaction, new SodiumAction<TA>((t, a) => action(a)), Rank.Highest);
+            return ListenSuppressed(transaction, new SodiumAction<TA>((t, a) => action(a)), Rank.Highest, allowAutoDispose);
         }
 
-        internal IEventListener<TA> ListenSuppressed(Transaction transaction, ISodiumAction<TA> action, Rank superior)
+        internal IEventListener<TA> ListenSuppressed(Transaction transaction, ISodiumAction<TA> action, Rank superior, bool allowAutoDispose)
         {
-            var listener = this.CreateListener(transaction, action, superior);
+            var listener = this.CreateListener(transaction, action, superior, allowAutoDispose);
             InitialFire(transaction, listener);
             return listener;
         }
@@ -394,13 +475,13 @@ namespace Sodium
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
         /// </remarks>
-        private Event<TA> Coalesce(Transaction transaction, Func<TA, TA, TA> coalesce)
+        private Event<TA> Coalesce(Transaction transaction, Func<TA, TA, TA> coalesce, bool allowAutoDispose)
         {
             AssertNotDisposed();
-            return new CoalesceEvent<TA>(this, coalesce, transaction) { Originator = this };
+            return new CoalesceEvent<TA>(this, coalesce, transaction, allowAutoDispose) { Originator = this };
         }
 
-        private EventListener<TA> CreateListener(Transaction transaction, ISodiumAction<TA> action, Rank superior)
+        private EventListener<TA> CreateListener(Transaction transaction, ISodiumAction<TA> action, Rank superior, bool allowAutoDispose)
         {
             lock (Constants.ListenersLock)
             {
@@ -409,7 +490,7 @@ namespace Sodium
                     transaction.Reprioritize = true;
                 }
 
-                var listener = new EventListener<TA>(this, action, superior);
+                var listener = new EventListener<TA>(this, action, superior, allowAutoDispose);
                 this.listeners.Add(listener);
                 return listener;
             }

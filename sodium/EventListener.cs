@@ -2,7 +2,8 @@ namespace Sodium
 {
     internal sealed class EventListener<TA> : SodiumItem, IEventListener<TA>
     {
-        public EventListener(Event<TA> evt, ISodiumAction<TA> action, Rank rank)
+        public EventListener(Event<TA> evt, ISodiumAction<TA> action, Rank rank, bool allowAutoDispose)
+            : base(allowAutoDispose)
         {
             this.Event = evt;
             this.Action = action;

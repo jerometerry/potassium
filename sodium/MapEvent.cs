@@ -9,11 +9,12 @@
         private Func<TA, TB> map;
         private IEventListener<TA> listener;
 
-        public MapEvent(Event<TA> evt, Func<TA, TB> map)
+        public MapEvent(Event<TA> evt, Func<TA, TB> map, bool allowAutoDispose)
+            : base(allowAutoDispose)
         {
             this.evt = evt;
             this.map = map;
-            this.listener = evt.Listen(new SodiumAction<TA>(this.Fire), this.Rank);
+            this.listener = evt.Listen(new SodiumAction<TA>(this.Fire), this.Rank, true);
         }
 
         public void Fire(Transaction trans, TA firing)

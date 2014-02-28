@@ -5,11 +5,12 @@ namespace Sodium
         private Behavior<TA> behavior;
         private IEventListener<TA> listener;
 
-        public BehaviorValueEvent(Behavior<TA> behavior, Event<TA> evt, Transaction transaction)
+        public BehaviorValueEvent(Behavior<TA> behavior, Event<TA> evt, Transaction transaction, bool allowAutoDispose)
+            : base(allowAutoDispose)
         {
             this.behavior = behavior;
             var action = new SodiumAction<TA>(this.Fire);
-            listener = evt.Listen(transaction, action, this.Rank);
+            listener = evt.Listen(transaction, action, this.Rank, true);
         }
 
         protected internal override TA[] InitialFirings()

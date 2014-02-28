@@ -7,6 +7,17 @@
         private Event<TA> loop;
         private IEventListener<TA> loopListener;
 
+        public EventLoop()
+            : this(false)
+        {
+            
+        }
+
+        public EventLoop(bool allowAutoDispose)
+            : base(allowAutoDispose)
+        {
+        }
+
         /// <summary>
         /// Firings on the given Event will be forwarded to the current Event
         /// </summary>
@@ -24,7 +35,7 @@
 
             this.loop = eventToLoop;
             var evt = this;
-            this.loopListener = eventToLoop.Listen(new SodiumAction<TA>(evt.Fire), evt.Rank);
+            this.loopListener = eventToLoop.Listen(new SodiumAction<TA>(evt.Fire), evt.Rank, true);
             return this;
         }
 
@@ -34,6 +45,12 @@
             {
                 this.loopListener.AutoDispose();
                 this.loopListener = null;
+            }
+
+            if (this.loop != null)
+            {
+                this.loop.AutoDispose();
+                this.loop = null;
             }
 
             base.Dispose(disposing);

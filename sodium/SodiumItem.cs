@@ -11,11 +11,11 @@
 
         private readonly long id;
 
-        protected SodiumItem()
+        protected SodiumItem(bool allowAutoDispose)
         {
             id = sequence++;
             Metrics.LiveItems.Add(this);
-            AllowAutoDispose = true;
+            AllowAutoDispose = allowAutoDispose;
             Metrics.ItemAllocations++;
         }
 

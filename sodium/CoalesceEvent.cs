@@ -9,13 +9,14 @@ namespace Sodium
         private IEventListener<TA> listener;
         private Maybe<TA> accumulatedValue = Maybe<TA>.Null;
 
-        public CoalesceEvent(Event<TA> evt, Func<TA, TA, TA> coalesce, Transaction transaction)
+        public CoalesceEvent(Event<TA> evt, Func<TA, TA, TA> coalesce, Transaction transaction, bool allowAutoDispose)
+            : base(allowAutoDispose)
         {
             this.evt = evt;
             this.coalesce = coalesce;
 
             var action = new SodiumAction<TA>(this.Accumulate);
-            this.listener = evt.Listen(transaction, action, this.Rank);
+            this.listener = evt.Listen(transaction, action, this.Rank, true);
         }
 
         protected internal override TA[] InitialFirings()
