@@ -13,6 +13,7 @@
             var action = new SodiumAction<Behavior<TA>>(this.Invoke);
             var v = bba.Value();
             this.listener = v.Listen(action, this.Rank);
+            this.RegisterFinalizer(v);
         }
 
         public void Invoke(Transaction transaction, Behavior<TA> behavior)
@@ -41,7 +42,12 @@
                 this.listener = null;
             }
 
-            this.eventListener = null;
+            if (this.eventListener != null)
+            {
+                this.eventListener.Close();
+                this.eventListener = null;
+            }
+
             this.bba = null;
             this.valueEvent = null;
 

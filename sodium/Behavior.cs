@@ -26,6 +26,7 @@ namespace Sodium
         public Behavior(TA initValue)
             : this(new Event<TA>(), initValue)
         {
+            this.RegisterFinalizer(this.Event);
         }
 
         /// <summary>
@@ -47,7 +48,9 @@ namespace Sodium
         /// </summary>
         public static Behavior<TA> Constant(TA initValue)
         {
-            return new Behavior<TA>(new StaticEvent<TA>(), initValue);
+            var behavior = new Behavior<TA>(new StaticEvent<TA>(), initValue);
+            behavior.RegisterFinalizer(behavior.Event);
+            return behavior;
         }
 
         /// <summary>
@@ -64,8 +67,9 @@ namespace Sodium
         /// </summary>
         public static Behavior<TB> Apply<TB>(Behavior<Func<TA, TB>> bf, Behavior<TA> ba)
         {
-            var sink = new BehaviorApplyEvent<TA, TB>(bf, ba);
-            var behavior = sink.Behavior;
+            var evt = new BehaviorApplyEvent<TA, TB>(bf, ba);
+            var behavior = evt.Behavior;
+            behavior.RegisterFinalizer(evt);
             return behavior;
         }
 
@@ -78,6 +82,7 @@ namespace Sodium
             var initValue = innerBehavior.Sample();
             var sink = new SwitchBehaviorEvent<TA>(bba);
             var result = sink.Hold(initValue);
+            result.RegisterFinalizer(sink);
             return result;
         }
 
@@ -179,6 +184,7 @@ namespace Sodium
             
             // Creates a new Behavior and a new Event
             var behavior = mapEvent.Hold(mappedValue);
+            behavior.RegisterFinalizer(mapEvent);
 
             return behavior;
         }
@@ -208,7 +214,13 @@ namespace Sodium
             var snapshotBehavior = loopBehavior.Map(x => x.Item2);
             var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
             loop.Loop(coalesceSnapshotEvent);
+
             var result = loopBehavior.Map(x => x.Item1);
+            result.RegisterFinalizer(loop);
+            result.RegisterFinalizer(loopBehavior);
+            result.RegisterFinalizer(coalesceEvent);
+            result.RegisterFinalizer(coalesceSnapshotEvent);
+            result.RegisterFinalizer(snapshotBehavior);
             return result;
         }
 
@@ -267,6 +279,7 @@ namespace Sodium
             // Needed in case of an initial value and an update
             // in the same transaction.
             var result = valueEvent.LastFiringOnly(transaction);
+            result.RegisterFinalizer(valueEvent);
             return result;
         }
 

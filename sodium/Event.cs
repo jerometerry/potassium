@@ -45,7 +45,10 @@ namespace Sodium
         /// </remarks>
         public static Event<TA> MergeWith(Func<TA, TA, TA> f, Event<TA> event1, Event<TA> event2)
         {
-            return Merge(event1, event2).Coalesce(f);
+            var merge = Merge(event1, event2);
+            var c = merge.Coalesce(f);
+            c.RegisterFinalizer(merge);
+            return c;
         }
 
         /// <summary>
@@ -130,6 +133,7 @@ namespace Sodium
                 {
                     var f = evt.LastFiringOnly(t);
                     var b = new Behavior<TA>(f, initValue);
+                    b.RegisterFinalizer(f);
                     return b;
                 });
         }
@@ -202,7 +206,12 @@ namespace Sodium
         public Event<TA> Gate(Behavior<bool> predicate)
         {
             Func<TA, bool, Maybe<TA>> snapshot = (a, p) => p ? new Maybe<TA>(a) : null;
-            return this.Snapshot(predicate, snapshot).FilterNotNull().Map(a => a.Value());
+            var sn = this.Snapshot(predicate, snapshot);
+            var filter = sn.FilterNotNull();
+            var map = filter.Map(a => a.Value());
+            map.RegisterFinalizer(filter);
+            map.RegisterFinalizer(sn);
+            return map;
         }
 
         /// <summary>
@@ -217,6 +226,10 @@ namespace Sodium
             var eb = ebs.Map(bs => bs.Item1);
             var evt = ebs.Map(bs => bs.Item2);
             es.Loop(evt);
+            eb.RegisterFinalizer(es);
+            eb.RegisterFinalizer(s);
+            eb.RegisterFinalizer(ebs);
+            eb.RegisterFinalizer(evt);
             return eb;
         }
 

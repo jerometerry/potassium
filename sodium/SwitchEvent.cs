@@ -18,8 +18,17 @@
 
         public override void Close()
         {
-            this.listener = null;
-            eventSwitchCallback = null;
+            if (this.listener != null)
+            {
+                this.listener.Close();
+                this.listener = null;
+            }
+
+            if (this.eventSwitchCallback != null)
+            {
+                eventSwitchCallback = null;
+            }
+            
             updates = null;
             this.behavior = null;
 

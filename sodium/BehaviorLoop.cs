@@ -5,6 +5,7 @@
         public BehaviorLoop()
             : base(new EventLoop<TA>(), default(TA))
         {
+            this.RegisterFinalizer(this.Event);
         }
 
         /// <summary>

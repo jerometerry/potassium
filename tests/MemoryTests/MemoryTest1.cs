@@ -38,6 +38,7 @@ namespace Sodium.MemoryTests
             var eventOfBehaviors = changeTens.Map(
                 tens =>
                     {
+                        DisposeFinalizers(behaviorMapFinalizers);
                         var tmp = behavior.Map(tt => new Tuple<int?, int?>(tens, tt));
                         tmp.Description = "Behavior<Tuple<int?,int?>>";
                         behaviorMapFinalizers.Add(tmp);
