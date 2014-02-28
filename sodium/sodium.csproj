@@ -52,6 +52,7 @@
     <Compile Include="EventLoop.cs" />
     <Compile Include="FixedTransactionContext.cs" />
     <Compile Include="Metrics.cs" />
+    <Compile Include="Observable.cs" />
     <Compile Include="SingleTransactionContext.cs" />
     <Compile Include="StaticEvent.cs" />
     <Compile Include="BehaviorValueEvent.cs" />

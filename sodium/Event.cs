@@ -8,7 +8,7 @@ namespace Sodium
     /// An Event is a stream of discrete event occurrences
     /// </summary>
     /// <typeparam name="TA">The type of values that will be fired through the event.</typeparam>
-    public class Event<TA> : IDisposable
+    public class Event<TA> : Observable
     {
         private readonly List<EventListener<TA>> listeners = new List<EventListener<TA>>();
         private readonly List<TA> firings = new List<TA>();
@@ -17,19 +17,11 @@ namespace Sodium
         /// The rank of the current Event. Default to rank zero
         /// </summary>
         private readonly Rank rank = new Rank();
-        private bool disposed;
+        
 
         public Event()
         {
             Metrics.EventAllocations++;
-        }
-
-        /// <summary>
-        /// Gets whether the current Event has been disposed
-        /// </summary>
-        public bool Disposed
-        {
-            get { return disposed; }
         }
 
         internal Rank Rank
@@ -243,16 +235,6 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Stop all listeners from receiving events from the current Event
-        /// </summary>
-        public void Dispose()
-        {
-            Metrics.EventDeallocations++;
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
         /// Clean up the output by discarding any firing other than the last one. 
         /// </summary>
         internal Event<TA> LastFiringOnly(Transaction transaction)
@@ -345,7 +327,7 @@ namespace Sodium
         /// <returns>True if the listener was removed, false otherwise</returns>
         internal bool RemoveListener(EventListener<TA> eventListener)
         {
-            if (disposed || eventListener == null || eventListener.Disposed)
+            if (Disposed || eventListener == null || eventListener.Disposed)
             {
                 return false;
             }
@@ -370,14 +352,8 @@ namespace Sodium
         /// Cleanup the current Event, disposing of any listeners.
         /// </summary>
         /// <param name="disposing">Whether to dispose of the listeners or not.</param>
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
-            if (disposed)
-            {
-                return;
-            }
-
-            disposed = true;
             if (disposing)
             {
                 var clone = new List<IEventListener<TA>>(this.listeners);
@@ -386,14 +362,6 @@ namespace Sodium
                 {
                     listener.Dispose();
                 }
-            }
-        }
-
-        protected void AssertNotDisposed()
-        {
-            if (disposed)
-            {
-                throw new ObjectDisposedException("Event is being used after it's disposed");
             }
         }
 

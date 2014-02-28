@@ -7,7 +7,7 @@ namespace Sodium
     /// </summary>
     /// <remarks>Behaviors generally change over time, but constant behaviors are ones that choose not to.</remarks>
     /// <typeparam name="TA">The type of values that will be fired through the behavior.</typeparam>
-    public class Behavior<TA> : IDisposable
+    public class Behavior<TA> : Observable
     {
         private TA value;
         
@@ -40,11 +40,6 @@ namespace Sodium
             this.eventListener = ListenForEventFirings();
             Metrics.BehaviorAllocations++;
         }
-
-        /// <summary>
-        /// Gets whether the current Behavior has been disposed
-        /// </summary>
-        public bool Disposed { get; private set; }
 
         protected Event<TA> Event { get; private set; }
 
@@ -236,16 +231,6 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Stop listening for event occurrences
-        /// </summary>
-        public void Dispose()
-        {
-            Metrics.BehaviorDeallocations++;
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
         /// Unwrap an event inside a behavior to give a time-varying event implementation.
         /// </summary>
         /// <param name="transaction"></param>
@@ -291,14 +276,8 @@ namespace Sodium
             return valueEventLast;
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
-            if (this.Disposed)
-            {
-                return;
-            }
-
-            this.Disposed = true;
             if (disposing)
             {
                 if (this.eventListener != null)
@@ -312,14 +291,6 @@ namespace Sodium
                     this.Event.Dispose();
                     this.Event = null;
                 }
-            }
-        }
-
-        protected void AssertNotDisposed()
-        {
-            if (this.Disposed)
-            {
-                throw new ObjectDisposedException("Event is being used after it's disposed");
             }
         }
 
