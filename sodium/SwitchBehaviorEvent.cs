@@ -12,7 +12,9 @@
         {
             this.bba = bba;
             var action = new SodiumAction<Behavior<TA>>(this.Invoke);
-            this.listener = bba.Value(true).Listen(action, this.Rank, true);
+            var v = bba.Value(true);
+            this.RegisterAutoFinalizer(v);
+            this.listener = v.Listen(action, this.Rank, true);
         }
 
         public void Invoke(Transaction transaction, Behavior<TA> behavior)

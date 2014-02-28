@@ -25,7 +25,7 @@
             this.Id = sequence++;
             this.autoFinalizers = new List<SodiumItem>();
             this.finalizers = new List<SodiumItem>();
-            Metrics.LiveItems.Add(this);
+            Metrics.ItemAllocated(this);
             AllowAutoDispose = allowAutoDispose;
             Metrics.ItemAllocations++;
         }
@@ -92,7 +92,7 @@
             this.Disposed = true;
             this.Disposing = false;
 
-            Metrics.LiveItems.Remove(this);
+            Metrics.ItemDeallocated(this);
         }
 
         /// <summary>
