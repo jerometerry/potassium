@@ -1,6 +1,7 @@
 ﻿namespace Sodium
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Base class for Events, Behaviors, and Listeners
@@ -11,9 +12,15 @@
 
         private readonly long id;
 
+        /// <summary>
+        /// List of items that will be disposed of when the current SodiumItem is disposed
+        /// </summary>
+        private List<SodiumItem> finalizers;
+
         protected SodiumItem(bool allowAutoDispose)
         {
             id = sequence++;
+            finalizers = new List<SodiumItem>();
             Metrics.LiveItems.Add(this);
             AllowAutoDispose = allowAutoDispose;
             Metrics.ItemAllocations++;
@@ -46,6 +53,11 @@
         public override int GetHashCode()
         {
             return this.id.GetHashCode();
+        }
+
+        public void RegisterFinalizer(SodiumItem item)
+        {
+            this.finalizers.Add(item);
         }
 
         public override bool Equals(object obj)
@@ -98,6 +110,19 @@
 
         protected virtual void Dispose(bool disposing)
         {
+            if (disposing)
+            {
+                if (finalizers != null && finalizers.Count > 0)
+                {
+                    var clone = new List<SodiumItem>(finalizers);
+                    finalizers.Clear();
+                    finalizers = null;
+                    foreach (var item in clone)
+                    {
+                        item.AutoDispose();
+                    }
+                }
+            }
         }
     }
 }

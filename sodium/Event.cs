@@ -283,6 +283,12 @@ namespace Sodium
             var eb = ebs.Map(bs => bs.Item1, allowAutoDispose);
             var evt = ebs.Map(bs => bs.Item2, true);
             es.Loop(evt);
+            
+            eb.RegisterFinalizer(es);
+            eb.RegisterFinalizer(s);
+            eb.RegisterFinalizer(ebs);
+            eb.RegisterFinalizer(evt);
+            
             return eb;
         }
 
@@ -301,7 +307,14 @@ namespace Sodium
             var behavior = evt.Hold(initState, true);
             var snapshotEvent = Snapshot(behavior, snapshot, true);
             evt.Loop(snapshotEvent);
-            return snapshotEvent.Hold(initState, allowAutoDispose);
+            
+            var result = snapshotEvent.Hold(initState, allowAutoDispose);
+
+            result.RegisterFinalizer(evt);
+            result.RegisterFinalizer(behavior);
+            result.RegisterFinalizer(snapshotEvent);
+
+            return result;
         }
 
         /// <summary>
@@ -386,7 +399,7 @@ namespace Sodium
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An IListener to be used to stop listening for events.</returns>
         /// <remarks>Any firings that have occurred on the current transaction will be re-fired immediate after listening.</remarks>
-        internal IEventListener<TA> Listen(Transaction transaction, ISodiumAction<TA> action, Rank superior, bool allowAutoDispose)
+        internal EventListener<TA> Listen(Transaction transaction, ISodiumAction<TA> action, Rank superior, bool allowAutoDispose)
         {
             var listener = this.CreateListener(transaction, action, superior, allowAutoDispose);
             InitialFire(transaction, listener);

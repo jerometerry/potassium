@@ -87,7 +87,9 @@ namespace Sodium
         public static Behavior<TB> Apply<TB>(Behavior<Func<TA, TB>> bf, Behavior<TA> ba, bool allowAutoDispose)
         {
             var sink = new BehaviorApplyEvent<TA, TB>(bf, ba, true, allowAutoDispose);
-            return sink.Behavior;
+            var behavior = sink.Behavior;
+            behavior.RegisterFinalizer(sink);
+            return behavior;
         }
 
         /// <summary>
@@ -103,7 +105,9 @@ namespace Sodium
             var innerBehavior = bba.Sample();
             var initValue = innerBehavior.Sample();
             var sink = new SwitchBehaviorEvent<TA>(bba, true);
-            return sink.Hold(initValue, allowAutoDispose);
+            var result = sink.Hold(initValue, allowAutoDispose);
+            result.RegisterFinalizer(sink);
+            return result;
         }
 
         /// <summary>
@@ -232,6 +236,8 @@ namespace Sodium
             // Creates a new Behavior and a new Event
             var behavior = mapEvent.Hold(mappedValue, allowAutoDispose);
             
+            behavior.RegisterFinalizer(mapEvent);
+
             return behavior;
         }
 
@@ -248,7 +254,9 @@ namespace Sodium
             AssertNotDisposed();
             Func<TA, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
             var bf = Map(ffa, true);
-            return Behavior<TB>.Apply(bf, behavior, allowAutoDispose);
+            var result = Behavior<TB>.Apply(bf, behavior, allowAutoDispose);
+            result.RegisterFinalizer(bf);
+            return result;
         }
 
         /// <summary>
@@ -271,7 +279,15 @@ namespace Sodium
             var snapshotBehavior = loopBehavior.Map(x => x.Item2, true);
             var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot, true);
             loop.Loop(coalesceSnapshotEvent);
-            return loopBehavior.Map(x => x.Item1, allowAutoDispose);
+            
+            var result = loopBehavior.Map(x => x.Item1, allowAutoDispose);
+            result.RegisterFinalizer(coalesceEvent);
+            result.RegisterFinalizer(loop);
+            result.RegisterFinalizer(loopBehavior);
+            result.RegisterFinalizer(snapshotBehavior);
+            result.RegisterFinalizer(coalesceSnapshotEvent);
+
+            return result;
         }
 
         /// <summary>
@@ -283,7 +299,11 @@ namespace Sodium
             Func<TA, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
             var bf = Map(map, true);
             var l1 = Behavior<TB>.Apply(bf, b, true);
-            return Behavior<TC>.Apply(l1, c, allowAutoDispose);
+
+            var result = Behavior<TC>.Apply(l1, c, allowAutoDispose);
+            result.RegisterFinalizer(bf);
+            result.RegisterFinalizer(l1);
+            return result;
         }
 
         /// <summary>
@@ -327,7 +347,9 @@ namespace Sodium
 
             // Needed in case of an initial value and an update
             // in the same transaction.
-            return valueEvent.LastFiringOnly(transaction, allowAutoDispose);
+            var result = valueEvent.LastFiringOnly(transaction, allowAutoDispose);
+            result.RegisterFinalizer(valueEvent);
+            return result;
         }
 
         protected override void Dispose(bool disposing)
@@ -367,7 +389,8 @@ namespace Sodium
         private IEventListener<TA> ListenForEventFirings(Transaction transaction, bool allowAutoDispose)
         {
             var action = new SodiumAction<TA>(ScheduleApplyValueUpdate);
-            return this.Event.Listen(transaction, action, Rank.Highest, allowAutoDispose);
+            var result = this.Event.Listen(transaction, action, Rank.Highest, allowAutoDispose);
+            return result;
         }
 
         /// <summary>

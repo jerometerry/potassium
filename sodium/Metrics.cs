@@ -45,19 +45,5 @@
                 return LiveItems.Count;
             } 
         }
-
-        /// <summary>
-        /// Call the AutoDispose method on any live SodiumItems
-        /// </summary>
-        public static void AutoDispose()
-        {
-            var clone = new List<SodiumItem>(LiveItems);
-            foreach(var o in clone)
-            {
-                o.AutoDispose();
-            }
-
-            LiveItems.Clear();
-        }
     }
 }
