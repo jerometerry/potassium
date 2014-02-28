@@ -174,7 +174,24 @@ namespace Sodium
         public Behavior<TB> Map<TB>(Func<TA, TB> map)
         {
             AssertNotDisposed();
-            return Updates().Map(map).Hold(map(Sample()));
+            
+            // No allocations. Just returns the underlying event
+            var underlyingEvent = Updates();
+
+            // Creates a new MapEvent
+            var mapEvent = underlyingEvent.Map(map);
+
+            // No allocations. Just returns the current value
+            var currentValue = Sample();
+            
+            // Mapping function may or may not allocate Events / Behaviors
+            // out of our control
+            var mappedValue = map(currentValue);
+            
+            // Creates a new Behavior and a new Event
+            var behavior = mapEvent.Hold(mappedValue);
+            
+            return behavior;
         }
 
         /// <summary>

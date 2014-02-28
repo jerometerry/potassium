@@ -65,8 +65,6 @@ namespace Sodium
         {
             return new MergeEvent<TA>(event1, event2);
         }
-        
-        
 
         /// <summary>
         /// Fire the given value to all registered listeners 

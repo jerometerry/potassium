@@ -28,11 +28,7 @@ namespace Sodium
                     listener = null;
                 }
 
-                if (this.behavior != null)
-                {
-                    behavior.Dispose();
-                    behavior = null;
-                }
+                behavior = null;
             }
 
             base.Dispose(disposing);

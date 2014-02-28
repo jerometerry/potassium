@@ -5,6 +5,7 @@
         private IEventListener<Behavior<TA>> listener;
         private IEventListener<TA> eventListener;
         private Behavior<Behavior<TA>> bba;
+        private Event<TA> valueEvent; 
 
         public SwitchBehaviorEvent(Behavior<Behavior<TA>> bba)
         {
@@ -27,7 +28,13 @@
                 this.eventListener = null;
             }
 
-            var valueEvent = behavior.Value(transaction);
+            if (this.valueEvent != null)
+            {
+                this.valueEvent.Dispose();
+                this.valueEvent = null;
+            }
+
+            this.valueEvent = behavior.Value(transaction);
             this.eventListener = valueEvent.Listen(transaction, new SodiumAction<TA>(Fire), Rank);
         }
 
@@ -51,6 +58,12 @@
                 {
                     this.bba.Dispose();
                     this.bba = null;
+                }
+
+                if (this.valueEvent != null)
+                {
+                    this.valueEvent.Dispose();
+                    this.valueEvent = null;
                 }
             }
 
