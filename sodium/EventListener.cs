@@ -17,19 +17,17 @@ namespace Sodium
 
         protected override void Dispose(bool disposing)
         {
-            if (!disposing)
+            if (disposing)
             {
-                return;
-            }
+                if (this.Event != null)
+                {
+                    this.Event.RemoveListener(this);
+                    this.Event = null;
+                }
 
-            if (this.Event != null)
-            {
-                this.Event.RemoveListener(this);
-                this.Event = null;
+                Action = null;
+                Rank = null;
             }
-
-            Action = null;
-            Rank = null;
         }
     }
 }

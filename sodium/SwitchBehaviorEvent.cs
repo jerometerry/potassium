@@ -24,13 +24,13 @@
             // that might have happened during this transaction will be suppressed.
             if (this.eventListener != null)
             {
-                this.eventListener.Dispose();
+                this.eventListener.AutoDispose();
                 this.eventListener = null;
             }
 
             if (this.valueEvent != null)
             {
-                this.valueEvent.Dispose();
+                this.valueEvent.AutoDispose();
                 this.valueEvent = null;
             }
 
@@ -44,25 +44,25 @@
             {
                 if (this.listener != null)
                 {
-                    this.listener.Dispose();
+                    this.listener.AutoDispose();
                     this.listener = null;
                 }
 
                 if (this.eventListener != null)
                 {
-                    this.eventListener.Dispose();
+                    this.eventListener.AutoDispose();
                     this.eventListener = null;
                 }
 
                 if (this.bba != null)
                 {
-                    this.bba.Dispose();
+                    this.bba.AutoDispose();
                     this.bba = null;
                 }
 
                 if (this.valueEvent != null)
                 {
-                    this.valueEvent.Dispose();
+                    this.valueEvent.AutoDispose();
                     this.valueEvent = null;
                 }
             }

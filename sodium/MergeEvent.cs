@@ -39,25 +39,25 @@ namespace Sodium
             {
                 if (l1 != null)
                 {
-                    l1.Dispose();
+                    l1.AutoDispose();
                     l1 = null;
                 }
 
                 if (l2 != null)
                 {
-                    l2.Dispose();
+                    l2.AutoDispose();
                     l2 = null;
                 }
 
                 if (evt1 != null)
                 {
-                    evt1.Dispose();
+                    evt1.AutoDispose();
                     evt1 = null;
                 }
 
                 if (evt2 != null)
                 {
-                    evt2.Dispose();
+                    evt2.AutoDispose();
                     evt2 = null;
                 }
             }

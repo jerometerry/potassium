@@ -39,19 +39,19 @@
             {
                 if (this.Behavior != null)
                 {
-                    this.Behavior.Dispose();
+                    this.Behavior.AutoDispose();
                     this.Behavior = null;
                 }
 
                 if (l1 != null)
                 {
-                    l1.Dispose();
+                    l1.AutoDispose();
                     l1 = null;
                 }
 
                 if (l2 != null)
                 {
-                    l2.Dispose();
+                    l2.AutoDispose();
                     l2 = null;
                 }
 

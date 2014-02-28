@@ -25,7 +25,7 @@ namespace Sodium
                 return;
             }
 
-            la[0].Dispose();
+            la[0].AutoDispose();
             la[0] = null;
         }
 
@@ -46,13 +46,13 @@ namespace Sodium
 
             if (this.eventListeners[0] != null)
             {
-                this.eventListeners[0].Dispose();
+                this.eventListeners[0].AutoDispose();
                 this.eventListeners[0] = null;
             }
 
             if (this.eventListener != null)
             {
-                this.eventListener.Dispose();
+                this.eventListener.AutoDispose();
                 this.eventListener = null;
             }
 
@@ -65,19 +65,19 @@ namespace Sodium
             {
                 if (this.eventListeners[0] != null)
                 {
-                    this.eventListeners[0].Dispose();
+                    this.eventListeners[0].AutoDispose();
                     this.eventListeners[0] = null;
                 }
 
                 if (this.eventListener != null)
                 {
-                    this.eventListener.Dispose();
+                    this.eventListener.AutoDispose();
                     this.eventListener = null;
                 }
 
                 if (evt != null)
                 {
-                    evt.Dispose();
+                    evt.AutoDispose();
                     evt = null;
                 }
 

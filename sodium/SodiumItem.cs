@@ -34,10 +34,13 @@
         public bool Disposed { get; private set; }
 
         /// <summary>
-        /// 
+        /// Gets whether the current SodiumItem is being disposed
         /// </summary>
-        public bool Disposingg { get; private set; }
+        public bool Disposing { get; private set; }
 
+        /// <summary>
+        /// Gets whether the current SodiumItem is being auto disposed
+        /// </summary>
         public bool AutoDisposing { get; private set; }
 
         public override int GetHashCode()
@@ -55,17 +58,18 @@
         /// </summary>
         public void Dispose()
         {
-            if (this.Disposed || this.Disposingg)
+            if (this.Disposed || this.Disposing)
             {
                 return;
             }
 
+            this.Disposing = true;
             Metrics.ItemDeallocations++;
             Dispose(true);
             GC.SuppressFinalize(this);
 
             this.Disposed = true;
-            this.Disposingg = false;
+            this.Disposing = false;
 
             Metrics.LiveItems.Remove(this);
         }
@@ -75,7 +79,7 @@
         /// </summary>
         public void AutoDispose()
         {
-            if (!this.AllowAutoDispose)
+            if (!this.AllowAutoDispose || this.Disposed || this.Disposing || this.AutoDisposing)
             {
                 return;
             }

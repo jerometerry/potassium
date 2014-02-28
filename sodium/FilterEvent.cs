@@ -55,13 +55,13 @@ namespace Sodium
             {
                 if (listener != null)
                 {
-                    listener.Dispose();
+                    listener.AutoDispose();
                     listener = null;
                 }
 
                 if (evt != null)
                 {
-                    evt.Dispose();
+                    evt.AutoDispose();
                     evt = null;
                 }
 

@@ -32,7 +32,7 @@
         {
             if (this.loopListener != null)
             {
-                this.loopListener.Dispose();
+                this.loopListener.AutoDispose();
                 this.loopListener = null;
             }
 

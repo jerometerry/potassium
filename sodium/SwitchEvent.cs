@@ -22,25 +22,25 @@
             {
                 if (this.listener != null)
                 {
-                    this.listener.Dispose();
+                    this.listener.AutoDispose();
                     this.listener = null;
                 }
 
                 if (eventSwitchCallback != null)
                 {
-                    eventSwitchCallback.Dispose();
+                    eventSwitchCallback.AutoDispose();
                     eventSwitchCallback = null;
                 }
 
                 if (updates != null)
                 {
-                    updates.Dispose();
+                    updates.AutoDispose();
                     updates = null;
                 }
 
                 if (this.behavior != null)
                 {
-                    this.behavior.Dispose();
+                    this.behavior.AutoDispose();
                     this.behavior = null;
                 }
             }

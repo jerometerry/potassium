@@ -24,7 +24,7 @@ namespace Sodium
             {
                 if (listener != null)
                 {
-                    listener.Dispose();
+                    listener.AutoDispose();
                     listener = null;
                 }
 

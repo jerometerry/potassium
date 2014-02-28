@@ -21,5 +21,9 @@ namespace Sodium
         /// Get / set the the description of the current IListener
         /// </summary>
         string Description { get; set; }
+
+        void AutoDispose();
+
+        bool AllowAutoDispose { get; set; }
     }
 }

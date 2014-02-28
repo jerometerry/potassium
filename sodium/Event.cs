@@ -265,7 +265,10 @@ namespace Sodium
             var clone = new List<EventListener<TA>>(this.listeners);
             foreach (var listener in clone)
             {
-                listener.Action.Invoke(transaction, firing);
+                if (!listener.Disposed && !listener.Disposing && listener.Action != null)
+                {
+                    listener.Action.Invoke(transaction, firing);
+                }
             }
         }
 
@@ -330,7 +333,8 @@ namespace Sodium
         /// <returns>True if the listener was removed, false otherwise</returns>
         internal bool RemoveListener(EventListener<TA> eventListener)
         {
-            if (Disposed || Disposingg || eventListener == null || eventListener.Disposed)
+            if (Disposed || this.Disposing || 
+                eventListener == null || eventListener.Disposed || eventListener.Disposing)
             {
                 return false;
             }
@@ -357,18 +361,16 @@ namespace Sodium
         /// <param name="disposing">Whether to dispose of the listeners or not.</param>
         protected override void Dispose(bool disposing)
         {
-            if (!disposing)
+            if (disposing)
             {
-                return;
-            }
+                Metrics.EventDeallocations++;
 
-            Metrics.EventDeallocations++;
-
-            var clone = new List<IEventListener<TA>>(this.listeners);
-            this.listeners.Clear();
-            foreach (var listener in clone)
-            {
-                listener.Dispose();
+                var clone = new List<IEventListener<TA>>(this.listeners);
+                this.listeners.Clear();
+                foreach (var listener in clone)
+                {
+                    listener.AutoDispose();
+                }
             }
         }
 

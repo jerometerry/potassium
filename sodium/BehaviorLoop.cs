@@ -25,7 +25,7 @@
         {
             if (this.Event != null)
             {
-                this.Event.Dispose();
+                this.Event.AutoDispose();
             }
 
             base.Dispose(disposing);
