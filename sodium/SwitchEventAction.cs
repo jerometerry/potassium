@@ -25,6 +25,8 @@ namespace Sodium
                 return;
             }
 
+            disposed = true;
+
             if (this.eventListener != null)
             {
                 this.eventListener.Dispose();
@@ -44,8 +46,6 @@ namespace Sodium
             }
 
             action = null;
-
-            disposed = true;
         }
 
         public void Invoke(Transaction transaction, Event<TA> newEvent)

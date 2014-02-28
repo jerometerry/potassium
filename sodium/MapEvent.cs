@@ -23,6 +23,7 @@
 
         protected internal override TB[] InitialFirings()
         {
+            this.AssertNotDisposed();
             var firings = evt.InitialFirings();
             if (firings == null)
             { 

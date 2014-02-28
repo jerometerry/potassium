@@ -27,6 +27,7 @@ namespace Sodium
 
         protected internal override TC[] InitialFirings()
         {
+            this.AssertNotDisposed();
             var events = evt.InitialFirings();
             if (events == null)
             {

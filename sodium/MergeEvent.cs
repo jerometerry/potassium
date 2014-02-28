@@ -21,6 +21,7 @@ namespace Sodium
 
         protected internal override TA[] InitialFirings()
         {
+            this.AssertNotDisposed();
             var firings1 = evt1.InitialFirings();
             var firings2 = evt2.InitialFirings();
 

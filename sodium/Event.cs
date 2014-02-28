@@ -344,22 +344,11 @@ namespace Sodium
                 return false;
             }
 
-            var previousCount = this.listeners.Count;
-
-            bool removed;
             lock (Constants.ListenersLock)
             {
                 Rank.RemoveSuperior(eventListener.Rank);
-                removed = this.listeners.Remove(eventListener);
+                return this.listeners.Remove(eventListener);
             }
-
-            var newCount = this.listeners.Count;
-            if (newCount == 0 && newCount < previousCount)
-            {
-                this.Dispose();
-            }
-
-            return removed;
         }
 
         /// <summary>

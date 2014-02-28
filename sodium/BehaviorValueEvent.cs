@@ -14,6 +14,7 @@ namespace Sodium
 
         protected internal override TA[] InitialFirings()
         {
+            this.AssertNotDisposed();
             return new[] { behavior.Sample() };
         }
 

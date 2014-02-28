@@ -20,6 +20,8 @@ namespace Sodium
 
         protected internal override TA[] InitialFirings()
         {
+            this.AssertNotDisposed();
+
             var events = evt.InitialFirings();
             if (events == null)
             {
