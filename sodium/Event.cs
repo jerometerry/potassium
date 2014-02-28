@@ -152,8 +152,7 @@ namespace Sodium
             return TransactionContext.Current.Run(t =>
                 {
                     var f = evt.LastFiringOnly(t, false);
-                    var b = new Behavior<TA>(f, initValue, allowAutoDispose)
-                        { Originator = evt };
+                    var b = new Behavior<TA>(f, initValue, allowAutoDispose);
                     b.RegisterFinalizer(f);
                     return b;
                 });
@@ -343,7 +342,7 @@ namespace Sodium
         /// </summary>
         internal Event<TA> LastFiringOnly(Transaction transaction, bool allowAutoDispose)
         {
-            return Coalesce(transaction, (a, b) => b, true);
+            return Coalesce(transaction, (a, b) => b, allowAutoDispose);
         }
 
         /// <summary>
@@ -500,7 +499,8 @@ namespace Sodium
         private Event<TA> Coalesce(Transaction transaction, Func<TA, TA, TA> coalesce, bool allowAutoDispose)
         {
             AssertNotDisposed();
-            return new CoalesceEvent<TA>(this, coalesce, transaction, allowAutoDispose) { Originator = this };
+            var evt = new CoalesceEvent<TA>(this, coalesce, transaction, allowAutoDispose);
+            return evt;
         }
 
         private EventListener<TA> CreateListener(Transaction transaction, ISodiumAction<TA> action, Rank superior, bool allowAutoDispose)

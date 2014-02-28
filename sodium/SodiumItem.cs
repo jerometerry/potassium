@@ -32,8 +32,6 @@
 
         public long Id { get; private set; }
 
-        public SodiumItem Originator { get; set; }
-
         public bool AllowAutoDispose { get; set; }
 
         /// <summary>
@@ -121,28 +119,30 @@
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposing)
             {
-                if (this.autoFinalizers != null && this.autoFinalizers.Count > 0)
-                {
-                    var clone = new List<SodiumItem>(this.autoFinalizers);
-                    this.autoFinalizers.Clear();
-                    this.autoFinalizers = null;
-                    foreach (var item in clone)
-                    {
-                        item.AutoDispose();
-                    }
-                }
+                return;
+            }
 
-                if (this.finalizers != null && this.finalizers.Count > 0)
+            if (this.autoFinalizers != null && this.autoFinalizers.Count > 0)
+            {
+                var clone = new List<SodiumItem>(this.autoFinalizers);
+                this.autoFinalizers.Clear();
+                this.autoFinalizers = null;
+                foreach (var item in clone)
                 {
-                    var clone = new List<SodiumItem>(this.finalizers);
-                    this.finalizers.Clear();
-                    this.finalizers = null;
-                    foreach (var item in clone)
-                    {
-                        item.Dispose();
-                    }
+                    item.AutoDispose();
+                }
+            }
+
+            if (this.finalizers != null && this.finalizers.Count > 0)
+            {
+                var clone = new List<SodiumItem>(this.finalizers);
+                this.finalizers.Clear();
+                this.finalizers = null;
+                foreach (var item in clone)
+                {
+                    item.Dispose();
                 }
             }
         }
