@@ -38,6 +38,7 @@ namespace Sodium
             this.Event = evt;
             this.value = initValue;
             this.eventListener = ListenForEventFirings();
+            Metrics.BehaviorAllocations++;
         }
 
         /// <summary>
@@ -222,6 +223,7 @@ namespace Sodium
         /// </summary>
         public void Dispose()
         {
+            Metrics.BehaviorDeallocations++;
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }

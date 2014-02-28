@@ -12,12 +12,17 @@ namespace Sodium
     {
         private readonly List<EventListener<TA>> listeners = new List<EventListener<TA>>();
         private readonly List<TA> firings = new List<TA>();
-        
+
         /// <summary>
         /// The rank of the current Event. Default to rank zero
         /// </summary>
         private readonly Rank rank = new Rank();
         private bool disposed;
+
+        public Event()
+        {
+            Metrics.EventAllocations++;
+        }
 
         /// <summary>
         /// Gets whether the current Event has been disposed
@@ -244,6 +249,7 @@ namespace Sodium
         /// </summary>
         public void Dispose()
         {
+            Metrics.EventDeallocations++;
             Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -263,6 +269,8 @@ namespace Sodium
         /// <param name="firing">The value to fire to registered callbacks</param>
         internal virtual void Fire(Transaction transaction, TA firing)
         {
+            Metrics.EventFirings++;
+
             var noFirings = !firings.Any();
             if (noFirings)
             {
