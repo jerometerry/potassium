@@ -19,6 +19,8 @@
             Metrics.ItemAllocations++;
         }
 
+        public SodiumItem Originator { get; set; }
+
         public bool AllowAutoDispose { get; set; }
 
         /// <summary>

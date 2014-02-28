@@ -117,7 +117,8 @@ namespace Sodium
         public Behavior<TA> Hold(TA initValue)
         {
             AssertNotDisposed();
-            return TransactionContext.Current.Run(t => new Behavior<TA>(LastFiringOnly(t), initValue));
+            var evt = this;
+            return TransactionContext.Current.Run((t) => new Behavior<TA>(evt.LastFiringOnly(t), initValue) { Originator = evt });
         }
 
         /// <summary>
@@ -394,7 +395,7 @@ namespace Sodium
         private Event<TA> Coalesce(Transaction transaction, Func<TA, TA, TA> coalesce)
         {
             AssertNotDisposed();
-            return new CoalesceEvent<TA>(this, coalesce, transaction);
+            return new CoalesceEvent<TA>(this, coalesce, transaction) { Originator = this };
         }
 
         private EventListener<TA> CreateListener(Transaction transaction, ISodiumAction<TA> action, Rank superior)
