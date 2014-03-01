@@ -197,6 +197,7 @@ namespace Sodium
             Func<TA, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
             var bf = Map(ffa);
             var result = Behavior<TB>.Apply(bf, behavior);
+            result.RegisterFinalizer(bf);
             return result;
         }
 
@@ -234,6 +235,8 @@ namespace Sodium
             var l1 = Behavior<TB>.Apply(bf, b);
 
             var result = Behavior<TC>.Apply(l1, c);
+            result.RegisterFinalizer(bf);
+            result.RegisterFinalizer(l1);
             return result;
         }
 
