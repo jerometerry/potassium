@@ -284,6 +284,17 @@ namespace Sodium
         }
 
         /// <summary>
+        /// Unwrap an event inside a behavior to give a time-varying event implementation.
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <param name="behavior">The behavior that wraps the event</param>
+        /// <returns>The unwrapped event</returns>
+        internal static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior)
+        {
+            return new SwitchEvent<TA>(transaction, behavior);
+        }
+
+        /// <summary>
         /// Gets the updated value of the Behavior that has not yet been moved to the
         /// current value of the Behavior. 
         /// </summary>
@@ -316,17 +327,6 @@ namespace Sodium
             var result = valueEvent.LastFiringOnly(transaction);
             result.RegisterFinalizer(valueEvent);
             return result;
-        }
-
-        /// <summary>
-        /// Unwrap an event inside a behavior to give a time-varying event implementation.
-        /// </summary>
-        /// <param name="transaction"></param>
-        /// <param name="behavior">The behavior that wraps the event</param>
-        /// <returns>The unwrapped event</returns>
-        internal static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior)
-        {
-            return new SwitchEvent<TA>(transaction, behavior);
         }
 
         /// <summary>

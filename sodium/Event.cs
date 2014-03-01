@@ -336,6 +336,7 @@ namespace Sodium
         {
             return TransactionContext.Current.Run(t => this.ListenSuppressed(t, action, superior));
         }
+
         /// <summary>
         /// Stop the given listener from receiving updates from the current Event
         /// </summary>
@@ -364,6 +365,14 @@ namespace Sodium
             return null;
         }
 
+        private static void Fire(Transaction transaction, EventListener<TA> eventListener, IEnumerable<TA> firings)
+        {
+            foreach (var firing in firings)
+            {
+                eventListener.Action.Invoke(transaction, firing);
+            }
+        }
+
         private EventListener<TA> CreateListener(Transaction transaction, ISodiumAction<TA> action, Rank superior)
         {
             lock (Constants.ListenersLock)
@@ -376,14 +385,6 @@ namespace Sodium
                 var listener = new EventListener<TA>(this, action, superior);
                 this.listeners.Add(listener);
                 return listener;
-            }
-        }
-
-        private static void Fire(Transaction transaction, EventListener<TA> eventListener, IEnumerable<TA> firings)
-        {
-            foreach (var firing in firings)
-            {
-                eventListener.Action.Invoke(transaction, firing);
             }
         }
 
