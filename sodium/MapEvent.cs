@@ -5,31 +5,20 @@
 
     internal sealed class MapEvent<TA, TB> : Event<TB>
     {
-        private Event<TA> evt;
+        private Event<TA> source;
         private Func<TA, TB> map;
         private IEventListener<TA> listener;
 
-        public MapEvent(Event<TA> evt, Func<TA, TB> map)
+        public MapEvent(Event<TA> source, Func<TA, TB> map)
         {
-            this.evt = evt;
+            this.source = source;
             this.map = map;
-            this.listener = evt.Listen(new SodiumAction<TA>(this.Fire), this.Rank);
+            this.listener = source.Listen(new SodiumAction<TA>(this.Fire), this.Rank);
         }
 
         public void Fire(Transaction trans, TA firing)
         {
             Fire(trans, this.map(firing));
-        }
-
-        protected internal override TB[] InitialFirings()
-        {
-            var firings = evt.InitialFirings();
-            if (firings == null)
-            { 
-                return null;
-            }
-
-            return firings.Select(e => map(e)).ToArray();
         }
 
         public override void Dispose()
@@ -40,14 +29,25 @@
                 listener = null;
             }
 
-            if (evt != null)
+            if (source != null)
             {
-                evt = null;
+                source = null;
             }
 
             map = null;
 
             base.Dispose();
+        }
+
+        protected internal override TB[] InitialFirings()
+        {
+            var firings = source.InitialFirings();
+            if (firings == null)
+            { 
+                return null;
+            }
+
+            return firings.Select(e => map(e)).ToArray();
         }
     }
 }

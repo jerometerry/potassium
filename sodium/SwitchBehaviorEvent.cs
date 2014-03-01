@@ -4,16 +4,16 @@
     {
         private IEventListener<Behavior<TA>> listener;
         private IEventListener<TA> eventListener;
-        private Behavior<Behavior<TA>> bba;
-        private Event<TA> valueEvent; 
+        private Behavior<Behavior<TA>> source;
+        private Event<TA> wrappedEvent;
+        private Event<Behavior<TA>> sourceEvent;
 
-        public SwitchBehaviorEvent(Behavior<Behavior<TA>> bba)
+        public SwitchBehaviorEvent(Behavior<Behavior<TA>> source)
         {
-            this.bba = bba;
+            this.source = source;
+            this.sourceEvent = source.Value();
             var action = new SodiumAction<Behavior<TA>>(this.Invoke);
-            var v = bba.Value();
-            this.listener = v.Listen(action, this.Rank);
-            this.RegisterFinalizer(v);
+            this.listener = this.sourceEvent.Listen(action, this.Rank);
         }
 
         public void Invoke(Transaction transaction, Behavior<TA> behavior)
@@ -30,8 +30,14 @@
                 this.eventListener = null;
             }
 
-            this.valueEvent = behavior.Value(transaction);
-            this.eventListener = valueEvent.Listen(transaction, new SodiumAction<TA>(Fire), Rank);
+            if (this.wrappedEvent != null)
+            {
+                this.wrappedEvent.Dispose();
+                this.wrappedEvent = null;
+            }
+
+            this.wrappedEvent = behavior.Value(transaction);
+            this.eventListener = wrappedEvent.Listen(transaction, new SodiumAction<TA>(Fire), Rank);
         }
 
         public override void Dispose()
@@ -48,8 +54,19 @@
                 this.eventListener = null;
             }
 
-            this.bba = null;
-            this.valueEvent = null;
+            if (this.wrappedEvent != null)
+            {
+                this.wrappedEvent.Dispose();
+                this.wrappedEvent = null;
+            }
+
+            if (this.sourceEvent != null)
+            {
+                this.sourceEvent.Dispose();
+                this.sourceEvent = null;
+            }
+
+            this.source = null;
 
             base.Dispose();
         }

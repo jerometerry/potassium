@@ -4,32 +4,19 @@ namespace Sodium
 
     internal sealed class MergeEvent<TA> : Event<TA>
     {
-        private Event<TA> evt1;
-        private Event<TA> evt2;
+        private Event<TA> source1;
+        private Event<TA> source2;
         private IEventListener<TA> l1;
         private IEventListener<TA> l2;
 
-        public MergeEvent(Event<TA> evt1, Event<TA> evt2)
+        public MergeEvent(Event<TA> source1, Event<TA> source2)
         {
-            this.evt1 = evt1;
-            this.evt2 = evt2;
+            this.source1 = source1;
+            this.source2 = source2;
 
             var action = new SodiumAction<TA>(this.Fire);
-            l1 = evt1.Listen(action, this.Rank);
-            l2 = evt2.Listen(action, this.Rank);
-        }
-
-        protected internal override TA[] InitialFirings()
-        {
-            var firings1 = evt1.InitialFirings();
-            var firings2 = evt2.InitialFirings();
-
-            if (firings1 != null && firings2 != null)
-            {
-                return firings1.Concat(firings2).ToArray();
-            }
-
-            return firings1 ?? firings2;
+            l1 = source1.Listen(action, this.Rank);
+            l2 = source2.Listen(action, this.Rank);
         }
 
         public override void Dispose()
@@ -46,17 +33,30 @@ namespace Sodium
                 l2 = null;
             }
 
-            if (evt1 != null)
+            if (source1 != null)
             {
-                evt1 = null;
+                source1 = null;
             }
 
-            if (evt2 != null)
+            if (source2 != null)
             {
-                evt2 = null;
+                source2 = null;
             }
 
             base.Dispose();
+        }
+
+        protected internal override TA[] InitialFirings()
+        {
+            var firings1 = source1.InitialFirings();
+            var firings2 = source2.InitialFirings();
+
+            if (firings1 != null && firings2 != null)
+            {
+                return firings1.Concat(firings2).ToArray();
+            }
+
+            return firings1 ?? firings2;
         }
     }
 }

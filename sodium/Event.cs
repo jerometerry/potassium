@@ -69,7 +69,6 @@ namespace Sodium
         /// <summary>
         /// Cleanup the current Event, disposing of any listeners.
         /// </summary>
-        /// <param name="disposing">Whether to dispose of the listeners or not.</param>
         public override void Dispose()
         {
             this.listeners.Clear();
@@ -128,14 +127,7 @@ namespace Sodium
         /// having the specified initial value.</returns>
         public Behavior<TA> Hold(TA initValue)
         {
-            var evt = this;
-            return TransactionContext.Current.Run(t =>
-                {
-                    var f = evt.LastFiringOnly(t);
-                    var b = new Behavior<TA>(f, initValue);
-                    b.RegisterFinalizer(f);
-                    return b;
-                });
+            return TransactionContext.Current.Run(t => ConvertToBehavior(t, initValue));
         }
 
         /// <summary>
@@ -244,7 +236,9 @@ namespace Sodium
             evt.Loop(snapshotEvent);
             
             var result = snapshotEvent.Hold(initState);
-
+            result.RegisterFinalizer(evt);
+            result.RegisterFinalizer(behavior);
+            result.RegisterFinalizer(snapshotEvent);
             return result;
         }
 
@@ -375,6 +369,14 @@ namespace Sodium
             {
                 eventListener.Action.Invoke(transaction, firing);
             }
+        }
+
+        private Behavior<TA> ConvertToBehavior(Transaction t, TA initValue)
+        {
+            var f = LastFiringOnly(t);
+            var b = new Behavior<TA>(f, initValue);
+            b.RegisterFinalizer(f);
+            return b;
         }
 
         /// <summary>

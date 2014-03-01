@@ -65,9 +65,9 @@ namespace Sodium
         /// Apply a value inside a behavior to a function inside a behavior. This is the
         /// primitive for all function lifting.
         /// </summary>
-        public static Behavior<TB> Apply<TB>(Behavior<Func<TA, TB>> bf, Behavior<TA> ba)
+        public static Behavior<TB> Apply<TB>(Behavior<Func<TA, TB>> bf, Behavior<TA> source)
         {
-            var evt = new BehaviorApplyEvent<TA, TB>(bf, ba);
+            var evt = new BehaviorApplyEvent<TA, TB>(bf, source);
             var behavior = evt.Behavior;
             behavior.RegisterFinalizer(evt);
             return behavior;
@@ -76,11 +76,11 @@ namespace Sodium
         /// <summary>
         /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
         /// </summary>
-        public static Behavior<TA> SwitchB(Behavior<Behavior<TA>> bba)
+        public static Behavior<TA> SwitchB(Behavior<Behavior<TA>> source)
         {
-            var innerBehavior = bba.Sample();
+            var innerBehavior = source.Sample();
             var initValue = innerBehavior.Sample();
-            var sink = new SwitchBehaviorEvent<TA>(bba);
+            var sink = new SwitchBehaviorEvent<TA>(source);
             var result = sink.Hold(initValue);
             result.RegisterFinalizer(sink);
             return result;
@@ -169,23 +169,12 @@ namespace Sodium
         /// </summary>
         public Behavior<TB> Map<TB>(Func<TA, TB> map)
         {
-            // No allocations. Just returns the underlying event
             var underlyingEvent = Updates();
-
-            // Creates a new MapEvent
             var mapEvent = underlyingEvent.Map(map);
-
-            // No allocations. Just returns the current value
             var currentValue = Sample();
-            
-            // Mapping function may or may not allocate Events / Behaviors
-            // out of our control
             var mappedValue = map(currentValue);
-            
-            // Creates a new Behavior and a new Event
             var behavior = mapEvent.Hold(mappedValue);
             behavior.RegisterFinalizer(mapEvent);
-
             return behavior;
         }
 
@@ -240,6 +229,21 @@ namespace Sodium
             return result;
         }
 
+        public override void Dispose()
+        {
+            if (this.eventListener != null)
+            {
+                this.eventListener = null;
+            }
+
+            if (this.Event != null)
+            {
+                this.Event = null;
+            }
+
+            base.Dispose();
+        }
+
         /// <summary>
         /// Unwrap an event inside a behavior to give a time-varying event implementation.
         /// </summary>
@@ -277,28 +281,13 @@ namespace Sodium
         /// value changes thereafter</returns>
         internal Event<TA> Value(Transaction transaction)
         {
-            var valueEvent = new BehaviorValueEvent<TA>(this, this.Event, transaction);
+            var valueEvent = new BehaviorValueEvent<TA>(this, transaction);
 
             // Needed in case of an initial value and an update
             // in the same transaction.
             var result = valueEvent.LastFiringOnly(transaction);
             result.RegisterFinalizer(valueEvent);
             return result;
-        }
-
-        public override void Dispose()
-        {
-            if (this.eventListener != null)
-            {
-                this.eventListener = null;
-            }
-
-            if (this.Event != null)
-            {
-                this.Event = null;
-            }
-
-            base.Dispose();
         }
 
         /// <summary>

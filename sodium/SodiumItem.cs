@@ -37,7 +37,7 @@
                 finalizers.Clear();
                 finalizers = null;
 
-                foreach(var item in clone)
+                foreach (var item in clone)
                 {
                     item.Dispose();
                 }

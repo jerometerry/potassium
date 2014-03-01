@@ -4,23 +4,41 @@ namespace Sodium
 
     internal sealed class CoalesceEvent<TA> : Event<TA>
     {
-        private Event<TA> evt;
+        private Event<TA> source;
         private Func<TA, TA, TA> coalesce;
         private IEventListener<TA> listener;
         private Maybe<TA> accumulatedValue = Maybe<TA>.Null;
 
-        public CoalesceEvent(Event<TA> evt, Func<TA, TA, TA> coalesce, Transaction transaction)
+        public CoalesceEvent(Event<TA> source, Func<TA, TA, TA> coalesce, Transaction transaction)
         {
-            this.evt = evt;
+            this.source = source;
             this.coalesce = coalesce;
 
             var action = new SodiumAction<TA>(this.Accumulate);
-            this.listener = evt.Listen(transaction, action, this.Rank);
+            this.listener = source.Listen(transaction, action, this.Rank);
+        }
+
+        public override void Dispose()
+        {
+            if (listener != null)
+            {
+                listener.Dispose();
+                listener = null;
+            }
+
+            if (source != null)
+            {
+                source = null;
+            }
+
+            coalesce = null;
+
+            base.Dispose();
         }
 
         protected internal override TA[] InitialFirings()
         {
-            var events = evt.InitialFirings();
+            var events = source.InitialFirings();
             if (events == null)
             {
                 return null;
@@ -33,24 +51,6 @@ namespace Sodium
             }
 
             return new[] { e };
-        }
-
-        public override void Dispose()
-        {
-            if (listener != null)
-            {
-                listener.Dispose();
-                listener = null;
-            }
-
-            if (evt != null)
-            {
-                evt = null;
-            }
-
-            coalesce = null;
-
-            base.Dispose();
         }
 
         private void Accumulate(Transaction transaction, TA data)

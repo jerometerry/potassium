@@ -4,29 +4,33 @@ namespace Sodium
     {
         private Event<TA> evt;
         private IEventListener<TA>[] eventListeners;
-        private IEventListener<TA> eventListener;
 
-        public OnceEvent(Event<TA> evt)
+        public OnceEvent(Event<TA> source)
         {
-            this.evt = evt;
+            this.evt = source;
 
             // This is a bit long-winded but it's efficient because it deregisters
             // the listener.
             this.eventListeners = new IEventListener<TA>[1];
-            this.eventListeners[0] = evt.Listen(new SodiumAction<TA>((t, a) => this.Fire(this.eventListeners, t, a)), this.Rank);
-            this.eventListener = this.eventListeners[0];
+            this.eventListeners[0] = source.Listen(new SodiumAction<TA>((t, a) => this.Fire(this.eventListeners, t, a)), this.Rank);
         }
 
-        public void Fire(IEventListener<TA>[] la, Transaction t, TA a)
+        public override void Dispose()
         {
-            this.Fire(t, a);
-            if (la[0] == null)
+            if (this.eventListeners[0] != null)
             {
-                return;
+                this.eventListeners[0].Dispose();
+                this.eventListeners[0] = null;
             }
 
-            la[0].Dispose();
-            la[0] = null;
+            if (evt != null)
+            {
+                evt = null;
+            }
+
+            eventListeners = null;
+
+            base.Dispose();
         }
 
         protected internal override TA[] InitialFirings()
@@ -49,37 +53,19 @@ namespace Sodium
                 this.eventListeners[0] = null;
             }
 
-            if (this.eventListener != null)
-            {
-                this.eventListener.Dispose();
-                this.eventListener = null;
-            }
-
             return results;
         }
 
-        public override void Dispose()
+        private void Fire(IEventListener<TA>[] la, Transaction t, TA a)
         {
-            if (this.eventListeners[0] != null)
+            this.Fire(t, a);
+            if (la[0] == null)
             {
-                this.eventListeners[0].Dispose();
-                this.eventListeners[0] = null;
+                return;
             }
 
-            if (this.eventListener != null)
-            {
-                this.eventListener.Dispose();
-                this.eventListener = null;
-            }
-
-            if (evt != null)
-            {
-                evt = null;
-            }
-
-            eventListeners = null;
-
-            base.Dispose();
+            la[0].Dispose();
+            la[0] = null;
         }
     }
 }

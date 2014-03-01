@@ -5,7 +5,7 @@
     internal class BehaviorApplyEvent<TA, TB> : Event<TB>
     {
         private Behavior<Func<TA, TB>> bf;
-        private Behavior<TA> ba;
+        private Behavior<TA> source;
         private IEventListener<Func<TA, TB>> l1;
         private IEventListener<TA> l2;
         
@@ -14,19 +14,19 @@
         /// </summary>
         private bool fired;
 
-        public BehaviorApplyEvent(Behavior<Func<TA, TB>> bf, Behavior<TA> ba)
+        public BehaviorApplyEvent(Behavior<Func<TA, TB>> bf, Behavior<TA> source)
         {
             this.bf = bf;
-            this.ba = ba;
+            this.source = source;
 
             var functionChanged = new SodiumAction<Func<TA, TB>>((t, f) => ScheduledPrioritizedFire(t));
             var valueChanged = new SodiumAction<TA>((t, a) => ScheduledPrioritizedFire(t));
 
             l1 = bf.Updates().Listen(functionChanged, this.Rank);
-            l2 = ba.Updates().Listen(valueChanged, this.Rank);
+            l2 = source.Updates().Listen(valueChanged, this.Rank);
 
             var map = bf.Sample();
-            var valA = ba.Sample();
+            var valA = source.Sample();
             var valB = map(valA);
             this.Behavior = this.Hold(valB);
         }
@@ -53,7 +53,7 @@
             }
 
             bf = null;
-            ba = null;
+            source = null;
 
             base.Dispose();
         }
@@ -87,7 +87,7 @@
         private TB GetNewValue()
         {
             var map = bf.NewValue();
-            var a = ba.NewValue();
+            var a = source.NewValue();
             var b = map(a);
             return b;
         }

@@ -18,6 +18,24 @@ namespace Sodium
             this.listener = evt.Listen(action, this.Rank);
         }
 
+        public override void Dispose()
+        {
+            if (listener != null)
+            {
+                listener.Dispose();
+                listener = null;
+            }
+
+            if (evt != null)
+            {
+                evt = null;
+            }
+
+            f = null;
+
+            base.Dispose();
+        }
+
         /// <summary>
         /// Fire the event if the predicate evaluates to true
         /// </summary>
@@ -46,24 +64,6 @@ namespace Sodium
             }
 
             return filtered.ToArray();
-        }
-
-        public override void Dispose()
-        {
-            if (listener != null)
-            {
-                listener.Dispose();
-                listener = null;
-            }
-
-            if (evt != null)
-            {
-                evt = null;
-            }
-
-            f = null;
-
-            base.Dispose();
         }
     }
 }

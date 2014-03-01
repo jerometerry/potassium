@@ -5,14 +5,14 @@
         private SwitchEventAction<TA> eventSwitchCallback;
         private IEventListener<Event<TA>> listener;
         private Event<Event<TA>> updates;
-        private Behavior<Event<TA>> behavior;
+        private Behavior<Event<TA>> source;
 
-        public SwitchEvent(Transaction transaction, Behavior<Event<TA>> behavior)
+        public SwitchEvent(Transaction transaction, Behavior<Event<TA>> source)
         {
-            this.behavior = behavior;
+            this.source = source;
             var action = new SodiumAction<TA>(this.Fire);
-            this.eventSwitchCallback = new SwitchEventAction<TA>(behavior, this, transaction, action);
-            this.updates = behavior.Updates();
+            this.eventSwitchCallback = new SwitchEventAction<TA>(source, this, transaction, action);
+            this.updates = source.Updates();
             this.listener = updates.Listen(transaction, eventSwitchCallback, this.Rank);
         }
 
@@ -30,7 +30,7 @@
             }
             
             updates = null;
-            this.behavior = null;
+            this.source = null;
 
             base.Dispose();
         }
