@@ -7,7 +7,7 @@ namespace Sodium
     /// </summary>
     /// <remarks>Behaviors generally change over time, but constant behaviors are ones that choose not to.</remarks>
     /// <typeparam name="TA">The type of values that will be fired through the behavior.</typeparam>
-    public class Behavior<TA> : SodiumItem
+    public class Behavior<TA> : Observable<TA>
     {
         private TA value;
         
@@ -161,7 +161,23 @@ namespace Sodium
         /// actions triggered during Value requiring a transaction all get the same instance.</remarks>
         public Event<TA> Value()
         {
-            return TransactionContext.Current.Run(t => Value(t));
+            return TransactionContext.Current.Run(Value);
+        }
+
+        public override IEventListener<TA> Listen(Action<TA> action)
+        {
+            var v = this.Value();
+            var l = v.Listen(action) as EventListener<TA>;
+            l.RegisterFinalizer(v);
+            return l;
+        }
+
+        public override IEventListener<TA> ListenSuppressed(Action<TA> action)
+        {
+            var v = this.Updates();
+            var l = v.Listen(action) as EventListener<TA>;
+            l.RegisterFinalizer(v);
+            return l;
         }
 
         /// <summary>

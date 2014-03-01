@@ -51,7 +51,8 @@
     <Compile Include="DelayEvent.cs" />
     <Compile Include="EventLoop.cs" />
     <Compile Include="FixedTransactionContext.cs" />
-    <Compile Include="SodiumItem.cs" />
+    <Compile Include="Observable.cs" />
+    <Compile Include="SodiumObject.cs" />
     <Compile Include="SingleTransactionContext.cs" />
     <Compile Include="StaticEvent.cs" />
     <Compile Include="BehaviorValueEvent.cs" />

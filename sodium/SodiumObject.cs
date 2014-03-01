@@ -6,11 +6,11 @@
     /// <summary>
     /// Base class for Events, Behaviors, and Listeners
     /// </summary>
-    public class SodiumItem : IDisposable
+    public class SodiumObject : IDisposable
     {
-        private List<SodiumItem> finalizers;
+        private List<SodiumObject> finalizers;
 
-        protected SodiumItem()
+        protected SodiumObject()
         {
         }
 
@@ -19,21 +19,26 @@
         /// </summary>
         public string Description { get; set; }
 
-        public void RegisterFinalizer(SodiumItem item)
+        /// <summary>
+        /// Registers the given SodiumObject to be disposed when the current
+        /// SodiumObject is disposed.
+        /// </summary>
+        /// <param name="o"></param>
+        public void RegisterFinalizer(SodiumObject o)
         {
             if (finalizers == null)
             {
-                finalizers = new List<SodiumItem>();
+                finalizers = new List<SodiumObject>();
             }
 
-            finalizers.Add(item);
+            finalizers.Add(o);
         }
 
         public virtual void Dispose()
         {
             if (finalizers != null && finalizers.Count > 0)
             {
-                var clone = new List<SodiumItem>(finalizers);
+                var clone = new List<SodiumObject>(finalizers);
                 finalizers.Clear();
                 finalizers = null;
 

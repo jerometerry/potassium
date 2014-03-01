@@ -8,7 +8,7 @@ namespace Sodium
     /// An Event is a stream of discrete event occurrences
     /// </summary>
     /// <typeparam name="TA">The type of values that will be fired through the event.</typeparam>
-    public class Event<TA> : SodiumItem
+    public class Event<TA> : Observable<TA>
     {
         private readonly List<EventListener<TA>> listeners = new List<EventListener<TA>>();
 
@@ -89,7 +89,7 @@ namespace Sodium
         /// </summary>
         /// <param name="action">An Action to be invoked when the current Event fires.</param>
         /// <returns>An IListener, that should be Disposed when no longer needed. </returns>
-        public IEventListener<TA> Listen(Action<TA> action)
+        public override IEventListener<TA> Listen(Action<TA> action)
         {
             return Listen(new SodiumAction<TA>((t, a) => action(a)), Rank.Highest);
         }
@@ -102,7 +102,7 @@ namespace Sodium
         /// <remarks>It's more common for the Listen method to be used instead of ListenSuppressed.
         /// You may want to use ListenSuppressed if the action will be triggered as part of a call
         /// to Listen.</remarks>
-        public IEventListener<TA> ListenSuppressed(Action<TA> action)
+        public override IEventListener<TA> ListenSuppressed(Action<TA> action)
         {
             return ListenSuppressed(new SodiumAction<TA>((t, a) => action(a)), Rank.Highest);
         }

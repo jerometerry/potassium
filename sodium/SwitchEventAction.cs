@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    internal sealed class SwitchEventAction<TA> : SodiumItem, ISodiumAction<Event<TA>>
+    internal sealed class SwitchEventAction<TA> : SodiumObject, ISodiumAction<Event<TA>>
     {
         private SwitchEvent<TA> sourceEvent;
         private ISodiumAction<TA> action;

@@ -10,9 +10,9 @@ namespace Sodium.MemoryTests
         [TestCase(1000000000)]
         public void Test(int iterations)
         {
-            var finalizers = new List<SodiumItem>();
+            var finalizers = new List<SodiumObject>();
 
-            var behaviorMapFinalizers = new List<SodiumItem>();
+            var behaviorMapFinalizers = new List<SodiumObject>();
 
             var evt = new Event<int?>() { Description = "Root event that will be fired on" };
             finalizers.Add(evt);
@@ -77,7 +77,7 @@ namespace Sodium.MemoryTests
             DisposeFinalizers(behaviorMapFinalizers);
         }
 
-        private static void DisposeFinalizers(List<SodiumItem> items)
+        private static void DisposeFinalizers(List<SodiumObject> items)
         {
             foreach (var item in items)
             {
