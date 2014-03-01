@@ -70,10 +70,10 @@ namespace Sodium
         /// Cleanup the current Event, disposing of any listeners.
         /// </summary>
         /// <param name="disposing">Whether to dispose of the listeners or not.</param>
-        public override void Close()
+        public override void Dispose()
         {
             this.listeners.Clear();
-            base.Close();
+            base.Dispose();
         }
 
         /// <summary>

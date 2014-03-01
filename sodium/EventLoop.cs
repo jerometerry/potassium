@@ -30,11 +30,11 @@
             return this;
         }
 
-        public override void Close()
+        public override void Dispose()
         {
             if (this.loopListener != null)
             {
-                this.loopListener.Close();
+                this.loopListener.Dispose();
                 this.loopListener = null;
             }
 
@@ -43,7 +43,7 @@
                 this.loop = null;
             }
 
-            base.Close();
+            base.Dispose();
         }
     }
 }

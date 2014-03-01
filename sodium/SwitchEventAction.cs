@@ -21,7 +21,7 @@ namespace Sodium
             {
                 if (this.eventListener != null)
                 { 
-                    this.eventListener.Close();
+                    this.eventListener.Dispose();
                     this.eventListener = null;
                 }
 
@@ -29,14 +29,14 @@ namespace Sodium
             });
         }
 
-        public override void Close()
+        public override void Dispose()
         {
             eventListener = null;
             evt = null;
             bea = null;
             action = null;
 
-            base.Close();
+            base.Dispose();
         }
     }
 }

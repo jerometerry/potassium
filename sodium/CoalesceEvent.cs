@@ -35,11 +35,11 @@ namespace Sodium
             return new[] { e };
         }
 
-        public override void Close()
+        public override void Dispose()
         {
             if (listener != null)
             {
-                listener.Close();
+                listener.Dispose();
                 listener = null;
             }
 
@@ -50,7 +50,7 @@ namespace Sodium
 
             coalesce = null;
 
-            base.Close();
+            base.Dispose();
         }
 
         private void Accumulate(Transaction transaction, TA data)

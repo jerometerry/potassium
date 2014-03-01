@@ -26,7 +26,7 @@
             // that might have happened during this transaction will be suppressed.
             if (this.eventListener != null)
             {
-                this.eventListener.Close();
+                this.eventListener.Dispose();
                 this.eventListener = null;
             }
 
@@ -34,24 +34,24 @@
             this.eventListener = valueEvent.Listen(transaction, new SodiumAction<TA>(Fire), Rank);
         }
 
-        public override void Close()
+        public override void Dispose()
         {
             if (this.listener != null)
             {
-                this.listener.Close();
+                this.listener.Dispose();
                 this.listener = null;
             }
 
             if (this.eventListener != null)
             {
-                this.eventListener.Close();
+                this.eventListener.Dispose();
                 this.eventListener = null;
             }
 
             this.bba = null;
             this.valueEvent = null;
 
-            base.Close();
+            base.Dispose();
         }
     }
 }

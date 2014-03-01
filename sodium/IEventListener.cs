@@ -10,16 +10,11 @@ namespace Sodium
     /// <remarks>To stop the IEventListener from receiving updates from the Event,
     /// call the Dispose method. The event will be disposed when the number of listeners reaches zero.
     /// </remarks>
-    public interface IEventListener<TA> : ISodiumItem
+    public interface IEventListener<TA> : IDisposable
     {
         /// <summary>
         /// Gets the Event the current IEventListener is listening to
         /// </summary>
         Event<TA> Event { get; }
-
-        /// <summary>
-        /// Get / set the the description of the current IListener
-        /// </summary>
-        string Description { get; set; }
     }
 }

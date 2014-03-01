@@ -16,11 +16,11 @@
             this.listener = updates.Listen(transaction, eventSwitchCallback, this.Rank);
         }
 
-        public override void Close()
+        public override void Dispose()
         {
             if (this.listener != null)
             {
-                this.listener.Close();
+                this.listener.Dispose();
                 this.listener = null;
             }
 
@@ -32,7 +32,7 @@
             updates = null;
             this.behavior = null;
 
-            base.Close();
+            base.Dispose();
         }
     }
 }

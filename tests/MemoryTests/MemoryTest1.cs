@@ -63,8 +63,6 @@ namespace Sodium.MemoryTests
             finalizers.Add(tensTupleEvent);
 
             var listener = tensTupleEvent.Listen(tu => { });
-            listener.Description = "Listener for tens changes";
-
             var i = 0;
 
             while (i < iterations)
@@ -73,7 +71,7 @@ namespace Sodium.MemoryTests
                 i++;
             }
 
-            listener.Close();
+            listener.Dispose();
 
             DisposeFinalizers(finalizers);
             DisposeFinalizers(behaviorMapFinalizers);
@@ -83,7 +81,7 @@ namespace Sodium.MemoryTests
         {
             foreach (var item in items)
             {
-                item.Close();
+                item.Dispose();
             }
 
             items.Clear();

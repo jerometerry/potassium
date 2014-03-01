@@ -33,7 +33,7 @@
 
         public Behavior<TB> Behavior { get; private set; }
 
-        public override void Close()
+        public override void Dispose()
         {
             if (this.Behavior != null)
             {
@@ -42,20 +42,20 @@
 
             if (l1 != null)
             {
-                l1.Close();
+                l1.Dispose();
                 l1 = null;
             }
 
             if (l2 != null)
             {
-                l2.Close();
+                l2.Dispose();
                 l2 = null;
             }
 
             bf = null;
             ba = null;
 
-            base.Close();
+            base.Dispose();
         }
 
         /// <summary>

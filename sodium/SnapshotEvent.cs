@@ -37,7 +37,7 @@ namespace Sodium
             return results.ToArray();
         }
 
-        public override void Close()
+        public override void Dispose()
         {
             if (listener != null)
             {
@@ -56,7 +56,7 @@ namespace Sodium
 
             snapshot = null;
 
-            base.Close();
+            base.Dispose();
         }
     }
 }

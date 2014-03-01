@@ -20,8 +20,8 @@ namespace Sodium.MemoryTests
                 i++;
             }
 
-            listen.Close();
-            observable.Close();
+            listen.Dispose();
+            observable.Dispose();
         }
     }
 }

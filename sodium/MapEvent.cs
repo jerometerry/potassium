@@ -32,11 +32,11 @@
             return firings.Select(e => map(e)).ToArray();
         }
 
-        public override void Close()
+        public override void Dispose()
         {
             if (listener != null)
             {
-                listener.Close();
+                listener.Dispose();
                 listener = null;
             }
 
@@ -47,7 +47,7 @@
 
             map = null;
 
-            base.Close();
+            base.Dispose();
         }
     }
 }

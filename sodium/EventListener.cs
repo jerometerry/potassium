@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    internal sealed class EventListener<TA> : SodiumItem, IEventListener<TA>
+    internal sealed class EventListener<TA> : IEventListener<TA>
     {
         public EventListener(Event<TA> evt, ISodiumAction<TA> action, Rank rank)
         {
@@ -15,7 +15,7 @@ namespace Sodium
 
         public Event<TA> Event { get; private set; }
 
-        public override void Close()
+        public void Dispose()
         {
             if (this.Event != null)
             {
@@ -25,8 +25,6 @@ namespace Sodium
 
             Action = null;
             Rank = null;
-
-            base.Close();
         }
     }
 }

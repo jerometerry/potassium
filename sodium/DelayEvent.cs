@@ -10,15 +10,15 @@
             this.listener = evt.Listen(action, this.Rank);
         }
 
-        public override void Close()
+        public override void Dispose()
         {
             if (listener != null)
             {
-                listener.Close();
+                listener.Dispose();
                 listener = null;
             }
 
-            base.Close();
+            base.Dispose();
         }
     }
 }

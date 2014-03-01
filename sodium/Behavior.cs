@@ -286,7 +286,7 @@ namespace Sodium
             return result;
         }
 
-        public override void Close()
+        public override void Dispose()
         {
             if (this.eventListener != null)
             {
@@ -298,7 +298,7 @@ namespace Sodium
                 this.Event = null;
             }
 
-            base.Close();
+            base.Dispose();
         }
 
         /// <summary>

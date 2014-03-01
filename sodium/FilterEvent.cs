@@ -48,11 +48,11 @@ namespace Sodium
             return filtered.ToArray();
         }
 
-        public override void Close()
+        public override void Dispose()
         {
             if (listener != null)
             {
-                listener.Close();
+                listener.Dispose();
                 listener = null;
             }
 
@@ -63,7 +63,7 @@ namespace Sodium
 
             f = null;
 
-            base.Close();
+            base.Dispose();
         }
     }
 }

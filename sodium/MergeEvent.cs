@@ -32,17 +32,17 @@ namespace Sodium
             return firings1 ?? firings2;
         }
 
-        public override void Close()
+        public override void Dispose()
         {
             if (l1 != null)
             {
-                l1.Close();
+                l1.Dispose();
                 l1 = null;
             }
 
             if (l2 != null)
             {
-                l2.Close();
+                l2.Dispose();
                 l2 = null;
             }
 
@@ -56,7 +56,7 @@ namespace Sodium
                 evt2 = null;
             }
 
-            base.Close();
+            base.Dispose();
         }
     }
 }

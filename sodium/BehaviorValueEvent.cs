@@ -17,17 +17,17 @@ namespace Sodium
             return new[] { behavior.Sample() };
         }
 
-        public override void Close()
+        public override void Dispose()
         {
             if (listener != null)
             {
-                listener.Close();
+                listener.Dispose();
                 listener = null;
             }
 
             behavior = null;
 
-            base.Close();
+            base.Dispose();
         }
     }
 }
