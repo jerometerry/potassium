@@ -9,6 +9,9 @@ namespace Sodium
     /// <typeparam name="TA">The type of values that will be fired through the behavior.</typeparam>
     public class Behavior<TA> : Observable<TA>
     {
+        /// <summary>
+        /// The current value of the Behavior, updated after the underlying event fires.
+        /// </summary>
         private TA value;
         
         /// <summary>
@@ -17,7 +20,10 @@ namespace Sodium
         /// </summary>
         private Maybe<TA> valueUpdate = Maybe<TA>.Null;
 
-        private IEventListener<TA> eventListener;
+        /// <summary>
+        /// Listener that listens for firings from the underlying Event.
+        /// </summary>
+        private IEventListener<TA> valueUpdateListener;
 
         /// <summary>
         /// A behavior with a time varying value
@@ -26,7 +32,7 @@ namespace Sodium
         public Behavior(TA initValue)
             : this(new Event<TA>(), initValue)
         {
-            this.RegisterFinalizer(this.Event);
+            this.RegisterFinalizer(this.Source);
         }
 
         /// <summary>
@@ -36,12 +42,15 @@ namespace Sodium
         /// <param name="initValue"></param>
         public Behavior(Event<TA> evt, TA initValue)
         {
-            this.Event = evt;
+            this.Source = evt;
             this.value = initValue;
-            this.eventListener = ListenForEventFirings();
+            this.valueUpdateListener = ListenForEventFirings();
         }
 
-        protected Event<TA> Event { get; private set; }
+        /// <summary>
+        /// The underlying Event that the Value of the current Behavior is updated with.
+        /// </summary>
+        protected Event<TA> Source { get; private set; }
 
         /// <summary>
         /// A behavior with a constant value.
@@ -49,16 +58,8 @@ namespace Sodium
         public static Behavior<TA> Constant(TA initValue)
         {
             var behavior = new Behavior<TA>(new StaticEvent<TA>(), initValue);
-            behavior.RegisterFinalizer(behavior.Event);
+            behavior.RegisterFinalizer(behavior.Source);
             return behavior;
-        }
-
-        /// <summary>
-        /// Lift a binary function into behaviors.
-        /// </summary>
-        public static Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> lift, Behavior<TA> a, Behavior<TB> b)
-        {
-            return a.Lift(lift, b);
         }
 
         /// <summary>
@@ -100,6 +101,14 @@ namespace Sodium
         }
 
         /// <summary>
+        /// Lift a binary function into behaviors.
+        /// </summary>
+        public static Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> lift, Behavior<TA> a, Behavior<TB> b)
+        {
+            return a.Lift(lift, b);
+        }
+
+        /// <summary>
         /// Lift a ternary function into behaviors.
         /// </summary>
         public static Behavior<TD> Lift<TB, TC, TD>(Func<TA, TB, TC, TD> f, Behavior<TA> a, Behavior<TB> b, Behavior<TC> c)
@@ -108,12 +117,86 @@ namespace Sodium
         }
 
         /// <summary>
+        /// Dispose of the current Behavior
+        /// </summary>
+        public override void Dispose()
+        {
+            if (this.valueUpdateListener != null)
+            {
+                this.valueUpdateListener = null;
+            }
+
+            if (this.Source != null)
+            {
+                this.Source = null;
+            }
+
+            base.Dispose();
+        }
+
+        /// <summary>
         /// Fire the given value to all registered listeners 
         /// </summary>
         /// <param name="a">The value to be fired</param>
-        public void Fire(TA a)
+        public override void Fire(TA a)
         {
-            this.Event.Fire(a);
+            this.Source.Fire(a);
+        }
+
+        /// <summary>
+        /// Listen to the current Behavior for updates, which fires immediate with the 
+        /// Behaviors current value, and every time the underlying event fires.
+        /// </summary>
+        /// <param name="action">The action to take when the Behavior's underlying event fires</param>
+        /// <returns>The listener</returns>
+        public override IEventListener<TA> Listen(Action<TA> action)
+        {
+            var v = this.Value();
+            var l = v.Listen(action) as EventListener<TA>;
+            l.RegisterFinalizer(v);
+            return l;
+        }
+
+        /// <summary>
+        /// Listen to the current Behavior for updates, but don't fire the initial value
+        /// </summary>
+        /// <param name="action">The action to take when the Behavior's underlying event fires</param>
+        /// <returns>The listener</returns>
+        public override IEventListener<TA> ListenSuppressed(Action<TA> action)
+        {
+            var v = this.Updates();
+            var l = v.Listen(action) as EventListener<TA>;
+            l.RegisterFinalizer(v);
+            return l;
+        }
+
+        /// <summary>
+        /// An event that is guaranteed to fire once when you listen to it, giving
+        /// the current value of the behavior, and thereafter behaves like updates(),
+        /// firing for each update to the behavior's value.
+        /// </summary>
+        /// <returns>An event that will fire when it's listened to, and every time it's 
+        /// value changes thereafter</returns>
+        /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
+        /// Value operation that takes a thread. This ensures that any other
+        /// actions triggered during Value requiring a transaction all get the same instance.</remarks>
+        public Event<TA> Value()
+        {
+            return TransactionContext.Current.Run(Value);
+        }
+
+        /// <summary>
+        /// Transform the behavior's value according to the supplied function.
+        /// </summary>
+        public Behavior<TB> Map<TB>(Func<TA, TB> map)
+        {
+            var underlyingEvent = Updates();
+            var mapEvent = underlyingEvent.Map(map);
+            var currentValue = Sample();
+            var mappedValue = map(currentValue);
+            var behavior = mapEvent.Hold(mappedValue);
+            behavior.RegisterFinalizer(mapEvent);
+            return behavior;
         }
 
         /// <summary>
@@ -146,52 +229,7 @@ namespace Sodium
         /// </summary>
         public Event<TA> Updates()
         {
-            return this.Event;
-        }
-
-        /// <summary>
-        /// An event that is guaranteed to fire once when you listen to it, giving
-        /// the current value of the behavior, and thereafter behaves like updates(),
-        /// firing for each update to the behavior's value.
-        /// </summary>
-        /// <returns>An event that will fire when it's listened to, and every time it's 
-        /// value changes thereafter</returns>
-        /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
-        /// Value operation that takes a thread. This ensures that any other
-        /// actions triggered during Value requiring a transaction all get the same instance.</remarks>
-        public Event<TA> Value()
-        {
-            return TransactionContext.Current.Run(Value);
-        }
-
-        public override IEventListener<TA> Listen(Action<TA> action)
-        {
-            var v = this.Value();
-            var l = v.Listen(action) as EventListener<TA>;
-            l.RegisterFinalizer(v);
-            return l;
-        }
-
-        public override IEventListener<TA> ListenSuppressed(Action<TA> action)
-        {
-            var v = this.Updates();
-            var l = v.Listen(action) as EventListener<TA>;
-            l.RegisterFinalizer(v);
-            return l;
-        }
-
-        /// <summary>
-        /// Transform the behavior's value according to the supplied function.
-        /// </summary>
-        public Behavior<TB> Map<TB>(Func<TA, TB> map)
-        {
-            var underlyingEvent = Updates();
-            var mapEvent = underlyingEvent.Map(map);
-            var currentValue = Sample();
-            var mappedValue = map(currentValue);
-            var behavior = mapEvent.Hold(mappedValue);
-            behavior.RegisterFinalizer(mapEvent);
-            return behavior;
+            return this.Source;
         }
 
         /// <summary>
@@ -245,32 +283,6 @@ namespace Sodium
             return result;
         }
 
-        public override void Dispose()
-        {
-            if (this.eventListener != null)
-            {
-                this.eventListener = null;
-            }
-
-            if (this.Event != null)
-            {
-                this.Event = null;
-            }
-
-            base.Dispose();
-        }
-
-        /// <summary>
-        /// Unwrap an event inside a behavior to give a time-varying event implementation.
-        /// </summary>
-        /// <param name="transaction"></param>
-        /// <param name="behavior">The behavior that wraps the event</param>
-        /// <returns>The unwrapped event</returns>
-        internal static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior)
-        {
-            return new SwitchEvent<TA>(transaction, behavior);
-        }
-
         /// <summary>
         /// Gets the updated value of the Behavior that has not yet been moved to the
         /// current value of the Behavior. 
@@ -307,6 +319,17 @@ namespace Sodium
         }
 
         /// <summary>
+        /// Unwrap an event inside a behavior to give a time-varying event implementation.
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <param name="behavior">The behavior that wraps the event</param>
+        /// <returns>The unwrapped event</returns>
+        internal static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior)
+        {
+            return new SwitchEvent<TA>(transaction, behavior);
+        }
+
+        /// <summary>
         /// Listen to the underlying event for firings
         /// </summary>
         /// <returns>The IEventListener registered with the underlying event.</returns>
@@ -323,7 +346,7 @@ namespace Sodium
         private IEventListener<TA> ListenForEventFirings(Transaction transaction)
         {
             var action = new SodiumAction<TA>(ScheduleApplyValueUpdate);
-            var result = this.Event.Listen(transaction, action, Rank.Highest);
+            var result = this.Source.Listen(transaction, action, Rank.Highest);
             return result;
         }
 

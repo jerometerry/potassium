@@ -5,7 +5,7 @@
         public BehaviorLoop()
             : base(new EventLoop<TA>(), default(TA))
         {
-            this.RegisterFinalizer(this.Event);
+            this.RegisterFinalizer(this.Source);
         }
 
         /// <summary>
@@ -17,7 +17,7 @@
         /// an ApplicationException will be raised.</remarks>
         public Behavior<TA> Loop(Behavior<TA> b)
         {
-            var loop = (EventLoop<TA>)Event;
+            var loop = (EventLoop<TA>)Source;
             loop.Loop(b.Updates());
             return this;
         }

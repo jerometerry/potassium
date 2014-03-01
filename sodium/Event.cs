@@ -10,8 +10,17 @@ namespace Sodium
     /// <typeparam name="TA">The type of values that will be fired through the event.</typeparam>
     public class Event<TA> : Observable<TA>
     {
+        /// <summary>
+        /// List of IListeners that are currently listening for firings 
+        /// from the current Event.
+        /// </summary>
         private readonly List<EventListener<TA>> listeners = new List<EventListener<TA>>();
 
+        /// <summary>
+        /// List of values that have been fired on the current Event in the current transaction.
+        /// Any listeners that are registered in the current transaction will get fired
+        /// these values on registration.
+        /// </summary>
         private readonly List<TA> firings = new List<TA>();
 
         /// <summary>
@@ -26,12 +35,30 @@ namespace Sodium
         {
         }
 
+        /// <summary>
+        /// The current Rank of the Event, used to prioritize firings on the current transaction.
+        /// </summary>
         internal Rank Rank
         {
             get
             {
                 return this.rank;
             }
+        }
+
+        /// <summary>
+        /// Merge two streams of events of the same type.
+        /// </summary>
+        /// <remarks>
+        /// In the case where two event occurrences are simultaneous (i.e. both
+        /// within the same transaction), both will be delivered in the same
+        /// transaction. If the event firings are ordered for some reason, then
+        /// their ordering is retained. In many common cases the ordering will
+        /// be undefined.
+        /// </remarks>
+        public static Event<TA> Merge(Event<TA> event1, Event<TA> event2)
+        {
+            return new MergeEvent<TA>(event1, event2);
         }
 
         /// <summary>
@@ -52,21 +79,6 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Merge two streams of events of the same type.
-        /// </summary>
-        /// <remarks>
-        /// In the case where two event occurrences are simultaneous (i.e. both
-        /// within the same transaction), both will be delivered in the same
-        /// transaction. If the event firings are ordered for some reason, then
-        /// their ordering is retained. In many common cases the ordering will
-        /// be undefined.
-        /// </remarks>
-        public static Event<TA> Merge(Event<TA> event1, Event<TA> event2)
-        {
-            return new MergeEvent<TA>(event1, event2);
-        }
-
-        /// <summary>
         /// Cleanup the current Event, disposing of any listeners.
         /// </summary>
         public override void Dispose()
@@ -79,7 +91,7 @@ namespace Sodium
         /// Fire the given value to all registered listeners 
         /// </summary>
         /// <param name="a">The value to be fired</param>
-        public void Fire(TA a)
+        public override void Fire(TA a)
         {
             TransactionContext.Current.Run(t => { Fire(t, a); return Unit.Value; });
         }
@@ -131,14 +143,6 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Variant of snapshot that throws away the event's value and captures the behavior's.
-        /// </summary>
-        public Event<TB> Snapshot<TB>(Behavior<TB> behavior)
-        {
-            return Snapshot(behavior, (a, b) => b);
-        }
-
-        /// <summary>
         /// Sample the behavior at the time of the event firing. Note that the 'current value'
         /// of the behavior that's sampled is the value as at the start of the transaction
         /// before any state changes of the current transaction are applied through 'hold's.
@@ -149,11 +153,11 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Push each event occurrence onto a new transaction.
+        /// Variant of snapshot that throws away the event's value and captures the behavior's.
         /// </summary>
-        public Event<TA> Delay()
+        public Event<TB> Snapshot<TB>(Behavior<TB> behavior)
         {
-            return new DelayEvent<TA>(this);
+            return Snapshot(behavior, (a, b) => b);
         }
 
         /// <summary>
@@ -173,6 +177,16 @@ namespace Sodium
         }
 
         /// <summary>
+        /// Filter out any event occurrences whose value is null.
+        /// </summary>
+        /// <remarks>For value types, comparison against null will always be false. 
+        /// FilterNotNull will not filter out any values for value types.</remarks>
+        public Event<TA> FilterNotNull()
+        {
+            return Filter(a => a != null);
+        }
+
+        /// <summary>
         /// Only keep event occurrences for which the predicate returns true.
         /// </summary>
         public Event<TA> Filter(Func<TA, bool> predicate)
@@ -181,13 +195,36 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Filter out any event occurrences whose value is null.
+        /// Accumulate on input event, outputting the new state each time.
         /// </summary>
-        /// <remarks>For value types, comparison against null will always be false. 
-        /// FilterNotNull will not filter out any values for value types.</remarks>
-        public Event<TA> FilterNotNull()
+        public Behavior<TS> Accum<TS>(TS initState, Func<TA, TS, TS> snapshot)
         {
-            return Filter(a => a != null);
+            var evt = new EventLoop<TS>();
+            var behavior = evt.Hold(initState);
+            var snapshotEvent = Snapshot(behavior, snapshot);
+            evt.Loop(snapshotEvent);
+
+            var result = snapshotEvent.Hold(initState);
+            result.RegisterFinalizer(evt);
+            result.RegisterFinalizer(behavior);
+            result.RegisterFinalizer(snapshotEvent);
+            return result;
+        }
+
+        /// <summary>
+        /// Throw away all event occurrences except for the first one.
+        /// </summary>
+        public Event<TA> Once()
+        {
+            return new OnceEvent<TA>(this);
+        }
+
+        /// <summary>
+        /// Push each event occurrence onto a new transaction.
+        /// </summary>
+        public Event<TA> Delay()
+        {
+            return new DelayEvent<TA>(this);
         }
 
         /// <summary>
@@ -223,39 +260,6 @@ namespace Sodium
             eb.RegisterFinalizer(ebs);
             eb.RegisterFinalizer(evt);
             return eb;
-        }
-
-        /// <summary>
-        /// Accumulate on input event, outputting the new state each time.
-        /// </summary>
-        public Behavior<TS> Accum<TS>(TS initState, Func<TA, TS, TS> snapshot)
-        {
-            var evt = new EventLoop<TS>();
-            var behavior = evt.Hold(initState);
-            var snapshotEvent = Snapshot(behavior, snapshot);
-            evt.Loop(snapshotEvent);
-            
-            var result = snapshotEvent.Hold(initState);
-            result.RegisterFinalizer(evt);
-            result.RegisterFinalizer(behavior);
-            result.RegisterFinalizer(snapshotEvent);
-            return result;
-        }
-
-        /// <summary>
-        /// Throw away all event occurrences except for the first one.
-        /// </summary>
-        public Event<TA> Once()
-        {
-            return new OnceEvent<TA>(this);
-        }
-
-        /// <summary>
-        /// Clean up the output by discarding any firing other than the last one. 
-        /// </summary>
-        internal Event<TA> LastFiringOnly(Transaction transaction)
-        {
-            return Coalesce(transaction, (a, b) => b);
         }
 
         /// <summary>
@@ -297,16 +301,6 @@ namespace Sodium
             return TransactionContext.Current.Run(t => this.Listen(t, action, superior));
         }
 
-        internal IEventListener<TA> ListenSuppressed(ISodiumAction<TA> action, Rank superior)
-        {
-            return TransactionContext.Current.Run(t => this.ListenSuppressed(t, action, superior));
-        }
-
-        internal IEventListener<TA> Listen(Transaction transaction, Action<TA> action)
-        {
-            return Listen(transaction, new SodiumAction<TA>((t, a) => action(a)), Rank.Highest);
-        }
-
         /// <summary>
         /// Listen for firings on the current event
         /// </summary>
@@ -323,11 +317,6 @@ namespace Sodium
             return listener;
         }
 
-        internal IEventListener<TA> ListenSuppressed(Transaction transaction, Action<TA> action)
-        {
-            return ListenSuppressed(transaction, new SodiumAction<TA>((t, a) => action(a)), Rank.Highest);
-        }
-
         internal IEventListener<TA> ListenSuppressed(Transaction transaction, ISodiumAction<TA> action, Rank superior)
         {
             var listener = this.CreateListener(transaction, action, superior);
@@ -335,6 +324,18 @@ namespace Sodium
             return listener;
         }
 
+        /// <summary>
+        /// Clean up the output by discarding any firing other than the last one. 
+        /// </summary>
+        internal Event<TA> LastFiringOnly(Transaction transaction)
+        {
+            return Coalesce(transaction, (a, b) => b);
+        }
+
+        internal IEventListener<TA> ListenSuppressed(ISodiumAction<TA> action, Rank superior)
+        {
+            return TransactionContext.Current.Run(t => this.ListenSuppressed(t, action, superior));
+        }
         /// <summary>
         /// Stop the given listener from receiving updates from the current Event
         /// </summary>
@@ -363,40 +364,6 @@ namespace Sodium
             return null;
         }
 
-        private static void Fire(Transaction transaction, EventListener<TA> eventListener, IEnumerable<TA> firings)
-        {
-            foreach (var firing in firings)
-            {
-                eventListener.Action.Invoke(transaction, firing);
-            }
-        }
-
-        private Behavior<TA> ConvertToBehavior(Transaction t, TA initValue)
-        {
-            var f = LastFiringOnly(t);
-            var b = new Behavior<TA>(f, initValue);
-            b.RegisterFinalizer(f);
-            return b;
-        }
-
-        /// <summary>
-        /// If there's more than one firing in a single transaction, combine them into
-        /// one using the specified combining function.
-        /// </summary>
-        /// <param name="transaction"></param>
-        /// <param name="coalesce"></param>
-        /// <remarks>
-        /// If the event firings are ordered, then the first will appear at the left
-        /// input of the combining function. In most common cases it's best not to
-        /// make any assumptions about the ordering, and the combining function would
-        /// ideally be commutative.
-        /// </remarks>
-        private Event<TA> Coalesce(Transaction transaction, Func<TA, TA, TA> coalesce)
-        {
-            var evt = new CoalesceEvent<TA>(this, coalesce, transaction);
-            return evt;
-        }
-
         private EventListener<TA> CreateListener(Transaction transaction, ISodiumAction<TA> action, Rank superior)
         {
             lock (Constants.ListenersLock)
@@ -409,6 +376,14 @@ namespace Sodium
                 var listener = new EventListener<TA>(this, action, superior);
                 this.listeners.Add(listener);
                 return listener;
+            }
+        }
+
+        private static void Fire(Transaction transaction, EventListener<TA> eventListener, IEnumerable<TA> firings)
+        {
+            foreach (var firing in firings)
+            {
+                eventListener.Action.Invoke(transaction, firing);
             }
         }
 
@@ -430,6 +405,32 @@ namespace Sodium
         private void Refire(Transaction transaction, EventListener<TA> eventListener)
         {
             Fire(transaction, eventListener, firings);
+        }
+
+        /// <summary>
+        /// If there's more than one firing in a single transaction, combine them into
+        /// one using the specified combining function.
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <param name="coalesce"></param>
+        /// <remarks>
+        /// If the event firings are ordered, then the first will appear at the left
+        /// input of the combining function. In most common cases it's best not to
+        /// make any assumptions about the ordering, and the combining function would
+        /// ideally be commutative.
+        /// </remarks>
+        private Event<TA> Coalesce(Transaction transaction, Func<TA, TA, TA> coalesce)
+        {
+            var evt = new CoalesceEvent<TA>(this, coalesce, transaction);
+            return evt;
+        }
+
+        private Behavior<TA> ConvertToBehavior(Transaction t, TA initValue)
+        {
+            var f = LastFiringOnly(t);
+            var b = new Behavior<TA>(f, initValue);
+            b.RegisterFinalizer(f);
+            return b;
         }
     }
 }

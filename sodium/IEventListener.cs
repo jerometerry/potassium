@@ -15,6 +15,6 @@ namespace Sodium
         /// <summary>
         /// Gets the Event the current IEventListener is listening to
         /// </summary>
-        Event<TA> Event { get; }
+        Event<TA> Source { get; }
     }
 }
