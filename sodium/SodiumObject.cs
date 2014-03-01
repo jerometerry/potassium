@@ -18,11 +18,6 @@
         }
 
         /// <summary>
-        /// Gets / sets a description for the current Observable
-        /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
         /// Gets whether the current SodiumObject is disposed
         /// </summary>
         public bool Disposed { get; private set; }
