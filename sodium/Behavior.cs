@@ -77,12 +77,12 @@ namespace Sodium
         /// <summary>
         /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
         /// </summary>
-        public static Behavior<TA> SwitchB(Behavior<Behavior<TA>> source)
+        public static Behavior<TA> Unwrap(Behavior<Behavior<TA>> source)
         {
             var innerBehavior = source.Sample();
             var initValue = innerBehavior.Sample();
             var sink = new SwitchBehaviorEvent<TA>(source);
-            var result = sink.Hold(initValue);
+            var result = sink.ToBehavior(initValue);
             result.RegisterFinalizer(sink);
             return result;
         }
@@ -95,9 +95,9 @@ namespace Sodium
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// SwitchE operation that takes a thread. This ensures that any other
         /// actions triggered during SwitchE requiring a transaction all get the same instance.</remarks>
-        public static Event<TA> SwitchE(Behavior<Event<TA>> behavior)
+        public static Event<TA> UnwrapEvent(Behavior<Event<TA>> behavior)
         {
-            return TransactionContext.Current.Run(t => SwitchE(t, behavior));
+            return TransactionContext.Current.Run(t => UnwrapEvent(t, behavior));
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace Sodium
             var mapEvent = underlyingEvent.Map(map);
             var currentValue = Sample();
             var mappedValue = map(currentValue);
-            var behavior = mapEvent.Hold(mappedValue);
+            var behavior = mapEvent.ToBehavior(mappedValue);
             behavior.RegisterFinalizer(mapEvent);
             return behavior;
         }
@@ -254,7 +254,7 @@ namespace Sodium
             var currentValue = Sample();
             var tuple = snapshot(currentValue, initState);
             var loop = new EventLoop<Tuple<TB, TS>>();
-            var loopBehavior = loop.Hold(tuple);
+            var loopBehavior = loop.ToBehavior(tuple);
             var snapshotBehavior = loopBehavior.Map(x => x.Item2);
             var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
             loop.Loop(coalesceSnapshotEvent);
@@ -289,7 +289,7 @@ namespace Sodium
         /// <param name="transaction"></param>
         /// <param name="behavior">The behavior that wraps the event</param>
         /// <returns>The unwrapped event</returns>
-        internal static Event<TA> SwitchE(Transaction transaction, Behavior<Event<TA>> behavior)
+        internal static Event<TA> UnwrapEvent(Transaction transaction, Behavior<Event<TA>> behavior)
         {
             return new SwitchEvent<TA>(transaction, behavior);
         }

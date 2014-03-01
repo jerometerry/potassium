@@ -12,7 +12,7 @@ namespace Sodium.Tests
         public void TestHold()
         {
             var evt = new Event<int>();
-            var behavior = evt.Hold(0);
+            var behavior = evt.ToBehavior(0);
             var results = new List<int>();
             var listener = behavior.Updates().Listen(results.Add);
             evt.Fire(2);
@@ -160,7 +160,7 @@ namespace Sodium.Tests
             var behavior1 = new Behavior<int>(9);
             var behavior2 = new Behavior<int>(2);
             var results = new List<int>();
-            var listener = Event<int>.MergeWith((x, y) => x + y, behavior1.Value(), behavior2.Value()).Listen(results.Add);
+            var listener = Event<int>.MergeWith(behavior1.Value(), behavior2.Value(), (x, y) => x + y).Listen(results.Add);
             behavior1.Fire(1);
             behavior2.Fire(4);
             listener.Dispose();
@@ -336,7 +336,7 @@ namespace Sodium.Tests
         public void TestHoldIsDelayed()
         {
             var evt = new Event<int>();
-            var behavior = evt.Hold(0);
+            var behavior = evt.ToBehavior(0);
             var pair = evt.Snapshot(behavior, (a, b) => a + " " + b);
             var results = new List<string>();
             var listener = pair.Listen(results.Add);
@@ -356,10 +356,10 @@ namespace Sodium.Tests
 
             // Split each field o of SB so we can update multiple behaviors in a
             // single transaction.
-            var behaviorA = sink.Map(s => s.C1).FilterNotNull().Hold('A');
-            var behaviorB = sink.Map(s => s.C2).FilterNotNull().Hold('a');
-            var bsw = sink.Map(s => s.Behavior).FilterNotNull().Hold(behaviorA);
-            var behavior = Behavior<char?>.SwitchB(bsw);
+            var behaviorA = sink.Map(s => s.C1).FilterNotNull().ToBehavior('A');
+            var behaviorB = sink.Map(s => s.C2).FilterNotNull().ToBehavior('a');
+            var bsw = sink.Map(s => s.Behavior).FilterNotNull().ToBehavior(behaviorA);
+            var behavior = Behavior<char?>.Unwrap(bsw);
             var results = new List<char>();
             var listener = behavior.Value().Listen(c =>
             {
@@ -390,9 +390,9 @@ namespace Sodium.Tests
             var ese = new Event<Se>();
             var ea = ese.Map(s => s.C1).FilterNotNull();
             var eb = ese.Map(s => s.C2).FilterNotNull();
-            var bsw = ese.Map(s => s.Event).FilterNotNull().Hold(ea);
+            var bsw = ese.Map(s => s.Event).FilterNotNull().ToBehavior(ea);
             var o = new List<char>();
-            var eo = Behavior<char>.SwitchE(bsw);
+            var eo = Behavior<char>.UnwrapEvent(bsw);
             var l = eo.Listen(o.Add);
             ese.Fire(new Se('A', 'a', null));
             ese.Fire(new Se('B', 'b', null));
@@ -417,7 +417,7 @@ namespace Sodium.Tests
         {
             var ea = new Event<int>();
             var sum = new BehaviorLoop<int>();
-            var sumOut = ea.Snapshot(sum, (x, y) => x + y).Hold(0);
+            var sumOut = ea.Snapshot(sum, (x, y) => x + y).ToBehavior(0);
             sum.Loop(sumOut);
             var o = new List<int>();
             var l = sumOut.Value().Listen(o.Add);
@@ -438,7 +438,7 @@ namespace Sodium.Tests
         {
             var ea = new Event<int>();
             var o = new List<int>();
-            var sum = ea.Hold(100).Collect(0, (a, s) => new Tuple<int, int>(a + s, a + s));
+            var sum = ea.ToBehavior(100).Collect(0, (a, s) => new Tuple<int, int>(a + s, a + s));
             var l = sum.Value().Listen(o.Add);
             ea.Fire(5);
             ea.Fire(7);

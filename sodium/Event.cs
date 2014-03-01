@@ -56,9 +56,9 @@ namespace Sodium
         /// their ordering is retained. In many common cases the ordering will
         /// be undefined.
         /// </remarks>
-        public static Event<TA> Merge(Event<TA> event1, Event<TA> event2)
+        public static Event<TA> Merge(Event<TA> source1, Event<TA> source2)
         {
-            return new MergeEvent<TA>(event1, event2);
+            return new MergeEvent<TA>(source1, source2);
         }
 
         /// <summary>
@@ -70,9 +70,9 @@ namespace Sodium
         /// within the same transaction), they are combined using the same logic as
         /// 'coalesce'.
         /// </remarks>
-        public static Event<TA> MergeWith(Func<TA, TA, TA> f, Event<TA> event1, Event<TA> event2)
+        public static Event<TA> MergeWith(Event<TA> source1, Event<TA> source2, Func<TA, TA, TA> f)
         {
-            var merge = Merge(event1, event2);
+            var merge = Merge(source1, source2);
             var c = merge.Coalesce(f);
             c.RegisterFinalizer(merge);
             return c;
@@ -137,9 +137,9 @@ namespace Sodium
         /// </summary>
         /// <returns>A Behavior that updates when the current event is fired,
         /// having the specified initial value.</returns>
-        public Behavior<TA> Hold(TA initValue)
+        public Behavior<TA> ToBehavior(TA initValue)
         {
-            return TransactionContext.Current.Run(t => ConvertToBehavior(t, initValue));
+            return TransactionContext.Current.Run(t => ToBehavior(t, initValue));
         }
 
         /// <summary>
@@ -200,11 +200,11 @@ namespace Sodium
         public Behavior<TS> Accum<TS>(TS initState, Func<TA, TS, TS> snapshot)
         {
             var evt = new EventLoop<TS>();
-            var behavior = evt.Hold(initState);
+            var behavior = evt.ToBehavior(initState);
             var snapshotEvent = Snapshot(behavior, snapshot);
             evt.Loop(snapshotEvent);
 
-            var result = snapshotEvent.Hold(initState);
+            var result = snapshotEvent.ToBehavior(initState);
             result.RegisterFinalizer(evt);
             result.RegisterFinalizer(behavior);
             result.RegisterFinalizer(snapshotEvent);
@@ -250,7 +250,7 @@ namespace Sodium
         public Event<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
         {
             var es = new EventLoop<TS>();
-            var s = es.Hold(initState);
+            var s = es.ToBehavior(initState);
             var ebs = Snapshot(s, snapshot);
             var eb = ebs.Map(bs => bs.Item1);
             var evt = ebs.Map(bs => bs.Item2);
@@ -388,12 +388,12 @@ namespace Sodium
             }
         }
 
-        private void InitialFire(Transaction transaction, EventListener<TA> eventListener)
+        private void InitialFire(Transaction transaction, EventListener<TA> lListener)
         {
             var initialFirings = InitialFirings();
             if (initialFirings != null)
             {
-                Fire(transaction, eventListener, initialFirings);
+                Fire(transaction, lListener, initialFirings);
             }
         }
 
@@ -402,10 +402,10 @@ namespace Sodium
         /// there's no order dependency between send and listen.
         /// </summary>
         /// <param name="transaction"></param>
-        /// <param name="eventListener"></param>
-        private void Refire(Transaction transaction, EventListener<TA> eventListener)
+        /// <param name="listener"></param>
+        private void Refire(Transaction transaction, EventListener<TA> listener)
         {
-            Fire(transaction, eventListener, firings);
+            Fire(transaction, listener, firings);
         }
 
         /// <summary>
@@ -426,7 +426,7 @@ namespace Sodium
             return evt;
         }
 
-        private Behavior<TA> ConvertToBehavior(Transaction t, TA initValue)
+        private Behavior<TA> ToBehavior(Transaction t, TA initValue)
         {
             var f = LastFiringOnly(t);
             var b = new Behavior<TA>(f, initValue);

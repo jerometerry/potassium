@@ -28,7 +28,7 @@
             var map = bf.Sample();
             var valA = source.Sample();
             var valB = map(valA);
-            this.Behavior = this.Hold(valB);
+            this.Behavior = this.ToBehavior(valB);
         }
 
         public Behavior<TB> Behavior { get; private set; }

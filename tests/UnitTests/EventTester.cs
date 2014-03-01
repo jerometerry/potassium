@@ -107,7 +107,7 @@ namespace Sodium.Tests
         {
             var ea = new Event<int>();
             var eb = new EventLoop<int>();
-            var ec = Event<int>.MergeWith((x, y) => x + y, ea.Map(x => x % 10), eb);
+            var ec = Event<int>.MergeWith(ea.Map(x => x % 10), eb, (x, y) => x + y);
             var ebO = ea.Map(x => x / 10).Filter(x => x != 0);
             eb.Loop(ebO);
             var o = new List<int>();
@@ -183,7 +183,7 @@ namespace Sodium.Tests
         public void TestDelay()
         {
             var e = new Event<char>();
-            var b = e.Hold(' ');
+            var b = e.ToBehavior(' ');
             var o = new List<char>();
             var l = e.Delay().Snapshot(b).Listen(o.Add);
             e.Fire('C');
