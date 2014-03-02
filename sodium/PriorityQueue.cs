@@ -10,7 +10,7 @@ namespace Sodium
     /// <remarks>PriorityQueue is implemented using a binary heap. 
     /// http://en.wikipedia.org/wiki/Binary_heap
     /// </remarks>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of values stored in the queue.</typeparam>
     public sealed class PriorityQueue<T> where T : IComparable<T>
     {
         private readonly List<T> data = new List<T>();
