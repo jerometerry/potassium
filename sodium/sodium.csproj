@@ -60,7 +60,6 @@
     <Compile Include="Constants.cs" />
     <Compile Include="PrioritizedAction.cs" />
     <Compile Include="SwitchBehaviorEvent.cs" />
-    <Compile Include="SwitchEventAction.cs" />
     <Compile Include="FilterEvent.cs" />
     <Compile Include="IEventListener.cs" />
     <Compile Include="EventListener.cs" />

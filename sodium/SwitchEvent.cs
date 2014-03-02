@@ -2,31 +2,53 @@
 {
     internal class SwitchEvent<T> : Event<T>
     {
-        private IEventListener<Event<T>> listener;
-        private Event<Event<T>> updates;
-        private Behavior<Event<T>> source;
+        private IEventListener<Event<T>> behaviorListener;
+        private Behavior<Event<T>> sourceBehavior;
+        private ISodiumCallback<T> wrappedEventListenerCallback;
+        private IEventListener<T> wrappedEventListener;
 
-        public SwitchEvent(Transaction transaction, Behavior<Event<T>> source)
+        public SwitchEvent(Transaction transaction, Behavior<Event<T>> sourceBehavior)
         {
-            this.source = source;
-            var action = new SodiumCallback<T>(this.Fire);
-            var callback = new SwitchEventAction<T>(source, this, transaction, action);
-            this.updates = source.Updates();
-            this.listener = updates.Listen(transaction, callback, this.Rank);
+            this.sourceBehavior = sourceBehavior;
+
+            this.wrappedEventListenerCallback = new SodiumCallback<T>(this.Fire);
+            this.wrappedEventListener = sourceBehavior.Sample().Listen(transaction, this.wrappedEventListenerCallback, this.Rank);
+            
+            var behaviorEventChanged = new SodiumCallback<Event<T>>(UpdateWrappedEventListener);
+            this.behaviorListener = sourceBehavior.Updates().Listen(transaction, behaviorEventChanged, this.Rank);
         }
 
         public override void Dispose()
         {
-            if (this.listener != null)
+            if (this.behaviorListener != null)
             {
-                this.listener.Dispose();
-                this.listener = null;
+                this.behaviorListener.Dispose();
+                this.behaviorListener = null;
             }
 
-            updates = null;
-            this.source = null;
+            if (this.wrappedEventListener != null)
+            {
+                this.wrappedEventListener.Dispose();
+                this.wrappedEventListener = null;
+            }
+
+            this.sourceBehavior = null;
 
             base.Dispose();
+        }
+
+        public void UpdateWrappedEventListener(Transaction transaction, Event<T> newEvent)
+        {
+            transaction.Last(() =>
+            {
+                if (this.wrappedEventListener != null)
+                {
+                    this.wrappedEventListener.Dispose();
+                    this.wrappedEventListener = null;
+                }
+
+                this.wrappedEventListener = newEvent.ListenSuppressed(transaction, this.wrappedEventListenerCallback, this.Rank);
+            });
         }
     }
 }

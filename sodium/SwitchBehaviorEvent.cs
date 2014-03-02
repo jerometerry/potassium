@@ -12,8 +12,8 @@
         {
             this.source = source;
             this.sourceEvent = source.Value();
-            var action = new SodiumCallback<Behavior<T>>(this.Invoke);
-            this.listener = this.sourceEvent.Listen(action, this.Rank);
+            var callback = new SodiumCallback<Behavior<T>>(this.Invoke);
+            this.listener = this.sourceEvent.Listen(callback, this.Rank);
         }
 
         public void Invoke(Transaction transaction, Behavior<T> behavior)

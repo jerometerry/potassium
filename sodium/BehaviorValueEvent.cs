@@ -8,8 +8,8 @@ namespace Sodium
         public BehaviorValueEvent(Behavior<T> behavior, Transaction transaction)
         {
             this.behavior = behavior;
-            var action = new SodiumCallback<T>(this.Fire);
-            listener = behavior.Updates().Listen(transaction, action, this.Rank);
+            var callback = new SodiumCallback<T>(this.Fire);
+            listener = behavior.Updates().Listen(transaction, callback, this.Rank);
         }
 
         public override void Dispose()

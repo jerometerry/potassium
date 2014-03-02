@@ -14,8 +14,8 @@ namespace Sodium
             this.source = source;
             this.f = f;
 
-            var action = new SodiumCallback<T>(this.Fire);
-            this.listener = source.Listen(action, this.Rank);
+            var callback = new SodiumCallback<T>(this.Fire);
+            this.listener = source.Listen(callback, this.Rank);
         }
 
         public override void Dispose()

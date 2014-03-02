@@ -14,9 +14,9 @@ namespace Sodium
             this.source1 = source1;
             this.source2 = source2;
 
-            var action = new SodiumCallback<T>(this.Fire);
-            l1 = source1.Listen(action, this.Rank);
-            l2 = source2.Listen(action, this.Rank);
+            var callback = new SodiumCallback<T>(this.Fire);
+            l1 = source1.Listen(callback, this.Rank);
+            l2 = source2.Listen(callback, this.Rank);
         }
 
         public override void Dispose()

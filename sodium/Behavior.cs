@@ -343,8 +343,8 @@ namespace Sodium
         /// <returns>The IEventListener registered with the underlying event.</returns>
         private IEventListener<T> ListenForEventFirings(Transaction transaction)
         {
-            var action = new SodiumCallback<T>(ScheduleApplyValueUpdate);
-            var result = this.Source.Listen(transaction, action, Rank.Highest);
+            var callback = new SodiumCallback<T>(ScheduleApplyValueUpdate);
+            var result = this.Source.Listen(transaction, callback, Rank.Highest);
             return result;
         }
 

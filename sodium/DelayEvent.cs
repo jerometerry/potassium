@@ -6,8 +6,8 @@
 
         public DelayEvent(Event<T> source)
         {
-            var action = new SodiumCallback<T>((t, a) => t.Post(() => this.Fire(a)));
-            this.listener = source.Listen(action, this.Rank);
+            var callback = new SodiumCallback<T>((t, a) => t.Post(() => this.Fire(a)));
+            this.listener = source.Listen(callback, this.Rank);
         }
 
         public override void Dispose()
