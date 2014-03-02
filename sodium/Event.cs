@@ -103,7 +103,7 @@ namespace Sodium
         /// <returns>An IListener, that should be Disposed when no longer needed. </returns>
         public override IEventListener<T> Listen(Action<T> callback)
         {
-            return Listen(new SodiumAction<T>((t, a) => callback(a)), Rank.Highest);
+            return Listen(new SodiumCallback<T>((t, a) => callback(a)), Rank.Highest);
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace Sodium
         /// to Listen.</remarks>
         public override IEventListener<T> ListenSuppressed(Action<T> callback)
         {
-            return ListenSuppressed(new SodiumAction<T>((t, a) => callback(a)), Rank.Highest);
+            return ListenSuppressed(new SodiumCallback<T>((t, a) => callback(a)), Rank.Highest);
         }
 
         /// <summary>
@@ -269,22 +269,9 @@ namespace Sodium
         /// <param name="firing">The value to fire to registered callbacks</param>
         internal virtual void Fire(Transaction transaction, T firing)
         {
-            var noFirings = !firings.Any();
-            if (noFirings)
-            {
-                transaction.Last(() => firings.Clear());
-            }
-
-            firings.Add(firing);
-
-            var clone = new List<EventListener<T>>(this.listeners);
-            foreach (var listener in clone)
-            {
-                if (listener.Action != null)
-                {
-                    listener.Action.Invoke(transaction, firing);
-                }
-            }
+            ScheduleClearFirings(transaction);
+            AddFiring(firing);
+            InvokeCallbacks(transaction, firing);
         }
 
         /// <summary>
@@ -296,7 +283,7 @@ namespace Sodium
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Listen operation that takes a thread. This ensures that any other
         /// actions triggered during Listen requiring a transaction all get the same instance.</remarks>
-        internal IEventListener<T> Listen(ISodiumAction<T> action, Rank superior)
+        internal IEventListener<T> Listen(ISodiumCallback<T> action, Rank superior)
         {
             return TransactionContext.Current.Run(t => this.Listen(t, action, superior));
         }
@@ -309,7 +296,7 @@ namespace Sodium
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An IListener to be used to stop listening for events.</returns>
         /// <remarks>Any firings that have occurred on the current transaction will be re-fired immediate after listening.</remarks>
-        internal EventListener<T> Listen(Transaction transaction, ISodiumAction<T> action, Rank superior)
+        internal EventListener<T> Listen(Transaction transaction, ISodiumCallback<T> action, Rank superior)
         {
             var listener = this.CreateListener(transaction, action, superior);
             InitialFire(transaction, listener);
@@ -317,7 +304,7 @@ namespace Sodium
             return listener;
         }
 
-        internal IEventListener<T> ListenSuppressed(Transaction transaction, ISodiumAction<T> action, Rank superior)
+        internal IEventListener<T> ListenSuppressed(Transaction transaction, ISodiumCallback<T> action, Rank superior)
         {
             var listener = this.CreateListener(transaction, action, superior);
             InitialFire(transaction, listener);
@@ -332,7 +319,7 @@ namespace Sodium
             return Coalesce(transaction, (a, b) => b);
         }
 
-        internal IEventListener<T> ListenSuppressed(ISodiumAction<T> action, Rank superior)
+        internal IEventListener<T> ListenSuppressed(ISodiumCallback<T> action, Rank superior)
         {
             return TransactionContext.Current.Run(t => this.ListenSuppressed(t, action, superior));
         }
@@ -369,11 +356,11 @@ namespace Sodium
         {
             foreach (var firing in firings)
             {
-                eventListener.Action.Invoke(transaction, firing);
+                eventListener.Callback.Invoke(transaction, firing);
             }
         }
 
-        private EventListener<T> CreateListener(Transaction transaction, ISodiumAction<T> action, Rank superior)
+        private EventListener<T> CreateListener(Transaction transaction, ISodiumCallback<T> action, Rank superior)
         {
             lock (Constants.ListenersLock)
             {
@@ -385,6 +372,32 @@ namespace Sodium
                 var listener = new EventListener<T>(this, action, superior);
                 this.listeners.Add(listener);
                 return listener;
+            }
+        }
+
+        private void ScheduleClearFirings(Transaction transaction)
+        {
+            var noFirings = !firings.Any();
+            if (noFirings)
+            {
+                transaction.Last(() => firings.Clear());
+            }
+        }
+
+        private void AddFiring(T firing)
+        {
+            firings.Add(firing);
+        }
+
+        private void InvokeCallbacks(Transaction transaction, T firing)
+        {
+            var clone = new List<EventListener<T>>(this.listeners);
+            foreach (var listener in clone)
+            {
+                if (listener.Callback != null)
+                {
+                    listener.Callback.Invoke(transaction, firing);
+                }
             }
         }
 

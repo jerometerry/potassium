@@ -9,7 +9,7 @@
         public SwitchEvent(Transaction transaction, Behavior<Event<T>> source)
         {
             this.source = source;
-            var action = new SodiumAction<T>(this.Fire);
+            var action = new SodiumCallback<T>(this.Fire);
             var callback = new SwitchEventAction<T>(source, this, transaction, action);
             this.updates = source.Updates();
             this.listener = updates.Listen(transaction, callback, this.Rank);

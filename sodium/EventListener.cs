@@ -2,14 +2,14 @@ namespace Sodium
 {
     internal sealed class EventListener<T> : SodiumObject, IEventListener<T>
     {
-        public EventListener(Event<T> source, ISodiumAction<T> action, Rank rank)
+        public EventListener(Event<T> source, ISodiumCallback<T> callback, Rank rank)
         {
             this.Source = source;
-            this.Action = action;
+            this.Callback = callback;
             this.Rank = rank;
         }
 
-        public ISodiumAction<T> Action { get; private set; }
+        public ISodiumCallback<T> Callback { get; private set; }
 
         public Rank Rank { get; private set; }
 
@@ -23,7 +23,7 @@ namespace Sodium
                 this.Source = null;
             }
 
-            Action = null;
+            Callback = null;
             Rank = null;
 
             base.Dispose();

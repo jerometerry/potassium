@@ -2,11 +2,11 @@ namespace Sodium
 {
     using System;
 
-    internal sealed class SodiumAction<T> : ISodiumAction<T>
+    internal sealed class SodiumCallback<T> : ISodiumCallback<T>
     {
         private readonly Action<Transaction, T> action;
 
-        public SodiumAction(Action<Transaction, T> action)
+        public SodiumCallback(Action<Transaction, T> action)
         {
             this.action = action;
         }

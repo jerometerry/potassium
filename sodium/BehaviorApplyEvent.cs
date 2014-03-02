@@ -19,8 +19,8 @@
             this.bf = bf;
             this.source = source;
 
-            var functionChanged = new SodiumAction<Func<T, TB>>((t, f) => ScheduledPrioritizedFire(t));
-            var valueChanged = new SodiumAction<T>((t, a) => ScheduledPrioritizedFire(t));
+            var functionChanged = new SodiumCallback<Func<T, TB>>((t, f) => ScheduledPrioritizedFire(t));
+            var valueChanged = new SodiumCallback<T>((t, a) => ScheduledPrioritizedFire(t));
 
             l1 = bf.Updates().Listen(functionChanged, this.Rank);
             l2 = source.Updates().Listen(valueChanged, this.Rank);

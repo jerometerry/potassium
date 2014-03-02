@@ -13,7 +13,7 @@
         {
             this.source = source;
             this.map = map;
-            this.listener = source.Listen(new SodiumAction<T>(this.Fire), this.Rank);
+            this.listener = source.Listen(new SodiumCallback<T>(this.Fire), this.Rank);
         }
 
         public void Fire(Transaction trans, T firing)

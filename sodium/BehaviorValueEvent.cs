@@ -8,7 +8,7 @@ namespace Sodium
         public BehaviorValueEvent(Behavior<T> behavior, Transaction transaction)
         {
             this.behavior = behavior;
-            var action = new SodiumAction<T>(this.Fire);
+            var action = new SodiumCallback<T>(this.Fire);
             listener = behavior.Updates().Listen(transaction, action, this.Rank);
         }
 

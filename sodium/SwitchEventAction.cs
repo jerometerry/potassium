@@ -1,13 +1,13 @@
 namespace Sodium
 {
-    internal sealed class SwitchEventAction<T> : SodiumObject, ISodiumAction<Event<T>>
+    internal sealed class SwitchEventAction<T> : SodiumObject, ISodiumCallback<Event<T>>
     {
         private SwitchEvent<T> sourceEvent;
-        private ISodiumAction<T> callback;
+        private ISodiumCallback<T> callback;
         private IEventListener<T> listener;
         private Behavior<Event<T>> behavior;
 
-        public SwitchEventAction(Behavior<Event<T>> sourceBehavior, SwitchEvent<T> sourceEvent, Transaction t, ISodiumAction<T> callback)
+        public SwitchEventAction(Behavior<Event<T>> sourceBehavior, SwitchEvent<T> sourceEvent, Transaction t, ISodiumCallback<T> callback)
         {
             this.behavior = sourceBehavior;
             this.sourceEvent = sourceEvent;

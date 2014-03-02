@@ -26,7 +26,7 @@
             }
 
             this.source = toLoop;
-            this.listener = source.Listen(new SodiumAction<T>(Fire), Rank);
+            this.listener = source.Listen(new SodiumCallback<T>(Fire), Rank);
             return this;
         }
 

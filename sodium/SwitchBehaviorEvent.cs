@@ -12,7 +12,7 @@
         {
             this.source = source;
             this.sourceEvent = source.Value();
-            var action = new SodiumAction<Behavior<T>>(this.Invoke);
+            var action = new SodiumCallback<Behavior<T>>(this.Invoke);
             this.listener = this.sourceEvent.Listen(action, this.Rank);
         }
 
@@ -37,7 +37,7 @@
             }
 
             this.wrappedEvent = behavior.Value(transaction);
-            this.eventListener = wrappedEvent.Listen(transaction, new SodiumAction<T>(Fire), Rank);
+            this.eventListener = wrappedEvent.Listen(transaction, new SodiumCallback<T>(Fire), Rank);
         }
 
         public override void Dispose()
