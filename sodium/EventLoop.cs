@@ -30,6 +30,9 @@
             return this;
         }
 
+        /// <summary>
+        /// Disposes the current EventLoop
+        /// </summary>
         public override void Dispose()
         {
             if (this.listener != null)
