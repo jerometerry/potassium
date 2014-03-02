@@ -83,7 +83,13 @@ namespace Sodium
         /// </summary>
         public override void Dispose()
         {
+            var clone = new List<EventListener<T>>(this.listeners);
             this.listeners.Clear();
+            foreach(var listener in clone)
+            {
+                listener.Dispose();
+            }
+
             base.Dispose();
         }
 
