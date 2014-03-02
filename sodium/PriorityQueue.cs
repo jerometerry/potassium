@@ -15,6 +15,9 @@ namespace Sodium
     {
         private readonly List<T> data = new List<T>();
 
+        /// <summary>
+        /// Re-adds all items to the PriorityQueue, so ensure they are in the correct order
+        /// </summary>
         public void Reprioritize()
         {
             var entries = new List<T>(data);
@@ -25,6 +28,10 @@ namespace Sodium
             }
         }
 
+        /// <summary>
+        /// Add the given item to the PriorityQueue, maintaining the heap property
+        /// </summary>
+        /// <param name="item">Item to be added</param>
         public void Add(T item)
         {
             data.Add(item);
@@ -43,6 +50,10 @@ namespace Sodium
             }
         }
 
+        /// <summary>
+        /// Pops the next highest priority time from the queue.
+        /// </summary>
+        /// <returns>The item of highest priority</returns>
         public T Remove()
         {
             // Assumes pq is not empty; up to calling code
@@ -84,22 +95,37 @@ namespace Sodium
             return frontItem;
         }
 
+        /// <summary>
+        /// Get the item of highest priority, but don't remove it from the queue.
+        /// </summary>
+        /// <returns>The highest priority item</returns>
         public T Peek()
         {
             var frontItem = data[0];
             return frontItem;
         }
-
+        
+        /// <summary>
+        /// Removes all items from the queue
+        /// </summary>be
         public void Clear()
         {
             data.Clear();
         }
 
+        /// <summary>
+        /// Gets the number of items in the queue.
+        /// </summary>
+        /// <returns>The number of items in the queue</returns>
         public int Count()
         {
             return data.Count;
         }
 
+        /// <summary>
+        /// Gets whether there are any items in the queue
+        /// </summary>
+        /// <returns>True if there are items, false otherwise</returns>
         public bool IsEmpty()
         {
             return Count() == 0;

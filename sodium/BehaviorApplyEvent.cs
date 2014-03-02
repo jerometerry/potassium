@@ -37,6 +37,7 @@
         {
             if (this.Behavior != null)
             {
+                this.Behavior.Dispose();
                 this.Behavior = null;
             }
 

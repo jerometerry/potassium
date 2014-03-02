@@ -2,14 +2,14 @@ namespace Sodium
 {
     internal sealed class OnceEvent<T> : Event<T>
     {
-        private Event<T> evt;
+        private Event<T> source;
         private IEventListener<T>[] eventListeners;
 
         public OnceEvent(Event<T> source)
         {
-            this.evt = source;
+            this.source = source;
 
-            // This is a bit long-winded but it's efficient because it deregisters
+            // This is a bit long-winded but it's efficient because it de-registers
             // the listener.
             this.eventListeners = new IEventListener<T>[1];
             this.eventListeners[0] = source.Listen(new SodiumAction<T>((t, a) => this.Fire(this.eventListeners, t, a)), this.Rank);
@@ -23,11 +23,7 @@ namespace Sodium
                 this.eventListeners[0] = null;
             }
 
-            if (evt != null)
-            {
-                evt = null;
-            }
-
+            this.source = null;
             eventListeners = null;
 
             base.Dispose();
@@ -35,7 +31,7 @@ namespace Sodium
 
         protected internal override T[] InitialFirings()
         {
-            var firings = evt.InitialFirings();
+            var firings = this.source.InitialFirings();
             if (firings == null)
             {
                 return null;

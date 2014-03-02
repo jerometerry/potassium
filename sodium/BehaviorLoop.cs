@@ -1,7 +1,14 @@
 ﻿namespace Sodium
 {
+    /// <summary>
+    /// A BehaviorLoop listens for updates from another Behavior, and fires them to listeners of the current behavior
+    /// </summary>
+    /// <typeparam name="T">The type of the value fired through the event</typeparam>
     public sealed class BehaviorLoop<T> : Behavior<T>
     {
+        /// <summary>
+        /// Default constructor for a BehaviorLoop
+        /// </summary>
         public BehaviorLoop()
             : base(new EventLoop<T>(), default(T))
         {

@@ -29,19 +29,12 @@ namespace Sodium
         {
             if (listener != null)
             {
+                listener.Dispose();
                 listener = null;
             }
 
-            if (source != null)
-            {
-                source = null;
-            }
-
-            if (behavior != null)
-            {
-                behavior = null;
-            }
-
+            source = null;
+            behavior = null;
             snapshot = null;
 
             base.Dispose();

@@ -2,46 +2,43 @@
 {
     using System;
 
+    /// <summary>
+    /// An EventLoop listens for updates from another Event, and forwards them 
+    /// to listeners of the current event.
+    /// </summary>
+    /// <typeparam name="T">The type of the value fired through the event</typeparam>
     public class EventLoop<T> : Event<T>
     {
-        private Event<T> loop;
-        private IEventListener<T> loopListener;
-
-        public EventLoop()
-        {
-        }
+        private Event<T> source;
+        private IEventListener<T> listener;
 
         /// <summary>
         /// Firings on the given Event will be forwarded to the current Event
         /// </summary>
-        /// <param name="eventToLoop">Event who's firings will be looped to the current Event</param>
+        /// <param name="toLoop">Event who's firings will be looped to the current Event</param>
         /// <remarks>Loop can only be called once on an Event. If Loop is called multiple times,
         /// an ApplicationException will be raised.</remarks>
-        public Event<T> Loop(Event<T> eventToLoop)
+        public Event<T> Loop(Event<T> toLoop)
         {
-            if (this.loop != null)
+            if (this.source != null)
             {
                 throw new ApplicationException("EventLoop looped more than once");
             }
 
-            this.loop = eventToLoop;
-            var evt = this;
-            this.loopListener = eventToLoop.Listen(new SodiumAction<T>(evt.Fire), evt.Rank);
+            this.source = toLoop;
+            this.listener = source.Listen(new SodiumAction<T>(Fire), Rank);
             return this;
         }
 
         public override void Dispose()
         {
-            if (this.loopListener != null)
+            if (this.listener != null)
             {
-                this.loopListener.Dispose();
-                this.loopListener = null;
+                this.listener.Dispose();
+                this.listener = null;
             }
 
-            if (this.loop != null)
-            {
-                this.loop = null;
-            }
+            this.source = null;
 
             base.Dispose();
         }

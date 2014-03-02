@@ -3,43 +3,43 @@ namespace Sodium
     internal sealed class SwitchEventAction<T> : SodiumObject, ISodiumAction<Event<T>>
     {
         private SwitchEvent<T> sourceEvent;
-        private ISodiumAction<T> action;
-        private IEventListener<T> eventListener;
-        private Behavior<Event<T>> bea;
+        private ISodiumAction<T> callback;
+        private IEventListener<T> listener;
+        private Behavior<Event<T>> behavior;
 
-        public SwitchEventAction(Behavior<Event<T>> sourceBehavior, SwitchEvent<T> sourceEvent, Transaction t, ISodiumAction<T> h)
+        public SwitchEventAction(Behavior<Event<T>> sourceBehavior, SwitchEvent<T> sourceEvent, Transaction t, ISodiumAction<T> callback)
         {
-            this.bea = sourceBehavior;
+            this.behavior = sourceBehavior;
             this.sourceEvent = sourceEvent;
-            this.action = h;
-            this.eventListener = sourceBehavior.Sample().Listen(t, h, sourceEvent.Rank);
+            this.callback = callback;
+            this.listener = behavior.Sample().Listen(t, callback, sourceEvent.Rank);
         }
 
         public void Invoke(Transaction transaction, Event<T> newEvent)
         {
             transaction.Last(() =>
             {
-                if (this.eventListener != null)
+                if (this.listener != null)
                 { 
-                    this.eventListener.Dispose();
-                    this.eventListener = null;
+                    this.listener.Dispose();
+                    this.listener = null;
                 }
 
-                this.eventListener = newEvent.ListenSuppressed(transaction, this.action, sourceEvent.Rank);
+                this.listener = newEvent.ListenSuppressed(transaction, this.callback, sourceEvent.Rank);
             });
         }
 
         public override void Dispose()
         {
-            if (this.eventListener != null)
+            if (this.listener != null)
             {
-                this.eventListener.Dispose();
-                this.eventListener = null;
+                this.listener.Dispose();
+                this.listener = null;
             }
 
             sourceEvent = null;
-            bea = null;
-            action = null;
+            this.behavior = null;
+            this.callback = null;
 
             base.Dispose();
         }

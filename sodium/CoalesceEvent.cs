@@ -26,11 +26,7 @@ namespace Sodium
                 listener = null;
             }
 
-            if (source != null)
-            {
-                source = null;
-            }
-
+            source = null;
             coalesce = null;
 
             base.Dispose();

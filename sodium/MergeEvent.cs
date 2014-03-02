@@ -33,15 +33,8 @@ namespace Sodium
                 l2 = null;
             }
 
-            if (source1 != null)
-            {
-                source1 = null;
-            }
-
-            if (source2 != null)
-            {
-                source2 = null;
-            }
+            source1 = null;
+            source2 = null;
 
             base.Dispose();
         }

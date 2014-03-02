@@ -5,7 +5,10 @@ namespace Sodium
     /// </summary>
     public class Unit
     {
-        public static readonly Unit Value = new Unit();
+        /// <summary>
+        /// A value that represents nothing
+        /// </summary>
+        public static readonly Unit Nothing = new Unit();
 
         private Unit() 
         { 

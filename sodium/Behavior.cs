@@ -123,14 +123,12 @@ namespace Sodium
         {
             if (this.valueUpdateListener != null)
             {
+                this.valueUpdateListener.Dispose();
                 this.valueUpdateListener = null;
             }
 
-            if (this.Source != null)
-            {
-                this.Source = null;
-            }
-
+            this.Source = null;
+            
             base.Dispose();
         }
 
@@ -147,12 +145,12 @@ namespace Sodium
         /// Listen to the current Behavior for updates, which fires immediate with the 
         /// Behaviors current value, and every time the underlying event fires.
         /// </summary>
-        /// <param name="action">The action to take when the Behavior's underlying event fires</param>
+        /// <param name="callback">The action to take when the Behavior's underlying event fires</param>
         /// <returns>The listener</returns>
-        public override IEventListener<T> Listen(Action<T> action)
+        public override IEventListener<T> Listen(Action<T> callback)
         {
             var v = this.Value();
-            var l = v.Listen(action) as EventListener<T>;
+            var l = (EventListener<T>)v.Listen(callback);
             l.RegisterFinalizer(v);
             return l;
         }
@@ -160,12 +158,12 @@ namespace Sodium
         /// <summary>
         /// Listen to the current Behavior for updates, but don't fire the initial value
         /// </summary>
-        /// <param name="action">The action to take when the Behavior's underlying event fires</param>
+        /// <param name="callback">The action to take when the Behavior's underlying event fires</param>
         /// <returns>The listener</returns>
-        public override IEventListener<T> ListenSuppressed(Action<T> action)
+        public override IEventListener<T> ListenSuppressed(Action<T> callback)
         {
             var v = this.Updates();
-            var l = v.Listen(action) as EventListener<T>;
+            var l = (EventListener<T>)v.Listen(callback);
             l.RegisterFinalizer(v);
             return l;
         }

@@ -29,12 +29,6 @@
             this.hasValue = true;
         }
 
-        private Maybe(T value, bool hasValue)
-        {
-            this.value = value;
-            this.hasValue = hasValue;
-        }
-
         /// <summary>
         /// A Maybe object wihtout a value
         /// </summary>

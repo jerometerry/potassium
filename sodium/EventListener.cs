@@ -15,7 +15,7 @@ namespace Sodium
 
         public Event<T> Source { get; private set; }
 
-        public void Dispose()
+        public override void Dispose()
         {
             if (this.Source != null)
             {
@@ -25,6 +25,8 @@ namespace Sodium
 
             Action = null;
             Rank = null;
+
+            base.Dispose();
         }
     }
 }

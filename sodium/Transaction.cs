@@ -22,6 +22,9 @@ namespace Sodium
         private List<Action> post;
         private bool disposed;
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public Transaction()
         {
             prioritized = new PriorityQueue<PrioritizedAction>();

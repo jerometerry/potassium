@@ -5,17 +5,17 @@ namespace Sodium
 
     internal sealed class FilterEvent<T> : Event<T>
     {
-        private Event<T> evt;
+        private Event<T> source;
         private Func<T, bool> f;
         private IEventListener<T> listener;
 
-        public FilterEvent(Event<T> evt, Func<T, bool> f)
+        public FilterEvent(Event<T> source, Func<T, bool> f)
         {
-            this.evt = evt;
+            this.source = source;
             this.f = f;
 
             var action = new SodiumAction<T>(this.Fire);
-            this.listener = evt.Listen(action, this.Rank);
+            this.listener = source.Listen(action, this.Rank);
         }
 
         public override void Dispose()
@@ -26,11 +26,7 @@ namespace Sodium
                 listener = null;
             }
 
-            if (evt != null)
-            {
-                evt = null;
-            }
-
+            this.source = null;
             f = null;
 
             base.Dispose();
@@ -51,7 +47,7 @@ namespace Sodium
 
         protected internal override T[] InitialFirings()
         {
-            var events = evt.InitialFirings();
+            var events = this.source.InitialFirings();
             if (events == null)
             {
                 return null;

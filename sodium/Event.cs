@@ -93,30 +93,30 @@ namespace Sodium
         /// <param name="a">The value to be fired</param>
         public override void Fire(T a)
         {
-            TransactionContext.Current.Run(t => { Fire(t, a); return Unit.Value; });
+            TransactionContext.Current.Run(t => { Fire(t, a); return Unit.Nothing; });
         }
 
         /// <summary>
         /// Listen for firings of this event.
         /// </summary>
-        /// <param name="action">An Action to be invoked when the current Event fires.</param>
+        /// <param name="callback">An Action to be invoked when the current Event fires.</param>
         /// <returns>An IListener, that should be Disposed when no longer needed. </returns>
-        public override IEventListener<T> Listen(Action<T> action)
+        public override IEventListener<T> Listen(Action<T> callback)
         {
-            return Listen(new SodiumAction<T>((t, a) => action(a)), Rank.Highest);
+            return Listen(new SodiumAction<T>((t, a) => callback(a)), Rank.Highest);
         }
 
         /// <summary>
         /// Similar to Listener, except that previous firings will not be re-fired.
         /// </summary>
-        /// <param name="action">The action to invoke on a firing</param>
+        /// <param name="callback">The action to invoke on a firing</param>
         /// <returns>An IListener to be used to stop listening for events.</returns>
         /// <remarks>It's more common for the Listen method to be used instead of ListenSuppressed.
         /// You may want to use ListenSuppressed if the action will be triggered as part of a call
         /// to Listen.</remarks>
-        public override IEventListener<T> ListenSuppressed(Action<T> action)
+        public override IEventListener<T> ListenSuppressed(Action<T> callback)
         {
-            return ListenSuppressed(new SodiumAction<T>((t, a) => action(a)), Rank.Highest);
+            return ListenSuppressed(new SodiumAction<T>((t, a) => callback(a)), Rank.Highest);
         }
 
         /// <summary>
@@ -388,12 +388,12 @@ namespace Sodium
             }
         }
 
-        private void InitialFire(Transaction transaction, EventListener<T> lListener)
+        private void InitialFire(Transaction transaction, EventListener<T> listener)
         {
             var initialFirings = InitialFirings();
             if (initialFirings != null)
             {
-                Fire(transaction, lListener, initialFirings);
+                Fire(transaction, listener, initialFirings);
             }
         }
 

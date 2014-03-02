@@ -29,11 +29,7 @@
                 listener = null;
             }
 
-            if (source != null)
-            {
-                source = null;
-            }
-
+            source = null;
             map = null;
 
             base.Dispose();
