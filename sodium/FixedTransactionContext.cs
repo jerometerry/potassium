@@ -23,10 +23,10 @@ namespace Sodium
         /// <summary>
         /// Run the given function on the fixed transaction
         /// </summary>
-        /// <typeparam name="TA">The return value of the supplied function</typeparam>
+        /// <typeparam name="T">The return value of the supplied function</typeparam>
         /// <param name="f">The function to run on the fixed Transaction</param>
         /// <returns>The result of calling the specified function</returns>
-        public override TA Run<TA>(Func<Transaction, TA> f)
+        public override T Run<T>(Func<Transaction, T> f)
         {
             lock (Constants.TransactionLock)
             {

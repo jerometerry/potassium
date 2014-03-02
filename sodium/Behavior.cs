@@ -6,31 +6,31 @@ namespace Sodium
     /// A Behavior is a time varying value
     /// </summary>
     /// <remarks>Behaviors generally change over time, but constant behaviors are ones that choose not to.</remarks>
-    /// <typeparam name="TA">The type of values that will be fired through the behavior.</typeparam>
-    public class Behavior<TA> : Observable<TA>
+    /// <typeparam name="T">The type of values that will be fired through the behavior.</typeparam>
+    public class Behavior<T> : Observable<T>
     {
         /// <summary>
         /// The current value of the Behavior, updated after the underlying event fires.
         /// </summary>
-        private TA value;
+        private T value;
         
         /// <summary>
         /// Holding tank for updates from the underlying Event, waiting to be 
         /// moved into the current value of the Behavior.
         /// </summary>
-        private Maybe<TA> valueUpdate = Maybe<TA>.Null;
+        private Maybe<T> valueUpdate = Maybe<T>.Null;
 
         /// <summary>
         /// Listener that listens for firings from the underlying Event.
         /// </summary>
-        private IEventListener<TA> valueUpdateListener;
+        private IEventListener<T> valueUpdateListener;
 
         /// <summary>
         /// A behavior with a time varying value
         /// </summary>
         /// <param name="initValue"></param>
-        public Behavior(TA initValue)
-            : this(new Event<TA>(), initValue)
+        public Behavior(T initValue)
+            : this(new Event<T>(), initValue)
         {
             this.RegisterFinalizer(this.Source);
         }
@@ -40,7 +40,7 @@ namespace Sodium
         /// </summary>
         /// <param name="evt"></param>
         /// <param name="initValue"></param>
-        public Behavior(Event<TA> evt, TA initValue)
+        public Behavior(Event<T> evt, T initValue)
         {
             this.Source = evt;
             this.value = initValue;
@@ -50,14 +50,14 @@ namespace Sodium
         /// <summary>
         /// The underlying Event that the Value of the current Behavior is updated with.
         /// </summary>
-        protected Event<TA> Source { get; private set; }
+        protected Event<T> Source { get; private set; }
 
         /// <summary>
         /// A behavior with a constant value.
         /// </summary>
-        public static Behavior<TA> Constant(TA initValue)
+        public static Behavior<T> Constant(T initValue)
         {
-            var behavior = new Behavior<TA>(new StaticEvent<TA>(), initValue);
+            var behavior = new Behavior<T>(new StaticEvent<T>(), initValue);
             behavior.RegisterFinalizer(behavior.Source);
             return behavior;
         }
@@ -66,9 +66,9 @@ namespace Sodium
         /// Apply a value inside a behavior to a function inside a behavior. This is the
         /// primitive for all function lifting.
         /// </summary>
-        public static Behavior<TB> Apply<TB>(Behavior<Func<TA, TB>> bf, Behavior<TA> source)
+        public static Behavior<TB> Apply<TB>(Behavior<Func<T, TB>> bf, Behavior<T> source)
         {
-            var evt = new BehaviorApplyEvent<TA, TB>(bf, source);
+            var evt = new BehaviorApplyEvent<T, TB>(bf, source);
             var behavior = evt.Behavior;
             behavior.RegisterFinalizer(evt);
             return behavior;
@@ -77,11 +77,11 @@ namespace Sodium
         /// <summary>
         /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
         /// </summary>
-        public static Behavior<TA> Unwrap(Behavior<Behavior<TA>> source)
+        public static Behavior<T> Unwrap(Behavior<Behavior<T>> source)
         {
             var innerBehavior = source.Sample();
             var initValue = innerBehavior.Sample();
-            var sink = new SwitchBehaviorEvent<TA>(source);
+            var sink = new SwitchBehaviorEvent<T>(source);
             var result = sink.ToBehavior(initValue);
             result.RegisterFinalizer(sink);
             return result;
@@ -95,7 +95,7 @@ namespace Sodium
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// SwitchE operation that takes a thread. This ensures that any other
         /// actions triggered during SwitchE requiring a transaction all get the same instance.</remarks>
-        public static Event<TA> UnwrapEvent(Behavior<Event<TA>> behavior)
+        public static Event<T> UnwrapEvent(Behavior<Event<T>> behavior)
         {
             return TransactionContext.Current.Run(t => UnwrapEvent(t, behavior));
         }
@@ -103,7 +103,7 @@ namespace Sodium
         /// <summary>
         /// Lift a binary function into behaviors.
         /// </summary>
-        public static Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> lift, Behavior<TA> a, Behavior<TB> b)
+        public static Behavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, Behavior<T> a, Behavior<TB> b)
         {
             return a.Lift(lift, b);
         }
@@ -111,7 +111,7 @@ namespace Sodium
         /// <summary>
         /// Lift a ternary function into behaviors.
         /// </summary>
-        public static Behavior<TD> Lift<TB, TC, TD>(Func<TA, TB, TC, TD> f, Behavior<TA> a, Behavior<TB> b, Behavior<TC> c)
+        public static Behavior<TD> Lift<TB, TC, TD>(Func<T, TB, TC, TD> f, Behavior<T> a, Behavior<TB> b, Behavior<TC> c)
         {
             return a.Lift(f, b, c);
         }
@@ -138,7 +138,7 @@ namespace Sodium
         /// Fire the given value to all registered listeners 
         /// </summary>
         /// <param name="a">The value to be fired</param>
-        public override void Fire(TA a)
+        public override void Fire(T a)
         {
             this.Source.Fire(a);
         }
@@ -149,10 +149,10 @@ namespace Sodium
         /// </summary>
         /// <param name="action">The action to take when the Behavior's underlying event fires</param>
         /// <returns>The listener</returns>
-        public override IEventListener<TA> Listen(Action<TA> action)
+        public override IEventListener<T> Listen(Action<T> action)
         {
             var v = this.Value();
-            var l = v.Listen(action) as EventListener<TA>;
+            var l = v.Listen(action) as EventListener<T>;
             l.RegisterFinalizer(v);
             return l;
         }
@@ -162,10 +162,10 @@ namespace Sodium
         /// </summary>
         /// <param name="action">The action to take when the Behavior's underlying event fires</param>
         /// <returns>The listener</returns>
-        public override IEventListener<TA> ListenSuppressed(Action<TA> action)
+        public override IEventListener<T> ListenSuppressed(Action<T> action)
         {
             var v = this.Updates();
-            var l = v.Listen(action) as EventListener<TA>;
+            var l = v.Listen(action) as EventListener<T>;
             l.RegisterFinalizer(v);
             return l;
         }
@@ -180,7 +180,7 @@ namespace Sodium
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Value operation that takes a thread. This ensures that any other
         /// actions triggered during Value requiring a transaction all get the same instance.</remarks>
-        public Event<TA> Value()
+        public Event<T> Value()
         {
             return TransactionContext.Current.Run(Value);
         }
@@ -188,7 +188,7 @@ namespace Sodium
         /// <summary>
         /// Transform the behavior's value according to the supplied function.
         /// </summary>
-        public Behavior<TB> Map<TB>(Func<TA, TB> map)
+        public Behavior<TB> Map<TB>(Func<T, TB> map)
         {
             var underlyingEvent = Updates();
             var mapEvent = underlyingEvent.Map(map);
@@ -211,14 +211,14 @@ namespace Sodium
         /// b.Updates().Listen(..) will capture the current value and any updates without risk
         /// of missing any in between.
         /// </remarks>
-        public TA Sample()
+        public T Sample()
         {
             // Here's the comment from the Java implementation:
             // 
             //     Since pointers in Java are atomic, we don't need to explicitly create a
             //     transaction.
             //
-            // In C# TA could be either a reference type or a value type. Question:
+            // In C# T could be either a reference type or a value type. Question:
             // Can we assume we don't require a transaction here?
             return value;
         }
@@ -227,7 +227,7 @@ namespace Sodium
         /// An event that gives the updates for the behavior. If this behavior was created
         /// with a hold, then updates() gives you an event equivalent to the one that was held.
         /// </summary>
-        public Event<TA> Updates()
+        public Event<T> Updates()
         {
             return this.Source;
         }
@@ -235,9 +235,9 @@ namespace Sodium
         /// <summary>
         /// Lift a binary function into behaviors.
         /// </summary>
-        public Behavior<TC> Lift<TB, TC>(Func<TA, TB, TC> lift, Behavior<TB> behavior)
+        public Behavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, Behavior<TB> behavior)
         {
-            Func<TA, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
+            Func<T, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
             var bf = Map(ffa);
             var result = Behavior<TB>.Apply(bf, behavior);
             result.RegisterFinalizer(bf);
@@ -248,7 +248,7 @@ namespace Sodium
         /// Transform a behavior with a generalized state loop (a mealy machine). The function
         /// is passed the input and the old state and returns the new state and output value.
         /// </summary>
-        public Behavior<TB> Collect<TB, TS>(TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
+        public Behavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             var coalesceEvent = Updates().Coalesce((a, b) => b);
             var currentValue = Sample();
@@ -271,9 +271,9 @@ namespace Sodium
         /// <summary>
         /// Lift a ternary function into behaviors.
         /// </summary>
-        public Behavior<TD> Lift<TB, TC, TD>(Func<TA, TB, TC, TD> lift, Behavior<TB> b, Behavior<TC> c)
+        public Behavior<TD> Lift<TB, TC, TD>(Func<T, TB, TC, TD> lift, Behavior<TB> b, Behavior<TC> c)
         {
-            Func<TA, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
+            Func<T, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
             var bf = Map(map);
             var l1 = Behavior<TB>.Apply(bf, b);
 
@@ -289,9 +289,9 @@ namespace Sodium
         /// <param name="transaction"></param>
         /// <param name="behavior">The behavior that wraps the event</param>
         /// <returns>The unwrapped event</returns>
-        internal static Event<TA> UnwrapEvent(Transaction transaction, Behavior<Event<TA>> behavior)
+        internal static Event<T> UnwrapEvent(Transaction transaction, Behavior<Event<T>> behavior)
         {
-            return new SwitchEvent<TA>(transaction, behavior);
+            return new SwitchEvent<T>(transaction, behavior);
         }
 
         /// <summary>
@@ -305,7 +305,7 @@ namespace Sodium
         /// updated with the value of the firing. However, it doesn't go directly to the
         /// value field. Instead, the value is put into newValue, and a Last Action is
         /// scheduled to move the value from newValue to value.</remarks>
-        internal TA NewValue()
+        internal T NewValue()
         {
             return valueUpdate.HasValue ? valueUpdate.Value() : value;
         }
@@ -318,9 +318,9 @@ namespace Sodium
         /// <param name="transaction">The transaction to run the Value operation on</param>
         /// <returns>An event that will fire when it's listened to, and every time it's 
         /// value changes thereafter</returns>
-        internal Event<TA> Value(Transaction transaction)
+        internal Event<T> Value(Transaction transaction)
         {
-            var valueEvent = new BehaviorValueEvent<TA>(this, transaction);
+            var valueEvent = new BehaviorValueEvent<T>(this, transaction);
 
             // Needed in case of an initial value and an update
             // in the same transaction.
@@ -333,7 +333,7 @@ namespace Sodium
         /// Listen to the underlying event for firings
         /// </summary>
         /// <returns>The IEventListener registered with the underlying event.</returns>
-        private IEventListener<TA> ListenForEventFirings()
+        private IEventListener<T> ListenForEventFirings()
         {
             return TransactionContext.Current.Run(t => this.ListenForEventFirings(t));
         }
@@ -343,9 +343,9 @@ namespace Sodium
         /// </summary>
         /// <param name="transaction">The transaction to schedule the listen on.</param>
         /// <returns>The IEventListener registered with the underlying event.</returns>
-        private IEventListener<TA> ListenForEventFirings(Transaction transaction)
+        private IEventListener<T> ListenForEventFirings(Transaction transaction)
         {
-            var action = new SodiumAction<TA>(ScheduleApplyValueUpdate);
+            var action = new SodiumAction<T>(ScheduleApplyValueUpdate);
             var result = this.Source.Listen(transaction, action, Rank.Highest);
             return result;
         }
@@ -356,14 +356,14 @@ namespace Sodium
         /// </summary>
         /// <param name="transaction">The transaction to schedule the value update on</param>
         /// <param name="update">The updated value</param>
-        private void ScheduleApplyValueUpdate(Transaction transaction, TA update)
+        private void ScheduleApplyValueUpdate(Transaction transaction, T update)
         {
             if (!valueUpdate.HasValue)
             {
                 transaction.Last(ApplyValueUpdate);
             }
 
-            valueUpdate = new Maybe<TA>(update);
+            valueUpdate = new Maybe<T>(update);
         }
 
         /// <summary>
@@ -372,7 +372,7 @@ namespace Sodium
         private void ApplyValueUpdate()
         {
             value = valueUpdate.Value();
-            valueUpdate = Maybe<TA>.Null;
+            valueUpdate = Maybe<T>.Null;
         }
     }
 }

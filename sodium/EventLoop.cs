@@ -2,10 +2,10 @@
 {
     using System;
 
-    public class EventLoop<TA> : Event<TA>
+    public class EventLoop<T> : Event<T>
     {
-        private Event<TA> loop;
-        private IEventListener<TA> loopListener;
+        private Event<T> loop;
+        private IEventListener<T> loopListener;
 
         public EventLoop()
         {
@@ -17,7 +17,7 @@
         /// <param name="eventToLoop">Event who's firings will be looped to the current Event</param>
         /// <remarks>Loop can only be called once on an Event. If Loop is called multiple times,
         /// an ApplicationException will be raised.</remarks>
-        public Event<TA> Loop(Event<TA> eventToLoop)
+        public Event<T> Loop(Event<T> eventToLoop)
         {
             if (this.loop != null)
             {
@@ -26,7 +26,7 @@
 
             this.loop = eventToLoop;
             var evt = this;
-            this.loopListener = eventToLoop.Listen(new SodiumAction<TA>(evt.Fire), evt.Rank);
+            this.loopListener = eventToLoop.Listen(new SodiumAction<T>(evt.Fire), evt.Rank);
             return this;
         }
 

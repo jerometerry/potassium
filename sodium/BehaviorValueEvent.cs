@@ -1,14 +1,14 @@
 namespace Sodium
 {
-    internal sealed class BehaviorValueEvent<TA> : Event<TA>
+    internal sealed class BehaviorValueEvent<T> : Event<T>
     {
-        private Behavior<TA> behavior;
-        private IEventListener<TA> listener;
+        private Behavior<T> behavior;
+        private IEventListener<T> listener;
 
-        public BehaviorValueEvent(Behavior<TA> behavior, Transaction transaction)
+        public BehaviorValueEvent(Behavior<T> behavior, Transaction transaction)
         {
             this.behavior = behavior;
-            var action = new SodiumAction<TA>(this.Fire);
+            var action = new SodiumAction<T>(this.Fire);
             listener = behavior.Updates().Listen(transaction, action, this.Rank);
         }
 
@@ -25,7 +25,7 @@ namespace Sodium
             base.Dispose();
         }
 
-        protected internal override TA[] InitialFirings()
+        protected internal override T[] InitialFirings()
         {
             return new[] { behavior.Sample() };
         }

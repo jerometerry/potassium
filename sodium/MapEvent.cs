@@ -3,20 +3,20 @@
     using System;
     using System.Linq;
 
-    internal sealed class MapEvent<TA, TB> : Event<TB>
+    internal sealed class MapEvent<T, TB> : Event<TB>
     {
-        private Event<TA> source;
-        private Func<TA, TB> map;
-        private IEventListener<TA> listener;
+        private Event<T> source;
+        private Func<T, TB> map;
+        private IEventListener<T> listener;
 
-        public MapEvent(Event<TA> source, Func<TA, TB> map)
+        public MapEvent(Event<T> source, Func<T, TB> map)
         {
             this.source = source;
             this.map = map;
-            this.listener = source.Listen(new SodiumAction<TA>(this.Fire), this.Rank);
+            this.listener = source.Listen(new SodiumAction<T>(this.Fire), this.Rank);
         }
 
-        public void Fire(Transaction trans, TA firing)
+        public void Fire(Transaction trans, T firing)
         {
             Fire(trans, this.map(firing));
         }

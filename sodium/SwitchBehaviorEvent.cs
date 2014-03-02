@@ -1,22 +1,22 @@
 ﻿namespace Sodium
 {
-    internal class SwitchBehaviorEvent<TA> : Event<TA>
+    internal class SwitchBehaviorEvent<T> : Event<T>
     {
-        private IEventListener<Behavior<TA>> listener;
-        private IEventListener<TA> eventListener;
-        private Behavior<Behavior<TA>> source;
-        private Event<TA> wrappedEvent;
-        private Event<Behavior<TA>> sourceEvent;
+        private IEventListener<Behavior<T>> listener;
+        private IEventListener<T> eventListener;
+        private Behavior<Behavior<T>> source;
+        private Event<T> wrappedEvent;
+        private Event<Behavior<T>> sourceEvent;
 
-        public SwitchBehaviorEvent(Behavior<Behavior<TA>> source)
+        public SwitchBehaviorEvent(Behavior<Behavior<T>> source)
         {
             this.source = source;
             this.sourceEvent = source.Value();
-            var action = new SodiumAction<Behavior<TA>>(this.Invoke);
+            var action = new SodiumAction<Behavior<T>>(this.Invoke);
             this.listener = this.sourceEvent.Listen(action, this.Rank);
         }
 
-        public void Invoke(Transaction transaction, Behavior<TA> behavior)
+        public void Invoke(Transaction transaction, Behavior<T> behavior)
         {
             // Note: If any switch takes place during a transaction, then the
             // Value().Listen will always cause a sample to be fetched from the
@@ -37,7 +37,7 @@
             }
 
             this.wrappedEvent = behavior.Value(transaction);
-            this.eventListener = wrappedEvent.Listen(transaction, new SodiumAction<TA>(Fire), Rank);
+            this.eventListener = wrappedEvent.Listen(transaction, new SodiumAction<T>(Fire), Rank);
         }
 
         public override void Dispose()

@@ -3,18 +3,18 @@ namespace Sodium
     using System;
     using System.Linq;
 
-    internal sealed class FilterEvent<TA> : Event<TA>
+    internal sealed class FilterEvent<T> : Event<T>
     {
-        private Event<TA> evt;
-        private Func<TA, bool> f;
-        private IEventListener<TA> listener;
+        private Event<T> evt;
+        private Func<T, bool> f;
+        private IEventListener<T> listener;
 
-        public FilterEvent(Event<TA> evt, Func<TA, bool> f)
+        public FilterEvent(Event<T> evt, Func<T, bool> f)
         {
             this.evt = evt;
             this.f = f;
 
-            var action = new SodiumAction<TA>(this.Fire);
+            var action = new SodiumAction<T>(this.Fire);
             this.listener = evt.Listen(action, this.Rank);
         }
 
@@ -41,7 +41,7 @@ namespace Sodium
         /// </summary>
         /// <param name="t"></param>
         /// <param name="a"></param>
-        internal override void Fire(Transaction t, TA a)
+        internal override void Fire(Transaction t, T a)
         {
             if (f(a))
             {
@@ -49,7 +49,7 @@ namespace Sodium
             }
         }
 
-        protected internal override TA[] InitialFirings()
+        protected internal override T[] InitialFirings()
         {
             var events = evt.InitialFirings();
             if (events == null)

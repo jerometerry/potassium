@@ -2,25 +2,25 @@
 {
     using System;
 
-    internal class BehaviorApplyEvent<TA, TB> : Event<TB>
+    internal class BehaviorApplyEvent<T, TB> : Event<TB>
     {
-        private Behavior<Func<TA, TB>> bf;
-        private Behavior<TA> source;
-        private IEventListener<Func<TA, TB>> l1;
-        private IEventListener<TA> l2;
+        private Behavior<Func<T, TB>> bf;
+        private Behavior<T> source;
+        private IEventListener<Func<T, TB>> l1;
+        private IEventListener<T> l2;
         
         /// <summary>
         /// Set to true when waiting for the Fire Priority Action to run.
         /// </summary>
         private bool fired;
 
-        public BehaviorApplyEvent(Behavior<Func<TA, TB>> bf, Behavior<TA> source)
+        public BehaviorApplyEvent(Behavior<Func<T, TB>> bf, Behavior<T> source)
         {
             this.bf = bf;
             this.source = source;
 
-            var functionChanged = new SodiumAction<Func<TA, TB>>((t, f) => ScheduledPrioritizedFire(t));
-            var valueChanged = new SodiumAction<TA>((t, a) => ScheduledPrioritizedFire(t));
+            var functionChanged = new SodiumAction<Func<T, TB>>((t, f) => ScheduledPrioritizedFire(t));
+            var valueChanged = new SodiumAction<T>((t, a) => ScheduledPrioritizedFire(t));
 
             l1 = bf.Updates().Listen(functionChanged, this.Rank);
             l2 = source.Updates().Listen(valueChanged, this.Rank);

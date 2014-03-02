@@ -3,24 +3,24 @@ namespace Sodium
     using System;
     using System.Linq;
 
-    internal sealed class SnapshotEvent<TA, TB, TC> : Event<TC>
+    internal sealed class SnapshotEvent<T, TB, TC> : Event<TC>
     {
-        private Event<TA> source;
-        private Func<TA, TB, TC> snapshot;
+        private Event<T> source;
+        private Func<T, TB, TC> snapshot;
         private Behavior<TB> behavior;
-        private IEventListener<TA> listener;
+        private IEventListener<T> listener;
 
-        public SnapshotEvent(Event<TA> source, Func<TA, TB, TC> snapshot, Behavior<TB> behavior)
+        public SnapshotEvent(Event<T> source, Func<T, TB, TC> snapshot, Behavior<TB> behavior)
         {
             this.source = source;
             this.snapshot = snapshot;
             this.behavior = behavior;
 
-            var action = new SodiumAction<TA>(this.Fire);
+            var action = new SodiumAction<T>(this.Fire);
             this.listener = source.Listen(action, this.Rank);
         }
 
-        public void Fire(Transaction transaction, TA firing)
+        public void Fire(Transaction transaction, T firing)
         {
             this.Fire(transaction, this.snapshot(firing, this.behavior.Sample()));
         }

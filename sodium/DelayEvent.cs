@@ -1,12 +1,12 @@
 ﻿namespace Sodium
 {
-    internal class DelayEvent<TA> : Event<TA>
+    internal class DelayEvent<T> : Event<T>
     {
-        private IEventListener<TA> listener;
+        private IEventListener<T> listener;
 
-        public DelayEvent(Event<TA> source)
+        public DelayEvent(Event<T> source)
         {
-            var action = new SodiumAction<TA>((t, a) => t.Post(() => this.Fire(a)));
+            var action = new SodiumAction<T>((t, a) => t.Post(() => this.Fire(a)));
             this.listener = source.Listen(action, this.Rank);
         }
 

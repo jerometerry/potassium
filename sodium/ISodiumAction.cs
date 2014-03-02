@@ -1,7 +1,7 @@
 namespace Sodium
 {
-    internal interface ISodiumAction<in TA>
+    internal interface ISodiumAction<in T>
     {
-        void Invoke(Transaction transaction, TA data);
+        void Invoke(Transaction transaction, T data);
     }
 }

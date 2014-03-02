@@ -2,19 +2,19 @@ namespace Sodium
 {
     using System;
 
-    internal sealed class CoalesceEvent<TA> : Event<TA>
+    internal sealed class CoalesceEvent<T> : Event<T>
     {
-        private Event<TA> source;
-        private Func<TA, TA, TA> coalesce;
-        private IEventListener<TA> listener;
-        private Maybe<TA> accumulatedValue = Maybe<TA>.Null;
+        private Event<T> source;
+        private Func<T, T, T> coalesce;
+        private IEventListener<T> listener;
+        private Maybe<T> accumulatedValue = Maybe<T>.Null;
 
-        public CoalesceEvent(Event<TA> source, Func<TA, TA, TA> coalesce, Transaction transaction)
+        public CoalesceEvent(Event<T> source, Func<T, T, T> coalesce, Transaction transaction)
         {
             this.source = source;
             this.coalesce = coalesce;
 
-            var action = new SodiumAction<TA>(this.Accumulate);
+            var action = new SodiumAction<T>(this.Accumulate);
             this.listener = source.Listen(transaction, action, this.Rank);
         }
 
@@ -36,7 +36,7 @@ namespace Sodium
             base.Dispose();
         }
 
-        protected internal override TA[] InitialFirings()
+        protected internal override T[] InitialFirings()
         {
             var events = source.InitialFirings();
             if (events == null)
@@ -53,23 +53,23 @@ namespace Sodium
             return new[] { e };
         }
 
-        private void Accumulate(Transaction transaction, TA data)
+        private void Accumulate(Transaction transaction, T data)
         {
             if (this.accumulatedValue.HasValue)
             {
-                this.accumulatedValue = new Maybe<TA>(coalesce(this.accumulatedValue.Value(), data));
+                this.accumulatedValue = new Maybe<T>(coalesce(this.accumulatedValue.Value(), data));
             }
             else
             {
                 transaction.Priority(Fire, this.Rank);
-                this.accumulatedValue = new Maybe<TA>(data);
+                this.accumulatedValue = new Maybe<T>(data);
             }
         }
 
         private void Fire(Transaction transaction)
         {
             this.Fire(transaction, this.accumulatedValue.Value());
-            this.accumulatedValue = Maybe<TA>.Null;
+            this.accumulatedValue = Maybe<T>.Null;
         }
     }
 }

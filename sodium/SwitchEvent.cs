@@ -1,17 +1,17 @@
 ﻿namespace Sodium
 {
-    internal class SwitchEvent<TA> : Event<TA>
+    internal class SwitchEvent<T> : Event<T>
     {
-        private SwitchEventAction<TA> eventSwitchCallback;
-        private IEventListener<Event<TA>> listener;
-        private Event<Event<TA>> updates;
-        private Behavior<Event<TA>> source;
+        private SwitchEventAction<T> eventSwitchCallback;
+        private IEventListener<Event<T>> listener;
+        private Event<Event<T>> updates;
+        private Behavior<Event<T>> source;
 
-        public SwitchEvent(Transaction transaction, Behavior<Event<TA>> source)
+        public SwitchEvent(Transaction transaction, Behavior<Event<T>> source)
         {
             this.source = source;
-            var action = new SodiumAction<TA>(this.Fire);
-            this.eventSwitchCallback = new SwitchEventAction<TA>(source, this, transaction, action);
+            var action = new SodiumAction<T>(this.Fire);
+            this.eventSwitchCallback = new SwitchEventAction<T>(source, this, transaction, action);
             this.updates = source.Updates();
             this.listener = updates.Listen(transaction, eventSwitchCallback, this.Rank);
         }

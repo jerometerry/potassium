@@ -1,13 +1,13 @@
 namespace Sodium
 {
-    internal sealed class SwitchEventAction<TA> : SodiumObject, ISodiumAction<Event<TA>>
+    internal sealed class SwitchEventAction<T> : SodiumObject, ISodiumAction<Event<T>>
     {
-        private SwitchEvent<TA> sourceEvent;
-        private ISodiumAction<TA> action;
-        private IEventListener<TA> eventListener;
-        private Behavior<Event<TA>> bea;
+        private SwitchEvent<T> sourceEvent;
+        private ISodiumAction<T> action;
+        private IEventListener<T> eventListener;
+        private Behavior<Event<T>> bea;
 
-        public SwitchEventAction(Behavior<Event<TA>> sourceBehavior, SwitchEvent<TA> sourceEvent, Transaction t, ISodiumAction<TA> h)
+        public SwitchEventAction(Behavior<Event<T>> sourceBehavior, SwitchEvent<T> sourceEvent, Transaction t, ISodiumAction<T> h)
         {
             this.bea = sourceBehavior;
             this.sourceEvent = sourceEvent;
@@ -15,7 +15,7 @@ namespace Sodium
             this.eventListener = sourceBehavior.Sample().Listen(t, h, sourceEvent.Rank);
         }
 
-        public void Invoke(Transaction transaction, Event<TA> newEvent)
+        public void Invoke(Transaction transaction, Event<T> newEvent)
         {
             transaction.Last(() =>
             {

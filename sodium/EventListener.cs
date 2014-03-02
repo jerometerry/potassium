@@ -1,19 +1,19 @@
 namespace Sodium
 {
-    internal sealed class EventListener<TA> : SodiumObject, IEventListener<TA>
+    internal sealed class EventListener<T> : SodiumObject, IEventListener<T>
     {
-        public EventListener(Event<TA> source, ISodiumAction<TA> action, Rank rank)
+        public EventListener(Event<T> source, ISodiumAction<T> action, Rank rank)
         {
             this.Source = source;
             this.Action = action;
             this.Rank = rank;
         }
 
-        public ISodiumAction<TA> Action { get; private set; }
+        public ISodiumAction<T> Action { get; private set; }
 
         public Rank Rank { get; private set; }
 
-        public Event<TA> Source { get; private set; }
+        public Event<T> Source { get; private set; }
 
         public void Dispose()
         {

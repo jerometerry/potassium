@@ -2,16 +2,16 @@ namespace Sodium
 {
     using System;
 
-    internal sealed class SodiumAction<TA> : ISodiumAction<TA>
+    internal sealed class SodiumAction<T> : ISodiumAction<T>
     {
-        private readonly Action<Transaction, TA> action;
+        private readonly Action<Transaction, T> action;
 
-        public SodiumAction(Action<Transaction, TA> action)
+        public SodiumAction(Action<Transaction, T> action)
         {
             this.action = action;
         }
 
-        public void Invoke(Transaction transaction, TA data)
+        public void Invoke(Transaction transaction, T data)
         {
             action(transaction, data);
         }

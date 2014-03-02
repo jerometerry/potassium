@@ -15,7 +15,7 @@ namespace Sodium
         /// <summary>
         /// Run the specified function inside a single transaction
         /// </summary>
-        /// <typeparam name="TA"></typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <param name="f">Function that accepts a transaction and returns a value</param>
         /// <returns></returns>
         /// <remarks>
@@ -23,7 +23,7 @@ namespace Sodium
         /// transaction automatically. It is useful where you want to run multiple
         /// reactive operations atomically.
         /// </remarks>
-        public override TA Run<TA>(Func<Transaction, TA> f)
+        public override T Run<T>(Func<Transaction, T> f)
         {
             lock (Constants.TransactionLock)
             {

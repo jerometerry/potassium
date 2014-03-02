@@ -1,9 +1,9 @@
 ﻿namespace Sodium
 {
-    public sealed class BehaviorLoop<TA> : Behavior<TA>
+    public sealed class BehaviorLoop<T> : Behavior<T>
     {
         public BehaviorLoop()
-            : base(new EventLoop<TA>(), default(TA))
+            : base(new EventLoop<T>(), default(T))
         {
             this.RegisterFinalizer(this.Source);
         }
@@ -15,9 +15,9 @@
         /// <returns>The current Behavior</returns>
         /// <remarks>Loop can only be called once on a Behavior. If Loop is called multiple times,
         /// an ApplicationException will be raised.</remarks>
-        public Behavior<TA> Loop(Behavior<TA> b)
+        public Behavior<T> Loop(Behavior<T> b)
         {
-            var loop = (EventLoop<TA>)Source;
+            var loop = (EventLoop<T>)Source;
             loop.Loop(b.Updates());
             return this;
         }

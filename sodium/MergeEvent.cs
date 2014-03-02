@@ -2,19 +2,19 @@ namespace Sodium
 {
     using System.Linq;
 
-    internal sealed class MergeEvent<TA> : Event<TA>
+    internal sealed class MergeEvent<T> : Event<T>
     {
-        private Event<TA> source1;
-        private Event<TA> source2;
-        private IEventListener<TA> l1;
-        private IEventListener<TA> l2;
+        private Event<T> source1;
+        private Event<T> source2;
+        private IEventListener<T> l1;
+        private IEventListener<T> l2;
 
-        public MergeEvent(Event<TA> source1, Event<TA> source2)
+        public MergeEvent(Event<T> source1, Event<T> source2)
         {
             this.source1 = source1;
             this.source2 = source2;
 
-            var action = new SodiumAction<TA>(this.Fire);
+            var action = new SodiumAction<T>(this.Fire);
             l1 = source1.Listen(action, this.Rank);
             l2 = source2.Listen(action, this.Rank);
         }
@@ -46,7 +46,7 @@ namespace Sodium
             base.Dispose();
         }
 
-        protected internal override TA[] InitialFirings()
+        protected internal override T[] InitialFirings()
         {
             var firings1 = source1.InitialFirings();
             var firings2 = source2.InitialFirings();

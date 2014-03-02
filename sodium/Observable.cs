@@ -5,12 +5,12 @@
     /// <summary>
     /// Base class for Event and Behavior
     /// </summary>
-    public abstract class Observable<TA> : SodiumObject
+    public abstract class Observable<T> : SodiumObject
     {
-        public abstract IEventListener<TA> Listen(Action<TA> action);
+        public abstract IEventListener<T> Listen(Action<T> action);
 
-        public abstract IEventListener<TA> ListenSuppressed(Action<TA> action);
+        public abstract IEventListener<T> ListenSuppressed(Action<T> action);
 
-        public abstract void Fire(TA a);
+        public abstract void Fire(T a);
     }
 }

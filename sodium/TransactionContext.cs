@@ -23,9 +23,9 @@
         /// <summary>
         /// Run the given function passing in a located Transaction
         /// </summary>
-        /// <typeparam name="TA">The return type of the supplied function</typeparam>
+        /// <typeparam name="T">The return type of the supplied function</typeparam>
         /// <param name="f">The function to run</param>
         /// <returns>The return value of the supplied function</returns>
-        public abstract TA Run<TA>(Func<Transaction, TA> f);
+        public abstract T Run<T>(Func<Transaction, T> f);
     }
 }
