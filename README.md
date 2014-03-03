@@ -14,13 +14,25 @@ Sodium.net API [documentation](http://jterry.azurewebsites.net/sodium.net/)
 Examples
 ==========
 
-*Echo*
+**Echo**
 ```
     var e = new Event<int>();
     var l = e.Listen(v => Console.WriteLine("{0}", v));
     for (var i = 0; i < 5; i++) 
         e.Fire(i);
     l.Dispose();
+    e.Dispose();
+```
+
+**Map**
+```
+    var e = new Event<int>();
+    var m = e.Map(v => v.ToString());
+    var l = m.Listen(v => Console.WriteLine("{0}", v));
+    for (var i = 0; i < 5; i++) 
+        e.Fire(i);
+    l.Dispose();
+    m.Dispose();
     e.Dispose();
 ```
 
