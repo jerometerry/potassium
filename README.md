@@ -51,10 +51,8 @@ Examples
     var e2 = new Event<int>();
     var m = e1.Merge(e2);
     var l = m.Listen(v => Console.Write("{0} ", v));
-    for (var i = 0; i < 5; i++)
-        e1.Fire(i);
-    for (var i = 6; i < 10; i++ )
-        e2.Fire(i);
+    for (var i = 0; i < 10; i++)
+        i % 2 == 0 ? e1.Fire(i) : e2.Fire(i);
     l.Dispose();
     m.Dispose();
     e2.Dispose();
@@ -62,7 +60,7 @@ Examples
 ```
 *Output*
 ```
-    0 1 2 3 4 5 6 7 8 9
+    0 1 2 3 4 6 7 8 9
 ```
 
 **Filter***

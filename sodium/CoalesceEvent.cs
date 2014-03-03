@@ -14,7 +14,7 @@ namespace Sodium
             this.source = source;
             this.coalesce = coalesce;
 
-            var callback = new SodiumCallback<T>(this.Accumulate);
+            var callback = new ActionCallback<T>(this.Accumulate);
             this.listener = source.Listen(transaction, callback, this.Rank);
         }
 
@@ -49,7 +49,7 @@ namespace Sodium
             return new[] { e };
         }
 
-        private void Accumulate(Transaction transaction, T data)
+        private void Accumulate(T data, Transaction transaction)
         {
             if (this.accumulatedValue.HasValue)
             {
@@ -64,7 +64,8 @@ namespace Sodium
 
         private void Fire(Transaction transaction)
         {
-            this.Fire(transaction, this.accumulatedValue.Value());
+            var v = this.accumulatedValue.Value();
+            this.Fire(v, transaction);
             this.accumulatedValue = Maybe<T>.Null;
         }
     }

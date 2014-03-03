@@ -88,7 +88,7 @@
     <Compile Include="ISodiumCallback.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SodiumCallback.cs" />
+    <Compile Include="ActionCallback.cs" />
     <Compile Include="TransactionContext.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>

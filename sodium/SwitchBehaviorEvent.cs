@@ -12,11 +12,11 @@
         {
             this.source = source;
             this.sourceEvent = source.Value();
-            var callback = new SodiumCallback<Behavior<T>>(this.Invoke);
+            var callback = new ActionCallback<Behavior<T>>(this.Invoke);
             this.listener = this.sourceEvent.Listen(callback, this.Rank);
         }
 
-        public void Invoke(Transaction transaction, Behavior<T> behavior)
+        public void Invoke(Behavior<T> behavior, Transaction transaction)
         {
             // Note: If any switch takes place during a transaction, then the
             // Value().Listen will always cause a sample to be fetched from the
@@ -37,7 +37,7 @@
             }
 
             this.wrappedEvent = behavior.Value(transaction);
-            this.eventListener = wrappedEvent.Listen(transaction, new SodiumCallback<T>(Fire), Rank);
+            this.eventListener = wrappedEvent.Listen(transaction, this.CreateFireCallback(), Rank);
         }
 
         public override void Dispose()

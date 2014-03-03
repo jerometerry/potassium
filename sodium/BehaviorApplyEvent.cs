@@ -19,8 +19,8 @@
             this.bf = bf;
             this.source = source;
 
-            var functionChanged = new SodiumCallback<Func<T, TB>>((t, f) => ScheduledPrioritizedFire(t));
-            var valueChanged = new SodiumCallback<T>((t, a) => ScheduledPrioritizedFire(t));
+            var functionChanged = new ActionCallback<Func<T, TB>>((f, t) => ScheduledPrioritizedFire(t));
+            var valueChanged = new ActionCallback<T>((a, t) => ScheduledPrioritizedFire(t));
 
             l1 = bf.Updates().Listen(functionChanged, this.Rank);
             l2 = source.Updates().Listen(valueChanged, this.Rank);
@@ -81,7 +81,7 @@
         private void Fire(Transaction transaction)
         {
             var b = this.GetNewValue();
-            this.Fire(transaction, b);
+            this.Fire(b, transaction);
             fired = false;
         }
 

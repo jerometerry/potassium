@@ -14,7 +14,7 @@ namespace Sodium
             this.source1 = source1;
             this.source2 = source2;
 
-            var callback = new SodiumCallback<T>(this.Fire);
+            var callback = this.CreateFireCallback();
             l1 = source1.Listen(callback, this.Rank);
             l2 = source2.Listen(callback, this.Rank);
         }

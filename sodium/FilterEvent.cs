@@ -14,7 +14,7 @@ namespace Sodium
             this.source = source;
             this.f = f;
 
-            var callback = new SodiumCallback<T>(this.Fire);
+            var callback = this.CreateFireCallback();
             this.listener = source.Listen(callback, this.Rank);
         }
 
@@ -32,19 +32,6 @@ namespace Sodium
             base.Dispose();
         }
 
-        /// <summary>
-        /// Fire the event if the predicate evaluates to true
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="a"></param>
-        internal override void Fire(Transaction t, T a)
-        {
-            if (f(a))
-            {
-                base.Fire(t, a);
-            }
-        }
-
         protected internal override T[] InitialFirings()
         {
             var events = this.source.InitialFirings();
@@ -60,6 +47,16 @@ namespace Sodium
             }
 
             return filtered.ToArray();
+        }
+
+        /// <summary>
+        /// Fire the event if the predicate evaluates to true
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="a"></param>
+        protected override bool Fire(T a, Transaction t)
+        {
+            return this.f(a) && base.Fire(a, t);
         }
     }
 }

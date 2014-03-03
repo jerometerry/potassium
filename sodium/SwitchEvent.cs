@@ -3,19 +3,16 @@
     internal class SwitchEvent<T> : Event<T>
     {
         private IEventListener<Event<T>> behaviorListener;
-        private Behavior<Event<T>> sourceBehavior;
         private ISodiumCallback<T> wrappedEventListenerCallback;
         private IEventListener<T> wrappedEventListener;
 
-        public SwitchEvent(Transaction transaction, Behavior<Event<T>> sourceBehavior)
+        public SwitchEvent(Behavior<Event<T>> source, Transaction transaction)
         {
-            this.sourceBehavior = sourceBehavior;
-
-            this.wrappedEventListenerCallback = new SodiumCallback<T>(this.Fire);
-            this.wrappedEventListener = sourceBehavior.Sample().Listen(transaction, this.wrappedEventListenerCallback, this.Rank);
+            this.wrappedEventListenerCallback = this.CreateFireCallback();
+            this.wrappedEventListener = source.Sample().Listen(transaction, this.wrappedEventListenerCallback, this.Rank);
             
-            var behaviorEventChanged = new SodiumCallback<Event<T>>(UpdateWrappedEventListener);
-            this.behaviorListener = sourceBehavior.Updates().Listen(transaction, behaviorEventChanged, this.Rank);
+            var behaviorEventChanged = new ActionCallback<Event<T>>(UpdateWrappedEventListener);
+            this.behaviorListener = source.Updates().Listen(transaction, behaviorEventChanged, this.Rank);
         }
 
         public override void Dispose()
@@ -32,12 +29,12 @@
                 this.wrappedEventListener = null;
             }
 
-            this.sourceBehavior = null;
+            this.wrappedEventListenerCallback = null;
 
             base.Dispose();
         }
 
-        public void UpdateWrappedEventListener(Transaction transaction, Event<T> newEvent)
+        public void UpdateWrappedEventListener(Event<T> newEvent, Transaction transaction)
         {
             transaction.Last(() =>
             {

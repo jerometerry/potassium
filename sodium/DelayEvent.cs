@@ -6,7 +6,7 @@
 
         public DelayEvent(Event<T> source)
         {
-            var callback = new SodiumCallback<T>((t, a) => t.Post(() => this.Fire(a)));
+            var callback = new ActionCallback<T>((a, t) => t.Post(() => this.Fire(a)));
             this.listener = source.Listen(callback, this.Rank);
         }
 

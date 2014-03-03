@@ -13,12 +13,13 @@
         {
             this.source = source;
             this.map = map;
-            this.listener = source.Listen(new SodiumCallback<T>(this.Fire), this.Rank);
+            this.listener = source.Listen(new ActionCallback<T>(this.Fire), this.Rank);
         }
 
-        public void Fire(Transaction trans, T firing)
+        public void Fire(T firing, Transaction trans)
         {
-            Fire(trans, this.map(firing));
+            var v = this.map(firing);
+            Fire(v, trans);
         }
 
         public override void Dispose()

@@ -85,7 +85,7 @@ namespace Sodium
         /// actions triggered during SwitchE requiring a transaction all get the same instance.</remarks>
         public static Event<T> UnwrapEvent(Behavior<Event<T>> behavior)
         {
-            return TransactionContext.Current.Run(t => UnwrapEvent(t, behavior));
+            return TransactionContext.Current.Run(t => UnwrapEvent(behavior, t));
         }
 
         /// <summary>
@@ -120,9 +120,9 @@ namespace Sodium
         /// Fire the given value to all registered listeners 
         /// </summary>
         /// <param name="a">The value to be fired</param>
-        public override void Fire(T a)
+        public override bool Fire(T a)
         {
-            this.Source.Fire(a);
+            return this.Source.Fire(a);
         }
 
         /// <summary>
@@ -140,11 +140,38 @@ namespace Sodium
         }
 
         /// <summary>
+        /// Listen to the current Behavior for updates, which fires immediate with the 
+        /// Behaviors current value, and every time the underlying event fires.
+        /// </summary>
+        /// <param name="callback">The action to take when the Behavior's underlying event fires</param>
+        /// <returns>The listener</returns>
+        public override IEventListener<T> Listen(ISodiumCallback<T> callback)
+        {
+            var v = this.Value();
+            var l = (EventListener<T>)v.Listen(callback);
+            l.RegisterFinalizer(v);
+            return l;
+        }
+
+        /// <summary>
         /// Listen to the current Behavior for updates, but don't fire the initial value
         /// </summary>
         /// <param name="callback">The action to take when the Behavior's underlying event fires</param>
         /// <returns>The listener</returns>
         public override IEventListener<T> ListenSuppressed(Action<T> callback)
+        {
+            var v = this.Updates();
+            var l = (EventListener<T>)v.Listen(callback);
+            l.RegisterFinalizer(v);
+            return l;
+        }
+
+        /// <summary>
+        /// Listen to the current Behavior for updates, but don't fire the initial value
+        /// </summary>
+        /// <param name="callback">The action to take when the Behavior's underlying event fires</param>
+        /// <returns>The listener</returns>
+        public override IEventListener<T> ListenSuppressed(ISodiumCallback<T> callback)
         {
             var v = this.Updates();
             var l = (EventListener<T>)v.Listen(callback);
@@ -271,9 +298,9 @@ namespace Sodium
         /// <param name="transaction"></param>
         /// <param name="behavior">The behavior that wraps the event</param>
         /// <returns>The unwrapped event</returns>
-        internal static Event<T> UnwrapEvent(Transaction transaction, Behavior<Event<T>> behavior)
+        internal static Event<T> UnwrapEvent(Behavior<Event<T>> behavior, Transaction transaction)
         {
-            return new SwitchEvent<T>(transaction, behavior);
+            return new SwitchEvent<T>(behavior, transaction);
         }
 
         /// <summary>
@@ -327,7 +354,7 @@ namespace Sodium
         /// <returns>The IEventListener registered with the underlying event.</returns>
         private IEventListener<T> ListenForEventFirings(Transaction transaction)
         {
-            var callback = new SodiumCallback<T>(ScheduleApplyValueUpdate);
+            var callback = new ActionCallback<T>(ScheduleApplyValueUpdate);
             var result = this.Source.Listen(transaction, callback, Rank.Highest);
             return result;
         }
@@ -338,7 +365,7 @@ namespace Sodium
         /// </summary>
         /// <param name="transaction">The transaction to schedule the value update on</param>
         /// <param name="update">The updated value</param>
-        private void ScheduleApplyValueUpdate(Transaction transaction, T update)
+        private void ScheduleApplyValueUpdate(T update, Transaction transaction)
         {
             if (!valueUpdate.HasValue)
             {

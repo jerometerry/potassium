@@ -12,7 +12,7 @@ namespace Sodium
             // This is a bit long-winded but it's efficient because it de-registers
             // the listener.
             this.eventListeners = new IEventListener<T>[1];
-            this.eventListeners[0] = source.Listen(new SodiumCallback<T>((t, a) => this.Fire(this.eventListeners, t, a)), this.Rank);
+            this.eventListeners[0] = source.Listen(new ActionCallback<T>((a, t) => this.Fire(this.eventListeners, a, t)), this.Rank);
         }
 
         public override void Dispose()
@@ -52,9 +52,9 @@ namespace Sodium
             return results;
         }
 
-        private void Fire(IEventListener<T>[] la, Transaction t, T a)
+        private void Fire(IEventListener<T>[] la, T a, Transaction t)
         {
-            this.Fire(t, a);
+            this.Fire(a, t);
             if (la[0] == null)
             {
                 return;

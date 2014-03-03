@@ -16,13 +16,15 @@ namespace Sodium
             this.snapshot = snapshot;
             this.behavior = behavior;
 
-            var callback = new SodiumCallback<T>(this.Fire);
+            var callback = new ActionCallback<T>(this.Fire);
             this.listener = source.Listen(callback, this.Rank);
         }
 
-        public void Fire(Transaction transaction, T firing)
+        public void Fire(T firing, Transaction transaction)
         {
-            this.Fire(transaction, this.snapshot(firing, this.behavior.Sample()));
+            var f = this.behavior.Sample();
+            var v = this.snapshot(firing, f);
+            this.Fire(v, transaction);
         }
 
         public override void Dispose()
