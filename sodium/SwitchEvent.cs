@@ -5,14 +5,12 @@
         private IEventListener<Event<T>> behaviorListener;
         private ISodiumCallback<T> wrappedEventListenerCallback;
         private IEventListener<T> wrappedEventListener;
+        private Behavior<Event<T>> source;
 
-        public SwitchEvent(Behavior<Event<T>> source, Transaction transaction)
+        public SwitchEvent(Behavior<Event<T>> source)
         {
-            this.wrappedEventListenerCallback = this.CreateFireCallback();
-            this.wrappedEventListener = source.Sample().Listen(transaction, this.wrappedEventListenerCallback, this.Rank);
-            
-            var behaviorEventChanged = new ActionCallback<Event<T>>(UpdateWrappedEventListener);
-            this.behaviorListener = source.Updates().Listen(transaction, behaviorEventChanged, this.Rank);
+            this.source = source;
+            this.Initialize();
         }
 
         public override void Dispose()
@@ -30,6 +28,7 @@
             }
 
             this.wrappedEventListenerCallback = null;
+            this.source = null;
 
             base.Dispose();
         }
@@ -46,6 +45,20 @@
 
                 this.wrappedEventListener = newEvent.ListenSuppressed(transaction, this.wrappedEventListenerCallback, this.Rank);
             });
+        }
+
+        private void Initialize()
+        {
+            this.Run(this.Initialize);
+        }
+
+        private void Initialize(Transaction transaction)
+        {
+            this.wrappedEventListenerCallback = this.CreateFireCallback();
+            this.wrappedEventListener = source.Sample().Listen(transaction, this.wrappedEventListenerCallback, this.Rank);
+
+            var behaviorEventChanged = new ActionCallback<Event<T>>(UpdateWrappedEventListener);
+            this.behaviorListener = source.Updates().Listen(transaction, behaviorEventChanged, this.Rank);
         }
     }
 }

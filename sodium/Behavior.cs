@@ -85,7 +85,7 @@ namespace Sodium
         /// actions triggered during SwitchE requiring a transaction all get the same instance.</remarks>
         public static Event<T> UnwrapEvent(Behavior<Event<T>> behavior)
         {
-            return TransactionContext.Current.Run(t => UnwrapEvent(behavior, t));
+            return new SwitchEvent<T>(behavior);
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace Sodium
         /// actions triggered during Value requiring a transaction all get the same instance.</remarks>
         public Event<T> Value()
         {
-            return TransactionContext.Current.Run(Value);
+            return this.Run<Event<T>>(Value);
         }
 
         /// <summary>
@@ -293,17 +293,6 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Unwrap an event inside a behavior to give a time-varying event implementation.
-        /// </summary>
-        /// <param name="transaction"></param>
-        /// <param name="behavior">The behavior that wraps the event</param>
-        /// <returns>The unwrapped event</returns>
-        internal static Event<T> UnwrapEvent(Behavior<Event<T>> behavior, Transaction transaction)
-        {
-            return new SwitchEvent<T>(behavior, transaction);
-        }
-
-        /// <summary>
         /// Gets the updated value of the Behavior that has not yet been moved to the
         /// current value of the Behavior. 
         /// </summary>
@@ -344,7 +333,7 @@ namespace Sodium
         /// <returns>The IEventListener registered with the underlying event.</returns>
         private IEventListener<T> ListenForEventFirings()
         {
-            return TransactionContext.Current.Run(t => this.ListenForEventFirings(t));
+            return this.Run<IEventListener<T>>(this.ListenForEventFirings);
         }
 
         /// <summary>

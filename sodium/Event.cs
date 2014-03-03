@@ -62,7 +62,7 @@ namespace Sodium
         /// <param name="a">The value to be fired</param>
         public override bool Fire(T a)
         {
-            return TransactionContext.Current.Run(t => this.Fire(a, t));
+            return this.Run(t => this.Fire(a, t));
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Sodium
         /// having the specified initial value.</returns>
         public Behavior<T> ToBehavior(T initValue)
         {
-            return TransactionContext.Current.Run(t => ToBehavior(t, initValue));
+            return this.Run(t => ToBehavior(t, initValue));
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace Sodium
         /// </remarks>
         public Event<T> Coalesce(Func<T, T, T> coalesce)
         {
-            return TransactionContext.Current.Run(t => Coalesce(t, coalesce));
+            return this.Run(t => Coalesce(t, coalesce));
         }
 
         /// <summary>
@@ -297,7 +297,7 @@ namespace Sodium
         /// actions triggered during Listen requiring a transaction all get the same instance.</remarks>
         internal IEventListener<T> Listen(ISodiumCallback<T> action, Rank superior)
         {
-            return TransactionContext.Current.Run(t => this.Listen(t, action, superior));
+            return this.Run(t => this.Listen(t, action, superior));
         }
 
         /// <summary>
@@ -333,7 +333,7 @@ namespace Sodium
 
         internal IEventListener<T> ListenSuppressed(ISodiumCallback<T> action, Rank superior)
         {
-            return TransactionContext.Current.Run(t => this.ListenSuppressed(t, action, superior));
+            return this.Run(t => this.ListenSuppressed(t, action, superior));
         }
 
         /// <summary>
