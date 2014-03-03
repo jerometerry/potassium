@@ -101,6 +101,16 @@ namespace Sodium
         }
 
         /// <summary>
+        /// Fire the given value on the underlying Event
+        /// </summary>
+        /// <param name="firing">The value to fire</param>
+        /// <returns>True if fired, false otherwise</returns>
+        public bool Fire(T firing)
+        {
+            return this.Source.Fire(firing);
+        }
+
+        /// <summary>
         /// Dispose of the current Behavior
         /// </summary>
         public override void Dispose()
