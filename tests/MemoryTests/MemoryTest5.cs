@@ -10,7 +10,7 @@ namespace Sodium.MemoryTests
         {
             var sink = new EventSink<int>();
             var obserable = sink.ToBehavior(0);
-            var listener = obserable.GetValueStream().Listen(tt => { });
+            var listener = obserable.Values().Listen(tt => { });
             var i = 0;
             while (i < iterations)
             {

@@ -11,7 +11,7 @@ Check out the [wiki](https://github.com/jerometerry/sodium.net/wiki) for more in
 
 Sodium.net API [documentation](http://jterry.azurewebsites.net/sodium.net/)
 
-Examples
+Event Examples
 ==========
 
 **Echo**
@@ -69,7 +69,7 @@ Examples
     0 1 2 3 4 6 7 8 9
 ```
 
-**Filter***
+**Filter**
 ```
     var e = new EventSink<char>();
     var f = e.Filter(c => char.IsUpper(c));
@@ -83,5 +83,57 @@ Examples
 ```
     H I
 ```
+
+Behavior Examples
+==========
+
+**Echo**
+```
+    var b = new BehaviorSink<int>(0);
+    var l = b.Listen(v => Console.Write("{0} ", v));
+    for (var i = 1; i <= 5; i++) 
+        b.Fire(i);
+    l.Dispose();
+    b.Dispose();
+```
+*Output*
+```
+    0 1 2 3 4 5
+```
+
+**Event to Behavior**
+```
+    var e = new EventSink<int>();
+    var b = e.ToBehavior(0);
+    var l = b.Listen(v => Console.Write("{0} ", v));
+    for (var i = 1; i <= 5; i++) 
+        e.Fire(i);
+    l.Dispose();
+    b.Dispose();
+    e.Dispose();
+```
+*Output*
+```
+    1 2 3 4 5
+```
+
+**Values**
+```
+    var e = new EventSink<int>();
+    var b = e.ToBehavior(0);
+    var v = b.Values();
+    var l = v.Listen(v => Console.Write("{0} ", v));
+    for (var i = 1; i <= 5; i++) 
+        e.Fire(i);
+    l.Dispose();
+    v.Dispose();
+    b.Dispose();
+    e.Dispose();
+```
+*Output*
+```
+    0 1 2 3 4 5
+```
+
 ==========
 [Sodium](https://github.com/kentuckyfriedtakahe/sodium) [Copyright](https://github.com/kentuckyfriedtakahe/sodium/blob/master/COPYING)

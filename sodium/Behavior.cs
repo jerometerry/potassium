@@ -120,8 +120,6 @@ namespace Sodium
             return this.Source.Listen(callback, superior, transaction);
         }
 
-        
-
         /// <summary>
         /// Dispose of the current Behavior
         /// </summary>
@@ -148,9 +146,9 @@ namespace Sodium
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Value operation that takes a thread. This ensures that any other
         /// actions triggered during Value requiring a transaction all get the same instance.</remarks>
-        public Event<T> GetValueStream()
+        public Event<T> Values()
         {
-            return this.Run<Event<T>>(this.GetValueStream);
+            return this.Run<Event<T>>(this.Values);
         }
 
         /// <summary>
@@ -161,7 +159,7 @@ namespace Sodium
         /// <param name="transaction">The transaction to run the Value operation on</param>
         /// <returns>An event that will fire when it's listened to, and every time it's 
         /// value changes thereafter</returns>
-        public Event<T> GetValueStream(Transaction transaction)
+        public Event<T> Values(Transaction transaction)
         {
             var valueEvent = new BehaviorValueEvent<T>(this, transaction);
 

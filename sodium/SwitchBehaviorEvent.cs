@@ -11,7 +11,7 @@
         public SwitchBehaviorEvent(Behavior<Behavior<T>> source)
         {
             this.source = source;
-            this.sourceEvent = source.GetValueStream();
+            this.sourceEvent = source.Values();
             var callback = new ActionCallback<Behavior<T>>(this.Invoke);
             this.listener = this.sourceEvent.Listen(callback, this.Rank);
         }
@@ -36,7 +36,7 @@
                 this.wrappedEvent = null;
             }
 
-            this.wrappedEvent = behavior.GetValueStream(transaction);
+            this.wrappedEvent = behavior.Values(transaction);
             this.eventListener = wrappedEvent.Listen(this.CreateFireCallback(), Rank, transaction);
         }
 
