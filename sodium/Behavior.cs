@@ -3,10 +3,10 @@ namespace Sodium
     using System;
 
     /// <summary>
-    /// A Behavior is a time varying value
+    /// A Behavior is a time varying value. It starts with an initial value which 
+    /// gets updated as the underlying Event is fired.
     /// </summary>
-    /// <remarks>Behaviors generally change over time, but constant behaviors are ones that choose not to.</remarks>
-    /// <typeparam name="T">The type of values that will be fired through the behavior.</typeparam>
+    /// <typeparam name="T">The type of values that will be fired through the Behavior.</typeparam>
     public class Behavior<T> : Observable<T>
     {
         /// <summary>

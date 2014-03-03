@@ -5,7 +5,9 @@ namespace Sodium
     using System.Linq;
 
     /// <summary>
-    /// An Event is a stream of discrete event occurrences
+    /// An Event is the observer pattern on steroids. The basic operations of Event are
+    /// Listen and Fire. More interesting operations that you can perform on an Event 
+    /// include Map, Filter, and ToBehavior, just to name a few.
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the event.</typeparam>
     public class Event<T> : Observable<T>
