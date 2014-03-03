@@ -55,10 +55,10 @@
         private void Initialize(Transaction transaction)
         {
             this.wrappedEventListenerCallback = this.CreateFireCallback();
-            this.wrappedEventListener = source.Sample().Listen(this.wrappedEventListenerCallback, this.Rank, transaction);
+            this.wrappedEventListener = source.Value.Listen(this.wrappedEventListenerCallback, this.Rank, transaction);
 
             var behaviorEventChanged = new ActionCallback<Event<T>>(UpdateWrappedEventListener);
-            this.behaviorListener = source.Updates().Listen(behaviorEventChanged, this.Rank, transaction);
+            this.behaviorListener = source.Listen(behaviorEventChanged, this.Rank, transaction);
         }
     }
 }

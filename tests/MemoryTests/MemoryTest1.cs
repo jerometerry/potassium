@@ -49,7 +49,7 @@ namespace Sodium.MemoryTests
             var tensTupleBehavior = Behavior<Tuple<int?, int?>>.Unwrap(tensTupleWrappedBehavior);
             finalizers.Add(tensTupleBehavior);
 
-            var tensTupleEvent = tensTupleBehavior.Value();
+            var tensTupleEvent = tensTupleBehavior.GetValueStream();
             finalizers.Add(tensTupleEvent);
 
             var listener = tensTupleEvent.Listen(tu => { });

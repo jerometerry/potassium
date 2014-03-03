@@ -13,7 +13,7 @@ namespace Sodium.MemoryTests
             var behavior = et.ToBehavior(0);
             var eventOfBehaviors = evt.Map(x => behavior).ToBehavior(behavior);
             var observable = Behavior<int>.Unwrap(eventOfBehaviors);
-            var l = observable.Value().Listen(tt => { });
+            var l = observable.GetValueStream().Listen(tt => { });
             var i = 0;
             while (i < iterations)
             {

@@ -158,7 +158,7 @@ namespace Sodium.Tests
             var ea = new Event<int>();
             var o = new List<int>();
             var sum = ea.Accum(100, (a, s) => a + s);
-            var l = sum.Updates().Listen(o.Add);
+            var l = sum.Listen(o.Add);
             ea.Fire(5);
             ea.Fire(7);
             ea.Fire(1);

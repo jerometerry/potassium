@@ -14,7 +14,7 @@ namespace Sodium.Tests
             var evt = new Event<int>();
             var behavior = evt.ToBehavior(0);
             var results = new List<int>();
-            var listener = behavior.Updates().Listen(results.Add);
+            var listener = behavior.Listen(results.Add);
             evt.Fire(2);
             evt.Fire(9);
             listener.Dispose();
@@ -49,7 +49,7 @@ namespace Sodium.Tests
         {
             var behavior = new Behavior<int>(9);
             var results = new List<int>();
-            var listener = behavior.Value().Listen(results.Add);
+            var listener = behavior.GetValueStream().Listen(results.Add);
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
@@ -62,7 +62,7 @@ namespace Sodium.Tests
         {
             var behavior = Behavior<int>.Constant(12);
             var results = new List<int>();
-            var listener = behavior.Value().Listen(results.Add);
+            var listener = behavior.GetValueStream().Listen(results.Add);
             listener.Dispose();
             behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(12), results);
@@ -73,7 +73,7 @@ namespace Sodium.Tests
         {
             var behavior = new Behavior<int>(9);
             var results = new List<int>();
-            var l = behavior.Value().Map(x => x + 100).Listen(results.Add);
+            var l = behavior.GetValueStream().Map(x => x + 100).Listen(results.Add);
             behavior.Fire(2);
             behavior.Fire(7);
             l.Dispose();
@@ -86,7 +86,7 @@ namespace Sodium.Tests
         {
             var behavior = new Behavior<int>(9);
             var results = new List<int>();
-            var listener = DoubleUp(behavior.Value()).Map(x => x + 100).Listen(results.Add);
+            var listener = DoubleUp(behavior.GetValueStream()).Map(x => x + 100).Listen(results.Add);
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
@@ -99,7 +99,7 @@ namespace Sodium.Tests
         {
             var behavior = new Behavior<int>(9);
             var results = new List<int>();
-            var listener = behavior.Value().Coalesce((fst, snd) => snd).Listen(results.Add);
+            var listener = behavior.GetValueStream().Coalesce((fst, snd) => snd).Listen(results.Add);
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
@@ -112,7 +112,7 @@ namespace Sodium.Tests
         {
             var behavior = new Behavior<int>(9);
             var results = new List<int>();
-            var listener = DoubleUp(behavior.Value()).Coalesce((fst, snd) => fst + snd).Listen(results.Add);
+            var listener = DoubleUp(behavior.GetValueStream()).Coalesce((fst, snd) => fst + snd).Listen(results.Add);
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
@@ -126,7 +126,7 @@ namespace Sodium.Tests
             var behaviorInt32 = new Behavior<int>(9);
             var behaviorChar = new Behavior<char>('a');
             var results = new List<char>();
-            var listener = behaviorInt32.Value().Snapshot(behaviorChar).Listen(results.Add);
+            var listener = behaviorInt32.GetValueStream().Snapshot(behaviorChar).Listen(results.Add);
             behaviorChar.Fire('b');
             behaviorInt32.Fire(2);
             behaviorChar.Fire('c');
@@ -143,7 +143,7 @@ namespace Sodium.Tests
             var behaviorInt32 = new Behavior<int>(9);
             var behaviorChar = new Behavior<char>('a');
             var results = new List<char>();
-            var listener = DoubleUp(behaviorInt32.Value()).Snapshot(behaviorChar).Listen(results.Add);
+            var listener = DoubleUp(behaviorInt32.GetValueStream()).Snapshot(behaviorChar).Listen(results.Add);
             behaviorChar.Fire('b');
             behaviorInt32.Fire(2);
             behaviorChar.Fire('c');
@@ -160,7 +160,7 @@ namespace Sodium.Tests
             var behavior1 = new Behavior<int>(9);
             var behavior2 = new Behavior<int>(2);
             var results = new List<int>();
-            var listener = behavior1.Value().Merge(behavior2.Value(), (x, y) => x + y).Listen(results.Add);
+            var listener = behavior1.GetValueStream().Merge(behavior2.GetValueStream(), (x, y) => x + y).Listen(results.Add);
             behavior1.Fire(1);
             behavior2.Fire(4);
             listener.Dispose();
@@ -174,7 +174,7 @@ namespace Sodium.Tests
         {
             var behavior = new Behavior<int>(9);
             var results = new List<int>();
-            var listener = behavior.Value().Filter(a => true).Listen(results.Add);
+            var listener = behavior.GetValueStream().Filter(a => true).Listen(results.Add);
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
@@ -187,7 +187,7 @@ namespace Sodium.Tests
         {
             var behavior = new Behavior<int>(9);
             var results = new List<int>();
-            var listener = DoubleUp(behavior.Value()).Filter(a => true).Listen(results.Add);
+            var listener = DoubleUp(behavior.GetValueStream()).Filter(a => true).Listen(results.Add);
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
@@ -200,7 +200,7 @@ namespace Sodium.Tests
         {
             var behavior = new Behavior<int>(9);
             var results = new List<int>();
-            var listener = behavior.Value().Once().Listen(results.Add);
+            var listener = behavior.GetValueStream().Once().Listen(results.Add);
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
@@ -213,7 +213,7 @@ namespace Sodium.Tests
         {
             var behavior = new Behavior<int>(9);
             var results = new List<int>();
-            var listener = DoubleUp(behavior.Value()).Once().Listen(results.Add);
+            var listener = DoubleUp(behavior.GetValueStream()).Once().Listen(results.Add);
             behavior.Fire(2);
             behavior.Fire(7);
             listener.Dispose();
@@ -226,7 +226,7 @@ namespace Sodium.Tests
         {
             var behavior = new Behavior<int>(9);
             var results = new List<int>();
-            var value = behavior.Value();
+            var value = behavior.GetValueStream();
             behavior.Fire(8);
             var listener = value.Listen(results.Add);
             behavior.Fire(2);
@@ -240,7 +240,7 @@ namespace Sodium.Tests
         {
             var behavior = new Behavior<int>(6);
             var results = new List<string>();
-            var listener = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture)).Value().Listen(results.Add);
+            var listener = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture)).GetValueStream().Listen(results.Add);
             behavior.Fire(8);
             listener.Dispose();
             behavior.Dispose();
@@ -253,7 +253,7 @@ namespace Sodium.Tests
             var behavior = new Behavior<int>(1);
             var behavior1 = behavior.Map(x => x * 3);
             var results = new List<int>();
-            var listener = behavior1.Value().Listen(results.Add);
+            var listener = behavior1.GetValueStream().Listen(results.Add);
             listener.Dispose();
             behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(3), results);
@@ -265,7 +265,7 @@ namespace Sodium.Tests
             var behavior = new Behavior<int>(1);
             var behavior1 = behavior.Map(x => x * 3);
             var results = new List<int>();
-            var listener = behavior1.Value().Listen(results.Add);
+            var listener = behavior1.GetValueStream().Listen(results.Add);
             behavior.Fire(2);
             listener.Dispose();
             behavior.Dispose();
@@ -279,7 +279,7 @@ namespace Sodium.Tests
             var results = new List<string>();
             var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
             behavior.Fire(2);
-            var listener = map.Value().Listen(results.Add);
+            var listener = map.GetValueStream().Listen(results.Add);
             behavior.Fire(8);
             listener.Dispose();
             behavior.Dispose();
@@ -292,7 +292,7 @@ namespace Sodium.Tests
             var bf = new Behavior<Func<long, string>>(b => "1 " + b);
             var ba = new Behavior<long>(5L);
             var results = new List<string>();
-            var listener = ba.Apply(bf).Value().Listen(results.Add);
+            var listener = ba.Apply(bf).GetValueStream().Listen(results.Add);
             bf.Fire(b => "12 " + b);
             ba.Fire(6L);
             listener.Dispose();
@@ -308,7 +308,7 @@ namespace Sodium.Tests
             var behavior2 = new Behavior<long>(5L);
             var results = new List<string>();
             var combinedBehavior = behavior1.Lift((x, y) => x + " " + y, behavior2);
-            var listener = combinedBehavior.Value().Listen(results.Add);
+            var listener = combinedBehavior.GetValueStream().Listen(results.Add);
             behavior1.Fire(12);
             behavior2.Fire(6L);
             listener.Dispose();
@@ -325,7 +325,7 @@ namespace Sodium.Tests
             var mappedBehavior2 = behavior.Map(x => x * 5);
             var results = new List<string>();
             var combinedBehavior = mappedBehavior1.Lift((x, y) => x + " " + y, mappedBehavior2);
-            var listener = combinedBehavior.Value().Listen(results.Add);
+            var listener = combinedBehavior.GetValueStream().Listen(results.Add);
             behavior.Fire(2);
             listener.Dispose();
             behavior.Dispose();
@@ -361,7 +361,7 @@ namespace Sodium.Tests
             var bsw = sink.Map(s => s.Behavior).FilterNotNull().ToBehavior(behaviorA);
             var behavior = Behavior<char?>.Unwrap(bsw);
             var results = new List<char>();
-            var listener = behavior.Value().Listen(c =>
+            var listener = behavior.GetValueStream().Listen(c =>
             {
                 Assert.IsNotNull(c, "c != null");
                 results.Add(c.Value);
@@ -420,11 +420,11 @@ namespace Sodium.Tests
             var sumOut = ea.Snapshot(sum, (x, y) => x + y).ToBehavior(0);
             sum.Loop(sumOut);
             var o = new List<int>();
-            var l = sumOut.Value().Listen(o.Add);
+            var l = sumOut.GetValueStream().Listen(o.Add);
             ea.Fire(2);
             ea.Fire(3);
             ea.Fire(1);
-            var sample = sum.Sample();
+            var sample = sum.Value;
             l.Dispose();
             ea.Dispose();
             sum.Dispose();
@@ -439,7 +439,7 @@ namespace Sodium.Tests
             var ea = new Event<int>();
             var o = new List<int>();
             var sum = ea.ToBehavior(100).Collect(0, (a, s) => new Tuple<int, int>(a + s, a + s));
-            var l = sum.Value().Listen(o.Add);
+            var l = sum.GetValueStream().Listen(o.Add);
             ea.Fire(5);
             ea.Fire(7);
             ea.Fire(1);
@@ -457,7 +457,7 @@ namespace Sodium.Tests
             var ea = new Event<int>();
             var o = new List<int>();
             var sum = ea.Accum(100, (a, s) => a + s);
-            var l = sum.Value().Listen(o.Add);
+            var l = sum.GetValueStream().Listen(o.Add);
             ea.Fire(5);
             ea.Fire(7);
             ea.Fire(1);

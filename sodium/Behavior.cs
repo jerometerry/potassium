@@ -10,11 +10,6 @@ namespace Sodium
     public class Behavior<T> : SodiumObject
     {
         /// <summary>
-        /// The current value of the Behavior, updated after the underlying event fires.
-        /// </summary>
-        private T value;
-        
-        /// <summary>
         /// Holding tank for updates from the underlying Event, waiting to be 
         /// moved into the current value of the Behavior.
         /// </summary>
@@ -43,14 +38,29 @@ namespace Sodium
         public Behavior(Event<T> source, T initValue)
         {
             this.Source = source;
-            this.value = initValue;
+            this.Value = initValue;
             this.valueUpdateListener = ListenForEventFirings();
         }
 
         /// <summary>
-        /// The underlying Event that the Value of the current Behavior is updated with.
+        /// The underlying event that gives the updates for the behavior. If this behavior was created
+        /// with a hold, then Source gives you an event equivalent to the one that was held.
         /// </summary>
-        protected Event<T> Source { get; private set; }
+        public Event<T> Source { get; private set; }
+
+        /// <summary>
+        /// Sample the behavior's current value.
+        /// </summary>
+        /// <remarks>
+        /// This should generally be avoided in favor of Value().Listen(..) so you don't
+        /// miss any updates, but in many circumstances it makes sense.
+        ///
+        /// It can be best to use it inside an explicit transaction (using TransactionContext.Current.Run()).
+        /// For example, a b.Value inside an explicit transaction along with a
+        /// b.Source.Listen(..) will capture the current value and any updates without risk
+        /// of missing any in between.
+        /// </remarks>
+        public T Value { get; private set; }
 
         /// <summary>
         /// A behavior with a constant value.
@@ -67,8 +77,8 @@ namespace Sodium
         /// </summary>
         public static Behavior<T> Unwrap(Behavior<Behavior<T>> source)
         {
-            var innerBehavior = source.Sample();
-            var initValue = innerBehavior.Sample();
+            var innerBehavior = source.Value;
+            var initValue = innerBehavior.Value;
             var sink = new SwitchBehaviorEvent<T>(source);
             var result = sink.ToBehavior(initValue);
             result.RegisterFinalizer(sink);
@@ -98,6 +108,26 @@ namespace Sodium
             var behavior = evt.Behavior;
             behavior.RegisterFinalizer(evt);
             return behavior;
+        }
+
+        /// <summary>
+        /// Listen to the underlying event for updates
+        /// </summary>
+        /// <param name="callback">The action to invoke when the underlying event fires</param>
+        /// <returns>The event listener</returns>
+        public IEventListener<T> Listen(Action<T> callback)
+        {
+            return this.Source.Listen(callback);
+        }
+
+        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank listenerRank)
+        {
+            return this.Source.Listen(callback, listenerRank);
+        }
+
+        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank superior, Transaction transaction)
+        {
+            return this.Source.Listen(callback, superior, transaction);
         }
 
         /// <summary>
@@ -136,9 +166,9 @@ namespace Sodium
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Value operation that takes a thread. This ensures that any other
         /// actions triggered during Value requiring a transaction all get the same instance.</remarks>
-        public Event<T> Value()
+        public Event<T> GetValueStream()
         {
-            return this.Run<Event<T>>(Value);
+            return this.Run<Event<T>>(this.GetValueStream);
         }
 
         /// <summary>
@@ -149,7 +179,7 @@ namespace Sodium
         /// <param name="transaction">The transaction to run the Value operation on</param>
         /// <returns>An event that will fire when it's listened to, and every time it's 
         /// value changes thereafter</returns>
-        public Event<T> Value(Transaction transaction)
+        public Event<T> GetValueStream(Transaction transaction)
         {
             var valueEvent = new BehaviorValueEvent<T>(this, transaction);
 
@@ -171,9 +201,9 @@ namespace Sodium
         /// updated with the value of the firing. However, it doesn't go directly to the
         /// value field. Instead, the value is put into newValue, and a Last Action is
         /// scheduled to move the value from newValue to value.</remarks>
-        public T NewValue()
+        public T GetNewValue()
         {
-            return valueUpdate.HasValue ? valueUpdate.Value() : value;
+            return valueUpdate.HasValue ? valueUpdate.Value() : Value;
         }
 
         /// <summary>
@@ -181,46 +211,13 @@ namespace Sodium
         /// </summary>
         public Behavior<TB> Map<TB>(Func<T, TB> map)
         {
-            var underlyingEvent = Updates();
+            var underlyingEvent = Source;
             var mapEvent = underlyingEvent.Map(map);
-            var currentValue = Sample();
+            var currentValue = Value;
             var mappedValue = map(currentValue);
             var behavior = mapEvent.ToBehavior(mappedValue);
             behavior.RegisterFinalizer(mapEvent);
             return behavior;
-        }
-
-        /// <summary>
-        /// Sample the behavior's current value.
-        /// </summary>
-        /// <remarks>
-        /// This should generally be avoided in favor of Value().Listen(..) so you don't
-        /// miss any updates, but in many circumstances it makes sense.
-        ///
-        /// It can be best to use it inside an explicit transaction (using Transaction.Run()).
-        /// For example, a b.sample() inside an explicit transaction along with a
-        /// b.Updates().Listen(..) will capture the current value and any updates without risk
-        /// of missing any in between.
-        /// </remarks>
-        public T Sample()
-        {
-            // Here's the comment from the Java implementation:
-            // 
-            //     Since pointers in Java are atomic, we don't need to explicitly create a
-            //     transaction.
-            //
-            // In C# T could be either a reference type or a value type. Question:
-            // Can we assume we don't require a transaction here?
-            return value;
-        }
-
-        /// <summary>
-        /// An event that gives the updates for the behavior. If this behavior was created
-        /// with a hold, then Updates() gives you an event equivalent to the one that was held.
-        /// </summary>
-        public Event<T> Updates()
-        {
-            return this.Source;
         }
 
         /// <summary>
@@ -241,8 +238,8 @@ namespace Sodium
         /// </summary>
         public Behavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
-            var coalesceEvent = Updates().Coalesce((a, b) => b);
-            var currentValue = Sample();
+            var coalesceEvent = Source.Coalesce((a, b) => b);
+            var currentValue = Value;
             var tuple = snapshot(currentValue, initState);
             var loop = new EventLoop<Tuple<TB, TS>>();
             var loopBehavior = loop.ToBehavior(tuple);
@@ -291,7 +288,7 @@ namespace Sodium
         private IEventListener<T> ListenForEventFirings(Transaction transaction)
         {
             var callback = new ActionCallback<T>(ScheduleApplyValueUpdate);
-            var result = this.Source.Listen(callback, Rank.Highest, transaction);
+            var result = this.Listen(callback, Rank.Highest, transaction);
             return result;
         }
 
@@ -316,7 +313,7 @@ namespace Sodium
         /// </summary>
         private void ApplyValueUpdate()
         {
-            value = valueUpdate.Value();
+            Value = valueUpdate.Value();
             valueUpdate = Maybe<T>.Null;
         }
     }

@@ -22,7 +22,7 @@ namespace Sodium
 
         public void Fire(T firing, Transaction transaction)
         {
-            var f = this.behavior.Sample();
+            var f = this.behavior.Value;
             var v = this.snapshot(firing, f);
             this.Fire(v, transaction);
         }
@@ -50,7 +50,7 @@ namespace Sodium
                 return null;
             }
             
-            var results = events.Select(e => this.snapshot(e, this.behavior.Sample()));
+            var results = events.Select(e => this.snapshot(e, this.behavior.Value));
             return results.ToArray();
         }
     }

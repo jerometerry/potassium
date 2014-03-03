@@ -22,11 +22,11 @@
             var functionChanged = new ActionCallback<Func<T, TB>>((f, t) => ScheduledPrioritizedFire(t));
             var valueChanged = new ActionCallback<T>((a, t) => ScheduledPrioritizedFire(t));
 
-            l1 = bf.Updates().Listen(functionChanged, this.Rank);
-            l2 = source.Updates().Listen(valueChanged, this.Rank);
+            l1 = bf.Listen(functionChanged, this.Rank);
+            l2 = source.Listen(valueChanged, this.Rank);
 
-            var map = bf.Sample();
-            var valA = source.Sample();
+            var map = bf.Value;
+            var valA = source.Value;
             var valB = map(valA);
             this.Behavior = this.ToBehavior(valB);
         }
@@ -87,8 +87,8 @@
 
         private TB GetNewValue()
         {
-            var map = bf.NewValue();
-            var a = source.NewValue();
+            var map = bf.GetNewValue();
+            var a = source.GetNewValue();
             var b = map(a);
             return b;
         }

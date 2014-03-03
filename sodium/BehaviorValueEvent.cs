@@ -9,7 +9,7 @@ namespace Sodium
         {
             this.behavior = behavior;
             var callback = this.CreateFireCallback();
-            listener = behavior.Updates().Listen(callback, this.Rank, transaction);
+            listener = behavior.Listen(callback, this.Rank, transaction);
         }
 
         public override void Dispose()
@@ -27,7 +27,7 @@ namespace Sodium
 
         protected internal override T[] InitialFirings()
         {
-            return new[] { behavior.Sample() };
+            return new[] { behavior.Value };
         }
     }
 }

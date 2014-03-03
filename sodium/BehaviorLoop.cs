@@ -25,7 +25,7 @@
         public Behavior<T> Loop(Behavior<T> b)
         {
             var loop = (EventLoop<T>)Source;
-            loop.Loop(b.Updates());
+            loop.Loop(b.Source);
             return this;
         }
     }

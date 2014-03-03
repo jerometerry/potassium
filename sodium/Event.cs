@@ -101,28 +101,28 @@ namespace Sodium
         /// <summary>
         /// Listen for firings on the current event
         /// </summary>
-        /// <param name="action">The action to invoke on a firing</param>
+        /// <param name="callback">The action to invoke on a firing</param>
         /// <param name="listenerRank">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An IListener to be used to stop listening for events</returns>
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Listen operation that takes a thread. This ensures that any other
         /// actions triggered during Listen requiring a transaction all get the same instance.</remarks>
-        public IEventListener<T> Listen(ISodiumCallback<T> action, Rank listenerRank)
+        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank listenerRank)
         {
-            return this.Run(t => this.Listen(action, listenerRank, t));
+            return this.Run(t => this.Listen(callback, listenerRank, t));
         }
 
         /// <summary>
         /// Listen for firings on the current event
         /// </summary>
         /// <param name="transaction">Transaction to send any firings on</param>
-        /// <param name="action">The action to invoke on a firing</param>
+        /// <param name="callback">The action to invoke on a firing</param>
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An IListener to be used to stop listening for events.</returns>
         /// <remarks>Any firings that have occurred on the current transaction will be re-fired immediate after listening.</remarks>
-        public IEventListener<T> Listen(ISodiumCallback<T> action, Rank superior, Transaction transaction)
+        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank superior, Transaction transaction)
         {
-            var listener = this.CreateListener(action, superior, transaction);
+            var listener = this.CreateListener(callback, superior, transaction);
             InitialFire(listener, transaction);
             Refire(listener, transaction);
             return listener;
