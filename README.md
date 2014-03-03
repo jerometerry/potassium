@@ -65,5 +65,19 @@ Examples
     0 1 2 3 4 5 6 7 8 9
 ```
 
+**Filter***
+```
+    var e = new Event<char>();
+    var f = e.Filter(c => char.IsUpper(c));
+    var l = f.Listen(v => Console.Write("{0} ", v));
+    e.Fire('H');
+    e.Fire('o');
+    e.Fire('I');
+    l.Dispose();
+```
+*Output*
+```
+    H I
+```
 ==========
 [Sodium](https://github.com/kentuckyfriedtakahe/sodium) [Copyright](https://github.com/kentuckyfriedtakahe/sodium/blob/master/COPYING)
