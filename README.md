@@ -91,14 +91,14 @@ Behavior Examples
 ```
     var b = new BehaviorSink<int>(0);
     var l = b.Listen(v => Console.Write("{0} ", v));
-    for (var i = 1; i <= 5; i++) 
+    for (var i = 0; i < 5; i++) 
         b.Fire(i);
     l.Dispose();
     b.Dispose();
 ```
 *Output*
 ```
-    0 1 2 3 4 5
+    0 1 2 3 4
 ```
 
 **Event to Behavior**
