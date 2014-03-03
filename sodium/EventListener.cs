@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    internal sealed class EventListener<T> : SodiumObject, IEventListener<T>
+    public sealed class EventListener<T> : SodiumObject, IEventListener<T>
     {
         public EventListener(Event<T> source, ISodiumCallback<T> callback, Rank rank)
         {

@@ -129,63 +129,6 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Similar to Listener, except that previous firings will not be re-fired.
-        /// </summary>
-        /// <param name="callback">The action to invoke on a firing</param>
-        /// <returns>An IListener to be used to stop listening for events.</returns>
-        /// <remarks>It's more common for the Listen method to be used instead of ListenSuppressed.
-        /// You may want to use ListenSuppressed if the action will be triggered as part of a call
-        /// to Listen.</remarks>
-        public IEventListener<T> ListenSuppressed(Action<T> callback)
-        {
-            return ListenSuppressed(new ActionCallback<T>((a, t) => callback(a)), Rank.Highest);
-        }
-
-        /// <summary>
-        /// Similar to Listener, except that previous firings will not be re-fired.
-        /// </summary>
-        /// <param name="callback">The action to invoke on a firing</param>
-        /// <returns>An IListener to be used to stop listening for events.</returns>
-        /// <remarks>It's more common for the Listen method to be used instead of ListenSuppressed.
-        /// You may want to use ListenSuppressed if the action will be triggered as part of a call
-        /// to Listen.</remarks>
-        public IEventListener<T> ListenSuppressed(ISodiumCallback<T> callback)
-        {
-            return ListenSuppressed(callback, Rank.Highest);
-        }
-
-        /// <summary>
-        /// Similar to Listener, except that previous firings will not be re-fired.
-        /// </summary>
-        /// <param name="callback">The action to invoke on a firing</param>
-        /// <param name="listenerRank">The rank to use for the new listener, used to order the firings</param>
-        /// <returns>An IListener to be used to stop listening for events.</returns>
-        /// <remarks>It's more common for the Listen method to be used instead of ListenSuppressed.
-        /// You may want to use ListenSuppressed if the action will be triggered as part of a call
-        /// to Listen.</remarks>
-        public IEventListener<T> ListenSuppressed(ISodiumCallback<T> callback, Rank listenerRank)
-        {
-            return this.Run(t => this.ListenSuppressed(callback, listenerRank, t));
-        }
-
-        /// <summary>
-        /// Similar to Listener, except that previous firings will not be re-fired.
-        /// </summary>
-        /// <param name="callback">The action to invoke on a firing</param>
-        /// <param name="transaction">The transaction to use to order firings</param>
-        /// <param name="listenerRank">The rank to use for the new listener, used to order the firings</param>
-        /// <returns>An IListener to be used to stop listening for events.</returns>
-        /// <remarks>It's more common for the Listen method to be used instead of ListenSuppressed.
-        /// You may want to use ListenSuppressed if the action will be triggered as part of a call
-        /// to Listen.</remarks>
-        public IEventListener<T> ListenSuppressed(ISodiumCallback<T> callback, Rank listenerRank, Transaction transaction)
-        {
-            var listener = this.CreateListener(callback, listenerRank, transaction);
-            InitialFire(listener, transaction);
-            return listener;
-        }
-
-        /// <summary>
         /// Stop the given listener from receiving updates from the current Event
         /// </summary>
         /// <param name="eventListener">The listener to remove</param>
@@ -433,6 +376,18 @@ namespace Sodium
             return new ActionCallback<T>((t, v) => this.Fire(t, v));
         }
 
+        /// <summary>
+        /// Anything fired already in this transaction must be re-fired now so that
+        /// there's no order dependency between send and listen.
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <param name="listener"></param>
+        protected virtual bool Refire(EventListener<T> listener, Transaction transaction)
+        {
+            Fire(listener, firings, transaction);
+            return true;
+        }
+
         private static void Fire(EventListener<T> eventListener, IEnumerable<T> firings, Transaction transaction)
         {
             foreach (var firing in firings)
@@ -486,17 +441,6 @@ namespace Sodium
             {
                 Fire(listener, initialFirings, transaction);
             }
-        }
-
-        /// <summary>
-        /// Anything fired already in this transaction must be re-fired now so that
-        /// there's no order dependency between send and listen.
-        /// </summary>
-        /// <param name="transaction"></param>
-        /// <param name="listener"></param>
-        private void Refire(EventListener<T> listener, Transaction transaction)
-        {
-            Fire(listener, firings, transaction);
         }
     }
 }

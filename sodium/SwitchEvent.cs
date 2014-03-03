@@ -33,20 +33,6 @@
             base.Dispose();
         }
 
-        public void UpdateWrappedEventListener(Event<T> newEvent, Transaction transaction)
-        {
-            transaction.Last(() =>
-            {
-                if (this.wrappedEventListener != null)
-                {
-                    this.wrappedEventListener.Dispose();
-                    this.wrappedEventListener = null;
-                }
-
-                this.wrappedEventListener = newEvent.ListenSuppressed(this.wrappedEventListenerCallback, this.Rank, transaction);
-            });
-        }
-
         private void Initialize()
         {
             this.Run(this.Initialize);
@@ -59,6 +45,22 @@
 
             var behaviorEventChanged = new ActionCallback<Event<T>>(UpdateWrappedEventListener);
             this.behaviorListener = source.Listen(behaviorEventChanged, this.Rank, transaction);
+        }
+
+        private void UpdateWrappedEventListener(Event<T> newEvent, Transaction transaction)
+        {
+            transaction.Last(() =>
+            {
+                if (this.wrappedEventListener != null)
+                {
+                    this.wrappedEventListener.Dispose();
+                    this.wrappedEventListener = null;
+                }
+
+                var suppressed = new SuppressedListenEvent<T>(newEvent);
+                this.wrappedEventListener = suppressed.Listen(this.wrappedEventListenerCallback, this.Rank, transaction);
+                ((EventListener<T>)this.wrappedEventListener).RegisterFinalizer(suppressed);
+            });
         }
     }
 }

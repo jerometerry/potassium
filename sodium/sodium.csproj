@@ -59,6 +59,7 @@
     <Compile Include="CoalesceEvent.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="PrioritizedAction.cs" />
+    <Compile Include="SuppressedListenEvent.cs" />
     <Compile Include="SwitchBehaviorEvent.cs" />
     <Compile Include="FilterEvent.cs" />
     <Compile Include="IEventListener.cs" />

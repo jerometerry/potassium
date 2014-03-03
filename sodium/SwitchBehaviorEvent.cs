@@ -19,9 +19,9 @@
         public void Invoke(Behavior<T> behavior, Transaction transaction)
         {
             // Note: If any switch takes place during a transaction, then the
-            // Value().Listen will always cause a sample to be fetched from the
+            // GetValueStream().Listen will always cause a sample to be fetched from the
             // one we just switched to. The caller will be fetching our output
-            // using Value().Listen, and Value() throws away all firings except
+            // using GetValueStream().Listen, and GetValueStream() throws away all firings except
             // for the last one. Therefore, anything from the old input behavior
             // that might have happened during this transaction will be suppressed.
             if (this.eventListener != null)

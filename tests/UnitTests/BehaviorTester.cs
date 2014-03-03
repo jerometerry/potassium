@@ -470,7 +470,7 @@ namespace Sodium.Tests
         }
 
         /// <summary>
-        /// This is used for tests where Value() produces a single initial value on listen,
+        /// This is used for tests where GetValueStream() produces a single initial value on listen,
         /// and then we double that up by causing that single initial event to be repeated.
         /// This needs testing separately, because the code must be done carefully to achieve
         /// this.
