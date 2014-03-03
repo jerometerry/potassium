@@ -23,6 +23,11 @@ Examples
     l.Dispose();
     e.Dispose();
 ```
+*Output*
+```
+    0 1 2 3 4
+```
+
 
 **Map**
 ```
@@ -34,6 +39,10 @@ Examples
     l.Dispose();
     m.Dispose();
     e.Dispose();
+```
+*Output*
+```
+    0 1 2 3 4
 ```
 
 **Merge**
@@ -51,5 +60,10 @@ Examples
     e2.Dispose();
     e1.Dispose();
 ```
+*Output*
+```
+    0 1 2 3 4 5 6 7 8 9
+```
 
+==========
 [Sodium](https://github.com/kentuckyfriedtakahe/sodium) [Copyright](https://github.com/kentuckyfriedtakahe/sodium/blob/master/COPYING)
