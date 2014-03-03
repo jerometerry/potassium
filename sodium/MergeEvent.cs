@@ -2,7 +2,7 @@ namespace Sodium
 {
     using System.Linq;
 
-    internal sealed class MergeEvent<T> : Event<T>
+    internal sealed class MergeEvent<T> : EventSink<T>
     {
         private Event<T> source1;
         private Event<T> source2;

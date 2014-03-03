@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    internal sealed class OnceEvent<T> : Event<T>
+    internal sealed class OnceEvent<T> : EventSink<T>
     {
         private Event<T> source;
         private IEventListener<T>[] eventListeners;

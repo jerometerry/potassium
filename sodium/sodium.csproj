@@ -48,13 +48,14 @@
   <ItemGroup>
     <Compile Include="BehaviorApplyEvent.cs" />
     <Compile Include="BehaviorLoop.cs" />
+    <Compile Include="BehaviorSink.cs" />
     <Compile Include="DelayEvent.cs" />
     <Compile Include="EventLoop.cs" />
+    <Compile Include="EventSink.cs" />
     <Compile Include="FixedTransactionContext.cs" />
     <Compile Include="LastFiringEvent.cs" />
     <Compile Include="SodiumObject.cs" />
     <Compile Include="SingleTransactionContext.cs" />
-    <Compile Include="StaticEvent.cs" />
     <Compile Include="BehaviorValueEvent.cs" />
     <Compile Include="CoalesceEvent.cs" />
     <Compile Include="Constants.cs" />

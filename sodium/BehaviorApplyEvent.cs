@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal class BehaviorApplyEvent<T, TB> : Event<TB>
+    internal class BehaviorApplyEvent<T, TB> : EventSink<TB>
     {
         private Behavior<Func<T, TB>> bf;
         private Behavior<T> source;

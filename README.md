@@ -16,7 +16,7 @@ Examples
 
 **Echo**
 ```
-    var e = new Event<int>();
+    var e = new EventSink<int>();
     var l = e.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
         e.Fire(i);
@@ -31,7 +31,7 @@ Examples
 
 **Map**
 ```
-    var e = new Event<int>();
+    var e = new EventSink<int>();
     var m = e.Map(v => v.ToString());
     var l = m.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
@@ -47,12 +47,18 @@ Examples
 
 **Merge**
 ```
-    var e1 = new Event<int>();
-    var e2 = new Event<int>();
+    var e1 = new EventSink<int>();
+    var e2 = new EventSink<int>();
     var m = e1.Merge(e2);
     var l = m.Listen(v => Console.Write("{0} ", v));
-    for (var i = 0; i < 10; i++)
-        i % 2 == 0 ? e1.Fire(i) : e2.Fire(i);
+    for (var i = 0; i < 10; i++) {
+        if (i % 2 == 0) {
+            e1.Fire(i);
+        }
+        else {
+            e2.Fire(i);
+        }
+    }
     l.Dispose();
     m.Dispose();
     e2.Dispose();
@@ -65,7 +71,7 @@ Examples
 
 **Filter***
 ```
-    var e = new Event<char>();
+    var e = new EventSink<char>();
     var f = e.Filter(c => char.IsUpper(c));
     var l = f.Listen(v => Console.Write("{0} ", v));
     e.Fire('H');

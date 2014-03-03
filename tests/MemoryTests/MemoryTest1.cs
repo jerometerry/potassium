@@ -14,7 +14,7 @@ namespace Sodium.MemoryTests
 
             var behaviorMapFinalizers = new List<SodiumObject>();
 
-            var evt = new Event<int?>();
+            var evt = new EventSink<int?>();
             finalizers.Add(evt);
 
             var behavior = evt.ToBehavior(0);

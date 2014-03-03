@@ -7,7 +7,7 @@
     /// to listeners of the current event.
     /// </summary>
     /// <typeparam name="T">The type of the value fired through the event</typeparam>
-    public class EventLoop<T> : Event<T>
+    public class EventLoop<T> : EventSink<T>
     {
         private Event<T> source;
         private IEventListener<T> listener;

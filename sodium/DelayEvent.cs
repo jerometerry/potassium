@@ -1,6 +1,6 @@
 ﻿namespace Sodium
 {
-    internal class DelayEvent<T> : Event<T>
+    internal class DelayEvent<T> : EventSink<T>
     {
         private IEventListener<T> listener;
 

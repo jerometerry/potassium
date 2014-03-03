@@ -11,7 +11,7 @@ namespace Sodium.Tests
         [Test]
         public void TestSendEvent()
         {
-            var e = new Event<int>();
+            var e = new EventSink<int>();
             var o = new List<int>();
             var l = e.Listen(o.Add);
             e.Fire(5);
@@ -24,7 +24,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMap()
         {
-            var e = new Event<int>();
+            var e = new EventSink<int>();
             var m = e.Map(x => x.ToString(CultureInfo.InvariantCulture));
             var o = new List<string>();
             var l = m.Listen(o.Add);
@@ -36,8 +36,8 @@ namespace Sodium.Tests
         [Test]
         public void TestMergeNonSimultaneous()
         {
-            var e1 = new Event<int>();
-            var e2 = new Event<int>();
+            var e1 = new EventSink<int>();
+            var e2 = new EventSink<int>();
             var o = new List<int>();
             var l = e1.Merge(e2).Listen(o.Add);
             e1.Fire(7);
@@ -50,7 +50,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMergeSimultaneous()
         {
-            var e = new Event<int>();
+            var e = new EventSink<int>();
             var o = new List<int>();
             var l = e.Merge(e).Listen(o.Add);
             e.Fire(7);
@@ -62,8 +62,8 @@ namespace Sodium.Tests
         [Test]
         public void TestCoalesce()
         {
-            var e1 = new Event<int>();
-            var e2 = new Event<int>();
+            var e1 = new EventSink<int>();
+            var e2 = new EventSink<int>();
             var o = new List<int>();
             var evt2 = e1.Map(x => x * 100);
             var evt = evt2.Merge(e2);
@@ -80,7 +80,7 @@ namespace Sodium.Tests
         [Test]
         public void TestFilter()
         {
-            var e = new Event<char>();
+            var e = new EventSink<char>();
             var o = new List<char>();
             var l = e.Filter(char.IsUpper).Listen(o.Add);
             e.Fire('H');
@@ -93,7 +93,7 @@ namespace Sodium.Tests
         [Test]
         public void TestFilterNotNull()
         {
-            var e = new Event<string>();
+            var e = new EventSink<string>();
             var o = new List<string>();
             var l = e.FilterNotNull().Listen(o.Add);
             e.Fire("tomato");
@@ -106,7 +106,7 @@ namespace Sodium.Tests
         [Test]
         public void TestLoopEvent()
         {
-            var ea = new Event<int>();
+            var ea = new EventSink<int>();
             var eb = new EventLoop<int>();
             var evt = ea.Map(x => x % 10);
             var ec = evt.Merge(eb, (x, y) => x + y);
@@ -123,8 +123,8 @@ namespace Sodium.Tests
         [Test]
         public void TestGate()
         {
-            var ec = new Event<char>();
-            var epred = new Behavior<bool>(true);
+            var ec = new EventSink<char>();
+            var epred = new BehaviorSink<bool>(true);
             var o = new List<char>();
             var l = ec.Gate(epred).Listen(o.Add);
             ec.Fire('H');
@@ -139,7 +139,7 @@ namespace Sodium.Tests
         [Test]
         public void TestCollect()
         {
-            var ea = new Event<int>();
+            var ea = new EventSink<int>();
             var o = new List<int>();
             var sum = ea.Collect(100, (a, s) => new Tuple<int, int>(a + s, a + s));
             var l = sum.Listen(o.Add);
@@ -155,7 +155,7 @@ namespace Sodium.Tests
         [Test]
         public void TestAccum()
         {
-            var ea = new Event<int>();
+            var ea = new EventSink<int>();
             var o = new List<int>();
             var sum = ea.Accum(100, (a, s) => a + s);
             var l = sum.Listen(o.Add);
@@ -171,7 +171,7 @@ namespace Sodium.Tests
         [Test]
         public void TestOnce()
         {
-            var e = new Event<char>();
+            var e = new EventSink<char>();
             var o = new List<char>();
             var l = e.Once().Listen(o.Add);
             e.Fire('A');
@@ -184,7 +184,7 @@ namespace Sodium.Tests
         [Test]
         public void TestDelay()
         {
-            var e = new Event<char>();
+            var e = new EventSink<char>();
             var b = e.ToBehavior(' ');
             var o = new List<char>();
             var l = e.Delay().Snapshot(b).Listen(o.Add);

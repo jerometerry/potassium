@@ -21,7 +21,7 @@ namespace Sodium
         private IEventListener<T> valueUpdateListener;
 
         /// <summary>
-        /// A behavior with a time varying value
+        /// A constant behavior
         /// </summary>
         /// <param name="initValue"></param>
         public Behavior(T initValue)
@@ -61,16 +61,6 @@ namespace Sodium
         /// of missing any in between.
         /// </remarks>
         public T Value { get; private set; }
-
-        /// <summary>
-        /// A behavior with a constant value.
-        /// </summary>
-        public static Behavior<T> Constant(T initValue)
-        {
-            var behavior = new Behavior<T>(new StaticEvent<T>(), initValue);
-            behavior.RegisterFinalizer(behavior.Source);
-            return behavior;
-        }
 
         /// <summary>
         /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
@@ -130,15 +120,7 @@ namespace Sodium
             return this.Source.Listen(callback, superior, transaction);
         }
 
-        /// <summary>
-        /// Fire the given value on the underlying Event
-        /// </summary>
-        /// <param name="firing">The value to fire</param>
-        /// <returns>True if fired, false otherwise</returns>
-        public bool Fire(T firing)
-        {
-            return this.Source.Fire(firing);
-        }
+        
 
         /// <summary>
         /// Dispose of the current Behavior
