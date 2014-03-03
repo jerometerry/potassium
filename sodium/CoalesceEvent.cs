@@ -34,7 +34,7 @@ namespace Sodium
 
         protected internal override T[] InitialFirings()
         {
-            var events = source.InitialFirings();
+            var events = GetInitialFirings(source);
             if (events == null)
             {
                 return null;

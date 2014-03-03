@@ -338,15 +338,6 @@ namespace Sodium
             return eb;
         }
 
-        /// <summary>
-        /// Gets the values that will be sent to newly added
-        /// </summary>
-        /// <returns>An Array of values that will be fired to all registered listeners</returns>
-        protected internal virtual T[] InitialFirings()
-        {
-            return null;
-        }
-
         protected virtual IEventListener<T> CreateListener(ISodiumCallback<T> source, Rank superior, Transaction transaction)
         {
             lock (Constants.ListenersLock)

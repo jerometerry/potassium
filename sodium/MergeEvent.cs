@@ -41,8 +41,8 @@ namespace Sodium
 
         protected internal override T[] InitialFirings()
         {
-            var firings1 = source1.InitialFirings();
-            var firings2 = source2.InitialFirings();
+            var firings1 = GetInitialFirings(source1);
+            var firings2 = GetInitialFirings(source2);
 
             if (firings1 != null && firings2 != null)
             {

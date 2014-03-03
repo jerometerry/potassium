@@ -38,7 +38,7 @@
 
         protected internal override TB[] InitialFirings()
         {
-            var firings = source.InitialFirings();
+            var firings = GetInitialFirings(source);
             if (firings == null)
             { 
                 return null;

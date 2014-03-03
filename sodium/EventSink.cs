@@ -39,6 +39,26 @@
         }
 
         /// <summary>
+        /// Gets the values that will be sent to newly added
+        /// </summary>
+        /// <returns>An Array of values that will be fired to all registered listeners</returns>
+        protected internal virtual T[] InitialFirings()
+        {
+            return null;
+        }
+
+        protected static TF[] GetInitialFirings<TF>(Event<TF> source)
+        {
+            var sink = source as EventSink<TF>;
+            if (sink == null)
+            {
+                return null;
+            }
+
+            return sink.InitialFirings();
+        }
+
+        /// <summary>
         /// Creates a callback that calls the Fire method on the current Event when invoked
         /// </summary>
         /// <returns>In ISodiumCallback that calls Fire, when invoked.</returns>
