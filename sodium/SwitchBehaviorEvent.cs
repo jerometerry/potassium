@@ -37,7 +37,7 @@
             }
 
             this.wrappedEvent = behavior.Value(transaction);
-            this.eventListener = wrappedEvent.Listen(transaction, this.CreateFireCallback(), Rank);
+            this.eventListener = wrappedEvent.Listen(this.CreateFireCallback(), Rank, transaction);
         }
 
         public override void Dispose()

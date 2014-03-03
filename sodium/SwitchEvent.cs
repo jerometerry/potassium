@@ -43,7 +43,7 @@
                     this.wrappedEventListener = null;
                 }
 
-                this.wrappedEventListener = newEvent.ListenSuppressed(transaction, this.wrappedEventListenerCallback, this.Rank);
+                this.wrappedEventListener = newEvent.ListenSuppressed(this.wrappedEventListenerCallback, this.Rank, transaction);
             });
         }
 
@@ -55,10 +55,10 @@
         private void Initialize(Transaction transaction)
         {
             this.wrappedEventListenerCallback = this.CreateFireCallback();
-            this.wrappedEventListener = source.Sample().Listen(transaction, this.wrappedEventListenerCallback, this.Rank);
+            this.wrappedEventListener = source.Sample().Listen(this.wrappedEventListenerCallback, this.Rank, transaction);
 
             var behaviorEventChanged = new ActionCallback<Event<T>>(UpdateWrappedEventListener);
-            this.behaviorListener = source.Updates().Listen(transaction, behaviorEventChanged, this.Rank);
+            this.behaviorListener = source.Updates().Listen(behaviorEventChanged, this.Rank, transaction);
         }
     }
 }

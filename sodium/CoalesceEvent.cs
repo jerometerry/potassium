@@ -15,7 +15,7 @@ namespace Sodium
             this.coalesce = coalesce;
 
             var callback = new ActionCallback<T>(this.Accumulate);
-            this.listener = source.Listen(transaction, callback, this.Rank);
+            this.listener = source.Listen(callback, this.Rank, transaction);
         }
 
         public override void Dispose()
