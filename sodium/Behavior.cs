@@ -36,13 +36,13 @@ namespace Sodium
         }
 
         /// <summary>
-        /// A behavior with a time varying value
+        /// Create A behavior with a time varying value from an Event and an initial value
         /// </summary>
-        /// <param name="evt"></param>
-        /// <param name="initValue"></param>
-        public Behavior(Event<T> evt, T initValue)
+        /// <param name="source">The Event to listen for updates from</param>
+        /// <param name="initValue">The initial value of the Behavior</param>
+        public Behavior(Event<T> source, T initValue)
         {
-            this.Source = evt;
+            this.Source = source;
             this.value = initValue;
             this.valueUpdateListener = ListenForEventFirings();
         }
@@ -59,18 +59,6 @@ namespace Sodium
         {
             var behavior = new Behavior<T>(new StaticEvent<T>(), initValue);
             behavior.RegisterFinalizer(behavior.Source);
-            return behavior;
-        }
-
-        /// <summary>
-        /// Apply a value inside a behavior to a function inside a behavior. This is the
-        /// primitive for all function lifting.
-        /// </summary>
-        public static Behavior<TB> Apply<TB>(Behavior<Func<T, TB>> bf, Behavior<T> source)
-        {
-            var evt = new BehaviorApplyEvent<T, TB>(bf, source);
-            var behavior = evt.Behavior;
-            behavior.RegisterFinalizer(evt);
             return behavior;
         }
 
@@ -101,19 +89,15 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Lift a binary function into behaviors.
+        /// Apply a value inside a behavior to a function inside a behavior. This is the
+        /// primitive for all function lifting.
         /// </summary>
-        public static Behavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, Behavior<T> a, Behavior<TB> b)
+        public Behavior<TB> Apply<TB>(Behavior<Func<T, TB>> bf)
         {
-            return a.Lift(lift, b);
-        }
-
-        /// <summary>
-        /// Lift a ternary function into behaviors.
-        /// </summary>
-        public static Behavior<TD> Lift<TB, TC, TD>(Func<T, TB, TC, TD> f, Behavior<T> a, Behavior<TB> b, Behavior<TC> c)
-        {
-            return a.Lift(f, b, c);
+            var evt = new BehaviorApplyEvent<T, TB>(bf, this);
+            var behavior = evt.Behavior;
+            behavior.RegisterFinalizer(evt);
+            return behavior;
         }
 
         /// <summary>
@@ -237,7 +221,7 @@ namespace Sodium
         {
             Func<T, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
             var bf = Map(ffa);
-            var result = Behavior<TB>.Apply(bf, behavior);
+            var result = behavior.Apply(bf);
             result.RegisterFinalizer(bf);
             return result;
         }
@@ -273,9 +257,9 @@ namespace Sodium
         {
             Func<T, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
             var bf = Map(map);
-            var l1 = Behavior<TB>.Apply(bf, b);
+            var l1 = b.Apply(bf);
 
-            var result = Behavior<TC>.Apply(l1, c);
+            var result = c.Apply(l1);
             result.RegisterFinalizer(bf);
             result.RegisterFinalizer(l1);
             return result;

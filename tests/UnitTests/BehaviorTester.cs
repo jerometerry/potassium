@@ -292,7 +292,7 @@ namespace Sodium.Tests
             var bf = new Behavior<Func<long, string>>(b => "1 " + b);
             var ba = new Behavior<long>(5L);
             var results = new List<string>();
-            var listener = Behavior<long>.Apply(bf, ba).Value().Listen(results.Add);
+            var listener = ba.Apply(bf).Value().Listen(results.Add);
             bf.Fire(b => "12 " + b);
             ba.Fire(6L);
             listener.Dispose();
@@ -307,7 +307,7 @@ namespace Sodium.Tests
             var behavior1 = new Behavior<int>(1);
             var behavior2 = new Behavior<long>(5L);
             var results = new List<string>();
-            var combinedBehavior = Behavior<int>.Lift((x, y) => x + " " + y, behavior1, behavior2);
+            var combinedBehavior = behavior1.Lift((x, y) => x + " " + y, behavior2);
             var listener = combinedBehavior.Value().Listen(results.Add);
             behavior1.Fire(12);
             behavior2.Fire(6L);
@@ -324,7 +324,7 @@ namespace Sodium.Tests
             var mappedBehavior1 = behavior.Map(x => x * 3);
             var mappedBehavior2 = behavior.Map(x => x * 5);
             var results = new List<string>();
-            var combinedBehavior = Behavior<int>.Lift((x, y) => x + " " + y, mappedBehavior1, mappedBehavior2);
+            var combinedBehavior = mappedBehavior1.Lift((x, y) => x + " " + y, mappedBehavior2);
             var listener = combinedBehavior.Value().Listen(results.Add);
             behavior.Fire(2);
             listener.Dispose();
