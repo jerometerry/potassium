@@ -118,7 +118,7 @@
 
         private void FireListenerCallback(T firing, IEventListener<T> listener, Transaction transaction)
         {
-            listener.Callback.Fire(firing, this, transaction);
+            listener.Callback.Fire(firing, listener, transaction);
         }
 
         private void ScheduleClearFirings(Transaction transaction)

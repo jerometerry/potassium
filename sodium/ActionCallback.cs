@@ -23,9 +23,9 @@ namespace Sodium
         /// Invokes the callback
         /// </summary>
         /// <param name="firing">The value to be fired to the </param>
-        /// <param name="source">The Event that triggered the callback</param>
+        /// <param name="listener">The listener that holds the current callback</param>
         /// <param name="transaction">The Transaction used to order the firing</param>
-        public void Fire(T firing, Event<T> source, Transaction transaction)
+        public void Fire(T firing, IEventListener<T> listener, Transaction transaction)
         {
             action(firing, transaction);
         }
