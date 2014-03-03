@@ -22,7 +22,18 @@
             Fire(v, trans);
         }
 
-        public override void Dispose()
+        protected internal override TB[] InitialFirings()
+        {
+            var firings = GetInitialFirings(source);
+            if (firings == null)
+            { 
+                return null;
+            }
+
+            return firings.Select(e => map(e)).ToArray();
+        }
+
+        protected override void Dispose(bool disposing)
         {
             if (listener != null)
             {
@@ -33,18 +44,7 @@
             source = null;
             map = null;
 
-            base.Dispose();
-        }
-
-        protected internal override TB[] InitialFirings()
-        {
-            var firings = GetInitialFirings(source);
-            if (firings == null)
-            { 
-                return null;
-            }
-
-            return firings.Select(e => map(e)).ToArray();
+            base.Dispose(disposing);
         }
     }
 }

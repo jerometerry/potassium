@@ -121,22 +121,6 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Dispose of the current Behavior
-        /// </summary>
-        public override void Dispose()
-        {
-            if (this.valueUpdateListener != null)
-            {
-                this.valueUpdateListener.Dispose();
-                this.valueUpdateListener = null;
-            }
-
-            this.Source = null;
-            
-            base.Dispose();
-        }
-
-        /// <summary>
         /// An event that is guaranteed to fire once when you listen to it, giving
         /// the current value of the behavior, and thereafter behaves like updates(),
         /// firing for each update to the behavior's value.
@@ -249,6 +233,22 @@ namespace Sodium
             result.RegisterFinalizer(bf);
             result.RegisterFinalizer(l1);
             return result;
+        }
+
+        /// <summary>
+        /// Dispose of the current Behavior
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (this.valueUpdateListener != null)
+            {
+                this.valueUpdateListener.Dispose();
+                this.valueUpdateListener = null;
+            }
+
+            this.Source = null;
+
+            base.Dispose(disposing);
         }
 
         /// <summary>

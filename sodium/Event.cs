@@ -47,21 +47,6 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Cleanup the current Event, disposing of any listeners.
-        /// </summary>
-        public override void Dispose()
-        {
-            var clone = new List<IEventListener<T>>(this.Listeners);
-            this.Listeners.Clear();
-            foreach (var listener in clone)
-            {
-                listener.Dispose();
-            }
-
-            base.Dispose();
-        }
-
-        /// <summary>
         /// Listen for firings of this event.
         /// </summary>
         /// <param name="callback">An Action to be invoked when the current Event fires.</param>
@@ -351,6 +336,21 @@ namespace Sodium
                 this.Listeners.Add(listener);
                 return listener;
             }
+        }
+
+        /// <summary>
+        /// Cleanup the current Event, disposing of any listeners.
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            var clone = new List<IEventListener<T>>(this.Listeners);
+            this.Listeners.Clear();
+            foreach (var listener in clone)
+            {
+                listener.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

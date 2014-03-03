@@ -27,7 +27,19 @@ namespace Sodium
             this.Fire(v, transaction);
         }
 
-        public override void Dispose()
+        protected internal override TC[] InitialFirings()
+        {
+            var events = GetInitialFirings(source);
+            if (events == null)
+            {
+                return null;
+            }
+            
+            var results = events.Select(e => this.snapshot(e, this.behavior.Value));
+            return results.ToArray();
+        }
+
+        protected override void Dispose(bool disposing)
         {
             if (listener != null)
             {
@@ -39,19 +51,7 @@ namespace Sodium
             behavior = null;
             snapshot = null;
 
-            base.Dispose();
-        }
-
-        protected internal override TC[] InitialFirings()
-        {
-            var events = GetInitialFirings(source);
-            if (events == null)
-            {
-                return null;
-            }
-            
-            var results = events.Select(e => this.snapshot(e, this.behavior.Value));
-            return results.ToArray();
+            base.Dispose(disposing);
         }
     }
 }

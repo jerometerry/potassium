@@ -40,7 +40,7 @@
             this.eventListener = wrappedEvent.Listen(this.CreateFireCallback(), Rank, transaction);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
             if (this.listener != null)
             {
@@ -68,7 +68,7 @@
 
             this.source = null;
 
-            base.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

@@ -33,7 +33,7 @@
         /// <summary>
         /// Disposes the current EventLoop
         /// </summary>
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
             if (this.listener != null)
             {
@@ -43,7 +43,7 @@
 
             this.source = null;
 
-            base.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

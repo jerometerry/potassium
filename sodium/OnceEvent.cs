@@ -15,20 +15,6 @@ namespace Sodium
             this.eventListeners[0] = source.Listen(new ActionCallback<T>((a, t) => this.Fire(this.eventListeners, a, t)), this.Rank);
         }
 
-        public override void Dispose()
-        {
-            if (this.eventListeners[0] != null)
-            {
-                this.eventListeners[0].Dispose();
-                this.eventListeners[0] = null;
-            }
-
-            this.source = null;
-            eventListeners = null;
-
-            base.Dispose();
-        }
-
         protected internal override T[] InitialFirings()
         {
             var firings = GetInitialFirings(this.source);
@@ -50,6 +36,20 @@ namespace Sodium
             }
 
             return results;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (this.eventListeners[0] != null)
+            {
+                this.eventListeners[0].Dispose();
+                this.eventListeners[0] = null;
+            }
+
+            this.source = null;
+            eventListeners = null;
+
+            base.Dispose(disposing);
         }
 
         private void Fire(IEventListener<T>[] la, T a, Transaction t)

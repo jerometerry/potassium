@@ -12,7 +12,12 @@ namespace Sodium
             listener = behavior.Listen(callback, this.Rank, transaction);
         }
 
-        public override void Dispose()
+        protected internal override T[] InitialFirings()
+        {
+            return new[] { behavior.Value };
+        }
+
+        protected override void Dispose(bool disposing)
         {
             if (listener != null)
             {
@@ -22,12 +27,7 @@ namespace Sodium
 
             behavior = null;
 
-            base.Dispose();
-        }
-
-        protected internal override T[] InitialFirings()
-        {
-            return new[] { behavior.Value };
+            base.Dispose(disposing);
         }
     }
 }

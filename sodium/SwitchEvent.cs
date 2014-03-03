@@ -13,7 +13,7 @@
             this.Initialize();
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
             if (this.behaviorListener != null)
             {
@@ -30,7 +30,7 @@
             this.wrappedEventListenerCallback = null;
             this.source = null;
 
-            base.Dispose();
+            base.Dispose(disposing);
         }
 
         private void Initialize()

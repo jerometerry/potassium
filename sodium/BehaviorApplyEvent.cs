@@ -33,7 +33,7 @@
 
         public Behavior<TB> Behavior { get; private set; }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
             if (this.Behavior != null)
             {
@@ -56,7 +56,7 @@
             bf = null;
             source = null;
 
-            base.Dispose();
+            base.Dispose(disposing);
         }
 
         /// <summary>

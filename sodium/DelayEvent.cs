@@ -10,7 +10,7 @@
             this.listener = source.Listen(callback, this.Rank);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
             if (listener != null)
             {
@@ -18,7 +18,7 @@
                 listener = null;
             }
 
-            base.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

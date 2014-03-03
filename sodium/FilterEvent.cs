@@ -28,20 +28,6 @@ namespace Sodium
             return this.f(a) && base.Fire(a, t);
         }
 
-        public override void Dispose()
-        {
-            if (listener != null)
-            {
-                listener.Dispose();
-                listener = null;
-            }
-
-            this.source = null;
-            f = null;
-
-            base.Dispose();
-        }
-
         protected internal override T[] InitialFirings()
         {
             var events = GetInitialFirings(this.source);
@@ -57,6 +43,20 @@ namespace Sodium
             }
 
             return filtered.ToArray();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (listener != null)
+            {
+                listener.Dispose();
+                listener = null;
+            }
+
+            this.source = null;
+            f = null;
+
+            base.Dispose(disposing);
         }
     }
 }

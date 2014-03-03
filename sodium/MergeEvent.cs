@@ -19,7 +19,20 @@ namespace Sodium
             l2 = source2.Listen(callback, this.Rank);
         }
 
-        public override void Dispose()
+        protected internal override T[] InitialFirings()
+        {
+            var firings1 = GetInitialFirings(source1);
+            var firings2 = GetInitialFirings(source2);
+
+            if (firings1 != null && firings2 != null)
+            {
+                return firings1.Concat(firings2).ToArray();
+            }
+
+            return firings1 ?? firings2;
+        }
+
+        protected override void Dispose(bool disposing)
         {
             if (l1 != null)
             {
@@ -36,20 +49,7 @@ namespace Sodium
             source1 = null;
             source2 = null;
 
-            base.Dispose();
-        }
-
-        protected internal override T[] InitialFirings()
-        {
-            var firings1 = GetInitialFirings(source1);
-            var firings2 = GetInitialFirings(source2);
-
-            if (firings1 != null && firings2 != null)
-            {
-                return firings1.Concat(firings2).ToArray();
-            }
-
-            return firings1 ?? firings2;
+            base.Dispose(disposing);
         }
     }
 }

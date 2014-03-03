@@ -18,20 +18,6 @@ namespace Sodium
             this.listener = source.Listen(callback, this.Rank, transaction);
         }
 
-        public override void Dispose()
-        {
-            if (listener != null)
-            {
-                listener.Dispose();
-                listener = null;
-            }
-
-            source = null;
-            coalesce = null;
-
-            base.Dispose();
-        }
-
         protected internal override T[] InitialFirings()
         {
             var events = GetInitialFirings(source);
@@ -47,6 +33,20 @@ namespace Sodium
             }
 
             return new[] { e };
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (listener != null)
+            {
+                listener.Dispose();
+                listener = null;
+            }
+
+            source = null;
+            coalesce = null;
+
+            base.Dispose(disposing);
         }
 
         private void Accumulate(T data, Transaction transaction)

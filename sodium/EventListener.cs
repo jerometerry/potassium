@@ -15,7 +15,7 @@ namespace Sodium
 
         public Rank Rank { get; private set; }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
             if (this.Source != null)
             {
@@ -26,7 +26,7 @@ namespace Sodium
             Callback = null;
             Rank = null;
 
-            base.Dispose();
+            base.Dispose(disposing);
         }
     }
 }
