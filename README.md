@@ -15,11 +15,13 @@ Examples
 ==========
 
 *Echo*
+```
     var e = new Event<int>();
     var l = e.Listen(v => Console.WriteLine("{0}", v));
     for (var i = 0; i < 5; i++) 
         e.Fire(i);
     l.Dispose();
     e.Dispose();
+```
 
 [Sodium](https://github.com/kentuckyfriedtakahe/sodium) [Copyright](https://github.com/kentuckyfriedtakahe/sodium/blob/master/COPYING)
