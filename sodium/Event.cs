@@ -10,7 +10,7 @@ namespace Sodium
     /// include Map, Filter, and ToBehavior, just to name a few.
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the event.</typeparam>
-    public class Event<T> : Observable<T>
+    public class Event<T> : SodiumObject
     {
         /// <summary>
         /// List of IListeners that are currently listening for firings 
@@ -60,7 +60,7 @@ namespace Sodium
         /// Fire the given value to all registered listeners 
         /// </summary>
         /// <param name="firing">The value to be fired</param>
-        public override bool Fire(T firing)
+        public bool Fire(T firing)
         {
             return this.Run(t => this.Fire(firing, t));
         }
@@ -70,7 +70,7 @@ namespace Sodium
         /// </summary>
         /// <param name="transaction">The transaction to invoke the callbacks on</param>
         /// <param name="firing">The value to fire to registered callbacks</param>
-        public override bool Fire(T firing, Transaction transaction)
+        public virtual bool Fire(T firing, Transaction transaction)
         {
             ScheduleClearFirings(transaction);
             AddFiring(firing);
@@ -83,7 +83,7 @@ namespace Sodium
         /// </summary>
         /// <param name="callback">An Action to be invoked when the current Event fires.</param>
         /// <returns>An IListener, that should be Disposed when no longer needed. </returns>
-        public override IEventListener<T> Listen(Action<T> callback)
+        public IEventListener<T> Listen(Action<T> callback)
         {
             return Listen(new ActionCallback<T>((a, t) => callback(a)), Rank.Highest);
         }
@@ -93,7 +93,7 @@ namespace Sodium
         /// </summary>
         /// <param name="callback">An Action to be invoked when the current Event fires.</param>
         /// <returns>An IListener, that should be Disposed when no longer needed. </returns>
-        public override IEventListener<T> Listen(ISodiumCallback<T> callback)
+        public IEventListener<T> Listen(ISodiumCallback<T> callback)
         {
             return Listen(callback, Rank.Highest);
         }
@@ -136,7 +136,7 @@ namespace Sodium
         /// <remarks>It's more common for the Listen method to be used instead of ListenSuppressed.
         /// You may want to use ListenSuppressed if the action will be triggered as part of a call
         /// to Listen.</remarks>
-        public override IEventListener<T> ListenSuppressed(Action<T> callback)
+        public IEventListener<T> ListenSuppressed(Action<T> callback)
         {
             return ListenSuppressed(new ActionCallback<T>((a, t) => callback(a)), Rank.Highest);
         }
@@ -149,7 +149,7 @@ namespace Sodium
         /// <remarks>It's more common for the Listen method to be used instead of ListenSuppressed.
         /// You may want to use ListenSuppressed if the action will be triggered as part of a call
         /// to Listen.</remarks>
-        public override IEventListener<T> ListenSuppressed(ISodiumCallback<T> callback)
+        public IEventListener<T> ListenSuppressed(ISodiumCallback<T> callback)
         {
             return ListenSuppressed(callback, Rank.Highest);
         }

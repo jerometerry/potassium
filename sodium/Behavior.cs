@@ -7,7 +7,7 @@ namespace Sodium
     /// gets updated as the underlying Event is fired.
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the Behavior.</typeparam>
-    public class Behavior<T> : Observable<T>
+    public class Behavior<T> : SodiumObject
     {
         /// <summary>
         /// The current value of the Behavior, updated after the underlying event fires.
@@ -81,8 +81,8 @@ namespace Sodium
         /// <param name="behavior">The behavior that wraps the event</param>
         /// <returns>The unwrapped event</returns>
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
-        /// SwitchE operation that takes a thread. This ensures that any other
-        /// actions triggered during SwitchE requiring a transaction all get the same instance.</remarks>
+        /// UnwrapEvent operation that takes a thread. This ensures that any other
+        /// actions triggered during UnwrapEvent requiring a transaction all get the same instance.</remarks>
         public static Event<T> UnwrapEvent(Behavior<Event<T>> behavior)
         {
             return new SwitchEvent<T>(behavior);
@@ -117,79 +117,6 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Fire the given value to all registered listeners 
-        /// </summary>
-        /// <param name="firing">The value to be fired</param>
-        public override bool Fire(T firing)
-        {
-            return this.Source.Fire(firing);
-        }
-
-        /// <summary>
-        /// Fires the given value to all registered listeners, using the given transaction
-        /// </summary>
-        /// <param name="firing">The value to fire.</param>
-        /// <param name="transaction">The transaction to used to order the firings</param>
-        public override bool Fire(T firing, Transaction transaction)
-        {
-            return this.Source.Fire(firing, transaction);
-        }
-
-        /// <summary>
-        /// Listen to the current Behavior for updates, which fires immediate with the 
-        /// Behaviors current value, and every time the underlying event fires.
-        /// </summary>
-        /// <param name="callback">The action to take when the Behavior's underlying event fires</param>
-        /// <returns>The listener</returns>
-        public override IEventListener<T> Listen(Action<T> callback)
-        {
-            var v = this.Value();
-            var l = (EventListener<T>)v.Listen(callback);
-            l.RegisterFinalizer(v);
-            return l;
-        }
-
-        /// <summary>
-        /// Listen to the current Behavior for updates, which fires immediate with the 
-        /// Behaviors current value, and every time the underlying event fires.
-        /// </summary>
-        /// <param name="callback">The action to take when the Behavior's underlying event fires</param>
-        /// <returns>The listener</returns>
-        public override IEventListener<T> Listen(ISodiumCallback<T> callback)
-        {
-            var v = this.Value();
-            var l = (EventListener<T>)v.Listen(callback);
-            l.RegisterFinalizer(v);
-            return l;
-        }
-
-        /// <summary>
-        /// Listen to the current Behavior for updates, but don't fire the initial value
-        /// </summary>
-        /// <param name="callback">The action to take when the Behavior's underlying event fires</param>
-        /// <returns>The listener</returns>
-        public override IEventListener<T> ListenSuppressed(Action<T> callback)
-        {
-            var v = this.Updates();
-            var l = (EventListener<T>)v.Listen(callback);
-            l.RegisterFinalizer(v);
-            return l;
-        }
-
-        /// <summary>
-        /// Listen to the current Behavior for updates, but don't fire the initial value
-        /// </summary>
-        /// <param name="callback">The action to take when the Behavior's underlying event fires</param>
-        /// <returns>The listener</returns>
-        public override IEventListener<T> ListenSuppressed(ISodiumCallback<T> callback)
-        {
-            var v = this.Updates();
-            var l = (EventListener<T>)v.Listen(callback);
-            l.RegisterFinalizer(v);
-            return l;
-        }
-
-        /// <summary>
         /// An event that is guaranteed to fire once when you listen to it, giving
         /// the current value of the behavior, and thereafter behaves like updates(),
         /// firing for each update to the behavior's value.
@@ -202,6 +129,41 @@ namespace Sodium
         public Event<T> Value()
         {
             return this.Run<Event<T>>(Value);
+        }
+
+        /// <summary>
+        /// An event that is guaranteed to fire once when you listen to it, giving
+        /// the current value of the behavior, and thereafter behaves like updates(),
+        /// firing for each update to the behavior's value.
+        /// </summary>
+        /// <param name="transaction">The transaction to run the Value operation on</param>
+        /// <returns>An event that will fire when it's listened to, and every time it's 
+        /// value changes thereafter</returns>
+        public Event<T> Value(Transaction transaction)
+        {
+            var valueEvent = new BehaviorValueEvent<T>(this, transaction);
+
+            // Needed in case of an initial value and an update
+            // in the same transaction.
+            var result = new LastFiringEvent<T>(valueEvent, transaction);
+            result.RegisterFinalizer(valueEvent);
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the updated value of the Behavior that has not yet been moved to the
+        /// current value of the Behavior. 
+        /// </summary>
+        /// <returns>
+        /// The updated value, if any, otherwise the current value
+        /// </returns>
+        /// <remarks>As the underlying event is fired, the current behavior is 
+        /// updated with the value of the firing. However, it doesn't go directly to the
+        /// value field. Instead, the value is put into newValue, and a Last Action is
+        /// scheduled to move the value from newValue to value.</remarks>
+        public T NewValue()
+        {
+            return valueUpdate.HasValue ? valueUpdate.Value() : value;
         }
 
         /// <summary>
@@ -244,7 +206,7 @@ namespace Sodium
 
         /// <summary>
         /// An event that gives the updates for the behavior. If this behavior was created
-        /// with a hold, then updates() gives you an event equivalent to the one that was held.
+        /// with a hold, then Updates() gives you an event equivalent to the one that was held.
         /// </summary>
         public Event<T> Updates()
         {
@@ -299,41 +261,6 @@ namespace Sodium
             var result = c.Apply(l1);
             result.RegisterFinalizer(bf);
             result.RegisterFinalizer(l1);
-            return result;
-        }
-
-        /// <summary>
-        /// Gets the updated value of the Behavior that has not yet been moved to the
-        /// current value of the Behavior. 
-        /// </summary>
-        /// <returns>
-        /// The updated value, if any, otherwise the current value
-        /// </returns>
-        /// <remarks>As the underlying event is fired, the current behavior is 
-        /// updated with the value of the firing. However, it doesn't go directly to the
-        /// value field. Instead, the value is put into newValue, and a Last Action is
-        /// scheduled to move the value from newValue to value.</remarks>
-        internal T NewValue()
-        {
-            return valueUpdate.HasValue ? valueUpdate.Value() : value;
-        }
-
-        /// <summary>
-        /// An event that is guaranteed to fire once when you listen to it, giving
-        /// the current value of the behavior, and thereafter behaves like updates(),
-        /// firing for each update to the behavior's value.
-        /// </summary>
-        /// <param name="transaction">The transaction to run the Value operation on</param>
-        /// <returns>An event that will fire when it's listened to, and every time it's 
-        /// value changes thereafter</returns>
-        internal Event<T> Value(Transaction transaction)
-        {
-            var valueEvent = new BehaviorValueEvent<T>(this, transaction);
-
-            // Needed in case of an initial value and an update
-            // in the same transaction.
-            var result = new LastFiringEvent<T>(valueEvent, transaction);
-            result.RegisterFinalizer(valueEvent);
             return result;
         }
 
