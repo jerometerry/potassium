@@ -17,7 +17,7 @@ Examples
 **Echo**
 ```
     var e = new Event<int>();
-    var l = e.Listen(v => Console.WriteLine("{0}", v));
+    var l = e.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
         e.Fire(i);
     l.Dispose();
@@ -28,12 +28,28 @@ Examples
 ```
     var e = new Event<int>();
     var m = e.Map(v => v.ToString());
-    var l = m.Listen(v => Console.WriteLine("{0}", v));
+    var l = m.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
         e.Fire(i);
     l.Dispose();
     m.Dispose();
     e.Dispose();
+```
+
+**Merge**
+```
+    var e1 = new Event<int>();
+    var e2 = new Event<int>();
+    var m = e1.Merge(e2);
+    var l = m.Listen(v => Console.Write("{0} ", v));
+    for (var i = 0; i < 5; i++)
+        e1.Fire(i);
+    for (var i = 6; i < 10; i++ )
+        e2.Fire(i);
+    l.Dispose();
+    m.Dispose();
+    e2.Dispose();
+    e1.Dispose();
 ```
 
 [Sodium](https://github.com/kentuckyfriedtakahe/sodium) [Copyright](https://github.com/kentuckyfriedtakahe/sodium/blob/master/COPYING)
