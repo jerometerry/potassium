@@ -2,24 +2,24 @@ namespace Sodium
 {
     internal sealed class EventListener<T> : SodiumObject, IEventListener<T>
     {
-        private ISodiumCallback<T> callback;
-
         public EventListener(Event<T> source, ISodiumCallback<T> callback, Rank rank)
         {
             this.Source = source;
-            this.callback = callback;
+            this.Callback = callback;
             this.Rank = rank;
         }
 
-        public Rank Rank { get; private set; }
-
         public Event<T> Source { get; private set; }
+
+        public ISodiumCallback<T> Callback { get; private set; }
+
+        public Rank Rank { get; private set; }
 
         public void Fire(T firing, Transaction transaction)
         {
-            if (this.callback != null)
+            if (this.Callback != null)
             {
-                this.callback.Fire(firing, transaction);
+                this.Callback.Fire(firing, transaction);
             }
         }
 
@@ -31,7 +31,7 @@ namespace Sodium
                 this.Source = null;
             }
 
-            callback = null;
+            Callback = null;
             Rank = null;
 
             base.Dispose();

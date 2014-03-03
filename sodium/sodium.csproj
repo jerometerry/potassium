@@ -51,6 +51,7 @@
     <Compile Include="DelayEvent.cs" />
     <Compile Include="EventLoop.cs" />
     <Compile Include="FixedTransactionContext.cs" />
+    <Compile Include="LastFiringEvent.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="SodiumObject.cs" />
     <Compile Include="SingleTransactionContext.cs" />

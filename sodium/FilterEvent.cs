@@ -18,6 +18,16 @@ namespace Sodium
             this.listener = source.Listen(callback, this.Rank);
         }
 
+        /// <summary>
+        /// Fire the event if the predicate evaluates to true
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="a"></param>
+        public override bool Fire(T a, Transaction t)
+        {
+            return this.f(a) && base.Fire(a, t);
+        }
+
         public override void Dispose()
         {
             if (listener != null)
@@ -47,16 +57,6 @@ namespace Sodium
             }
 
             return filtered.ToArray();
-        }
-
-        /// <summary>
-        /// Fire the event if the predicate evaluates to true
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="a"></param>
-        protected override bool Fire(T a, Transaction t)
-        {
-            return this.f(a) && base.Fire(a, t);
         }
     }
 }

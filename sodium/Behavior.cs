@@ -119,10 +119,20 @@ namespace Sodium
         /// <summary>
         /// Fire the given value to all registered listeners 
         /// </summary>
-        /// <param name="a">The value to be fired</param>
-        public override bool Fire(T a)
+        /// <param name="firing">The value to be fired</param>
+        public override bool Fire(T firing)
         {
-            return this.Source.Fire(a);
+            return this.Source.Fire(firing);
+        }
+
+        /// <summary>
+        /// Fires the given value to all registered listeners, using the given transaction
+        /// </summary>
+        /// <param name="firing">The value to fire.</param>
+        /// <param name="transaction">The transaction to used to order the firings</param>
+        public override bool Fire(T firing, Transaction transaction)
+        {
+            return this.Source.Fire(firing, transaction);
         }
 
         /// <summary>
@@ -322,7 +332,7 @@ namespace Sodium
 
             // Needed in case of an initial value and an update
             // in the same transaction.
-            var result = valueEvent.LastFiringOnly(transaction);
+            var result = new LastFiringEvent<T>(valueEvent, transaction);
             result.RegisterFinalizer(valueEvent);
             return result;
         }

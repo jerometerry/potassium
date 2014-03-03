@@ -14,7 +14,7 @@
         /// </summary>
         /// <param name="transaction"></param>
         /// <param name="firing"></param>
-        protected override bool Fire(T firing, Transaction transaction)
+        public override bool Fire(T firing, Transaction transaction)
         {
             return false;
         }

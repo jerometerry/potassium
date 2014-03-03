@@ -39,8 +39,15 @@
         /// <summary>
         /// Fires the given value to all registered listeners
         /// </summary>
-        /// <param name="a">The value to fire.</param>
-        public abstract bool Fire(T a);
+        /// <param name="firing">The value to fire.</param>
+        public abstract bool Fire(T firing);
+
+        /// <summary>
+        /// Fires the given value to all registered listeners, using the given transaction
+        /// </summary>
+        /// <param name="firing">The value to fire.</param>
+        /// <param name="transaction">The transaction to used to order the firings</param>
+        public abstract bool Fire(T firing, Transaction transaction);
 
         /// <summary>
         /// Run the given Action using a Transaction obtained from TransactionContext.Current
