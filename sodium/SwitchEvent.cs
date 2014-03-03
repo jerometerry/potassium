@@ -59,7 +59,7 @@
 
                 var suppressed = new SuppressedListenEvent<T>(newEvent);
                 this.wrappedEventListener = suppressed.Listen(this.wrappedEventListenerCallback, this.Rank, transaction);
-                ((EventListener<T>)this.wrappedEventListener).RegisterFinalizer(suppressed);
+                ((SodiumObject)this.wrappedEventListener).RegisterFinalizer(suppressed);
             });
         }
     }

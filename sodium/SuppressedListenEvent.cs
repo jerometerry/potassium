@@ -7,7 +7,7 @@
             this.Loop(source);
         }
 
-        protected override bool Refire(EventListener<T> listener, Transaction transaction)
+        protected override bool Refire(IEventListener<T> listener, Transaction transaction)
         {
             return false;
         }

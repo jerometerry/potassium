@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    public sealed class EventListener<T> : SodiumObject, IEventListener<T>
+    internal sealed class EventListener<T> : SodiumObject, IEventListener<T>
     {
         public EventListener(Event<T> source, ISodiumCallback<T> callback, Rank rank)
         {
@@ -14,14 +14,6 @@ namespace Sodium
         public ISodiumCallback<T> Callback { get; private set; }
 
         public Rank Rank { get; private set; }
-
-        public void Fire(T firing, Transaction transaction)
-        {
-            if (this.Callback != null)
-            {
-                this.Callback.Fire(firing, transaction);
-            }
-        }
 
         public override void Dispose()
         {

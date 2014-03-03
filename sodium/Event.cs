@@ -16,7 +16,7 @@ namespace Sodium
         /// List of IListeners that are currently listening for firings 
         /// from the current Event.
         /// </summary>
-        private readonly List<EventListener<T>> listeners = new List<EventListener<T>>();
+        private readonly List<IEventListener<T>> listeners = new List<IEventListener<T>>();
 
         /// <summary>
         /// List of values that have been fired on the current Event in the current transaction.
@@ -46,7 +46,7 @@ namespace Sodium
         /// </summary>
         public override void Dispose()
         {
-            var clone = new List<EventListener<T>>(this.listeners);
+            var clone = new List<IEventListener<T>>(this.listeners);
             this.listeners.Clear();
             foreach (var listener in clone)
             {
@@ -74,7 +74,7 @@ namespace Sodium
         {
             ScheduleClearFirings(transaction);
             AddFiring(firing);
-            FireToListeners(firing, transaction);
+            FireListenerCallbacks(firing, transaction);
             return true;
         }
 
@@ -382,21 +382,30 @@ namespace Sodium
         /// </summary>
         /// <param name="transaction"></param>
         /// <param name="listener"></param>
-        protected virtual bool Refire(EventListener<T> listener, Transaction transaction)
+        protected virtual bool Refire(IEventListener<T> listener, Transaction transaction)
         {
             Fire(listener, firings, transaction);
             return true;
         }
 
-        private static void Fire(EventListener<T> eventListener, IEnumerable<T> firings, Transaction transaction)
+        private static void Fire(IEventListener<T> eventListener, IEnumerable<T> firings, Transaction transaction)
         {
             foreach (var firing in firings)
             {
-                eventListener.Fire(firing, transaction);
+                eventListener.Callback.Fire(firing, transaction);
             }
         }
 
-        private EventListener<T> CreateListener(ISodiumCallback<T> action, Rank superior, Transaction transaction)
+        private void FireListenerCallbacks(T firing, Transaction transaction)
+        {
+            var clone = new List<IEventListener<T>>(this.listeners);
+            foreach (var listener in clone)
+            {
+                listener.Callback.Fire(firing, transaction);
+            }
+        }
+
+        private IEventListener<T> CreateListener(ISodiumCallback<T> action, Rank superior, Transaction transaction)
         {
             lock (Constants.ListenersLock)
             {
@@ -425,16 +434,7 @@ namespace Sodium
             firings.Add(firing);
         }
 
-        private void FireToListeners(T firing, Transaction transaction)
-        {
-            var clone = new List<EventListener<T>>(this.listeners);
-            foreach (var listener in clone)
-            {
-                listener.Fire(firing, transaction);
-            }
-        }
-
-        private void InitialFire(EventListener<T> listener, Transaction transaction)
+        private void InitialFire(IEventListener<T> listener, Transaction transaction)
         {
             var initialFirings = InitialFirings();
             if (initialFirings != null)
