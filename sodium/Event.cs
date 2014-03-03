@@ -29,13 +29,6 @@ namespace Sodium
         private readonly Rank rank = new Rank();
 
         /// <summary>
-        /// Constructs an pass-through Event
-        /// </summary>
-        public Event()
-        {
-        }
-
-        /// <summary>
         /// The current Rank of the Event, used to prioritize firings on the current transaction.
         /// </summary>
         internal Rank Rank
@@ -47,45 +40,13 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Merge two streams of events of the same type.
-        /// </summary>
-        /// <remarks>
-        /// In the case where two event occurrences are simultaneous (i.e. both
-        /// within the same transaction), both will be delivered in the same
-        /// transaction. If the event firings are ordered for some reason, then
-        /// their ordering is retained. In many common cases the ordering will
-        /// be undefined.
-        /// </remarks>
-        public static Event<T> Merge(Event<T> source1, Event<T> source2)
-        {
-            return new MergeEvent<T>(source1, source2);
-        }
-
-        /// <summary>
-        /// Merge two streams of events of the same type, combining simultaneous
-        /// event occurrences.
-        /// </summary>
-        /// <remarks>
-        /// In the case where multiple event occurrences are simultaneous (i.e. all
-        /// within the same transaction), they are combined using the same logic as
-        /// 'coalesce'.
-        /// </remarks>
-        public static Event<T> MergeWith(Event<T> source1, Event<T> source2, Func<T, T, T> f)
-        {
-            var merge = Merge(source1, source2);
-            var c = merge.Coalesce(f);
-            c.RegisterFinalizer(merge);
-            return c;
-        }
-
-        /// <summary>
         /// Cleanup the current Event, disposing of any listeners.
         /// </summary>
         public override void Dispose()
         {
             var clone = new List<EventListener<T>>(this.listeners);
             this.listeners.Clear();
-            foreach(var listener in clone)
+            foreach (var listener in clone)
             {
                 listener.Dispose();
             }
@@ -215,6 +176,38 @@ namespace Sodium
             result.RegisterFinalizer(behavior);
             result.RegisterFinalizer(snapshotEvent);
             return result;
+        }
+
+        /// <summary>
+        /// Merge two streams of events of the same type.
+        /// </summary>
+        /// <remarks>
+        /// In the case where two event occurrences are simultaneous (i.e. both
+        /// within the same transaction), both will be delivered in the same
+        /// transaction. If the event firings are ordered for some reason, then
+        /// their ordering is retained. In many common cases the ordering will
+        /// be undefined.
+        /// </remarks>
+        public Event<T> Merge(Event<T> source2)
+        {
+            return new MergeEvent<T>(this, source2);
+        }
+
+        /// <summary>
+        /// Merge two streams of events of the same type, combining simultaneous
+        /// event occurrences.
+        /// </summary>
+        /// <remarks>
+        /// In the case where multiple event occurrences are simultaneous (i.e. all
+        /// within the same transaction), they are combined using the same logic as
+        /// 'coalesce'.
+        /// </remarks>
+        public Event<T> Merge(Event<T> source2, Func<T, T, T> f)
+        {
+            var merge = this.Merge(source2);
+            var c = merge.Coalesce(f);
+            c.RegisterFinalizer(merge);
+            return c;
         }
 
         /// <summary>

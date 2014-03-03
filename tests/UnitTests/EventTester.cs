@@ -39,7 +39,7 @@ namespace Sodium.Tests
             var e1 = new Event<int>();
             var e2 = new Event<int>();
             var o = new List<int>();
-            var l = Event<int>.Merge(e1, e2).Listen(o.Add);
+            var l = e1.Merge(e2).Listen(o.Add);
             e1.Fire(7);
             e2.Fire(9);
             e1.Fire(8);
@@ -52,7 +52,7 @@ namespace Sodium.Tests
         {
             var e = new Event<int>();
             var o = new List<int>();
-            var l = Event<int>.Merge(e, e).Listen(o.Add);
+            var l = e.Merge(e).Listen(o.Add);
             e.Fire(7);
             e.Fire(9);
             l.Dispose();
@@ -65,10 +65,11 @@ namespace Sodium.Tests
             var e1 = new Event<int>();
             var e2 = new Event<int>();
             var o = new List<int>();
-            var l =
-                 Event<int>.Merge(e1, Event<int>.Merge(e1.Map(x => x * 100), e2))
-                .Coalesce((a, b) => a + b)
-                .Listen(o.Add);
+            var evt2 = e1.Map(x => x * 100);
+            var evt = evt2.Merge(e2);
+            var l = e1.Merge(evt)
+                      .Coalesce((a, b) => a + b)
+                      .Listen(o.Add);
             e1.Fire(2);
             e1.Fire(8);
             e2.Fire(40);
@@ -107,7 +108,8 @@ namespace Sodium.Tests
         {
             var ea = new Event<int>();
             var eb = new EventLoop<int>();
-            var ec = Event<int>.MergeWith(ea.Map(x => x % 10), eb, (x, y) => x + y);
+            var evt = ea.Map(x => x % 10);
+            var ec = evt.Merge(eb, (x, y) => x + y);
             var ebO = ea.Map(x => x / 10).Filter(x => x != 0);
             eb.Loop(ebO);
             var o = new List<int>();

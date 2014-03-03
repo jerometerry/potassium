@@ -160,7 +160,7 @@ namespace Sodium.Tests
             var behavior1 = new Behavior<int>(9);
             var behavior2 = new Behavior<int>(2);
             var results = new List<int>();
-            var listener = Event<int>.MergeWith(behavior1.Value(), behavior2.Value(), (x, y) => x + y).Listen(results.Add);
+            var listener = behavior1.Value().Merge(behavior2.Value(), (x, y) => x + y).Listen(results.Add);
             behavior1.Fire(1);
             behavior2.Fire(4);
             listener.Dispose();
@@ -477,7 +477,7 @@ namespace Sodium.Tests
         /// </summary>
         private static Event<int> DoubleUp(Event<int> ev)
         {
-            return Event<int>.Merge(ev, ev);
+            return ev.Merge(ev);
         }
 
         private class Se
