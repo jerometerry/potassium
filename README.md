@@ -11,4 +11,15 @@ Check out the [wiki](https://github.com/jerometerry/sodium.net/wiki) for more in
 
 Sodium.net API [documentation](http://jterry.azurewebsites.net/sodium.net/)
 
+Examples
+==========
+
+*Echo*
+    var e = new Event<int>();
+    var l = e.Listen(v => Console.WriteLine("{0}", v));
+    for (var i = 0; i < 5; i++) 
+        e.Fire(i);
+    l.Dispose();
+    e.Dispose();
+
 [Sodium](https://github.com/kentuckyfriedtakahe/sodium) [Copyright](https://github.com/kentuckyfriedtakahe/sodium/blob/master/COPYING)
