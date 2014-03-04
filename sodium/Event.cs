@@ -2,7 +2,6 @@ namespace Sodium
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     /// <summary>
     /// An Event is the observer pattern on steroids. The basic operations of Event are

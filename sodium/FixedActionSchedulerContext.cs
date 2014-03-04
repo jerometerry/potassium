@@ -28,7 +28,7 @@ namespace Sodium
         /// <returns>The result of calling the specified function</returns>
         public override T Start<T>(Func<ActionScheduler, T> f)
         {
-            lock (Constants.TransactionLock)
+            lock (Constants.SchedulerLock)
             {
                 try
                 {

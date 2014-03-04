@@ -110,14 +110,27 @@ namespace Sodium
             return this.Source.Listen(callback);
         }
 
-        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank listenerRank)
+        /// <summary>
+        /// Listen to the underlying event for updates
+        /// </summary>
+        /// <param name="callback">The action to invoke when the underlying event fires</param>
+        /// <param name="rank">The rank of the action, used as a superior to the rank of the underlying action.</param>
+        /// <returns>The event listener</returns>
+        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank rank)
         {
-            return this.Source.Listen(callback, listenerRank);
+            return this.Source.Listen(callback, rank);
         }
 
-        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank superior, ActionScheduler scheduler)
+        /// <summary>
+        /// Listen to the underlying event for updates
+        /// </summary>
+        /// <param name="callback">The action to invoke when the underlying event fires</param>
+        /// <param name="rank">The rank of the action, used as a superior to the rank of the underlying action.</param>
+        /// <param name="scheduler">The scheduler used to order actions</param>
+        /// <returns>The event listener</returns>
+        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank rank, ActionScheduler scheduler)
         {
-            return this.Source.Listen(callback, superior, scheduler);
+            return this.Source.Listen(callback, rank, scheduler);
         }
 
         /// <summary>

@@ -10,6 +10,6 @@
         /// <summary>
         /// Coarse-grained lock that's held during the whole scheduler. 
         /// </summary>
-        internal static readonly object TransactionLock = new object();
+        internal static readonly object SchedulerLock = new object();
     }
 }

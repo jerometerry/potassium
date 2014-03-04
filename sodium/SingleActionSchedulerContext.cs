@@ -25,7 +25,7 @@ namespace Sodium
         /// </remarks>
         public override T Start<T>(Func<ActionScheduler, T> f)
         {
-            lock (Constants.TransactionLock)
+            lock (Constants.SchedulerLock)
             {
                 // If we are already inside a scheduler (which must be on the same
                 // thread otherwise we wouldn't have acquired transactionLock), then
