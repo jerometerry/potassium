@@ -14,7 +14,9 @@ Sodium.net API [documentation](http://jterry.azurewebsites.net/sodium.net/)
 Memory Management
 ==========
 
-```Event```, ```Behavior``` and Event ```IEventListener``` all implement ```IDisposable```, and all should be disposed of when you are done with them. 
+```Event```, ```Behavior``` and ```IEventListener``` all implement ```IDisposable```, and all should be disposed of when you are done with them. 
+
+Return values of ```Event``` and ```Behavior``` methods that return other ```Events``` and ```Behaviors``` also need to be disposed of. 
 
 This is especially important if you are calling methods on ```Events``` and / or ```Behaviors``` inside callback functions.
 
@@ -38,6 +40,8 @@ Here's an example, extraced from *MemoryTest1.cs*
         items.Clear();
     }
 ```
+
+Notice the use of ```DisposeFinalizers``` inside the ```changeTens.Map``` lambda expression. ```Behavior.Map``` creates a new instance of ```Behavior```, which needs to be disposed. Without this, there would be a memory leak.
 
 Event Examples
 ==========
