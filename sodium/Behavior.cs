@@ -55,8 +55,8 @@ namespace Sodium
         /// This should generally be avoided in favor of GetValueStream().Listen(..) so you don't
         /// miss any updates, but in many circumstances it makes sense.
         ///
-        /// It can be best to use it inside an explicit scheduler (using ActionSchedulerContext.Current.Run()).
-        /// For example, a b.Value inside an explicit scheduler along with a
+        /// It can be best to use it inside an explicit transaction (using ActionSchedulerContext.Current.Run()).
+        /// For example, a b.Value inside an explicit transaction along with a
         /// b.Source.Listen(..) will capture the current value and any updates without risk
         /// of missing any in between.
         /// </remarks>
@@ -82,7 +82,7 @@ namespace Sodium
         /// <returns>The unwrapped event</returns>
         /// <remarks>ActionSchedulerContext.Current.Run is used to invoke the overload of the 
         /// UnwrapEvent operation that takes a thread. This ensures that any other
-        /// actions triggered during UnwrapEvent requiring a scheduler all get the same instance.</remarks>
+        /// actions triggered during UnwrapEvent requiring a transaction all get the same instance.</remarks>
         public static Event<T> UnwrapEvent(Behavior<Event<T>> behavior)
         {
             return new SwitchEvent<T>(behavior);
@@ -126,11 +126,11 @@ namespace Sodium
         /// </summary>
         /// <param name="callback">The action to invoke when the underlying event fires</param>
         /// <param name="rank">The rank of the action, used as a superior to the rank of the underlying action.</param>
-        /// <param name="scheduler">The scheduler used to order actions</param>
+        /// <param name="transaction">The transaction used to order actions</param>
         /// <returns>The event listener</returns>
-        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank rank, Scheduler scheduler)
+        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank rank, Transaction transaction)
         {
-            return this.Source.Listen(callback, rank, scheduler);
+            return this.Source.Listen(callback, rank, transaction);
         }
 
         /// <summary>
@@ -142,10 +142,10 @@ namespace Sodium
         /// value changes thereafter</returns>
         /// <remarks>ActionSchedulerContext.Current.Run is used to invoke the overload of the 
         /// Value operation that takes a thread. This ensures that any other
-        /// actions triggered during Value requiring a scheduler all get the same instance.</remarks>
+        /// actions triggered during Value requiring a transaction all get the same instance.</remarks>
         public Event<T> Values()
         {
-            return this.RunScheduler<Event<T>>(this.Values);
+            return this.StartTransaction<Event<T>>(this.Values);
         }
 
         /// <summary>
@@ -153,16 +153,16 @@ namespace Sodium
         /// the current value of the behavior, and thereafter behaves like updates(),
         /// firing for each update to the behavior's value.
         /// </summary>
-        /// <param name="scheduler">The scheduler to run the Value operation on</param>
+        /// <param name="transaction">The transaction to run the Value operation on</param>
         /// <returns>An event that will fire when it's listened to, and every time it's 
         /// value changes thereafter</returns>
-        public Event<T> Values(Scheduler scheduler)
+        public Event<T> Values(Transaction transaction)
         {
-            var valueEvent = new BehaviorValueEvent<T>(this, scheduler);
+            var valueEvent = new BehaviorValueEvent<T>(this, transaction);
 
             // Needed in case of an initial value and an update
-            // in the same scheduler.
-            var result = new LastFiringEvent<T>(valueEvent, scheduler);
+            // in the same transaction.
+            var result = new LastFiringEvent<T>(valueEvent, transaction);
             result.RegisterFinalizer(valueEvent);
             return result;
         }
@@ -270,32 +270,32 @@ namespace Sodium
         /// <returns>The IEventListener registered with the underlying event.</returns>
         private IEventListener<T> ListenForEventFirings()
         {
-            return this.RunScheduler<IEventListener<T>>(this.ListenForEventFirings);
+            return this.StartTransaction<IEventListener<T>>(this.ListenForEventFirings);
         }
 
         /// <summary>
         /// Listen to the underlying event for firings
         /// </summary>
-        /// <param name="scheduler">The scheduler to schedule the listen on.</param>
+        /// <param name="transaction">The transaction to schedule the listen on.</param>
         /// <returns>The IEventListener registered with the underlying event.</returns>
-        private IEventListener<T> ListenForEventFirings(Scheduler scheduler)
+        private IEventListener<T> ListenForEventFirings(Transaction transaction)
         {
             var callback = new ActionCallback<T>(ScheduleApplyValueUpdate);
-            var result = this.Listen(callback, Rank.Highest, scheduler);
+            var result = this.Listen(callback, Rank.Highest, transaction);
             return result;
         }
 
         /// <summary>
-        /// Store the updated value, and schedule a Scheduler.Last action that will move the updated value 
+        /// Store the updated value, and schedule a Transaction.Last action that will move the updated value 
         /// into the current value.
         /// </summary>
-        /// <param name="scheduler">The scheduler to schedule the value update on</param>
+        /// <param name="transaction">The transaction to schedule the value update on</param>
         /// <param name="update">The updated value</param>
-        private void ScheduleApplyValueUpdate(T update, Scheduler scheduler)
+        private void ScheduleApplyValueUpdate(T update, Transaction transaction)
         {
             if (!valueUpdate.HasValue)
             {
-                scheduler.Medium(ApplyValueUpdate);
+                transaction.Medium(ApplyValueUpdate);
             }
 
             valueUpdate = new Maybe<T>(update);

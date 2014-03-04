@@ -16,7 +16,7 @@
             this.listener = source.Listen(new ActionCallback<T>(this.Fire), this.Rank);
         }
 
-        public void Fire(T firing, Scheduler trans)
+        public void Fire(T firing, Transaction trans)
         {
             var v = this.map(firing);
             Fire(v, trans);

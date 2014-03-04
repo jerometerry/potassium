@@ -10,7 +10,7 @@
         public SwitchEvent(Behavior<Event<T>> source)
         {
             this.source = source;
-            this.RunScheduler<Unit>(this.Initialize);
+            this.StartTransaction<Unit>(this.Initialize);
         }
 
         protected override void Dispose(bool disposing)
@@ -33,20 +33,20 @@
             base.Dispose(disposing);
         }
 
-        private Unit Initialize(Scheduler scheduler)
+        private Unit Initialize(Transaction transaction)
         {
             this.wrappedEventListenerCallback = this.CreateFireCallback();
-            this.wrappedEventListener = source.Value.Listen(this.wrappedEventListenerCallback, this.Rank, scheduler);
+            this.wrappedEventListener = source.Value.Listen(this.wrappedEventListenerCallback, this.Rank, transaction);
 
             var behaviorEventChanged = new ActionCallback<Event<T>>(UpdateWrappedEventListener);
-            this.behaviorListener = source.Listen(behaviorEventChanged, this.Rank, scheduler);
+            this.behaviorListener = source.Listen(behaviorEventChanged, this.Rank, transaction);
 
             return Unit.Nothing;
         }
 
-        private void UpdateWrappedEventListener(Event<T> newEvent, Scheduler scheduler)
+        private void UpdateWrappedEventListener(Event<T> newEvent, Transaction transaction)
         {
-            scheduler.Medium(() =>
+            transaction.Medium(() =>
             {
                 if (this.wrappedEventListener != null)
                 {
@@ -55,7 +55,7 @@
                 }
 
                 var suppressed = new SuppressedListenEvent<T>(newEvent);
-                this.wrappedEventListener = suppressed.Listen(this.wrappedEventListenerCallback, this.Rank, scheduler);
+                this.wrappedEventListener = suppressed.Listen(this.wrappedEventListenerCallback, this.Rank, transaction);
                 ((SodiumObject)this.wrappedEventListener).RegisterFinalizer(suppressed);
             });
         }

@@ -27,11 +27,11 @@
         /// </summary>
         public bool Disposing { get; private set; }
 
-        private SchedulerContext Context
+        private TransactionContext Context
         {
             get
             {
-                return SchedulerContext.Current;
+                return TransactionContext.Current;
             }
         }
 
@@ -84,20 +84,14 @@
         }
 
         /// <summary>
-        /// Run the given Function using a Scheduler obtained from ActionSchedulerContext.Current
+        /// Run the given Function using a Transaction obtained from ActionSchedulerContext.Current
         /// </summary>
         /// <typeparam name="TR">The return type of the Function</typeparam>
         /// <param name="f">The Function to run</param>
         /// <returns>The result of the Function</returns>
-        protected TR RunScheduler<TR>(Func<Scheduler, TR> f)
+        protected TR StartTransaction<TR>(Func<Transaction, TR> f)
         {
-            lock (Constants.SchedulerLock)
-            {
-                using (var task = this.Context.CreateTask(f))
-                {
-                    return task.Run();
-                }
-            }
+            return this.Context.Run(f);
         }
     }
 }

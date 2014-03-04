@@ -8,13 +8,13 @@ namespace Sodium
     /// <typeparam name="T">The type of value that will be fired</typeparam>
     public sealed class ActionCallback<T> : ISodiumCallback<T>
     {
-        private readonly Action<T, Scheduler> action;
+        private readonly Action<T, Transaction> action;
 
         /// <summary>
         /// Constructs a new SodiumCallback from the given Action
         /// </summary>
         /// <param name="action">The Action to invoke when the Observable fires</param>
-        public ActionCallback(Action<T, Scheduler> action)
+        public ActionCallback(Action<T, Transaction> action)
         {
             this.action = action;
         }
@@ -24,10 +24,10 @@ namespace Sodium
         /// </summary>
         /// <param name="firing">The value to be fired to the </param>
         /// <param name="listener">The listener that holds the current callback</param>
-        /// <param name="scheduler">The Scheduler used to order the firing</param>
-        public void Fire(T firing, IEventListener<T> listener, Scheduler scheduler)
+        /// <param name="transaction">The Transaction used to order the firing</param>
+        public void Fire(T firing, IEventListener<T> listener, Transaction transaction)
         {
-            action(firing, scheduler);
+            action(firing, transaction);
         }
     }
 }

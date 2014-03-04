@@ -9,13 +9,13 @@ namespace Sodium
         private IEventListener<T> listener;
         private Maybe<T> accumulatedValue = Maybe<T>.Null;
 
-        public CoalesceEvent(Event<T> source, Func<T, T, T> coalesce, Scheduler scheduler)
+        public CoalesceEvent(Event<T> source, Func<T, T, T> coalesce, Transaction transaction)
         {
             this.source = source;
             this.coalesce = coalesce;
 
             var callback = new ActionCallback<T>(this.Accumulate);
-            this.listener = source.Listen(callback, this.Rank, scheduler);
+            this.listener = source.Listen(callback, this.Rank, transaction);
         }
 
         protected internal override T[] InitialFirings()
@@ -49,7 +49,7 @@ namespace Sodium
             base.Dispose(disposing);
         }
 
-        private void Accumulate(T data, Scheduler scheduler)
+        private void Accumulate(T data, Transaction transaction)
         {
             if (this.accumulatedValue.HasValue)
             {
@@ -57,15 +57,15 @@ namespace Sodium
             }
             else
             {
-                scheduler.High(Fire, this.Rank);
+                transaction.High(Fire, this.Rank);
                 this.accumulatedValue = new Maybe<T>(data);
             }
         }
 
-        private void Fire(Scheduler scheduler)
+        private void Fire(Transaction transaction)
         {
             var v = this.accumulatedValue.Value();
-            this.Fire(v, scheduler);
+            this.Fire(v, transaction);
             this.accumulatedValue = Maybe<T>.Null;
         }
     }

@@ -4,10 +4,10 @@ namespace Sodium
     using System.Collections.Generic;
 
     /// <summary>
-    /// A Scheduler is used to order a stream of actions
+    /// A Transaction is used to order a stream of actions
     /// </summary>
     /// <remarks>
-    /// Actions are run in the following order when the scheduler is ran
+    /// Actions are run in the following order when the transaction is ran
     /// 
     ///     1. High priority actions
     ///     2. Medium priority actions
@@ -16,7 +16,7 @@ namespace Sodium
     /// High priority actions are ordered by Rank using a Priority Queue. Medium 
     /// and Low priority actions are run in the order they are added.
     /// </remarks>
-    public sealed class Scheduler : SodiumObject
+    public sealed class Transaction : SodiumObject
     {
         private PriorityQueue<PrioritizedAction> high;
         private List<Action> medium;
@@ -25,7 +25,7 @@ namespace Sodium
         /// <summary>
         /// Default constructor
         /// </summary>
-        public Scheduler()
+        public Transaction()
         {
             this.high = new PriorityQueue<PrioritizedAction>();
             this.medium = new List<Action>();
@@ -43,7 +43,7 @@ namespace Sodium
         /// </summary> 
         /// <param name="action">The action to schedule high</param>
         /// <param name="rank">The rank of the action</param>
-        public void High(Action<Scheduler> action, Rank rank)
+        public void High(Action<Transaction> action, Rank rank)
         {
             this.high.Add(new PrioritizedAction(action, rank));
         }
@@ -82,7 +82,7 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Clean up the current Scheduler, purging any actions without firing
+        /// Clean up the current Transaction, purging any actions without firing
         /// </summary>
         protected override void Dispose(bool disposing)
         {

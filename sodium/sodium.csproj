@@ -46,7 +46,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SchedulerTask.cs" />
     <Compile Include="BehaviorApplyEvent.cs" />
     <Compile Include="BehaviorLoop.cs" />
     <Compile Include="BehaviorSink.cs" />
@@ -80,7 +79,7 @@
   <ItemGroup>
     <Compile Include="SnapshotEvent.cs" />
     <Compile Include="SwitchEvent.cs" />
-    <Compile Include="Scheduler.cs" />
+    <Compile Include="Transaction.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Rank.cs" />
@@ -90,7 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionCallback.cs" />
-    <Compile Include="SchedulerContext.cs" />
+    <Compile Include="TransactionContext.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
