@@ -7,13 +7,14 @@ namespace Sodium
     /// A Scheduler is used to order a stream of actions
     /// </summary>
     /// <remarks>
-    /// Transactions are run in the following order when the scheduler is committed
+    /// Actions are run in the following order when the scheduler is ran
     /// 
-    ///     1. Priority actions
-    ///     2. Last actions
-    ///     3. Post actions
+    ///     1. High priority actions
+    ///     2. Medium priority actions
+    ///     3. Low priority actions
     /// 
-    /// Prioritized actions are ordered by Rank using a Priority Queue 
+    /// High priority actions are ordered by Rank using a Priority Queue. Medium 
+    /// and Low priority actions are run in the order they are added.
     /// </remarks>
     public sealed class ActionScheduler : SodiumObject
     {
