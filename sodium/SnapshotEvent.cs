@@ -20,11 +20,11 @@ namespace Sodium
             this.listener = source.Listen(callback, this.Rank);
         }
 
-        public void Fire(T firing, Transaction transaction)
+        public void Fire(T firing, ActionScheduler scheduler)
         {
             var f = this.behavior.Value;
             var v = this.snapshot(firing, f);
-            this.Fire(v, transaction);
+            this.Fire(v, scheduler);
         }
 
         protected internal override TC[] InitialFirings()

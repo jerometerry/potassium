@@ -60,13 +60,13 @@
         }
 
         /// <summary>
-        /// Schedule prioritized firing on the given transaction
+        /// Schedule prioritized firing on the given scheduler
         /// </summary>
-        /// <param name="transaction"></param>
+        /// <param name="scheduler"></param>
         /// <returns>True if firing was added as a priority action on the given 
-        /// transaction, false if there is already an scheduled firing that 
+        /// scheduler, false if there is already an scheduled firing that 
         /// is yet to fire.</returns>
-        private bool ScheduledPrioritizedFire(Transaction transaction)
+        private bool ScheduledPrioritizedFire(ActionScheduler scheduler)
         {
             if (fired)
             {
@@ -74,14 +74,14 @@
             }
 
             fired = true;
-            transaction.Priority(Fire, this.Rank);
+            scheduler.High(Fire, this.Rank);
             return true;
         }
 
-        private void Fire(Transaction transaction)
+        private void Fire(ActionScheduler scheduler)
         {
             var b = this.GetNewValue();
-            this.Fire(b, transaction);
+            this.Fire(b, scheduler);
             fired = false;
         }
 

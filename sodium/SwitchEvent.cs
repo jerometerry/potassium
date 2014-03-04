@@ -35,21 +35,21 @@
 
         private void Initialize()
         {
-            this.Run(this.Initialize);
+            this.StartScheduler(this.Initialize);
         }
 
-        private void Initialize(Transaction transaction)
+        private void Initialize(ActionScheduler scheduler)
         {
             this.wrappedEventListenerCallback = this.CreateFireCallback();
-            this.wrappedEventListener = source.Value.Listen(this.wrappedEventListenerCallback, this.Rank, transaction);
+            this.wrappedEventListener = source.Value.Listen(this.wrappedEventListenerCallback, this.Rank, scheduler);
 
             var behaviorEventChanged = new ActionCallback<Event<T>>(UpdateWrappedEventListener);
-            this.behaviorListener = source.Listen(behaviorEventChanged, this.Rank, transaction);
+            this.behaviorListener = source.Listen(behaviorEventChanged, this.Rank, scheduler);
         }
 
-        private void UpdateWrappedEventListener(Event<T> newEvent, Transaction transaction)
+        private void UpdateWrappedEventListener(Event<T> newEvent, ActionScheduler scheduler)
         {
-            transaction.Last(() =>
+            scheduler.Medium(() =>
             {
                 if (this.wrappedEventListener != null)
                 {
@@ -58,7 +58,7 @@
                 }
 
                 var suppressed = new SuppressedListenEvent<T>(newEvent);
-                this.wrappedEventListener = suppressed.Listen(this.wrappedEventListenerCallback, this.Rank, transaction);
+                this.wrappedEventListener = suppressed.Listen(this.wrappedEventListenerCallback, this.Rank, scheduler);
                 ((SodiumObject)this.wrappedEventListener).RegisterFinalizer(suppressed);
             });
         }

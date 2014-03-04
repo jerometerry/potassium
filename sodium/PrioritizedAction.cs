@@ -6,18 +6,18 @@ namespace Sodium
     {
         private static long nextSequence;
 
-        private readonly Action<Transaction> action;
+        private readonly Action<ActionScheduler> action;
         private readonly Rank rank;
         private readonly long sequence;
 
-        public PrioritizedAction(Action<Transaction> action, Rank rank)
+        public PrioritizedAction(Action<ActionScheduler> action, Rank rank)
         {
             this.action = action;
             this.rank = rank;
             this.sequence = nextSequence++;
         }
 
-        public Action<Transaction> Action
+        public Action<ActionScheduler> Action
         {
             get
             {

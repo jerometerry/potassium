@@ -3,46 +3,46 @@ namespace Sodium
     using System;
 
     /// <summary>
-    /// FixedTransactionContext is a TransactionContext that uses a single (fixed) Transaction
+    /// FixedTransactionContext is a ActionSchedulerContext that uses a single (fixed) Scheduler
     /// throughout it's lifetime.
     /// </summary>
-    public sealed class FixedTransactionContext : TransactionContext, IDisposable
+    public sealed class FixedActionSchedulerContext : ActionSchedulerContext, IDisposable
     {
-        private Transaction transaction;
+        private ActionScheduler scheduler;
         private bool disposed;
 
         /// <summary>
         /// Creates a new FixedTransactionContext
         /// </summary>
-        /// <param name="transaction">The fixed Transaction</param>
-        public FixedTransactionContext(Transaction transaction)
+        /// <param name="scheduler">The fixed Scheduler</param>
+        public FixedActionSchedulerContext(ActionScheduler scheduler)
         {
-            this.transaction = transaction;
+            this.scheduler = scheduler;
         }
 
         /// <summary>
-        /// Run the given function on the fixed transaction
+        /// Run the given function on the fixed scheduler
         /// </summary>
         /// <typeparam name="T">The return value of the supplied function</typeparam>
-        /// <param name="f">The function to run on the fixed Transaction</param>
+        /// <param name="f">The function to run on the fixed Scheduler</param>
         /// <returns>The result of calling the specified function</returns>
-        public override T Run<T>(Func<Transaction, T> f)
+        public override T Start<T>(Func<ActionScheduler, T> f)
         {
             lock (Constants.TransactionLock)
             {
                 try
                 {
-                    return f(this.transaction);
+                    return f(this.scheduler);
                 }
                 finally
                 {
-                    transaction.Commit();
+                    scheduler.Run();
                 }
             }
         }
 
         /// <summary>
-        /// Releases the current FixedTransactionContext, and it's fixed Transaction.
+        /// Releases the current FixedTransactionContext, and it's fixed Scheduler.
         /// </summary>
         public void Dispose()
         {
@@ -51,10 +51,10 @@ namespace Sodium
                 return;
             }
 
-            if (this.transaction != null)
+            if (this.scheduler != null)
             {
-                this.transaction.Dispose();
-                this.transaction = null;
+                this.scheduler.Dispose();
+                this.scheduler = null;
             }
 
             this.disposed = true;

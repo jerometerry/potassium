@@ -76,23 +76,23 @@
         }
 
         /// <summary>
-        /// Run the given Action using a Transaction obtained from TransactionContext.Current
-        /// </summary>
-        /// <param name="action">The Action to run</param>
-        protected void Run(Action<Transaction> action)
-        {
-            this.Run(t => { action(t); return Unit.Nothing; });
-        }
-
-        /// <summary>
-        /// Run the given Function using a Transaction obtained from TransactionContext.Current
+        /// Run the given Function using a Scheduler obtained from ActionSchedulerContext.Current
         /// </summary>
         /// <typeparam name="TR">The return type of the Function</typeparam>
         /// <param name="f">The Function to run</param>
         /// <returns>The result of the Function</returns>
-        protected TR Run<TR>(Func<Transaction, TR> f)
+        protected TR StartScheduler<TR>(Func<ActionScheduler, TR> f)
         {
-            return TransactionContext.Current.Run(f);
+            return ActionSchedulerContext.Current.Start(f);
+        }
+
+        /// <summary>
+        /// Run the given Action using a Scheduler obtained from ActionSchedulerContext.Current
+        /// </summary>
+        /// <param name="action">The Action to run</param>
+        protected void StartScheduler(Action<ActionScheduler> action)
+        {
+            this.StartScheduler(s => { action(s); return Unit.Nothing; });
         }
     }
 }

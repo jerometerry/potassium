@@ -355,7 +355,7 @@ namespace Sodium.Tests
             var sink = new EventSink<Sb>();
 
             // Split each field o of SB so we can update multiple behaviors in a
-            // single transaction.
+            // single scheduler.
             var behaviorA = sink.Map(s => s.C1).FilterNotNull().ToBehavior('A');
             var behaviorB = sink.Map(s => s.C2).FilterNotNull().ToBehavior('a');
             var bsw = sink.Map(s => s.Behavior).FilterNotNull().ToBehavior(behaviorA);

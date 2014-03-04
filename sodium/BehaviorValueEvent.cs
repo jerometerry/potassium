@@ -5,11 +5,11 @@ namespace Sodium
         private Behavior<T> behavior;
         private IEventListener<T> listener;
 
-        public BehaviorValueEvent(Behavior<T> behavior, Transaction transaction)
+        public BehaviorValueEvent(Behavior<T> behavior, ActionScheduler scheduler)
         {
             this.behavior = behavior;
             var callback = this.CreateFireCallback();
-            listener = behavior.Listen(callback, this.Rank, transaction);
+            listener = behavior.Listen(callback, this.Rank, scheduler);
         }
 
         protected internal override T[] InitialFirings()

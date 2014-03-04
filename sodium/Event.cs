@@ -24,7 +24,7 @@ namespace Sodium
         private readonly Rank rank = new Rank();
 
         /// <summary>
-        /// The current Rank of the Event, used to prioritize firings on the current transaction.
+        /// The current Rank of the Event, used to prioritize firings on the current scheduler.
         /// </summary>
         public Rank Rank
         {
@@ -72,25 +72,25 @@ namespace Sodium
         /// <param name="callback">The action to invoke on a firing</param>
         /// <param name="listenerRank">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An IListener to be used to stop listening for events</returns>
-        /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
+        /// <remarks>ActionSchedulerContext.Current.Run is used to invoke the overload of the 
         /// Listen operation that takes a thread. This ensures that any other
-        /// actions triggered during Listen requiring a transaction all get the same instance.</remarks>
+        /// actions triggered during Listen requiring a scheduler all get the same instance.</remarks>
         public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank listenerRank)
         {
-            return this.Run(t => this.Listen(callback, listenerRank, t));
+            return this.StartScheduler(t => this.Listen(callback, listenerRank, t));
         }
 
         /// <summary>
         /// Listen for firings on the current event
         /// </summary>
-        /// <param name="transaction">Transaction to send any firings on</param>
+        /// <param name="scheduler">Scheduler to send any firings on</param>
         /// <param name="callback">The action to invoke on a firing</param>
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An IListener to be used to stop listening for events.</returns>
-        /// <remarks>Any firings that have occurred on the current transaction will be re-fired immediate after listening.</remarks>
-        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank superior, Transaction transaction)
+        /// <remarks>Any firings that have occurred on the current scheduler will be re-fired immediate after listening.</remarks>
+        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank superior, ActionScheduler scheduler)
         {
-            return this.CreateListener(callback, superior, transaction);
+            return this.CreateListener(callback, superior, scheduler);
         }
 
         /// <summary>
@@ -126,27 +126,27 @@ namespace Sodium
         /// <summary>
         /// Create a behavior with the specified initial value, that gets updated
         /// by the values coming through the event. The 'current value' of the behavior
-        /// is notionally the value as it was 'at the start of the transaction'.
+        /// is notionally the value as it was 'at the start of the scheduler'.
         /// That is, state updates caused by event firings get processed at the end of
-        /// the transaction.
+        /// the scheduler.
         /// </summary>
         /// <returns>A Behavior that updates when the current event is fired,
         /// having the specified initial value.</returns>
         public Behavior<T> ToBehavior(T initValue)
         {
-            return this.Run(t => ToBehavior(initValue, t));
+            return this.StartScheduler(t => ToBehavior(initValue, t));
         }
 
         /// <summary>
         /// Create a behavior with the specified initial value, that gets updated
         /// by the values coming through the event. The 'current value' of the behavior
-        /// is notionally the value as it was 'at the start of the transaction'.
+        /// is notionally the value as it was 'at the start of the scheduler'.
         /// That is, state updates caused by event firings get processed at the end of
-        /// the transaction.
+        /// the scheduler.
         /// </summary>
         /// <returns>A Behavior that updates when the current event is fired,
         /// having the specified initial value.</returns>
-        public Behavior<T> ToBehavior(T initValue, Transaction t)
+        public Behavior<T> ToBehavior(T initValue, ActionScheduler t)
         {
             var f = new LastFiringEvent<T>(this, t);
             var b = new Behavior<T>(f, initValue);
@@ -156,8 +156,8 @@ namespace Sodium
 
         /// <summary>
         /// Sample the behavior at the time of the event firing. Note that the 'current value'
-        /// of the behavior that's sampled is the value as at the start of the transaction
-        /// before any state changes of the current transaction are applied through 'hold's.
+        /// of the behavior that's sampled is the value as at the start of the scheduler
+        /// before any state changes of the current scheduler are applied through 'hold's.
         /// </summary>
         public Event<TC> Snapshot<TB, TC>(Behavior<TB> behavior, Func<T, TB, TC> snapshot)
         {
@@ -173,7 +173,7 @@ namespace Sodium
         }
 
         /// <summary>
-        /// If there's more than one firing in a single transaction, combine them into
+        /// If there's more than one firing in a single scheduler, combine them into
         /// one using the specified combining function.
         /// </summary>
         /// <param name="coalesce"></param>
@@ -185,14 +185,14 @@ namespace Sodium
         /// </remarks>
         public Event<T> Coalesce(Func<T, T, T> coalesce)
         {
-            return this.Run(t => Coalesce(coalesce, t));
+            return this.StartScheduler(t => Coalesce(coalesce, t));
         }
 
         /// <summary>
-        /// If there's more than one firing in a single transaction, combine them into
+        /// If there's more than one firing in a single scheduler, combine them into
         /// one using the specified combining function.
         /// </summary>
-        /// <param name="transaction"></param>
+        /// <param name="scheduler"></param>
         /// <param name="coalesce"></param>
         /// <remarks>
         /// If the event firings are ordered, then the first will appear at the left
@@ -200,9 +200,9 @@ namespace Sodium
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
         /// </remarks>
-        public Event<T> Coalesce(Func<T, T, T> coalesce, Transaction transaction)
+        public Event<T> Coalesce(Func<T, T, T> coalesce, ActionScheduler scheduler)
         {
-            return new CoalesceEvent<T>(this, coalesce, transaction);
+            return new CoalesceEvent<T>(this, coalesce, scheduler);
         }
 
         /// <summary>
@@ -245,8 +245,8 @@ namespace Sodium
         /// </summary>
         /// <remarks>
         /// In the case where two event occurrences are simultaneous (i.e. both
-        /// within the same transaction), both will be delivered in the same
-        /// transaction. If the event firings are ordered for some reason, then
+        /// within the same scheduler), both will be delivered in the same
+        /// scheduler. If the event firings are ordered for some reason, then
         /// their ordering is retained. In many common cases the ordering will
         /// be undefined.
         /// </remarks>
@@ -261,7 +261,7 @@ namespace Sodium
         /// </summary>
         /// <remarks>
         /// In the case where multiple event occurrences are simultaneous (i.e. all
-        /// within the same transaction), they are combined using the same logic as
+        /// within the same scheduler), they are combined using the same logic as
         /// 'coalesce'.
         /// </remarks>
         public Event<T> Merge(Event<T> source2, Func<T, T, T> f)
@@ -281,7 +281,7 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Push each event occurrence onto a new transaction.
+        /// Push each event occurrence onto a new scheduler.
         /// </summary>
         public Event<T> Delay()
         {
@@ -290,8 +290,8 @@ namespace Sodium
 
         /// <summary>
         /// Let event occurrences through only when the behavior's value is True.
-        /// Note that the behavior's value is as it was at the start of the transaction,
-        /// that is, no state changes from the current transaction are taken into account.
+        /// Note that the behavior's value is as it was at the start of the scheduler,
+        /// that is, no state changes from the current scheduler are taken into account.
         /// </summary>
         public Event<T> Gate(Behavior<bool> predicate)
         {
@@ -323,13 +323,13 @@ namespace Sodium
             return eb;
         }
 
-        protected virtual IEventListener<T> CreateListener(ISodiumCallback<T> source, Rank superior, Transaction transaction)
+        protected virtual IEventListener<T> CreateListener(ISodiumCallback<T> source, Rank superior, ActionScheduler scheduler)
         {
             lock (Constants.ListenersLock)
             {
                 if (this.rank.AddSuperior(superior))
                 {
-                    transaction.Reprioritize = true;
+                    scheduler.Reprioritize = true;
                 }
 
                 var listener = new EventListener<T>(this, source, superior);
