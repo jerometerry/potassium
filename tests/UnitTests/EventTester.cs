@@ -185,7 +185,7 @@ namespace Sodium.Tests
         public void TestDelay()
         {
             var e = new EventSink<char>();
-            var b = e.ToBehavior(' ');
+            var b = e.Hold(' ');
             var o = new List<char>();
             var l = e.Delay().Snapshot(b).Listen(o.Add);
             e.Fire('C');

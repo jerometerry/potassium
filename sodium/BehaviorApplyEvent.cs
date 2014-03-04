@@ -28,7 +28,7 @@
             var map = bf.Value;
             var valA = source.Value;
             var valB = map(valA);
-            this.Behavior = this.ToBehavior(valB);
+            this.Behavior = this.Hold(valB);
         }
 
         public Behavior<TB> Behavior { get; private set; }

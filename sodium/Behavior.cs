@@ -67,12 +67,12 @@ namespace Sodium
         /// </summary>
         /// <param name="source">The Behavior with an inner Behavior to unwrap.</param>
         /// <returns>The new, unwrapped Behavior</returns>
-        public static Behavior<T> Unwrap(Behavior<Behavior<T>> source)
+        public static Behavior<T> SwitchB(Behavior<Behavior<T>> source)
         {
             var innerBehavior = source.Value;
             var initValue = innerBehavior.Value;
             var sink = new SwitchBehaviorEvent<T>(source);
-            var result = sink.ToBehavior(initValue);
+            var result = sink.Hold(initValue);
             result.RegisterFinalizer(sink);
             return result;
         }
@@ -85,7 +85,7 @@ namespace Sodium
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// UnwrapEvent operation that takes a thread. This ensures that any other
         /// actions triggered during UnwrapEvent requiring a transaction all get the same instance.</remarks>
-        public static Event<T> UnwrapEvent(Behavior<Event<T>> behavior)
+        public static Event<T> SwitchE(Behavior<Event<T>> behavior)
         {
             return new SwitchEvent<T>(behavior);
         }
@@ -160,7 +160,7 @@ namespace Sodium
             var mapEvent = underlyingEvent.Map(map);
             var currentValue = Value;
             var mappedValue = map(currentValue);
-            var behavior = mapEvent.ToBehavior(mappedValue);
+            var behavior = mapEvent.Hold(mappedValue);
             behavior.RegisterFinalizer(mapEvent);
             return behavior;
         }
@@ -199,7 +199,7 @@ namespace Sodium
             var currentValue = Value;
             var tuple = snapshot(currentValue, initState);
             var loop = new EventLoop<Tuple<TB, TS>>();
-            var loopBehavior = loop.ToBehavior(tuple);
+            var loopBehavior = loop.Hold(tuple);
             var snapshotBehavior = loopBehavior.Map(x => x.Item2);
             var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
             loop.Loop(coalesceSnapshotEvent);

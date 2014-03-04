@@ -98,9 +98,9 @@ namespace Sodium
         /// <param name="initValue">The initial value for the Behavior</param>
         /// <returns>A Behavior that updates when the current event is fired,
         /// having the specified initial value.</returns>
-        public Behavior<T> ToBehavior(T initValue)
+        public Behavior<T> Hold(T initValue)
         {
-            return this.StartTransaction(t => ToBehavior(initValue, t));
+            return this.StartTransaction(t => this.Hold(initValue, t));
         }
 
         /// <summary>
@@ -180,11 +180,11 @@ namespace Sodium
         public Behavior<TS> Accum<TS>(TS initState, Func<T, TS, TS> snapshot)
         {
             var evt = new EventLoop<TS>();
-            var behavior = evt.ToBehavior(initState);
+            var behavior = evt.Hold(initState);
             var snapshotEvent = Snapshot(behavior, snapshot);
             evt.Loop(snapshotEvent);
 
-            var result = snapshotEvent.ToBehavior(initState);
+            var result = snapshotEvent.Hold(initState);
             result.RegisterFinalizer(evt);
             result.RegisterFinalizer(behavior);
             result.RegisterFinalizer(snapshotEvent);
@@ -278,7 +278,7 @@ namespace Sodium
         public Event<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             var es = new EventLoop<TS>();
-            var s = es.ToBehavior(initState);
+            var s = es.Hold(initState);
             var ebs = Snapshot(s, snapshot);
             var eb = ebs.Map(bs => bs.Item1);
             var evt = ebs.Map(bs => bs.Item2);
@@ -351,7 +351,7 @@ namespace Sodium
         /// </summary>
         /// <returns>A Behavior that updates when the current event is fired,
         /// having the specified initial value.</returns>
-        internal Behavior<T> ToBehavior(T initValue, Transaction t)
+        internal Behavior<T> Hold(T initValue, Transaction t)
         {
             var f = new LastFiringEvent<T>(this, t);
             var b = new Behavior<T>(f, initValue);

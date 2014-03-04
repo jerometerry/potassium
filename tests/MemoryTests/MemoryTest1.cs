@@ -17,7 +17,7 @@ namespace Sodium.MemoryTests
             var evt = new EventSink<int?>();
             finalizers.Add(evt);
 
-            var behavior = evt.ToBehavior(0);
+            var behavior = evt.Hold(0);
             finalizers.Add(behavior);
 
             // TODO - etens isn't being used. Seems like it should be
@@ -42,10 +42,10 @@ namespace Sodium.MemoryTests
             var behaviorMap = behavior.Map(tt => new Tuple<int?, int?>(0, tt));
             finalizers.Add(behaviorMap);
 
-            var tensTupleWrappedBehavior = eventOfBehaviors.ToBehavior(behaviorMap);
+            var tensTupleWrappedBehavior = eventOfBehaviors.Hold(behaviorMap);
             finalizers.Add(tensTupleWrappedBehavior);
 
-            var tensTupleBehavior = Behavior<Tuple<int?, int?>>.Unwrap(tensTupleWrappedBehavior);
+            var tensTupleBehavior = Behavior<Tuple<int?, int?>>.SwitchB(tensTupleWrappedBehavior);
             finalizers.Add(tensTupleBehavior);
 
             var tensTupleEvent = tensTupleBehavior.Values();
