@@ -10,7 +10,7 @@
         public SwitchEvent(Behavior<Event<T>> source)
         {
             this.source = source;
-            this.Initialize();
+            this.RunScheduler<Unit>(this.Initialize);
         }
 
         protected override void Dispose(bool disposing)
@@ -33,18 +33,15 @@
             base.Dispose(disposing);
         }
 
-        private void Initialize()
-        {
-            this.RunScheduler(this.Initialize);
-        }
-
-        private void Initialize(Scheduler scheduler)
+        private Unit Initialize(Scheduler scheduler)
         {
             this.wrappedEventListenerCallback = this.CreateFireCallback();
             this.wrappedEventListener = source.Value.Listen(this.wrappedEventListenerCallback, this.Rank, scheduler);
 
             var behaviorEventChanged = new ActionCallback<Event<T>>(UpdateWrappedEventListener);
             this.behaviorListener = source.Listen(behaviorEventChanged, this.Rank, scheduler);
+
+            return Unit.Nothing;
         }
 
         private void UpdateWrappedEventListener(Event<T> newEvent, Scheduler scheduler)

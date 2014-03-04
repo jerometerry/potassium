@@ -99,14 +99,5 @@
                 }
             }
         }
-
-        /// <summary>
-        /// Run the given Action using a Scheduler obtained from ActionSchedulerContext.Current
-        /// </summary>
-        /// <param name="action">The Action to run</param>
-        protected void RunScheduler(Action<Scheduler> action)
-        {
-            this.RunScheduler(s => { action(s); return Unit.Nothing; });
-        }        
     }
 }
