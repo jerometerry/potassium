@@ -27,6 +27,14 @@
         /// </summary>
         public bool Disposing { get; private set; }
 
+        private SchedulerContext Context
+        {
+            get
+            {
+                return SchedulerContext.Current;
+            }
+        }
+
         /// <summary>
         /// Registers the given SodiumObject to be disposed when the current
         /// SodiumObject is disposed.
@@ -81,18 +89,24 @@
         /// <typeparam name="TR">The return type of the Function</typeparam>
         /// <param name="f">The Function to run</param>
         /// <returns>The result of the Function</returns>
-        protected TR StartScheduler<TR>(Func<ActionScheduler, TR> f)
+        protected TR RunScheduler<TR>(Func<Scheduler, TR> f)
         {
-            return ActionSchedulerContext.Current.Start(f);
+            lock (Constants.SchedulerLock)
+            {
+                using (var task = this.Context.CreateTask(f))
+                {
+                    return task.Run();
+                }
+            }
         }
 
         /// <summary>
         /// Run the given Action using a Scheduler obtained from ActionSchedulerContext.Current
         /// </summary>
         /// <param name="action">The Action to run</param>
-        protected void StartScheduler(Action<ActionScheduler> action)
+        protected void RunScheduler(Action<Scheduler> action)
         {
-            this.StartScheduler(s => { action(s); return Unit.Nothing; });
-        }
+            this.RunScheduler(s => { action(s); return Unit.Nothing; });
+        }        
     }
 }

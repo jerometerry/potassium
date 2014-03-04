@@ -16,7 +16,7 @@ namespace Sodium
     /// High priority actions are ordered by Rank using a Priority Queue. Medium 
     /// and Low priority actions are run in the order they are added.
     /// </remarks>
-    public sealed class ActionScheduler : SodiumObject
+    public sealed class Scheduler : SodiumObject
     {
         private PriorityQueue<PrioritizedAction> high;
         private List<Action> medium;
@@ -25,7 +25,7 @@ namespace Sodium
         /// <summary>
         /// Default constructor
         /// </summary>
-        public ActionScheduler()
+        public Scheduler()
         {
             this.high = new PriorityQueue<PrioritizedAction>();
             this.medium = new List<Action>();
@@ -43,7 +43,7 @@ namespace Sodium
         /// </summary> 
         /// <param name="action">The action to schedule high</param>
         /// <param name="rank">The rank of the action</param>
-        public void High(Action<ActionScheduler> action, Rank rank)
+        public void High(Action<Scheduler> action, Rank rank)
         {
             this.high.Add(new PrioritizedAction(action, rank));
         }

@@ -46,16 +46,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SchedulerTask.cs" />
     <Compile Include="BehaviorApplyEvent.cs" />
     <Compile Include="BehaviorLoop.cs" />
     <Compile Include="BehaviorSink.cs" />
     <Compile Include="DelayEvent.cs" />
     <Compile Include="EventLoop.cs" />
     <Compile Include="EventSink.cs" />
-    <Compile Include="FixedActionSchedulerContext.cs" />
     <Compile Include="LastFiringEvent.cs" />
     <Compile Include="SodiumObject.cs" />
-    <Compile Include="SingleActionSchedulerContext.cs" />
     <Compile Include="BehaviorValueEvent.cs" />
     <Compile Include="CoalesceEvent.cs" />
     <Compile Include="Constants.cs" />
@@ -81,7 +80,7 @@
   <ItemGroup>
     <Compile Include="SnapshotEvent.cs" />
     <Compile Include="SwitchEvent.cs" />
-    <Compile Include="ActionScheduler.cs" />
+    <Compile Include="Scheduler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Rank.cs" />
@@ -91,7 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionCallback.cs" />
-    <Compile Include="ActionSchedulerContext.cs" />
+    <Compile Include="SchedulerContext.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

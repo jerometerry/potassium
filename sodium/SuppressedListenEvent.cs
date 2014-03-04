@@ -7,7 +7,7 @@
             this.Loop(source);
         }
 
-        protected override bool Refire(IEventListener<T> listener, ActionScheduler scheduler)
+        protected override bool Refire(IEventListener<T> listener, Scheduler scheduler)
         {
             return false;
         }

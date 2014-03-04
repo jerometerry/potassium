@@ -76,7 +76,7 @@ namespace Sodium
         /// actions triggered during Listen requiring a scheduler all get the same instance.</remarks>
         public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank listenerRank)
         {
-            return this.StartScheduler(t => this.Listen(callback, listenerRank, t));
+            return this.RunScheduler(t => this.Listen(callback, listenerRank, t));
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Sodium
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An IListener to be used to stop listening for events.</returns>
         /// <remarks>Any firings that have occurred on the current scheduler will be re-fired immediate after listening.</remarks>
-        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank superior, ActionScheduler scheduler)
+        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank superior, Scheduler scheduler)
         {
             return this.CreateListener(callback, superior, scheduler);
         }
@@ -133,7 +133,7 @@ namespace Sodium
         /// having the specified initial value.</returns>
         public Behavior<T> ToBehavior(T initValue)
         {
-            return this.StartScheduler(t => ToBehavior(initValue, t));
+            return this.RunScheduler(t => ToBehavior(initValue, t));
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace Sodium
         /// </summary>
         /// <returns>A Behavior that updates when the current event is fired,
         /// having the specified initial value.</returns>
-        public Behavior<T> ToBehavior(T initValue, ActionScheduler t)
+        public Behavior<T> ToBehavior(T initValue, Scheduler t)
         {
             var f = new LastFiringEvent<T>(this, t);
             var b = new Behavior<T>(f, initValue);
@@ -184,7 +184,7 @@ namespace Sodium
         /// </remarks>
         public Event<T> Coalesce(Func<T, T, T> coalesce)
         {
-            return this.StartScheduler(t => Coalesce(coalesce, t));
+            return this.RunScheduler(t => Coalesce(coalesce, t));
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace Sodium
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
         /// </remarks>
-        public Event<T> Coalesce(Func<T, T, T> coalesce, ActionScheduler scheduler)
+        public Event<T> Coalesce(Func<T, T, T> coalesce, Scheduler scheduler)
         {
             return new CoalesceEvent<T>(this, coalesce, scheduler);
         }
@@ -322,7 +322,7 @@ namespace Sodium
             return eb;
         }
 
-        protected virtual IEventListener<T> CreateListener(ISodiumCallback<T> source, Rank superior, ActionScheduler scheduler)
+        protected virtual IEventListener<T> CreateListener(ISodiumCallback<T> source, Rank superior, Scheduler scheduler)
         {
             lock (Constants.ListenersLock)
             {

@@ -5,7 +5,7 @@ namespace Sodium
         private Behavior<T> behavior;
         private IEventListener<T> listener;
 
-        public BehaviorValueEvent(Behavior<T> behavior, ActionScheduler scheduler)
+        public BehaviorValueEvent(Behavior<T> behavior, Scheduler scheduler)
         {
             this.behavior = behavior;
             var callback = this.CreateFireCallback();

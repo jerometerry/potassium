@@ -16,7 +16,7 @@
             this.listener = this.sourceEvent.Listen(callback, this.Rank);
         }
 
-        public void Invoke(Behavior<T> behavior, ActionScheduler scheduler)
+        public void Invoke(Behavior<T> behavior, Scheduler scheduler)
         {
             // Note: If any switch takes place during a scheduler, then the
             // GetValueStream().Listen will always cause a sample to be fetched from the

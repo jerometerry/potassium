@@ -35,10 +35,10 @@
 
         private void Initialize()
         {
-            this.StartScheduler(this.Initialize);
+            this.RunScheduler(this.Initialize);
         }
 
-        private void Initialize(ActionScheduler scheduler)
+        private void Initialize(Scheduler scheduler)
         {
             this.wrappedEventListenerCallback = this.CreateFireCallback();
             this.wrappedEventListener = source.Value.Listen(this.wrappedEventListenerCallback, this.Rank, scheduler);
@@ -47,7 +47,7 @@
             this.behaviorListener = source.Listen(behaviorEventChanged, this.Rank, scheduler);
         }
 
-        private void UpdateWrappedEventListener(Event<T> newEvent, ActionScheduler scheduler)
+        private void UpdateWrappedEventListener(Event<T> newEvent, Scheduler scheduler)
         {
             scheduler.Medium(() =>
             {

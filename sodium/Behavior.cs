@@ -128,7 +128,7 @@ namespace Sodium
         /// <param name="rank">The rank of the action, used as a superior to the rank of the underlying action.</param>
         /// <param name="scheduler">The scheduler used to order actions</param>
         /// <returns>The event listener</returns>
-        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank rank, ActionScheduler scheduler)
+        public IEventListener<T> Listen(ISodiumCallback<T> callback, Rank rank, Scheduler scheduler)
         {
             return this.Source.Listen(callback, rank, scheduler);
         }
@@ -145,7 +145,7 @@ namespace Sodium
         /// actions triggered during Value requiring a scheduler all get the same instance.</remarks>
         public Event<T> Values()
         {
-            return this.StartScheduler<Event<T>>(this.Values);
+            return this.RunScheduler<Event<T>>(this.Values);
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace Sodium
         /// <param name="scheduler">The scheduler to run the Value operation on</param>
         /// <returns>An event that will fire when it's listened to, and every time it's 
         /// value changes thereafter</returns>
-        public Event<T> Values(ActionScheduler scheduler)
+        public Event<T> Values(Scheduler scheduler)
         {
             var valueEvent = new BehaviorValueEvent<T>(this, scheduler);
 
@@ -270,7 +270,7 @@ namespace Sodium
         /// <returns>The IEventListener registered with the underlying event.</returns>
         private IEventListener<T> ListenForEventFirings()
         {
-            return this.StartScheduler<IEventListener<T>>(this.ListenForEventFirings);
+            return this.RunScheduler<IEventListener<T>>(this.ListenForEventFirings);
         }
 
         /// <summary>
@@ -278,7 +278,7 @@ namespace Sodium
         /// </summary>
         /// <param name="scheduler">The scheduler to schedule the listen on.</param>
         /// <returns>The IEventListener registered with the underlying event.</returns>
-        private IEventListener<T> ListenForEventFirings(ActionScheduler scheduler)
+        private IEventListener<T> ListenForEventFirings(Scheduler scheduler)
         {
             var callback = new ActionCallback<T>(ScheduleApplyValueUpdate);
             var result = this.Listen(callback, Rank.Highest, scheduler);
@@ -291,7 +291,7 @@ namespace Sodium
         /// </summary>
         /// <param name="scheduler">The scheduler to schedule the value update on</param>
         /// <param name="update">The updated value</param>
-        private void ScheduleApplyValueUpdate(T update, ActionScheduler scheduler)
+        private void ScheduleApplyValueUpdate(T update, Scheduler scheduler)
         {
             if (!valueUpdate.HasValue)
             {

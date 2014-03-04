@@ -20,7 +20,7 @@ namespace Sodium
             this.listener = source.Listen(callback, this.Rank);
         }
 
-        public void Fire(T firing, ActionScheduler scheduler)
+        public void Fire(T firing, Scheduler scheduler)
         {
             var f = this.behavior.Value;
             var v = this.snapshot(firing, f);

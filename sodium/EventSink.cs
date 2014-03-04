@@ -22,7 +22,7 @@
         /// <param name="firing">The value to be fired</param>
         public bool Fire(T firing)
         {
-            return this.StartScheduler(t => this.Fire(firing, t));
+            return this.RunScheduler(t => this.Fire(firing, t));
         }
 
         /// <summary>
@@ -30,7 +30,7 @@
         /// </summary>
         /// <param name="scheduler">The scheduler to invoke the callbacks on</param>
         /// <param name="firing">The value to fire to registered callbacks</param>
-        public virtual bool Fire(T firing, ActionScheduler scheduler)
+        public virtual bool Fire(T firing, Scheduler scheduler)
         {
             ScheduleClearFirings(scheduler);
             AddFiring(firing);
@@ -73,14 +73,14 @@
         /// </summary>
         /// <param name="scheduler"></param>
         /// <param name="listener"></param>
-        protected virtual bool Refire(IEventListener<T> listener, ActionScheduler scheduler)
+        protected virtual bool Refire(IEventListener<T> listener, Scheduler scheduler)
         {
             var toFire = firings;
             Fire(listener, toFire, scheduler);
             return true;
         }
 
-        protected override IEventListener<T> CreateListener(ISodiumCallback<T> source, Rank superior, ActionScheduler scheduler)
+        protected override IEventListener<T> CreateListener(ISodiumCallback<T> source, Rank superior, Scheduler scheduler)
         {
             var listener = base.CreateListener(source, superior, scheduler);
             InitialFire(listener, scheduler);
@@ -88,13 +88,13 @@
             return listener;
         }
 
-        private void InitialFire(IEventListener<T> listener, ActionScheduler scheduler)
+        private void InitialFire(IEventListener<T> listener, Scheduler scheduler)
         {
             var toFire = InitialFirings();
             Fire(listener, toFire, scheduler);
         }
 
-        private void Fire(IEventListener<T> listener, ICollection<T> toFire, ActionScheduler scheduler)
+        private void Fire(IEventListener<T> listener, ICollection<T> toFire, Scheduler scheduler)
         {
             if (toFire == null || toFire.Count == 0)
             {
@@ -107,7 +107,7 @@
             }
         }
 
-        private void FireListenerCallbacks(T firing, ActionScheduler scheduler)
+        private void FireListenerCallbacks(T firing, Scheduler scheduler)
         {
             var clone = new List<IEventListener<T>>(Listeners);
             foreach (var listener in clone)
@@ -116,12 +116,12 @@
             }
         }
 
-        private void FireListenerCallback(T firing, IEventListener<T> listener, ActionScheduler scheduler)
+        private void FireListenerCallback(T firing, IEventListener<T> listener, Scheduler scheduler)
         {
             listener.Callback.Fire(firing, listener, scheduler);
         }
 
-        private void ScheduleClearFirings(ActionScheduler scheduler)
+        private void ScheduleClearFirings(Scheduler scheduler)
         {
             var noFirings = !firings.Any();
             if (noFirings)

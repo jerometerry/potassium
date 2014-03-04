@@ -66,7 +66,7 @@
         /// <returns>True if firing was added as a priority action on the given 
         /// scheduler, false if there is already an scheduled firing that 
         /// is yet to fire.</returns>
-        private bool ScheduledPrioritizedFire(ActionScheduler scheduler)
+        private bool ScheduledPrioritizedFire(Scheduler scheduler)
         {
             if (fired)
             {
@@ -78,7 +78,7 @@
             return true;
         }
 
-        private void Fire(ActionScheduler scheduler)
+        private void Fire(Scheduler scheduler)
         {
             var b = this.GetNewValue();
             this.Fire(b, scheduler);

@@ -52,7 +52,7 @@ namespace Sodium
             base.Dispose(disposing);
         }
 
-        private void Fire(IEventListener<T>[] la, T a, ActionScheduler t)
+        private void Fire(IEventListener<T>[] la, T a, Scheduler t)
         {
             this.Fire(a, t);
             if (la[0] == null)

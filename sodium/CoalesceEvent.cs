@@ -9,7 +9,7 @@ namespace Sodium
         private IEventListener<T> listener;
         private Maybe<T> accumulatedValue = Maybe<T>.Null;
 
-        public CoalesceEvent(Event<T> source, Func<T, T, T> coalesce, ActionScheduler scheduler)
+        public CoalesceEvent(Event<T> source, Func<T, T, T> coalesce, Scheduler scheduler)
         {
             this.source = source;
             this.coalesce = coalesce;
@@ -49,7 +49,7 @@ namespace Sodium
             base.Dispose(disposing);
         }
 
-        private void Accumulate(T data, ActionScheduler scheduler)
+        private void Accumulate(T data, Scheduler scheduler)
         {
             if (this.accumulatedValue.HasValue)
             {
@@ -62,7 +62,7 @@ namespace Sodium
             }
         }
 
-        private void Fire(ActionScheduler scheduler)
+        private void Fire(Scheduler scheduler)
         {
             var v = this.accumulatedValue.Value();
             this.Fire(v, scheduler);
