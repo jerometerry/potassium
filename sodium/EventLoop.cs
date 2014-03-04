@@ -16,6 +16,7 @@
         /// Firings on the given Event will be forwarded to the current Event
         /// </summary>
         /// <param name="toLoop">Event who's firings will be looped to the current Event</param>
+        /// <returns>The current EventLoop</returns>
         /// <remarks>Loop can only be called once on an Event. If Loop is called multiple times,
         /// an ApplicationException will be raised.</remarks>
         public Event<T> Loop(Event<T> toLoop)

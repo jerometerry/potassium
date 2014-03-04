@@ -4,7 +4,7 @@ namespace Sodium
     /// ISodiumCallback is used to fire a value to a registered listener
     /// </summary>
     /// <typeparam name="T">The type of values fired through the associated Event</typeparam>
-    public interface ISodiumCallback<T>
+    internal interface ISodiumCallback<T>
     {
         /// <summary>
         /// Fire the given value to the listener

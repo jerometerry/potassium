@@ -16,15 +16,5 @@ namespace Sodium
         /// Gets the Event the current IEventListener is listening to
         /// </summary>
         Event<T> Source { get; }
-
-        /// <summary>
-        /// Gets the Rank of the current IEventListener
-        /// </summary>
-        Rank Rank { get; }
-
-        /// <summary>
-        /// Gets the callback that will be fired when the Event fires.
-        /// </summary>
-        ISodiumCallback<T> Callback { get; }
     }
 }

@@ -6,7 +6,7 @@
     /// A TransactionContext is responsible for obtaining a Transaction
     /// used to run functions accepting a Transaction as a parameter.
     /// </summary>
-    public class TransactionContext
+    internal class TransactionContext
     {
         private static readonly TransactionContext CurrentContext = new TransactionContext();
 

@@ -23,7 +23,7 @@ namespace Sodium
         /// </summary>
         /// <param name="t"></param>
         /// <param name="a"></param>
-        public override bool Fire(T a, Transaction t)
+        internal override bool Fire(T a, Transaction t)
         {
             return this.f(a) && base.Fire(a, t);
         }
