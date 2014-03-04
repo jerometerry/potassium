@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sodium", "sodium\Sodium.csproj", "{CC18D685-53D9-4A66-8CCA-3E8ED4EC8F13}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sodium.Tests", "tests\UnitTests\Sodium.Tests.csproj", "{1D1FFCFA-CDD6-401A-BE6A-D079CC98200B}"
@@ -56,7 +54,6 @@ Global
 		{F6BA09F8-17E3-402C-86ED-A717804A3A14}.Release|Any CPU.Build.0 = Release|Any CPU
 		{08FCB85E-E1DE-4DAD-90CC-5652E7462451}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{08FCB85E-E1DE-4DAD-90CC-5652E7462451}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{08FCB85E-E1DE-4DAD-90CC-5652E7462451}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
