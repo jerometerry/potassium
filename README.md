@@ -51,7 +51,7 @@ Event Examples
     var e = new EventSink<int>();
     var l = e.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
-        e.Fire(i);
+        e.Send(i);
     l.Dispose();
     e.Dispose();
 ```
@@ -67,7 +67,7 @@ Event Examples
     var m = e.Map(v => v.ToString());
     var l = m.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
-        e.Fire(i);
+        e.Send(i);
     l.Dispose();
     m.Dispose();
     e.Dispose();
@@ -85,10 +85,10 @@ Event Examples
     var l = m.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 10; i++) {
         if (i % 2 == 0) {
-            e1.Fire(i);
+            e1.Send(i);
         }
         else {
-            e2.Fire(i);
+            e2.Send(i);
         }
     }
     l.Dispose();
@@ -106,9 +106,9 @@ Event Examples
     var e = new EventSink<char>();
     var f = e.Filter(c => char.IsUpper(c));
     var l = f.Listen(v => Console.Write("{0} ", v));
-    e.Fire('H');
-    e.Fire('o');
-    e.Fire('I');
+    e.Send('H');
+    e.Send('o');
+    e.Send('I');
     l.Dispose();
 ```
 *Output*
@@ -124,7 +124,7 @@ Behavior Examples
     var b = new BehaviorSink<int>(0);
     var l = b.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
-        b.Fire(i);
+        b.Send(i);
     l.Dispose();
     b.Dispose();
 ```
@@ -136,10 +136,10 @@ Behavior Examples
 **Event to Behavior**
 ```
     var e = new EventSink<int>();
-    var b = e.ToBehavior(0);
+    var b = e.Hold(0);
     var l = b.Listen(v => Console.Write("{0} ", v));
     for (var i = 1; i <= 5; i++) 
-        e.Fire(i);
+        e.Send(i);
     l.Dispose();
     b.Dispose();
     e.Dispose();
@@ -152,11 +152,11 @@ Behavior Examples
 **Values**
 ```
     var e = new EventSink<int>();
-    var b = e.ToBehavior(0);
+    var b = e.Hold(0);
     var v = b.Values();
     var l = v.Listen(v => Console.Write("{0} ", v));
     for (var i = 1; i <= 5; i++) 
-        e.Fire(i);
+        e.Send(i);
     l.Dispose();
     v.Dispose();
     b.Dispose();

@@ -19,7 +19,7 @@
         public void Fire(T firing, Transaction trans)
         {
             var v = this.map(firing);
-            Fire(v, trans);
+            this.Send(v, trans);
         }
 
         protected internal override TB[] InitialFirings()

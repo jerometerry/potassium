@@ -14,7 +14,7 @@ namespace Sodium.MemoryTests
             var i = 0;
             while (i < iterations)
             {
-                sink.Fire(i);
+                sink.Send(i);
                 i++;
             }
 

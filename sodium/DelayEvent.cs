@@ -6,7 +6,7 @@
 
         public DelayEvent(Event<T> source)
         {
-            var callback = new ActionCallback<T>((a, t) => t.Low(() => this.Fire(a)));
+            var callback = new ActionCallback<T>((a, t) => t.Low(() => this.Send(a)));
             this.listener = source.Listen(callback, this.Rank);
         }
 

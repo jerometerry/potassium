@@ -17,7 +17,7 @@ namespace Sodium.MemoryTests
             var i = 0;
             while (i < iterations)
             {
-                evt.Fire(i);
+                evt.Send(i);
                 i++;
             }
 

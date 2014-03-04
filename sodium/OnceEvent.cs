@@ -54,7 +54,7 @@ namespace Sodium
 
         private void Fire(IEventListener<T>[] la, T a, Transaction t)
         {
-            this.Fire(a, t);
+            this.Send(a, t);
             if (la[0] == null)
             {
                 return;

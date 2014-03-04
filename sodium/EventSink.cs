@@ -21,9 +21,9 @@
         /// </summary>
         /// <param name="firing">The value to be fired</param>
         /// <returns>True if the fire was successful, false otherwise.</returns>
-        public bool Fire(T firing)
+        public bool Send(T firing)
         {
-            return this.StartTransaction(t => this.Fire(firing, t));
+            return this.StartTransaction(t => this.Send(firing, t));
         }
 
         internal static TF[] GetInitialFirings<TF>(Event<TF> source)
@@ -42,7 +42,7 @@
         /// </summary>
         /// <param name="transaction">The transaction to invoke the callbacks on</param>
         /// <param name="firing">The value to fire to registered callbacks</param>
-        internal virtual bool Fire(T firing, Transaction transaction)
+        internal virtual bool Send(T firing, Transaction transaction)
         {
             ScheduleClearFirings(transaction);
             AddFiring(firing);
@@ -56,7 +56,7 @@
         /// <returns>In ISodiumCallback that calls Fire, when invoked.</returns>
         internal ISodiumCallback<T> CreateFireCallback()
         {
-            return new ActionCallback<T>((t, v) => this.Fire(t, v));
+            return new ActionCallback<T>((t, v) => this.Send(t, v));
         }
 
         /// <summary>
@@ -68,7 +68,7 @@
         internal virtual bool Refire(IEventListener<T> listener, Transaction transaction)
         {
             var toFire = firings;
-            Fire(listener, toFire, transaction);
+            this.Send(listener, toFire, transaction);
             return true;
         }
 
@@ -92,10 +92,10 @@
         private void InitialFire(IEventListener<T> listener, Transaction transaction)
         {
             var toFire = InitialFirings();
-            Fire(listener, toFire, transaction);
+            this.Send(listener, toFire, transaction);
         }
 
-        private void Fire(IEventListener<T> listener, ICollection<T> toFire, Transaction transaction)
+        private void Send(IEventListener<T> listener, ICollection<T> toFire, Transaction transaction)
         {
             if (toFire == null || toFire.Count == 0)
             {

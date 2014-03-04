@@ -23,9 +23,9 @@ namespace Sodium
         /// </summary>
         /// <param name="t"></param>
         /// <param name="a"></param>
-        internal override bool Fire(T a, Transaction t)
+        internal override bool Send(T a, Transaction t)
         {
-            return this.f(a) && base.Fire(a, t);
+            return this.f(a) && base.Send(a, t);
         }
 
         protected internal override T[] InitialFirings()

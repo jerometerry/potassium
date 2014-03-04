@@ -65,7 +65,7 @@ namespace Sodium
         private void Fire(Transaction transaction)
         {
             var v = this.accumulatedValue.Value();
-            this.Fire(v, transaction);
+            this.Send(v, transaction);
             this.accumulatedValue = Maybe<T>.Null;
         }
     }

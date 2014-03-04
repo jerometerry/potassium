@@ -24,7 +24,7 @@ namespace Sodium
         {
             var f = this.behavior.Value;
             var v = this.snapshot(firing, f);
-            this.Fire(v, transaction);
+            this.Send(v, transaction);
         }
 
         protected internal override TC[] InitialFirings()

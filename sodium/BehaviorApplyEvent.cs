@@ -81,7 +81,7 @@
         private void Fire(Transaction transaction)
         {
             var b = this.GetNewValue();
-            this.Fire(b, transaction);
+            this.Send(b, transaction);
             fired = false;
         }
 

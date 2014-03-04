@@ -14,10 +14,10 @@ namespace Sodium.Tests
             var e = new EventSink<int>();
             var o = new List<int>();
             var l = e.Listen(o.Add);
-            e.Fire(5);
+            e.Send(5);
             l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(5), o);
-            e.Fire(6);
+            e.Send(6);
             AssertArraysEqual(Arrays<int>.AsList(5), o);
         }
 
@@ -28,7 +28,7 @@ namespace Sodium.Tests
             var m = e.Map(x => x.ToString(CultureInfo.InvariantCulture));
             var o = new List<string>();
             var l = m.Listen(o.Add);
-            e.Fire(5);
+            e.Send(5);
             l.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("5"), o);
         }
@@ -40,9 +40,9 @@ namespace Sodium.Tests
             var e2 = new EventSink<int>();
             var o = new List<int>();
             var l = e1.Merge(e2).Listen(o.Add);
-            e1.Fire(7);
-            e2.Fire(9);
-            e1.Fire(8);
+            e1.Send(7);
+            e2.Send(9);
+            e1.Send(8);
             l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(7, 9, 8), o);
         }
@@ -53,8 +53,8 @@ namespace Sodium.Tests
             var e = new EventSink<int>();
             var o = new List<int>();
             var l = e.Merge(e).Listen(o.Add);
-            e.Fire(7);
-            e.Fire(9);
+            e.Send(7);
+            e.Send(9);
             l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(7, 7, 9, 9), o);
         }
@@ -70,9 +70,9 @@ namespace Sodium.Tests
             var l = e1.Merge(evt)
                       .Coalesce((a, b) => a + b)
                       .Listen(o.Add);
-            e1.Fire(2);
-            e1.Fire(8);
-            e2.Fire(40);
+            e1.Send(2);
+            e1.Send(8);
+            e2.Send(40);
             l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(202, 808, 40), o);
         }
@@ -83,9 +83,9 @@ namespace Sodium.Tests
             var e = new EventSink<char>();
             var o = new List<char>();
             var l = e.Filter(char.IsUpper).Listen(o.Add);
-            e.Fire('H');
-            e.Fire('o');
-            e.Fire('I');
+            e.Send('H');
+            e.Send('o');
+            e.Send('I');
             l.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('H', 'I'), o);
         }
@@ -96,9 +96,9 @@ namespace Sodium.Tests
             var e = new EventSink<string>();
             var o = new List<string>();
             var l = e.FilterNotNull().Listen(o.Add);
-            e.Fire("tomato");
-            e.Fire(null);
-            e.Fire("peach");
+            e.Send("tomato");
+            e.Send(null);
+            e.Send("peach");
             l.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("tomato", "peach"), o);
         }
@@ -114,8 +114,8 @@ namespace Sodium.Tests
             eb.Loop(ebO);
             var o = new List<int>();
             var l = ec.Listen(o.Add);
-            ea.Fire(2);
-            ea.Fire(52);
+            ea.Send(2);
+            ea.Send(52);
             l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(2, 7), o);
         }
@@ -127,11 +127,11 @@ namespace Sodium.Tests
             var epred = new BehaviorSink<bool>(true);
             var o = new List<char>();
             var l = ec.Gate(epred).Listen(o.Add);
-            ec.Fire('H');
+            ec.Send('H');
             epred.Fire(false);
-            ec.Fire('O');
+            ec.Send('O');
             epred.Fire(true);
-            ec.Fire('I');
+            ec.Send('I');
             l.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('H', 'I'), o);
         }
@@ -143,11 +143,11 @@ namespace Sodium.Tests
             var o = new List<int>();
             var sum = ea.Collect(100, (a, s) => new Tuple<int, int>(a + s, a + s));
             var l = sum.Listen(o.Add);
-            ea.Fire(5);
-            ea.Fire(7);
-            ea.Fire(1);
-            ea.Fire(2);
-            ea.Fire(3);
+            ea.Send(5);
+            ea.Send(7);
+            ea.Send(1);
+            ea.Send(2);
+            ea.Send(3);
             l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(105, 112, 113, 115, 118), o);
         }
@@ -159,11 +159,11 @@ namespace Sodium.Tests
             var o = new List<int>();
             var sum = ea.Accum(100, (a, s) => a + s);
             var l = sum.Listen(o.Add);
-            ea.Fire(5);
-            ea.Fire(7);
-            ea.Fire(1);
-            ea.Fire(2);
-            ea.Fire(3);
+            ea.Send(5);
+            ea.Send(7);
+            ea.Send(1);
+            ea.Send(2);
+            ea.Send(3);
             l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(105, 112, 113, 115, 118), o);
         }
@@ -174,9 +174,9 @@ namespace Sodium.Tests
             var e = new EventSink<char>();
             var o = new List<char>();
             var l = e.Once().Listen(o.Add);
-            e.Fire('A');
-            e.Fire('B');
-            e.Fire('C');
+            e.Send('A');
+            e.Send('B');
+            e.Send('C');
             l.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('A'), o);
         }
@@ -188,9 +188,9 @@ namespace Sodium.Tests
             var b = e.Hold(' ');
             var o = new List<char>();
             var l = e.Delay().Snapshot(b).Listen(o.Add);
-            e.Fire('C');
-            e.Fire('B');
-            e.Fire('A');
+            e.Send('C');
+            e.Send('B');
+            e.Send('A');
             l.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('C', 'B', 'A'), o);
         }
