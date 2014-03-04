@@ -28,7 +28,7 @@
         /// <returns>The return value of the function</returns>
         public T Run<T>(Func<Transaction, T> f)
         {
-            lock (Constants.SchedulerLock)
+            lock (Constants.TransactionLock)
             {
                 var created = false;
                 if (currentTransaction == null)
