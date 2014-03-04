@@ -11,6 +11,34 @@ Check out the [wiki](https://github.com/jerometerry/sodium.net/wiki) for more in
 
 Sodium.net API [documentation](http://jterry.azurewebsites.net/sodium.net/)
 
+Memory Management
+==========
+
+```Event```, ```Behavior``` and Event ```IEventListener``` all implement ```IDisposable```, and all should be disposed of when you are done with them. 
+
+This is especially important if you are calling methods on ```Events``` and / or ```Behaviors``` inside callback functions.
+
+Here's an example, extraced from *MemoryTest1.cs*
+
+```
+    public void Test() {
+        var behaviorMapFinalizers = new List<SodiumObject>();
+
+        var eventOfBehaviors = changeTens.Map(tens => {
+            DisposeFinalizers(behaviorMapFinalizers);
+            var mapped = behavior.Map(tt => new Tuple<int?, int?>(tens, tt));
+            behaviorMapFinalizers.Add(mapped);
+            return mapped;
+        });
+    }
+
+    private static void DisposeFinalizers(List<SodiumObject> items) {
+        foreach (var item in items)
+            item.Dispose();
+        items.Clear();
+    }
+```
+
 Event Examples
 ==========
 
