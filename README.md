@@ -24,7 +24,7 @@ Here's an example, extraced from *MemoryTest1.cs*
 
 ```
     public void Test() {
-        var behaviorMapFinalizers = new List<SodiumObject>();
+        var behaviorMapFinalizers = new List<IDisposable>();
 
         var eventOfBehaviors = changeTens.Map(tens => {
             DisposeFinalizers(behaviorMapFinalizers);
@@ -34,7 +34,7 @@ Here's an example, extraced from *MemoryTest1.cs*
         });
     }
 
-    private static void DisposeFinalizers(List<SodiumObject> items) {
+    private static void DisposeFinalizers(List<IDisposable> items) {
         foreach (var item in items)
             item.Dispose();
         items.Clear();

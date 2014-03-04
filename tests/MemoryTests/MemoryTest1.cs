@@ -10,9 +10,9 @@ namespace Sodium.MemoryTests
         [TestCase(1000000000)]
         public void Test(int iterations)
         {
-            var finalizers = new List<SodiumObject>();
+            var finalizers = new List<IDisposable>();
 
-            var behaviorMapFinalizers = new List<SodiumObject>();
+            var behaviorMapFinalizers = new List<IDisposable>();
 
             var evt = new EventSink<int?>();
             finalizers.Add(evt);
@@ -30,14 +30,13 @@ namespace Sodium.MemoryTests
             var changeTens = snapshotEvent.FilterNotNull();
             finalizers.Add(changeTens);
 
-            var eventOfBehaviors = changeTens.Map(
-                tens =>
-                    {
-                        DisposeFinalizers(behaviorMapFinalizers);
-                        var tmp = behavior.Map(tt => new Tuple<int?, int?>(tens, tt));
-                        behaviorMapFinalizers.Add(tmp);
-                        return tmp;
-                    });
+            var eventOfBehaviors = changeTens.Map(tens =>
+            {
+                DisposeFinalizers(behaviorMapFinalizers);
+                var mapped = behavior.Map(tt => new Tuple<int?, int?>(tens, tt));
+                behaviorMapFinalizers.Add(mapped);
+                return mapped;
+            });
             finalizers.Add(eventOfBehaviors);
 
             var behaviorMap = behavior.Map(tt => new Tuple<int?, int?>(0, tt));
@@ -67,7 +66,7 @@ namespace Sodium.MemoryTests
             DisposeFinalizers(behaviorMapFinalizers);
         }
 
-        private static void DisposeFinalizers(List<SodiumObject> items)
+        private static void DisposeFinalizers(List<IDisposable> items)
         {
             foreach (var item in items)
             {
