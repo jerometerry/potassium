@@ -317,8 +317,13 @@ namespace Sodium.Tests
             AssertArraysEqual(Arrays<string>.AsList("1 5", "12 5", "12 6"), results);
         }
 
+        /// <summary>
+        /// A Lift Glitch is when two behaviors that are combined into a single behavior fire at the same time,
+        /// and the resulting behavior fires twice. What should happen is that the resulting behavior
+        /// fires once when the source behaviors fire simultaneously.
+        /// </summary>
         [Test]
-        public void TestMapAndLift()
+        public void TestLiftGlitch()
         {
             var behavior = new BehaviorSink<int>(1);
             var mappedBehavior1 = behavior.Map(x => x * 3);

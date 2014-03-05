@@ -9,6 +9,7 @@ namespace Sodium
     /// include Map, Filter, and ToBehavior, just to name a few.
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the event.</typeparam>
+    /// <remarks>Events that fire in the same Transaction are known as Simultaneous Events.</remarks>
     public class Event<T> : SodiumObject
     {
         /// <summary>

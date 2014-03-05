@@ -4,7 +4,8 @@ namespace Sodium
     using System.Collections.Generic;
 
     /// <summary>
-    /// A Transaction is used to order a stream of actions
+    /// A Transaction is used to order a stream of actions. Events that occur in the same Transaction
+    /// are known as Simultaneous Events.
     /// </summary>
     /// <remarks>
     /// Actions are run in the following order when the transaction is ran

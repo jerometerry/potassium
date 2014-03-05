@@ -67,6 +67,8 @@ namespace Sodium
         /// </summary>
         /// <param name="source">The Behavior with an inner Behavior to unwrap.</param>
         /// <returns>The new, unwrapped Behavior</returns>
+        /// <remarks>Switch allows the reactive network to change dynamically, using 
+        /// reactive logic to modify reactive logic.</remarks>
         public static Behavior<T> SwitchB(Behavior<Behavior<T>> source)
         {
             var innerBehavior = source.Value;
@@ -84,7 +86,11 @@ namespace Sodium
         /// <returns>The unwrapped event</returns>
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// UnwrapEvent operation that takes a thread. This ensures that any other
-        /// actions triggered during UnwrapEvent requiring a transaction all get the same instance.</remarks>
+        /// actions triggered during UnwrapEvent requiring a transaction all get the same instance.
+        /// 
+        /// Switch allows the reactive network to change dynamically, using 
+        /// reactive logic to modify reactive logic.>
+        /// </remarks>
         public static Event<T> SwitchE(Behavior<Event<T>> behavior)
         {
             return new SwitchEvent<T>(behavior);
@@ -224,6 +230,7 @@ namespace Sodium
         /// <param name="c">Behavior of type TC used to do the lift</param>
         /// <returns>A new Behavior who's value is computed by applying the lift function to the current
         /// behavior, and the given behaviors.</returns>
+        /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
         public Behavior<TD> Lift<TB, TC, TD>(Func<T, TB, TC, TD> lift, Behavior<TB> b, Behavior<TC> c)
         {
             Func<T, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
@@ -242,6 +249,7 @@ namespace Sodium
         /// <param name="callback">The action to invoke when the underlying event fires</param>
         /// <param name="rank">The rank of the action, used as a superior to the rank of the underlying action.</param>
         /// <returns>The event listener</returns>
+        /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
         internal IEventListener<T> Listen(ISodiumCallback<T> callback, Rank rank)
         {
             return this.Source.Listen(callback, rank);
