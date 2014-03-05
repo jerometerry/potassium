@@ -5,7 +5,7 @@
     /// <summary>
     /// Base class for Event and Behavior
     /// </summary>
-    public class Observable : DisposableObject
+    public abstract class Observable<T> : DisposableObject
     {
         private TransactionContext Context
         {
@@ -14,6 +14,13 @@
                 return TransactionContext.Current;
             }
         }
+
+        /// <summary>
+        /// Listen to the Observable for updates
+        /// </summary>
+        /// <param name="callback">The action to invoke when the event fires</param>
+        /// <returns>The event listener</returns>
+        public abstract IEventListener<T> Listen(Action<T> callback);
 
         /// <summary>
         /// Run the given Function using a Transaction obtained from TransactionContext.Current

@@ -10,7 +10,7 @@ namespace Sodium
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the event.</typeparam>
     /// <remarks>Events that fire in the same Transaction are known as Simultaneous Events.</remarks>
-    public class Event<T> : Observable
+    public class Event<T> : Observable<T>
     {
         /// <summary>
         /// List of IListeners that are currently listening for firings 
@@ -51,7 +51,7 @@ namespace Sodium
         /// </summary>
         /// <param name="callback">An Action to be invoked when the current Event fires.</param>
         /// <returns>An IListener, that should be Disposed when no longer needed. </returns>
-        public IEventListener<T> Listen(Action<T> callback)
+        public override IEventListener<T> Listen(Action<T> callback)
         {
             return Listen(new ActionCallback<T>((a, t) => callback(a)), Rank.Highest);
         }

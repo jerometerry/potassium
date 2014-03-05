@@ -7,7 +7,7 @@ namespace Sodium
     /// gets updated as the underlying Event is fired.
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the Behavior.</typeparam>
-    public class Behavior<T> : Observable
+    public class Behavior<T> : Observable<T>
     {
         /// <summary>
         /// Holding tank for updates from the underlying Event, waiting to be 
@@ -116,7 +116,7 @@ namespace Sodium
         /// </summary>
         /// <param name="callback">The action to invoke when the underlying event fires</param>
         /// <returns>The event listener</returns>
-        public IEventListener<T> Listen(Action<T> callback)
+        public override IEventListener<T> Listen(Action<T> callback)
         {
             return this.Source.Listen(callback);
         }
