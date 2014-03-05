@@ -133,7 +133,7 @@ Behavior Examples
     0 1 2 3 4
 ```
 
-**Event to Behavior**
+**Hold**
 ```
     var e = new EventSink<int>();
     var b = e.Hold(0);
