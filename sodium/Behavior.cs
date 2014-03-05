@@ -7,7 +7,7 @@ namespace Sodium
     /// gets updated as the underlying Event is fired.
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the Behavior.</typeparam>
-    public class Behavior<T> : SodiumObject
+    public class Behavior<T> : Observable
     {
         /// <summary>
         /// Holding tank for updates from the underlying Event, waiting to be 

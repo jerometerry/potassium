@@ -4,16 +4,16 @@
     using System.Collections.Generic;
 
     /// <summary>
-    /// Base class for Events, Behaviors, and Listeners
+    /// Base class for all disposable objects in the Sodium library.
     /// </summary>
-    public class SodiumObject : IDisposable
+    public class DisposableObject : IDisposable
     {
-        private List<SodiumObject> finalizers;
+        private List<DisposableObject> finalizers;
 
         /// <summary>
         /// Constructs a new SodiumObject
         /// </summary>
-        protected SodiumObject()
+        protected DisposableObject()
         {
         }
 
@@ -27,24 +27,16 @@
         /// </summary>
         public bool Disposing { get; private set; }
 
-        private TransactionContext Context
-        {
-            get
-            {
-                return TransactionContext.Current;
-            }
-        }
-
         /// <summary>
         /// Registers the given SodiumObject to be disposed when the current
         /// SodiumObject is disposed.
         /// </summary>
         /// <param name="o">The SodiumObject to register for disposal</param>
-        public void RegisterFinalizer(SodiumObject o)
+        public void RegisterFinalizer(DisposableObject o)
         {
             if (finalizers == null)
             {
-                finalizers = new List<SodiumObject>();
+                finalizers = new List<DisposableObject>();
             }
 
             finalizers.Add(o);
@@ -57,17 +49,6 @@
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Run the given Function using a Transaction obtained from TransactionContext.Current
-        /// </summary>
-        /// <typeparam name="TR">The return type of the Function</typeparam>
-        /// <param name="f">The Function to run</param>
-        /// <returns>The result of the Function</returns>
-        internal TR StartTransaction<TR>(Func<Transaction, TR> f)
-        {
-            return this.Context.Run(f);
         }
 
         /// <summary>

@@ -17,7 +17,7 @@ namespace Sodium
     /// High priority actions are ordered by Rank using a Priority Queue. Medium 
     /// and Low priority actions are run in the order they are added.
     /// </remarks>
-    internal sealed class Transaction : SodiumObject
+    internal sealed class Transaction : DisposableObject
     {
         private PriorityQueue<PrioritizedAction> high;
         private List<Action> medium;
@@ -34,7 +34,7 @@ namespace Sodium
         }
 
         /// <summary>
-        /// If the Rank of any action is modified, set Reprioritize to true to reprioritize
+        /// If the Rank of any action is modified, set Reprioritize to true to re-prioritize
         /// the PriorityQueue before running the Prioritized Actions.
         /// </summary>
         public bool Reprioritize { get; set; }
@@ -68,9 +68,9 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Run all scheduled actions, in the order High, Medium, Low.
+        /// Close the current Transaction, running all scheduled actions, in the order High, Medium, Low.
         /// </summary>
-        public void Run()
+        public void Close()
         {
             this.RunHigh();
             this.high.Clear();

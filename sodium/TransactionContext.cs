@@ -41,7 +41,7 @@
 
                 if (created)
                 {
-                    currentTransaction.Run();
+                    currentTransaction.Close();
                     currentTransaction.Dispose();
                     currentTransaction = null;
                 }
