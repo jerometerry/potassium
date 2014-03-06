@@ -93,6 +93,9 @@
     <Compile Include="TransactionContext.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Sodium.cd" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Sodium.ActionCallback&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="18.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ActionCallback.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Sodium.Behavior&lt;T&gt;" Collapsed="true">
+    <Position X="4" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAjAAIkAAAAAQAAAAAEAEABAAAAAgEAAAAAI=</HashCode>
+      <FileName>Behavior.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.BehaviorApplyEvent&lt;T, TB&gt;" Collapsed="true">
+    <Position X="14" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAACAABAMACAAAAAAAAAAUABAAAAAIAAAAAAA=</HashCode>
+      <FileName>BehaviorApplyEvent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.BehaviorLoop&lt;T&gt;" Collapsed="true">
+    <Position X="2.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BehaviorLoop.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.BehaviorSink&lt;T&gt;" Collapsed="true">
+    <Position X="5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BehaviorSink.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.BehaviorValueEvent&lt;T&gt;" Collapsed="true">
+    <Position X="29.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAACAAAAAAAAAAAAgAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BehaviorValueEvent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.CoalesceEvent&lt;T&gt;" Collapsed="true">
+    <Position X="7.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAACAAAAIAAAAAAEAAAIAEAAAAAABACAAAAAA=</HashCode>
+      <FileName>CoalesceEvent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.Constants" Collapsed="true">
+    <Position X="20.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Constants.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.DelayEvent&lt;T&gt;" Collapsed="true">
+    <Position X="16.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DelayEvent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.DisposableObject" Collapsed="true">
+    <Position X="17.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAgIAAAAAAAAAEAAAAAACAAA=</HashCode>
+      <FileName>DisposableObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Sodium.Event&lt;T&gt;" Collapsed="true">
+    <Position X="19.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAATAgAkAAAAAAAEAAAJwIIQCAAAEAAAAAIAg=</HashCode>
+      <FileName>Event.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.EventListener&lt;T&gt;" Collapsed="true">
+    <Position X="31.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>EventListener.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="0.1" />
+  </Class>
+  <Class Name="Sodium.EventLoop&lt;T&gt;" Collapsed="true">
+    <Position X="9.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIACAAAAIAAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>EventLoop.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.EventSink&lt;T&gt;" Collapsed="true">
+    <Position X="19.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAACEAAAIAsAAAAAAAAAAIQAAAAIAE=</HashCode>
+      <FileName>EventSink.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.FilterEvent&lt;T&gt;" Collapsed="true">
+    <Position X="18.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAACAAAAIAAEAAAAAAAIAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>FilterEvent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.LastFiringEvent&lt;T&gt;" Collapsed="true">
+    <Position X="7.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LastFiringEvent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.MapEvent&lt;T, TB&gt;" Collapsed="true">
+    <Position X="11.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAEAAAACAAAAIAAAAAAAAAAIAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapEvent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.Maybe&lt;T&gt;" Collapsed="true">
+    <Position X="22" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAAAEgAAAAAAABAAAAKAAAAIgIAAABAA=</HashCode>
+      <FileName>Maybe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.MergeEvent&lt;T&gt;" Collapsed="true">
+    <Position X="20.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAACAAAAAAAAAAAAAAAAAQAAAADAAIAAAAAAA=</HashCode>
+      <FileName>MergeEvent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.Observable&lt;T&gt;" Collapsed="true">
+    <Position X="17.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAEAAAAAAACAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Observable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.OnceEvent&lt;T&gt;" Collapsed="true">
+    <Position X="25.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAACAAAAIAAAAAAAAAAAAEAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>OnceEvent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.PrioritizedAction" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="18.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAABAAAAQAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAQ=</HashCode>
+      <FileName>PrioritizedAction.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Sodium.PriorityQueue&lt;T&gt;" Collapsed="true">
+    <Position X="20.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAJAAAAAAAAEAAAAAAAABAUAAAABAQAAAAAQAABAAAA=</HashCode>
+      <FileName>PriorityQueue.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.Rank" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="22" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAQAAAQEAAAAAAAAAAAAAAAAAAAAAAwAEYA=</HashCode>
+      <FileName>Rank.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Sodium.SnapshotEvent&lt;T, TB, TC&gt;" Collapsed="true">
+    <Position X="23" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAACAAACAAAAIAAAAAAAgAAIAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SnapshotEvent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.SuppressedListenEvent&lt;T&gt;" Collapsed="true">
+    <Position X="9.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>SuppressedListenEvent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.SwitchBehaviorEvent&lt;T&gt;" Collapsed="true">
+    <Position X="27.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAIAACAIAAIEAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SwitchBehaviorEvent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.SwitchEvent&lt;T&gt;" Collapsed="true">
+    <Position X="32" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAQACAAAQIAAAACAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>SwitchEvent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.Transaction" Collapsed="true">
+    <Position X="5.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQQAAAAACAAAAAAAgAACAMAAAgAIAAAAAAAAACEQAA=</HashCode>
+      <FileName>Transaction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.TransactionContext" Collapsed="true">
+    <Position X="18.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAAAAACAAAAAAAAQAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>TransactionContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sodium.Unit" Collapsed="true">
+    <Position X="20.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Unit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Sodium.IEventListener&lt;T&gt;" Collapsed="true">
+    <Position X="18.5" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IEventListener.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Sodium.ISodiumCallback&lt;T&gt;" Collapsed="true">
+    <Position X="20.25" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ISodiumCallback.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
