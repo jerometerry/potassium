@@ -25,11 +25,11 @@ Here's a code snippit for listening to an Event of int's.
 
 **Behavior** - a continuous, time varying value. In Sodium, a Behavior is composed of a value, and an Event that is listened to to update the value. The Event inside the Behavior is accessed via the *Source* Property.
 
-Here's a code snippit for listeneing to a Behavior of int's. Note that the callback in the Listen method will fire during the invocation of Listen, and will also fire everytime (in the future) when the underlying Event fires.
+Here's a code snippit for listeneing to a Behavior of int's. 
 ```
     Behavior<int> b; // obtained from a series of operations on Events / Behaviors
     ...
-    var l = b.Values().Listen(v => Console.Write("{0} ", v));
+    var l = b.Listen(v => Console.Write("{0} ", v));
 ``` 
 
 **EventSink** - EventSink is an Event that can be fired (the name of the firing method in Sodium is *Send*).
@@ -62,6 +62,15 @@ Below is a basic example of using the EventLoop. Firing happens on *e*, which tr
 ```
 
 **BehaviorLoop** - BehaviorLoop loops firings from one Behavior to another, similar to EventLoop (internally, Behavior just calls the EventLoop.Loop method).
+
+Below is a basic example of using the BehaviorLoop. Firing happens on *b*, which triggers the callback on *loop*, writing the value to the console.
+```
+    var b = new BehaviorSink<int>(0);
+    var loop = new BehaviorLoop<int>();
+    loop.Loop(b);
+    var l = loop.Listen(v => Console.Write("{0} ", v);
+    e.Fire(1);
+```
 
 Key Operations
 ==========
