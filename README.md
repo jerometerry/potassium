@@ -16,9 +16,9 @@ Key Classes
 
 **Event** - a series of discrete event occurrences.
 
-Here's an example of an Event of int's, that writes the value to the console when the Event is fired.
+Here's an example of an Event of int's, that writes the value to the console when the Event is fired. 
 ```
-    Event<int> e;
+    Event<int> e; // obtained from a series of operations on an EventSink or a BehaviorSink
     ...
     var l = e.Listen(v => Console.Write("{0} ", v));
 ```
@@ -27,19 +27,39 @@ Here's an example of an Event of int's, that writes the value to the console whe
 
 Here's an example of a Behavior of int's with an initial value of zero, that writes the initial value to the console, and also writes the value of the behavior to the console when the underlying Event is fired.
 ```
-    Behavior<int> b; // initial value 0
+    Behavior<int> b; // // obtained from a series of operations on an EventSink or a BehaviorSink
     ...
     var l = b.Values().Listen(v => Console.Write("{0} ", v));
 ``` 
 
-**EventSink** - EventSink is an Event that has can be fired (the name of the firing method in Sodium is *Send*).
+**EventSink** - EventSink is an Event that can be fired (the name of the firing method in Sodium is *Send*).
 
-Here's an example of sending a value.
+Here's an example of creating an EventSink, and sending (aka firing) a value to all registered listeners.
 ```
     var e = new EventSink<int>();
+    ... // register listeners
     e.Send(0);
 ```
 
+**BehaviorSink** - BehaviorSink is a Behavior that can be fired
+
+Here's an example of constructing a BehaviorSink with an initial value of zero, and seding it a new value of one,  after some operations that register listeners.
+```
+    var b = new BehaviorSink<int>(0);
+    ... // register listeners
+    b.Send(1);
+```
+
+**EventLoop** - EventLoop is an EventSink that listenes another Event for firings, and fires the same value on itself, known as looping. 
+
+Below is a basic example of using the EventLoop. Firing happens on *e*, which triggers the callback on *loop*, writing the value to the console.
+```
+    var e = new EventSink<int>(); 
+    var loop = new EventLoop<int>();
+    loop.Loop(e);
+    var l = loop.Listen(v => Console.Write("{0} ", v);
+    e.Fire(0);
+```
 
 Key Operations
 ==========
