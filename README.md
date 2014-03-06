@@ -11,6 +11,25 @@ Check out the [wiki](https://github.com/jerometerry/sodium.net/wiki) for more in
 
 Sodium.net API [documentation](http://jterry.azurewebsites.net/sodium.net/)
 
+Key Concepts
+==========
+
+**Event** - a series of discrete event occurrences.
+
+Here's an example of an Event of int's, that writes the value to the console when the Event is fired.
+```
+    var e = new EventSink<int>();
+    var l = e.Listen(v => Console.Write("{0} ", v));
+```
+
+**Behavior** - a continuous, time varying value. In Sodium, a Behavior is basically the latest firing of an Event.
+
+Here's an example of a Behavior of int's with an initial value of zero, that writes the initial value to the console, and also writes the value of the behavior to the console when the underlying Event is fired.
+```
+    var b = new BehaviorSink<int>(0);
+    var l = b.Values().Listen(v => Console.Write("{0} ", v));
+```
+
 Memory Management
 ==========
 
