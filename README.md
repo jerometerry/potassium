@@ -44,6 +44,10 @@ All High priority actions are run first (using Priority Queue), all Medium Prior
 
 High, Medium and Low priority actions are run when the Transaction is closed when the operation that requested the Transaction completes.
 
+**Rank** - A Rank is assigned to an Event, with a default priority of zero. A Rank has an operation to add a superior, with a class invariant that all superiors must have a higher priority than their subordinates. 
+
+The Rank of an Event is used when registering High priority actions on a Transaction, as a means to ensure actions are run on a priority basis.
+
 Memory Management
 ==========
 
