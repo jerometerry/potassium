@@ -16,18 +16,18 @@ Key Classes
 
 **Event** - a series of discrete event occurrences.
 
-Here's an example of an Event of int's, that writes the value to the console when the Event is fired. 
+Here's a code snippit for listening to an Event of int's.
 ```
     Event<int> e; // obtained from a series of operations on an EventSink or a BehaviorSink
     ...
     var l = e.Listen(v => Console.Write("{0} ", v));
 ```
 
-**Behavior** - a continuous, time varying value. In Sodium, a Behavior is basically the latest firing of an Event.
+**Behavior** - a continuous, time varying value. In Sodium, a Behavior is composed of a value, and an Event that is listened to to update the value. The Event inside the Behavior is accessed via the *Source* Property.
 
-Here's an example of a Behavior of int's with an initial value of zero, that writes the initial value to the console, and also writes the value of the behavior to the console when the underlying Event is fired.
+Here's a code snippit for listeneing to a Behavior of int's. Note that the callback in the Listen method will fire during the invocation of Listen, and will also fire everytime (in the future) when the underlying Event fires.
 ```
-    Behavior<int> b; // // obtained from a series of operations on an EventSink or a BehaviorSink
+    Behavior<int> b; // obtained from a series of operations on an EventSink or a BehaviorSink
     ...
     var l = b.Values().Listen(v => Console.Write("{0} ", v));
 ``` 
@@ -60,6 +60,8 @@ Below is a basic example of using the EventLoop. Firing happens on *e*, which tr
     var l = loop.Listen(v => Console.Write("{0} ", v);
     e.Fire(0);
 ```
+
+**BehaviorLoop** - BehaviorLoop loops firings from one Behavior to another, similar to EventLoop (internally, Behavior just calls the EventLoop.Loop method).
 
 Key Operations
 ==========
