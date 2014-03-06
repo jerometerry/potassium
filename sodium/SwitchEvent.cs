@@ -10,7 +10,7 @@
         public SwitchEvent(Behavior<Event<T>> source)
         {
             this.source = source;
-            this.StartTransaction<Unit>(this.Initialize);
+            this.RunInTransaction<Unit>(this.Initialize);
         }
 
         protected override void Dispose(bool disposing)

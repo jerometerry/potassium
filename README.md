@@ -30,6 +30,12 @@ Here's an example of a Behavior of int's with an initial value of zero, that wri
     var l = b.Values().Listen(v => Console.Write("{0} ", v));
 ```
 
+**Transaction** - A Transaction is used to provide the concept of simultaneous Events. 
+
+In Sodium, only one Transaction can be open at a time. A Transaction is requested when registering a listener, or when firing a value. A Transaction is closed when the initial request that created the Transaction completes. 
+
+Firing and listening can cause a chain reaction of operations that may cause other firing and listening operations. This chain of operations will all execute inside the same Transaction. 
+
 Memory Management
 ==========
 

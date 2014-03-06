@@ -23,7 +23,7 @@
         /// <returns>True if the fire was successful, false otherwise.</returns>
         public bool Send(T firing)
         {
-            return this.StartTransaction(t => this.Send(firing, t));
+            return this.RunInTransaction(t => this.Send(firing, t));
         }
 
         internal static TF[] GetInitialFirings<TF>(Event<TF> source)

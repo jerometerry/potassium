@@ -8,7 +8,7 @@ namespace Sodium
     /// superior Ranks. The class invariant is that all superiors must have a higher rank
     /// than their subordinates.
     /// </summary>
-    internal sealed class Rank : IComparable<Rank>
+    public sealed class Rank : IComparable<Rank>
     {
         /// <summary>
         /// The Highest Rank possible.

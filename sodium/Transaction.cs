@@ -17,7 +17,7 @@ namespace Sodium
     /// High priority actions are ordered by Rank using a Priority Queue. Medium 
     /// and Low priority actions are run in the order they are added.
     /// </remarks>
-    internal sealed class Transaction : DisposableObject
+    public sealed class Transaction : DisposableObject
     {
         private PriorityQueue<PrioritizedAction> high;
         private List<Action> medium;
