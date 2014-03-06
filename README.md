@@ -18,7 +18,7 @@ Key Classes
 
 Here's a code snippit for listening to an Event of int's.
 ```
-    Event<int> e; // obtained from a series of operations on an EventSink or a BehaviorSink
+    Event<int> e; // obtained from a series of operations on Events / Behaviors
     ...
     var l = e.Listen(v => Console.Write("{0} ", v));
 ```
@@ -27,7 +27,7 @@ Here's a code snippit for listening to an Event of int's.
 
 Here's a code snippit for listeneing to a Behavior of int's. Note that the callback in the Listen method will fire during the invocation of Listen, and will also fire everytime (in the future) when the underlying Event fires.
 ```
-    Behavior<int> b; // obtained from a series of operations on an EventSink or a BehaviorSink
+    Behavior<int> b; // obtained from a series of operations on Events / Behaviors
     ...
     var l = b.Values().Listen(v => Console.Write("{0} ", v));
 ``` 
