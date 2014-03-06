@@ -11,6 +11,16 @@ Check out the [wiki](https://github.com/jerometerry/sodium.net/wiki) for more in
 
 Sodium.net API [documentation](http://jterry.azurewebsites.net/sodium.net/)
 
+Overview
+==========
+
+Sodium is made up of 2 primitives with 12 opeartions.
+
+The primitives are Event, and Behavior.
+
+The operations are Accum, Apply, Coalesce, Collect, Filter, Gate, Hold, Lift, Map, Merge, Snapshot, Switch
+
+
 Key Classes
 ==========
 
