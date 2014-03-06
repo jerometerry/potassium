@@ -11,14 +11,15 @@ Check out the [wiki](https://github.com/jerometerry/sodium.net/wiki) for more in
 
 Sodium.net API [documentation](http://jterry.azurewebsites.net/sodium.net/)
 
-Key Concepts
+Key Classes
 ==========
 
 **Event** - a series of discrete event occurrences.
 
 Here's an example of an Event of int's, that writes the value to the console when the Event is fired.
 ```
-    var e = new EventSink<int>();
+    Event<int> e;
+    ...
     var l = e.Listen(v => Console.Write("{0} ", v));
 ```
 
@@ -26,9 +27,22 @@ Here's an example of an Event of int's, that writes the value to the console whe
 
 Here's an example of a Behavior of int's with an initial value of zero, that writes the initial value to the console, and also writes the value of the behavior to the console when the underlying Event is fired.
 ```
-    var b = new BehaviorSink<int>(0);
+    Behavior<int> b; // initial value 0
+    ...
     var l = b.Values().Listen(v => Console.Write("{0} ", v));
 ``` 
+
+**EventSink** - EventSink is an Event that has can be fired (the name of the firing method in Sodium is *Send*).
+
+Here's an example of sending a value.
+```
+    var e = new EventSink<int>();
+    e.Send(0);
+```
+
+
+Key Operations
+==========
 
 **Hold** - A Hold is an operation on an Event given an initial value, that creates a Behavior with the initial value that updates whenever the Event fires.
 
