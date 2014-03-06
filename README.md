@@ -28,7 +28,31 @@ Here's an example of a Behavior of int's with an initial value of zero, that wri
 ```
     var b = new BehaviorSink<int>(0);
     var l = b.Values().Listen(v => Console.Write("{0} ", v));
-```
+``` 
+
+**Hold** - A Hold is an operation on an Event given an initial value, that creates a Behavior with the initial value that updates whenever the Event fires.
+
+**Map** - A map is the process of converting an Event or Behavior from one type to another, by supplying a mapping function.
+
+**Filter** - Filtering is the process of throwing away any firings from source Events that don't evaluate to true through a given filter predicate.
+
+**Gate** - Gating is the process of now allowing Firing values that don't evaluate to true through a given gate predicate.
+
+**Merge** - Merging is the process of combining two Events of the same type into a single Event, using a coalesce (combining) function.
+
+**Snapshot** - Snapshot is the process of sampling a Behaviors value at the time of an Event firing, and producing a value (a snapshot) by passing the value of the Behavior at the time of the firing and the value fired on the Event into a snapshot function.
+
+**Apply** - Apply is the process of taking a Behavior and a Behavior of mapping functions, to produce of a new Behavior of the return type of the mapping function inside the Behavior. This is the primitive for Behavior lifting.
+
+**Lift** - Lifting is the process of taking a multi-valued function (2 or 3 valued functions in Sodium), along with Behaviors for each value of the function, and creating a new Behavior that is computed by evaluating the function with the current values of each of the Behaviors values.
+
+A lifted Behavior has the property that if any of the input Behaviors are modified simultaneously, the lifted Behavior should fire only once.
+
+**Lift Glitch** - A lift glitch occurs if a lifted Behavior fires multiple times in response to simultaneous updates of it's input Behaviors.
+
+**Coalesce** - Coalesce is the process of combining several simultaneous values into a single value. 
+
+**Switch** - Switch is the process of unwrapping a Behavior of Behaviors or a Behavior of Events into the inner Behavior or Event. Switch allows the reactive network to change dynamically, using reactive logic to modify reactive logic.
 
 **Transaction** - A Transaction is used to provide the concept of simultaneous Events. 
 

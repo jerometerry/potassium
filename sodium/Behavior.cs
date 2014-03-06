@@ -89,7 +89,7 @@ namespace Sodium
         /// actions triggered during UnwrapEvent requiring a transaction all get the same instance.
         /// 
         /// Switch allows the reactive network to change dynamically, using 
-        /// reactive logic to modify reactive logic.>
+        /// reactive logic to modify reactive logic.
         /// </remarks>
         public static Event<T> SwitchE(Behavior<Event<T>> behavior)
         {
