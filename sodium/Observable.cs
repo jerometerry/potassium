@@ -29,7 +29,7 @@
         /// <typeparam name="TR">The return type of the Function</typeparam>
         /// <param name="f">The Function to run</param>
         /// <returns>The result of the Function</returns>
-        protected TR RunInTransaction<TR>(Func<Transaction, TR> f)
+        protected TR StartTransaction<TR>(Func<Transaction, TR> f)
         {
             return this.Context.Run(f);
         }

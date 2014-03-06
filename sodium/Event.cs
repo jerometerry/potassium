@@ -101,7 +101,7 @@ namespace Sodium
         /// having the specified initial value.</returns>
         public Behavior<T> Hold(T initValue)
         {
-            return this.RunInTransaction(t => this.Hold(initValue, t));
+            return this.StartTransaction(t => this.Hold(initValue, t));
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace Sodium
         /// </remarks>
         public Event<T> Coalesce(Func<T, T, T> coalesce)
         {
-            return this.RunInTransaction(t => Coalesce(coalesce, t));
+            return this.StartTransaction(t => Coalesce(coalesce, t));
         }
 
         /// <summary>
@@ -327,7 +327,7 @@ namespace Sodium
         /// actions triggered during Listen requiring a transaction all get the same instance.</remarks>
         internal IEventListener<T> Listen(ISodiumCallback<T> callback, Rank listenerRank)
         {
-            return this.RunInTransaction(t => this.Listen(callback, listenerRank, t));
+            return this.StartTransaction(t => this.Listen(callback, listenerRank, t));
         }
 
         /// <summary>

@@ -36,6 +36,14 @@ In Sodium, only one Transaction can be open at a time. A Transaction is requeste
 
 Firing and listening can cause a chain reaction of operations that may cause other firing and listening operations. This chain of operations will all execute inside the same Transaction. 
 
+Once a Transaction has been opened, actions can be added to it, using the High, Medium and Low methods. 
+
+High registers the action on a Priority Queue using a Rank to order. Medium and Low are run in the order they are added.
+
+All High priority actions are run first (using Priority Queue), all Medium Priority actions second (by order added), and all Low priority actions third (by order added). 
+
+High, Medium and Low priority actions are run when the Transaction is closed when the operation that requested the Transaction completes.
+
 Memory Management
 ==========
 

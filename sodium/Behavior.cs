@@ -133,7 +133,7 @@ namespace Sodium
         /// actions triggered during Value requiring a transaction all get the same instance.</remarks>
         public Event<T> Values()
         {
-            return this.RunInTransaction(this.Values);
+            return this.StartTransaction(this.Values);
         }
 
         /// <summary>
@@ -308,7 +308,7 @@ namespace Sodium
         /// <returns>The IEventListener registered with the underlying event.</returns>
         private IEventListener<T> ListenForEventFirings()
         {
-            return this.RunInTransaction(this.ListenForEventFirings);
+            return this.StartTransaction(this.ListenForEventFirings);
         }
 
         /// <summary>
