@@ -1,8 +1,8 @@
 namespace Sodium
 {
-    internal sealed class EventListener<T> : DisposableObject, IEventListener<T>
+    internal sealed class Subscription<T> : DisposableObject, ISubscription<T>
     {
-        public EventListener(Event<T> source, ISodiumCallback<T> callback, Rank rank)
+        public Subscription(Event<T> source, ISodiumCallback<T> callback, Rank rank)
         {
             this.Source = source;
             this.Callback = callback;
@@ -19,7 +19,7 @@ namespace Sodium
         {
             if (this.Source != null)
             {
-                this.Source.RemoveListener(this);
+                this.Source.CancelSubscription(this);
                 this.Source = null;
             }
 

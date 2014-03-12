@@ -4,13 +4,13 @@
 
     /// <summary>
     /// An EventLoop listens for updates from another Event, and forwards them 
-    /// to listeners of the current event.
+    /// to subscriptions of the current event.
     /// </summary>
     /// <typeparam name="T">The type of the value fired through the event</typeparam>
     public class EventLoop<T> : EventSink<T>
     {
         private Event<T> source;
-        private IEventListener<T> listener;
+        private ISubscription<T> subscription;
 
         /// <summary>
         /// Firings on the given Event will be forwarded to the current Event
@@ -27,7 +27,7 @@
             }
 
             this.source = toLoop;
-            this.listener = source.Listen(this.CreateFireCallback(), Rank);
+            this.subscription = source.Subscribe(this.CreateFireCallback(), Rank);
             return this;
         }
 
@@ -36,10 +36,10 @@
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            if (this.listener != null)
+            if (this.subscription != null)
             {
-                this.listener.Dispose();
-                this.listener = null;
+                this.subscription.Dispose();
+                this.subscription = null;
             }
 
             this.source = null;

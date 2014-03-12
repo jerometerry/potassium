@@ -3,16 +3,16 @@ namespace Sodium
     internal sealed class OnceEvent<T> : EventSink<T>
     {
         private Event<T> source;
-        private IEventListener<T>[] eventListeners;
+        private ISubscription<T>[] subscriptions;
 
         public OnceEvent(Event<T> source)
         {
             this.source = source;
 
             // This is a bit long-winded but it's efficient because it de-registers
-            // the listener.
-            this.eventListeners = new IEventListener<T>[1];
-            this.eventListeners[0] = source.Listen(new ActionCallback<T>((a, t) => this.Fire(this.eventListeners, a, t)), this.Rank);
+            // the subscription.
+            this.subscriptions = new ISubscription<T>[1];
+            this.subscriptions[0] = source.Subscribe(new ActionCallback<T>((a, t) => this.Fire(this.subscriptions, a, t)), this.Rank);
         }
 
         protected internal override T[] InitialFirings()
@@ -29,10 +29,10 @@ namespace Sodium
                 results = new[] { firings[0] };
             }
 
-            if (this.eventListeners[0] != null)
+            if (this.subscriptions[0] != null)
             {
-                this.eventListeners[0].Dispose();
-                this.eventListeners[0] = null;
+                this.subscriptions[0].Dispose();
+                this.subscriptions[0] = null;
             }
 
             return results;
@@ -40,21 +40,21 @@ namespace Sodium
 
         protected override void Dispose(bool disposing)
         {
-            if (this.eventListeners[0] != null)
+            if (this.subscriptions[0] != null)
             {
-                this.eventListeners[0].Dispose();
-                this.eventListeners[0] = null;
+                this.subscriptions[0].Dispose();
+                this.subscriptions[0] = null;
             }
 
             this.source = null;
-            eventListeners = null;
+            this.subscriptions = null;
 
             base.Dispose(disposing);
         }
 
-        private void Fire(IEventListener<T>[] la, T a, Transaction t)
+        private void Fire(ISubscription<T>[] la, T a, Transaction t)
         {
-            this.Send(a, t);
+            this.Fire(a, t);
             if (la[0] == null)
             {
                 return;

@@ -8,7 +8,7 @@ namespace Sodium
         private Event<T> source;
         private Func<T, TB, TC> snapshot;
         private Behavior<TB> behavior;
-        private IEventListener<T> listener;
+        private ISubscription<T> subscription;
 
         public SnapshotEvent(Event<T> source, Func<T, TB, TC> snapshot, Behavior<TB> behavior)
         {
@@ -17,14 +17,14 @@ namespace Sodium
             this.behavior = behavior;
 
             var callback = new ActionCallback<T>(this.Fire);
-            this.listener = source.Listen(callback, this.Rank);
+            this.subscription = source.Subscribe(callback, this.Rank);
         }
 
         public void Fire(T firing, Transaction transaction)
         {
             var f = this.behavior.Value;
             var v = this.snapshot(firing, f);
-            this.Send(v, transaction);
+            this.Fire(v, transaction);
         }
 
         protected internal override TC[] InitialFirings()
@@ -41,10 +41,10 @@ namespace Sodium
 
         protected override void Dispose(bool disposing)
         {
-            if (listener != null)
+            if (this.subscription != null)
             {
-                listener.Dispose();
-                listener = null;
+                this.subscription.Dispose();
+                this.subscription = null;
             }
 
             source = null;

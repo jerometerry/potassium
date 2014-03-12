@@ -6,8 +6,8 @@
     {
         private Behavior<Func<T, TB>> bf;
         private Behavior<T> source;
-        private IEventListener<Func<T, TB>> l1;
-        private IEventListener<T> l2;
+        private ISubscription<Func<T, TB>> l1;
+        private ISubscription<T> l2;
         
         /// <summary>
         /// Set to true when waiting for the Fire Priority Action to run.
@@ -22,8 +22,8 @@
             var functionChanged = new ActionCallback<Func<T, TB>>((f, t) => ScheduledPrioritizedFire(t));
             var valueChanged = new ActionCallback<T>((a, t) => ScheduledPrioritizedFire(t));
 
-            l1 = bf.Listen(functionChanged, this.Rank);
-            l2 = source.Listen(valueChanged, this.Rank);
+            l1 = bf.Subscribe(functionChanged, this.Rank);
+            l2 = source.Subscribe(valueChanged, this.Rank);
 
             var map = bf.Value;
             var valA = source.Value;
@@ -81,7 +81,7 @@
         private void Fire(Transaction transaction)
         {
             var b = this.GetNewValue();
-            this.Send(b, transaction);
+            this.Fire(b, transaction);
             fired = false;
         }
 

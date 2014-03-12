@@ -20,8 +20,8 @@
         /// Listen to the Observable for updates
         /// </summary>
         /// <param name="callback">The action to invoke when the event fires</param>
-        /// <returns>The event listener</returns>
-        public abstract IEventListener<T> Listen(Action<T> callback);
+        /// <returns>The event subscription</returns>
+        public abstract ISubscription<T> Subscribe(Action<T> callback);
 
         /// <summary>
         /// Run the given Function using a Transaction obtained from TransactionContext.Current

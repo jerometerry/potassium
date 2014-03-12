@@ -222,11 +222,11 @@
       <FileName>Unit.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="Sodium.IEventListener&lt;T&gt;" Collapsed="true">
+  <Interface Name="Sodium.ISubscription&lt;T&gt;" Collapsed="true">
     <Position X="18.5" Y="13" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>IEventListener.cs</FileName>
+      <FileName>ISubscription.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Sodium.ISodiumCallback&lt;T&gt;" Collapsed="true">

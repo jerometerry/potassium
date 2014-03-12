@@ -22,7 +22,7 @@
         /// <returns>True if fired, false otherwise</returns>
         public bool Fire(T firing)
         {
-            return ((EventSink<T>)Source).Send(firing);
+            return ((EventSink<T>)Source).Fire(firing);
         }
     }
 }

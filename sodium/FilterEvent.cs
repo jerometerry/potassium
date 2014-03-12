@@ -7,7 +7,7 @@ namespace Sodium
     {
         private Event<T> source;
         private Func<T, bool> f;
-        private IEventListener<T> listener;
+        private ISubscription<T> subscription;
 
         public FilterEvent(Event<T> source, Func<T, bool> f)
         {
@@ -15,7 +15,7 @@ namespace Sodium
             this.f = f;
 
             var callback = this.CreateFireCallback();
-            this.listener = source.Listen(callback, this.Rank);
+            this.subscription = source.Subscribe(callback, this.Rank);
         }
 
         /// <summary>
@@ -23,9 +23,9 @@ namespace Sodium
         /// </summary>
         /// <param name="t"></param>
         /// <param name="a"></param>
-        internal override bool Send(T a, Transaction t)
+        internal override bool Fire(T a, Transaction t)
         {
-            return this.f(a) && base.Send(a, t);
+            return this.f(a) && base.Fire(a, t);
         }
 
         protected internal override T[] InitialFirings()
@@ -47,10 +47,10 @@ namespace Sodium
 
         protected override void Dispose(bool disposing)
         {
-            if (listener != null)
+            if (this.subscription != null)
             {
-                listener.Dispose();
-                listener = null;
+                this.subscription.Dispose();
+                this.subscription = null;
             }
 
             this.source = null;

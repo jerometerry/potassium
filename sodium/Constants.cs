@@ -5,7 +5,7 @@
         /// <summary>
         /// Fine-grained lock that protects listeners and nodes. 
         /// </summary>
-        internal static readonly object ListenersLock = new object();
+        internal static readonly object SubscriptionLock = new object();
 
         /// <summary>
         /// Coarse-grained lock that's held during the whole transaction. 

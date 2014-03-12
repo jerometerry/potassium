@@ -3,7 +3,7 @@ namespace Sodium
     using System;
 
     /// <summary>
-    /// ActionCallback wraps an System.Action used to listen to Observables.
+    /// ActionCallback wraps an System.Action used to subscribe to Observables.
     /// </summary>
     /// <typeparam name="T">The type of value that will be fired</typeparam>
     internal sealed class ActionCallback<T> : ISodiumCallback<T>
@@ -23,9 +23,9 @@ namespace Sodium
         /// Invokes the callback
         /// </summary>
         /// <param name="firing">The value to be fired to the </param>
-        /// <param name="listener">The listener that holds the current callback</param>
+        /// <param name="subscription">The subscription that holds the current callback</param>
         /// <param name="transaction">The Transaction used to order the firing</param>
-        public void Fire(T firing, IEventListener<T> listener, Transaction transaction)
+        public void Fire(T firing, ISubscription<T> subscription, Transaction transaction)
         {
             action(firing, transaction);
         }

@@ -12,11 +12,11 @@ namespace Sodium.MemoryTests
             var nestedEvent = new Event<int>();
             var behaviorOfEvents = evt.Map(x => nestedEvent).Hold(nestedEvent);
             var observable = Behavior<int>.SwitchE(behaviorOfEvents);
-            var listen = observable.Listen(tt => { });
+            var listen = observable.Subscribe(tt => { });
             var i = 0;
             while (i < iterations)
             {
-                evt.Send(i);
+                evt.Fire(i);
                 i++;
             }
 

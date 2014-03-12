@@ -24,10 +24,10 @@
         {
             // Initialize the Sodium Event
             evt = new EventSink<MouseEventArgs>();
-            evt.Map(Format).Listen(DisplayMousePosition);
+            evt.Map(Format).Subscribe(DisplayMousePosition);
 
             // Register the mouse move event to fire on the Sodium.Event
-            MouseMove += (s, e) => evt.Send(e);
+            MouseMove += (s, e) => evt.Fire(e);
         }
 
         private void DisplayMousePosition(Tuple<string, string> t)

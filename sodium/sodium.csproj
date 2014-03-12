@@ -59,11 +59,11 @@
     <Compile Include="CoalesceEvent.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="PrioritizedAction.cs" />
-    <Compile Include="SuppressedListenEvent.cs" />
+    <Compile Include="SuppressedSubscribeEvent.cs" />
     <Compile Include="SwitchBehaviorEvent.cs" />
     <Compile Include="FilterEvent.cs" />
-    <Compile Include="IEventListener.cs" />
-    <Compile Include="EventListener.cs" />
+    <Compile Include="ISubscription.cs" />
+    <Compile Include="Subscription.cs" />
     <Compile Include="MapEvent.cs" />
     <Compile Include="Maybe.cs" />
     <Compile Include="MergeEvent.cs" />

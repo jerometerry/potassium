@@ -11,19 +11,19 @@
     {
         /// <summary>
         /// List of values that have been fired on the current Event in the current transaction.
-        /// Any listeners that are registered in the current transaction will get fired
+        /// Any subscriptions that are registered in the current transaction will get fired
         /// these values on registration.
         /// </summary>
         private readonly List<T> firings = new List<T>();
 
         /// <summary>
-        /// Fire the given value to all registered listeners 
+        /// Fire the given value to all registered subscriptions
         /// </summary>
         /// <param name="firing">The value to be fired</param>
         /// <returns>True if the fire was successful, false otherwise.</returns>
-        public bool Send(T firing)
+        public bool Fire(T firing)
         {
-            return this.StartTransaction(t => this.Send(firing, t));
+            return this.StartTransaction(t => this.Fire(firing, t));
         }
 
         internal static TF[] GetInitialFirings<TF>(Event<TF> source)
@@ -42,11 +42,11 @@
         /// </summary>
         /// <param name="transaction">The transaction to invoke the callbacks on</param>
         /// <param name="firing">The value to fire to registered callbacks</param>
-        internal virtual bool Send(T firing, Transaction transaction)
+        internal virtual bool Fire(T firing, Transaction transaction)
         {
             ScheduleClearFirings(transaction);
             AddFiring(firing);
-            FireListenerCallbacks(firing, transaction);
+            this.FireSubscriptionCallbacks(firing, transaction);
             return true;
         }
 
@@ -56,46 +56,46 @@
         /// <returns>In ISodiumCallback that calls Fire, when invoked.</returns>
         internal ISodiumCallback<T> CreateFireCallback()
         {
-            return new ActionCallback<T>((t, v) => this.Send(t, v));
+            return new ActionCallback<T>((t, v) => this.Fire(t, v));
         }
 
         /// <summary>
         /// Anything fired already in this transaction must be re-fired now so that
-        /// there's no order dependency between send and listen.
+        /// there's no order dependency between Fire and Subscribe.
         /// </summary>
         /// <param name="transaction"></param>
-        /// <param name="listener"></param>
-        internal virtual bool Refire(IEventListener<T> listener, Transaction transaction)
+        /// <param name="subscription"></param>
+        internal virtual bool Refire(ISubscription<T> subscription, Transaction transaction)
         {
             var toFire = firings;
-            this.Send(listener, toFire, transaction);
+            this.Fire(subscription, toFire, transaction);
             return true;
         }
 
-        internal override IEventListener<T> CreateListener(ISodiumCallback<T> source, Rank superior, Transaction transaction)
+        internal override ISubscription<T> CreateSubscription(ISodiumCallback<T> source, Rank superior, Transaction transaction)
         {
-            var listener = base.CreateListener(source, superior, transaction);
-            InitialFire(listener, transaction);
-            Refire(listener, transaction);
-            return listener;
+            var subscription = base.CreateSubscription(source, superior, transaction);
+            InitialFire(subscription, transaction);
+            Refire(subscription, transaction);
+            return subscription;
         }
 
         /// <summary>
         /// Gets the values that will be sent to newly added
         /// </summary>
-        /// <returns>An Array of values that will be fired to all registered listeners</returns>
+        /// <returns>An Array of values that will be fired to all registered subscriptions</returns>
         protected internal virtual T[] InitialFirings()
         {
             return null;
         }
 
-        private void InitialFire(IEventListener<T> listener, Transaction transaction)
+        private void InitialFire(ISubscription<T> subscription, Transaction transaction)
         {
             var toFire = InitialFirings();
-            this.Send(listener, toFire, transaction);
+            this.Fire(subscription, toFire, transaction);
         }
 
-        private void Send(IEventListener<T> listener, ICollection<T> toFire, Transaction transaction)
+        private void Fire(ISubscription<T> subscription, ICollection<T> toFire, Transaction transaction)
         {
             if (toFire == null || toFire.Count == 0)
             {
@@ -104,23 +104,23 @@
 
             foreach (var firing in toFire)
             {
-                FireListenerCallback(firing, listener, transaction);
+                this.FireSubscriptionCallback(firing, subscription, transaction);
             }
         }
 
-        private void FireListenerCallbacks(T firing, Transaction transaction)
+        private void FireSubscriptionCallbacks(T firing, Transaction transaction)
         {
-            var clone = new List<IEventListener<T>>(Listeners);
-            foreach (var listener in clone)
+            var clone = new List<ISubscription<T>>(this.Subscriptions);
+            foreach (var subscription in clone)
             {
-                FireListenerCallback(firing, listener, transaction);
+                this.FireSubscriptionCallback(firing, subscription, transaction);
             }
         }
 
-        private void FireListenerCallback(T firing, IEventListener<T> listener, Transaction transaction)
+        private void FireSubscriptionCallback(T firing, ISubscription<T> subscription, Transaction transaction)
         {
-            var l = (EventListener<T>)listener;
-            l.Callback.Fire(firing, listener, transaction);
+            var l = (Subscription<T>)subscription;
+            l.Callback.Fire(firing, subscription, transaction);
         }
 
         private void ScheduleClearFirings(Transaction transaction)

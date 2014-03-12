@@ -16,9 +16,9 @@ namespace Sodium
         private Maybe<T> valueUpdate = Maybe<T>.Null;
 
         /// <summary>
-        /// Listener that listens for firings from the underlying Event.
+        /// Subscription that listens for firings from the underlying Event.
         /// </summary>
-        private IEventListener<T> valueUpdateListener;
+        private ISubscription<T> valueUpdateSubscription;
 
         /// <summary>
         /// A constant behavior
@@ -39,7 +39,7 @@ namespace Sodium
         {
             this.Source = source;
             this.Value = initValue;
-            this.valueUpdateListener = ListenForEventFirings();
+            this.valueUpdateSubscription = this.SubscribeToEventFirings();
         }
 
         /// <summary>
@@ -52,12 +52,12 @@ namespace Sodium
         /// Sample the behavior's current value.
         /// </summary>
         /// <remarks>
-        /// This should generally be avoided in favor of GetValueStream().Listen(..) so you don't
+        /// This should generally be avoided in favor of GetValueStream().Subscribe(..) so you don't
         /// miss any updates, but in many circumstances it makes sense.
         ///
         /// It can be best to use it inside an explicit transaction (using TransactionContext.Current.Run()).
         /// For example, a b.Value inside an explicit transaction along with a
-        /// b.Source.Listen(..) will capture the current value and any updates without risk
+        /// b.Source.Subscribe(..) will capture the current value and any updates without risk
         /// of missing any in between.
         /// </remarks>
         public T Value { get; private set; }
@@ -115,18 +115,18 @@ namespace Sodium
         /// Listen to the underlying event for updates
         /// </summary>
         /// <param name="callback">The action to invoke when the underlying event fires</param>
-        /// <returns>The event listener</returns>
-        public override IEventListener<T> Listen(Action<T> callback)
+        /// <returns>The event subscription</returns>
+        public override ISubscription<T> Subscribe(Action<T> callback)
         {
-            return this.Source.Listen(callback);
+            return this.Source.Subscribe(callback);
         }
 
         /// <summary>
-        /// An event that is guaranteed to fire once when you listen to it, giving
+        /// An event that is guaranteed to fire once when you subscribe to it, giving
         /// the current value of the behavior, and thereafter behaves like updates(),
         /// firing for each update to the behavior's value.
         /// </summary>
-        /// <returns>An event that will fire when it's listened to, and every time it's 
+        /// <returns>An event that will fire when it's subscribed to, and every time it's 
         /// value changes thereafter</returns>
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Value operation that takes a thread. This ensures that any other
@@ -248,11 +248,11 @@ namespace Sodium
         /// </summary>
         /// <param name="callback">The action to invoke when the underlying event fires</param>
         /// <param name="rank">The rank of the action, used as a superior to the rank of the underlying action.</param>
-        /// <returns>The event listener</returns>
+        /// <returns>The event subscription</returns>
         /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
-        internal IEventListener<T> Listen(ISodiumCallback<T> callback, Rank rank)
+        internal ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank rank)
         {
-            return this.Source.Listen(callback, rank);
+            return this.Source.Subscribe(callback, rank);
         }
 
         /// <summary>
@@ -261,19 +261,19 @@ namespace Sodium
         /// <param name="callback">The action to invoke when the underlying event fires</param>
         /// <param name="rank">The rank of the action, used as a superior to the rank of the underlying action.</param>
         /// <param name="transaction">The transaction used to order actions</param>
-        /// <returns>The event listener</returns>
-        internal IEventListener<T> Listen(ISodiumCallback<T> callback, Rank rank, Transaction transaction)
+        /// <returns>The event subscription</returns>
+        internal ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank rank, Transaction transaction)
         {
-            return this.Source.Listen(callback, rank, transaction);
+            return this.Source.Subscribe(callback, rank, transaction);
         }
 
         /// <summary>
-        /// An event that is guaranteed to fire once when you listen to it, giving
+        /// An event that is guaranteed to fire once when you subscribe to it, giving
         /// the current value of the behavior, and thereafter behaves like updates(),
         /// firing for each update to the behavior's value.
         /// </summary>
         /// <param name="transaction">The transaction to run the Value operation on</param>
-        /// <returns>An event that will fire when it's listened to, and every time it's 
+        /// <returns>An event that will fire when it's subscribed to, and every time it's 
         /// value changes thereafter</returns>
         internal Event<T> Values(Transaction transaction)
         {
@@ -291,10 +291,10 @@ namespace Sodium
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            if (this.valueUpdateListener != null)
+            if (this.valueUpdateSubscription != null)
             {
-                this.valueUpdateListener.Dispose();
-                this.valueUpdateListener = null;
+                this.valueUpdateSubscription.Dispose();
+                this.valueUpdateSubscription = null;
             }
 
             this.Source = null;
@@ -305,21 +305,21 @@ namespace Sodium
         /// <summary>
         /// Listen to the underlying event for firings
         /// </summary>
-        /// <returns>The IEventListener registered with the underlying event.</returns>
-        private IEventListener<T> ListenForEventFirings()
+        /// <returns>The ISubscription registered with the underlying event.</returns>
+        private ISubscription<T> SubscribeToEventFirings()
         {
-            return this.StartTransaction(this.ListenForEventFirings);
+            return this.StartTransaction(this.SubscribeToEventFirings);
         }
 
         /// <summary>
         /// Listen to the underlying event for firings
         /// </summary>
-        /// <param name="transaction">The transaction to schedule the listen on.</param>
-        /// <returns>The IEventListener registered with the underlying event.</returns>
-        private IEventListener<T> ListenForEventFirings(Transaction transaction)
+        /// <param name="transaction">The transaction to schedule the subscription on.</param>
+        /// <returns>The ISubscription registered with the underlying event.</returns>
+        private ISubscription<T> SubscribeToEventFirings(Transaction transaction)
         {
             var callback = new ActionCallback<T>(ScheduleApplyValueUpdate);
-            var result = this.Listen(callback, Rank.Highest, transaction);
+            var result = this.Subscribe(callback, Rank.Highest, transaction);
             return result;
         }
 

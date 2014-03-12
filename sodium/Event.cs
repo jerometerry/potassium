@@ -5,7 +5,7 @@ namespace Sodium
 
     /// <summary>
     /// An Event is the observer pattern on steroids. The basic operations of Event are
-    /// Listen and Fire. More interesting operations that you can perform on an Event 
+    /// Subscribe and Fire. More interesting operations that you can perform on an Event 
     /// include Map, Filter, and ToBehavior, just to name a few.
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the event.</typeparam>
@@ -13,10 +13,10 @@ namespace Sodium
     public class Event<T> : Observable<T>
     {
         /// <summary>
-        /// List of IListeners that are currently listening for firings 
+        /// List of ISubscriptions that are currently listening for firings 
         /// from the current Event.
         /// </summary>
-        private readonly List<IEventListener<T>> listeners = new List<IEventListener<T>>();
+        private readonly List<ISubscription<T>> subscriptions = new List<ISubscription<T>>();
 
         /// <summary>
         /// The rank of the current Event. Default to rank zero
@@ -35,14 +35,14 @@ namespace Sodium
         }
 
         /// <summary>
-        /// List of IListeners that are currently listening for firings 
+        /// List of ISubscriptions that are currently listening for firings 
         /// from the current Event.
         /// </summary>
-        protected List<IEventListener<T>> Listeners
+        protected List<ISubscription<T>> Subscriptions
         {
             get
             {
-                return this.listeners;
+                return this.subscriptions;
             }
         }
 
@@ -50,30 +50,30 @@ namespace Sodium
         /// Listen for firings of this event.
         /// </summary>
         /// <param name="callback">An Action to be invoked when the current Event fires.</param>
-        /// <returns>An IListener, that should be Disposed when no longer needed. </returns>
-        public override IEventListener<T> Listen(Action<T> callback)
+        /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
+        public override ISubscription<T> Subscribe(Action<T> callback)
         {
-            return Listen(new ActionCallback<T>((a, t) => callback(a)), Rank.Highest);
+            return this.Subscribe(new ActionCallback<T>((a, t) => callback(a)), Rank.Highest);
         }
 
         /// <summary>
-        /// Stop the given listener from receiving updates from the current Event
+        /// Stop the given subscription from receiving updates from the current Event
         /// </summary>
-        /// <param name="eventListener">The listener to remove</param>
-        /// <returns>True if the listener was removed, false otherwise</returns>
-        public bool RemoveListener(IEventListener<T> eventListener)
+        /// <param name="subscription">The subscription to remove</param>
+        /// <returns>True if the subscription was removed, false otherwise</returns>
+        public bool CancelSubscription(ISubscription<T> subscription)
         {
-            if (eventListener == null)
+            if (subscription == null)
             {
                 return false;
             }
 
-            var l = (EventListener<T>)eventListener;
+            var l = (Subscription<T>)subscription;
 
-            lock (Constants.ListenersLock)
+            lock (Constants.SubscriptionLock)
             {
                 Rank.RemoveSuperior(l.Rank);
-                return this.Listeners.Remove(l);
+                return this.Subscriptions.Remove(l);
             }
         }
 
@@ -291,18 +291,18 @@ namespace Sodium
             return eb;
         }
 
-        internal virtual IEventListener<T> CreateListener(ISodiumCallback<T> source, Rank superior, Transaction transaction)
+        internal virtual ISubscription<T> CreateSubscription(ISodiumCallback<T> source, Rank superior, Transaction transaction)
         {
-            lock (Constants.ListenersLock)
+            lock (Constants.SubscriptionLock)
             {
                 if (this.rank.AddSuperior(superior))
                 {
                     transaction.Reprioritize = true;
                 }
 
-                var listener = new EventListener<T>(this, source, superior);
-                this.Listeners.Add(listener);
-                return listener;
+                var subscription = new Subscription<T>(this, source, superior);
+                this.Subscriptions.Add(subscription);
+                return subscription;
             }
         }
 
@@ -310,24 +310,24 @@ namespace Sodium
         /// Listen for firings of this event.
         /// </summary>
         /// <param name="callback">An Action to be invoked when the current Event fires.</param>
-        /// <returns>An IListener, that should be Disposed when no longer needed. </returns>
-        internal IEventListener<T> Listen(ISodiumCallback<T> callback)
+        /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
+        internal ISubscription<T> Subscribe(ISodiumCallback<T> callback)
         {
-            return Listen(callback, Rank.Highest);
+            return this.Subscribe(callback, Rank.Highest);
         }
 
         /// <summary>
         /// Listen for firings on the current event
         /// </summary>
         /// <param name="callback">The action to invoke on a firing</param>
-        /// <param name="listenerRank">A rank that will be added as a superior of the Rank of the current Event</param>
-        /// <returns>An IListener to be used to stop listening for events</returns>
+        /// <param name="subscriptionRank">A rank that will be added as a superior of the Rank of the current Event</param>
+        /// <returns>An ISubscription to be used to stop listening for events</returns>
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
-        /// Listen operation that takes a thread. This ensures that any other
-        /// actions triggered during Listen requiring a transaction all get the same instance.</remarks>
-        internal IEventListener<T> Listen(ISodiumCallback<T> callback, Rank listenerRank)
+        /// Subscribe operation that takes a thread. This ensures that any other
+        /// actions triggered during Subscribe requiring a transaction all get the same instance.</remarks>
+        internal ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank subscriptionRank)
         {
-            return this.StartTransaction(t => this.Listen(callback, listenerRank, t));
+            return this.StartTransaction(t => this.Subscribe(callback, subscriptionRank, t));
         }
 
         /// <summary>
@@ -336,11 +336,11 @@ namespace Sodium
         /// <param name="transaction">Transaction to send any firings on</param>
         /// <param name="callback">The action to invoke on a firing</param>
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
-        /// <returns>An IListener to be used to stop listening for events.</returns>
-        /// <remarks>Any firings that have occurred on the current transaction will be re-fired immediate after listening.</remarks>
-        internal IEventListener<T> Listen(ISodiumCallback<T> callback, Rank superior, Transaction transaction)
+        /// <returns>An ISubscription to be used to stop listening for events.</returns>
+        /// <remarks>Any firings that have occurred on the current transaction will be re-fired immediate after subscribing.</remarks>
+        internal ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank superior, Transaction transaction)
         {
-            return this.CreateListener(callback, superior, transaction);
+            return this.CreateSubscription(callback, superior, transaction);
         }
 
         /// <summary>
@@ -378,15 +378,15 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Cleanup the current Event, disposing of any listeners.
+        /// Cleanup the current Event, disposing of any subscriptions.
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            var clone = new List<IEventListener<T>>(this.Listeners);
-            this.Listeners.Clear();
-            foreach (var listener in clone)
+            var clone = new List<ISubscription<T>>(this.Subscriptions);
+            this.Subscriptions.Clear();
+            foreach (var subscription in clone)
             {
-                listener.Dispose();
+                subscription.Dispose();
             }
 
             base.Dispose(disposing);

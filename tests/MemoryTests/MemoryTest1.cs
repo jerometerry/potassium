@@ -51,12 +51,12 @@ namespace Sodium.MemoryTests
             var tensTupleEvent = tensTupleBehavior.Values();
             finalizers.Add(tensTupleEvent);
 
-            var listener = tensTupleEvent.Listen(tu => { });
+            var listener = tensTupleEvent.Subscribe(tu => { });
             var i = 0;
 
             while (i < iterations)
             {
-                evt.Send(i);
+                evt.Fire(i);
                 i++;
             }
 

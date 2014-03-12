@@ -6,8 +6,8 @@ namespace Sodium
     {
         private Event<T> source1;
         private Event<T> source2;
-        private IEventListener<T> l1;
-        private IEventListener<T> l2;
+        private ISubscription<T> l1;
+        private ISubscription<T> l2;
 
         public MergeEvent(Event<T> source1, Event<T> source2)
         {
@@ -15,8 +15,8 @@ namespace Sodium
             this.source2 = source2;
 
             var callback = this.CreateFireCallback();
-            l1 = source1.Listen(callback, this.Rank);
-            l2 = source2.Listen(callback, this.Rank);
+            l1 = source1.Subscribe(callback, this.Rank);
+            l2 = source2.Subscribe(callback, this.Rank);
         }
 
         protected internal override T[] InitialFirings()

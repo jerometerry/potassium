@@ -7,19 +7,19 @@
     {
         private Event<T> source;
         private Func<T, TB> map;
-        private IEventListener<T> listener;
+        private ISubscription<T> subscription;
 
         public MapEvent(Event<T> source, Func<T, TB> map)
         {
             this.source = source;
             this.map = map;
-            this.listener = source.Listen(new ActionCallback<T>(this.Fire), this.Rank);
+            this.subscription = source.Subscribe(new ActionCallback<T>(this.Fire), this.Rank);
         }
 
         public void Fire(T firing, Transaction trans)
         {
             var v = this.map(firing);
-            this.Send(v, trans);
+            this.Fire(v, trans);
         }
 
         protected internal override TB[] InitialFirings()
@@ -35,10 +35,10 @@
 
         protected override void Dispose(bool disposing)
         {
-            if (listener != null)
+            if (this.subscription != null)
             {
-                listener.Dispose();
-                listener = null;
+                this.subscription.Dispose();
+                this.subscription = null;
             }
 
             source = null;

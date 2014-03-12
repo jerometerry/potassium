@@ -3,13 +3,13 @@ namespace Sodium
     internal sealed class BehaviorValueEvent<T> : EventSink<T>
     {
         private Behavior<T> behavior;
-        private IEventListener<T> listener;
+        private ISubscription<T> subscription;
 
         public BehaviorValueEvent(Behavior<T> behavior, Transaction transaction)
         {
             this.behavior = behavior;
             var callback = this.CreateFireCallback();
-            listener = behavior.Listen(callback, this.Rank, transaction);
+            this.subscription = behavior.Subscribe(callback, this.Rank, transaction);
         }
 
         protected internal override T[] InitialFirings()
@@ -19,10 +19,10 @@ namespace Sodium
 
         protected override void Dispose(bool disposing)
         {
-            if (listener != null)
+            if (this.subscription != null)
             {
-                listener.Dispose();
-                listener = null;
+                this.subscription.Dispose();
+                this.subscription = null;
             }
 
             behavior = null;
