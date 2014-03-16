@@ -122,6 +122,21 @@ namespace Sodium
         }
 
         /// <summary>
+        /// Listen to the underlying event for updates
+        /// </summary>
+        /// <param name="callback"> action to invoke when the underlying event fires</param>
+        /// <returns>The event subscription</returns>
+        /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
+        /// current value of the behavior.</remarks>
+        public ISubscription<T> SubscribeWithFire(Action<T> callback)
+        {
+            var v = this.Values();
+            var s = (Subscription<T>)v.Subscribe(callback);
+            s.RegisterFinalizer(v);
+            return s;
+        }
+
+        /// <summary>
         /// An event that is guaranteed to fire once when you subscribe to it, giving
         /// the current value of the behavior, and thereafter behaves like updates(),
         /// firing for each update to the behavior's value.
