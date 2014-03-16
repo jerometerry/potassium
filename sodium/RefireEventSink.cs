@@ -38,11 +38,10 @@ namespace Sodium
             return true;
         }
 
-        internal override ISubscription<T> CreateSubscription(ISodiumCallback<T> source, Rank superior, Transaction transaction)
+        protected override void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
         {
-            var subscription = base.CreateSubscription(source, superior, transaction);
             this.Refire(subscription, transaction);
-            return subscription;
+            base.OnSubscribe(subscription, transaction);
         }
 
         private void ScheduleClearFirings(Transaction transaction)

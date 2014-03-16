@@ -19,14 +19,6 @@ namespace Sodium
             return sink.InitialFirings();
         }
 
-        internal override ISubscription<T> CreateSubscription(ISodiumCallback<T> source, Rank superior, Transaction transaction)
-        {
-            var subscription = base.CreateSubscription(source, superior, transaction);
-            this.InitialFire(subscription, transaction);
-            this.Refire(subscription, transaction);
-            return subscription;
-        }
-
         /// <summary>
         /// Gets the values that will be sent to newly added
         /// </summary>
@@ -36,6 +28,17 @@ namespace Sodium
         protected internal virtual T[] InitialFirings()
         {
             return null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="subscription"></param>
+        /// <param name="transaction"></param>
+        protected override void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
+        {
+            this.InitialFire(subscription, transaction);
+            base.OnSubscribe(subscription, transaction);
         }
 
         /// <summary>

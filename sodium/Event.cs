@@ -291,8 +291,9 @@ namespace Sodium
             return eb;
         }
 
-        internal virtual ISubscription<T> CreateSubscription(ISodiumCallback<T> source, Rank superior, Transaction transaction)
+        internal ISubscription<T> CreateSubscription(ISodiumCallback<T> source, Rank superior, Transaction transaction)
         {
+            Subscription<T> subscription;
             lock (Constants.SubscriptionLock)
             {
                 if (this.rank.AddSuperior(superior))
@@ -300,10 +301,21 @@ namespace Sodium
                     transaction.Reprioritize = true;
                 }
 
-                var subscription = new Subscription<T>(this, source, superior);
+                subscription = new Subscription<T>(this, source, superior);
                 this.Subscriptions.Add(subscription);
-                return subscription;
             }
+
+            this.OnSubscribe(subscription, transaction);
+            return subscription;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="subscription"></param>
+        /// <param name="transaction"></param>
+        protected virtual void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
+        {
         }
 
         /// <summary>
