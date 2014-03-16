@@ -3,7 +3,7 @@ namespace Sodium
     using System;
     using System.Linq;
 
-    internal sealed class FilterEvent<T> : EventSink<T>
+    internal sealed class FilterEvent<T> : InitialFireEventSink<T>
     {
         private Event<T> source;
         private Func<T, bool> f;

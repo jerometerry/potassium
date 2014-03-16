@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    internal sealed class BehaviorValueEvent<T> : EventSink<T>
+    internal sealed class BehaviorValueEvent<T> : InitialFireEventSink<T>
     {
         private Behavior<T> behavior;
         private ISubscription<T> subscription;

@@ -52,6 +52,7 @@
     <Compile Include="DelayEvent.cs" />
     <Compile Include="EventLoop.cs" />
     <Compile Include="EventSink.cs" />
+    <Compile Include="InitialFireEventSink.cs" />
     <Compile Include="LastFiringEvent.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="DisposableObject.cs" />

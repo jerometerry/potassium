@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    internal sealed class OnceEvent<T> : EventSink<T>
+    internal sealed class OnceEvent<T> : InitialFireEventSink<T>
     {
         private Event<T> source;
         private ISubscription<T>[] subscriptions;

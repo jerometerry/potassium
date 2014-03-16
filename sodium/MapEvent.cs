@@ -3,7 +3,7 @@
     using System;
     using System.Linq;
 
-    internal sealed class MapEvent<T, TB> : EventSink<TB>
+    internal sealed class MapEvent<T, TB> : InitialFireEventSink<TB>
     {
         private Event<T> source;
         private Func<T, TB> map;

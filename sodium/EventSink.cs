@@ -26,17 +26,6 @@
             return this.StartTransaction(t => this.Fire(firing, t));
         }
 
-        internal static TF[] GetInitialFirings<TF>(Event<TF> source)
-        {
-            var sink = source as EventSink<TF>;
-            if (sink == null)
-            {
-                return null;
-            }
-
-            return sink.InitialFirings();
-        }
-
         /// <summary>
         /// Fire the given value to all registered callbacks
         /// </summary>
@@ -75,27 +64,11 @@
         internal override ISubscription<T> CreateSubscription(ISodiumCallback<T> source, Rank superior, Transaction transaction)
         {
             var subscription = base.CreateSubscription(source, superior, transaction);
-            InitialFire(subscription, transaction);
             Refire(subscription, transaction);
             return subscription;
         }
 
-        /// <summary>
-        /// Gets the values that will be sent to newly added
-        /// </summary>
-        /// <returns>An Array of values that will be fired to all registered subscriptions</returns>
-        protected internal virtual T[] InitialFirings()
-        {
-            return null;
-        }
-
-        private void InitialFire(ISubscription<T> subscription, Transaction transaction)
-        {
-            var toFire = InitialFirings();
-            this.Fire(subscription, toFire, transaction);
-        }
-
-        private void Fire(ISubscription<T> subscription, ICollection<T> toFire, Transaction transaction)
+        protected void Fire(ISubscription<T> subscription, ICollection<T> toFire, Transaction transaction)
         {
             if (toFire == null || toFire.Count == 0)
             {

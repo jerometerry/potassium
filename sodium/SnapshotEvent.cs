@@ -3,7 +3,7 @@ namespace Sodium
     using System;
     using System.Linq;
 
-    internal sealed class SnapshotEvent<T, TB, TC> : EventSink<TC>
+    internal sealed class SnapshotEvent<T, TB, TC> : InitialFireEventSink<TC>
     {
         private Event<T> source;
         private Func<T, TB, TC> snapshot;
