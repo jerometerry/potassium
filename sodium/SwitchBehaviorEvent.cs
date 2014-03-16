@@ -4,16 +4,12 @@
     {
         private ISubscription<Behavior<T>> subscription;
         private ISubscription<T> wrappedSubscription;
-        private Behavior<Behavior<T>> source;
         private Event<T> wrappedEvent;
-        private Event<Behavior<T>> sourceEvent;
 
         public SwitchBehaviorEvent(Behavior<Behavior<T>> source)
         {
-            this.source = source;
-            this.sourceEvent = source.Values();
             var callback = new ActionCallback<Behavior<T>>(this.Invoke);
-            this.subscription = this.sourceEvent.Subscribe(callback, this.Rank);
+            this.subscription = source.SubscribeWithFire(callback, this.Rank);
         }
 
         public void Invoke(Behavior<T> behavior, Transaction transaction)
@@ -59,14 +55,6 @@
                 this.wrappedEvent.Dispose();
                 this.wrappedEvent = null;
             }
-
-            if (this.sourceEvent != null)
-            {
-                this.sourceEvent.Dispose();
-                this.sourceEvent = null;
-            }
-
-            this.source = null;
 
             base.Dispose(disposing);
         }

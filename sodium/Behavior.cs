@@ -129,8 +129,8 @@ namespace Sodium
         /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
         /// current value of the behavior.</remarks>
         public ISubscription<T> SubscribeWithFire(Action<T> callback)
-        {
-            var v = this.Values();
+        { 
+            var v = this.StartTransaction(this.Values);
             var s = (Subscription<T>)v.Subscribe(callback);
             s.RegisterFinalizer(v);
             return s;
@@ -268,6 +268,22 @@ namespace Sodium
         internal ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank rank)
         {
             return this.Source.Subscribe(callback, rank);
+        }
+
+        /// <summary>
+        /// Listen to the underlying event for updates
+        /// </summary>
+        /// <param name="callback"> action to invoke when the underlying event fires</param>
+        /// <param name="rank">A rank that will be added as a superior of the Rank of the current Event</param>
+        /// <returns>The event subscription</returns>
+        /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
+        /// current value of the behavior.</remarks>
+        internal ISubscription<T> SubscribeWithFire(ISodiumCallback<T> callback, Rank rank)
+        {
+            var v = this.StartTransaction(this.Values);
+            var s = (Subscription<T>)v.Subscribe(callback, rank);
+            s.RegisterFinalizer(v);
+            return s;
         }
 
         /// <summary>
