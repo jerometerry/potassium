@@ -1,6 +1,6 @@
 ﻿namespace Sodium
 {
-    internal class DelayEvent<T> : EventSink<T>
+    internal sealed class DelayEvent<T> : EventSink<T>
     {
         private ISubscription<T> subscription;
 

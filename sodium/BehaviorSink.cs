@@ -4,7 +4,7 @@
     /// A BehaviorSink is a Behavior that you can fire updates through.
     /// </summary>
     /// <typeparam name="T">The type of value that will be fired through the Behavior</typeparam>
-    public class BehaviorSink<T> : Behavior<T>
+    public sealed class BehaviorSink<T> : Behavior<T>
     {
         /// <summary>
         /// Constructs a new BehaviorSink
