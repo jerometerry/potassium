@@ -56,7 +56,7 @@
     <Compile Include="LastFiringEvent.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="DisposableObject.cs" />
-    <Compile Include="BehaviorValueEvent.cs" />
+    <Compile Include="BehaviorEventSink.cs" />
     <Compile Include="CoalesceEvent.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="PrioritizedAction.cs" />
