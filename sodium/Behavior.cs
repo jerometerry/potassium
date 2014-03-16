@@ -46,7 +46,7 @@ namespace Sodium
         /// The underlying event that gives the updates for the behavior. If this behavior was created
         /// with a hold, then Source gives you an event equivalent to the one that was held.
         /// </summary>
-        public Event<T> Source { get; private set; }
+        protected internal Event<T> Source { get; set; }
 
         /// <summary>
         /// Sample the behavior's current value.
