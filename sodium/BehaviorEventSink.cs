@@ -5,7 +5,7 @@ namespace Sodium
     /// and fires all updates thereafter.
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Behavior</typeparam>
-    public sealed class BehaviorEventSink<T> : InitialFireEventSink<T>
+    internal sealed class BehaviorEventSink<T> : InitialFireEventSink<T>
     {
         private Behavior<T> behavior;
         private ISubscription<T> subscription;

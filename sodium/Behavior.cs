@@ -308,13 +308,13 @@ namespace Sodium
         /// value changes thereafter</returns>
         internal Event<T> Values(Transaction transaction)
         {
-            var sink = new BehaviorEventSink<T>(this, transaction);
+            var valueStream = new BehaviorEventSink<T>(this, transaction);
 
             // Needed in case of an initial value and an update
             // in the same transaction.
-            var result = new LastFiringEvent<T>(sink, transaction);
-            result.RegisterFinalizer(sink);
-            return result;
+            var values = new LastFiringEvent<T>(valueStream, transaction);
+            values.RegisterFinalizer(valueStream);
+            return values;
         }
 
         /// <summary>

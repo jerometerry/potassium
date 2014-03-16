@@ -1,6 +1,7 @@
 namespace Sodium
 {
     using System;
+    using System.Collections.Generic;
 
     internal class CoalesceEvent<T> : InitialFireEventSink<T>
     {
@@ -26,12 +27,7 @@ namespace Sodium
                 return null;
             }
             
-            var e = events[0];
-            for (var i = 1; i < events.Length; i++)
-            {
-                e = coalesce(e, events[i]);
-            }
-
+            var e = this.Coalesce(events);
             return new[] { e };
         }
 
@@ -49,6 +45,17 @@ namespace Sodium
             base.Dispose(disposing);
         }
 
+        private T Coalesce(IList<T> events)
+        {
+            var e = events[0];
+            for (var i = 1; i < events.Count; i++)
+            {
+                e = this.coalesce(e, events[i]);
+            }
+
+            return e;
+        }
+
         private void Accumulate(T data, Transaction transaction)
         {
             if (this.accumulatedValue.HasValue)
@@ -57,9 +64,14 @@ namespace Sodium
             }
             else
             {
-                transaction.High(Fire, this.Rank);
+                this.ScheduleFiring(transaction);
                 this.accumulatedValue = new Maybe<T>(data);
             }
+        }
+
+        private void ScheduleFiring(Transaction transaction)
+        {
+            transaction.High(this.Fire, this.Rank);
         }
 
         private void Fire(Transaction transaction)
