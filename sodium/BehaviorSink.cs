@@ -13,6 +13,7 @@
         public BehaviorSink(T initialValue) 
             : base(new EventSink<T>(), initialValue)
         {
+            this.RegisterFinalizer(this.Source);
         }
 
         /// <summary>

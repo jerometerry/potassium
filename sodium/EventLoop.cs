@@ -9,7 +9,7 @@
     /// <typeparam name="T">The type of the value fired through the event</typeparam>
     public class EventLoop<T> : RefireEventSink<T>
     {
-        private Event<T> source;
+        private Observable<T> source;
         private ISubscription<T> subscription;
 
         /// <summary>
@@ -19,7 +19,7 @@
         /// <returns>The current EventLoop</returns>
         /// <remarks>Loop can only be called once on an Event. If Loop is called multiple times,
         /// an ApplicationException will be raised.</remarks>
-        public Event<T> Loop(Event<T> toLoop)
+        public Event<T> Loop(Observable<T> toLoop)
         {
             if (this.source != null)
             {

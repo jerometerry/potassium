@@ -23,6 +23,8 @@
         /// <returns>The event subscription</returns>
         public abstract ISubscription<T> Subscribe(Action<T> callback);
 
+        internal abstract ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank subscriptionRank);
+
         /// <summary>
         /// Run the given Function using a Transaction obtained from TransactionContext.Current
         /// </summary>

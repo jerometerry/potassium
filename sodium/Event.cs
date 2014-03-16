@@ -337,7 +337,7 @@ namespace Sodium
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Subscribe operation that takes a thread. This ensures that any other
         /// actions triggered during Subscribe requiring a transaction all get the same instance.</remarks>
-        internal ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank subscriptionRank)
+        internal override ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank subscriptionRank)
         {
             return this.StartTransaction(t => this.Subscribe(callback, subscriptionRank, t));
         }

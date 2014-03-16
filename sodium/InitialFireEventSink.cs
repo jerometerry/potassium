@@ -6,7 +6,7 @@ namespace Sodium
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Event</typeparam>
     /// <remarks>Used by Behavior to support firing of initial values of the Behavior</remarks>
-    public class InitialFireEventSink<T> : RefireEventSink<T>
+    public abstract class InitialFireEventSink<T> : RefireEventSink<T>
     {
         internal static TF[] GetInitialFirings<TF>(Event<TF> source)
         {

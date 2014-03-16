@@ -60,7 +60,7 @@ namespace Sodium
         /// The underlying event that gives the updates for the behavior. If this behavior was created
         /// with a hold, then Source gives you an event equivalent to the one that was held.
         /// </summary>
-        internal Event<T> Source { get; private set; }
+        protected Event<T> Source { get; private set; }
 
         /// <summary>
         /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
@@ -250,7 +250,7 @@ namespace Sodium
         /// <param name="rank">The rank of the action, used as a superior to the rank of the underlying action.</param>
         /// <returns>The event subscription</returns>
         /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
-        internal ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank rank)
+        internal override ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank rank)
         {
             return this.Source.Subscribe(callback, rank);
         }
