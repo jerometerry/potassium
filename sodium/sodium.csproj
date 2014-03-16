@@ -60,6 +60,7 @@
     <Compile Include="CoalesceEvent.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="PrioritizedAction.cs" />
+    <Compile Include="RefireEventSink.cs" />
     <Compile Include="SuppressedSubscribeEvent.cs" />
     <Compile Include="SwitchBehaviorEvent.cs" />
     <Compile Include="FilterEvent.cs" />

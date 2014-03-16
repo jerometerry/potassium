@@ -7,7 +7,7 @@
     /// to subscriptions of the current event.
     /// </summary>
     /// <typeparam name="T">The type of the value fired through the event</typeparam>
-    public class EventLoop<T> : EventSink<T>
+    public class EventLoop<T> : RefireEventSink<T>
     {
         private Event<T> source;
         private ISubscription<T> subscription;
