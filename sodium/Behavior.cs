@@ -43,12 +43,6 @@ namespace Sodium
         }
 
         /// <summary>
-        /// The underlying event that gives the updates for the behavior. If this behavior was created
-        /// with a hold, then Source gives you an event equivalent to the one that was held.
-        /// </summary>
-        protected internal Event<T> Source { get; set; }
-
-        /// <summary>
         /// Sample the behavior's current value.
         /// </summary>
         /// <remarks>
@@ -61,6 +55,12 @@ namespace Sodium
         /// of missing any in between.
         /// </remarks>
         public T Value { get; private set; }
+
+        /// <summary>
+        /// The underlying event that gives the updates for the behavior. If this behavior was created
+        /// with a hold, then Source gives you an event equivalent to the one that was held.
+        /// </summary>
+        internal Event<T> Source { get; private set; }
 
         /// <summary>
         /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
@@ -134,21 +134,6 @@ namespace Sodium
             var s = (Subscription<T>)v.Subscribe(callback);
             s.RegisterFinalizer(v);
             return s;
-        }
-
-        /// <summary>
-        /// An event that is guaranteed to fire once when you subscribe to it, giving
-        /// the current value of the behavior, and thereafter behaves like updates(),
-        /// firing for each update to the behavior's value.
-        /// </summary>
-        /// <returns>An event that will fire when it's subscribed to, and every time it's 
-        /// value changes thereafter</returns>
-        /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
-        /// Value operation that takes a thread. This ensures that any other
-        /// actions triggered during Value requiring a transaction all get the same instance.</remarks>
-        public Event<T> Values()
-        {
-            return this.StartTransaction(this.Values);
         }
 
         /// <summary>

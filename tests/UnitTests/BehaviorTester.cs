@@ -44,18 +44,19 @@ namespace Sodium.Tests
             AssertArraysEqual(Arrays<string>.AsList("100 0", "200 2", "300 1"), results);
         }
 
-        [Test]
-        public void TestValues()
-        {
-            var behavior = new BehaviorSink<int>(9);
-            var results = new List<int>();
-            var listener = behavior.SubscribeWithFire(results.Add);
-            behavior.Fire(2);
-            behavior.Fire(7);
-            listener.Dispose();
-            behavior.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(9, 2, 7), results);
-        }
+
+        //[Test]
+        //public void TestValues()
+        //{
+        //    var behavior = new BehaviorSink<int>(9);
+        //    var results = new List<int>();
+        //    var listener = behavior.SubscribeWithFire(results.Add);
+        //    behavior.Fire(2);
+        //    behavior.Fire(7);
+        //    listener.Dispose();
+        //    behavior.Dispose();
+        //    AssertArraysEqual(Arrays<int>.AsList(9, 2, 7), results);
+        //}
 
         [Test]
         public void TestConstantBehavior()
@@ -68,172 +69,172 @@ namespace Sodium.Tests
             AssertArraysEqual(Arrays<int>.AsList(12), results);
         }
 
-        [Test]
-        public void TestValuesThenMap()
-        {
-            var behavior = new BehaviorSink<int>(9);
-            var results = new List<int>();
-            var l = behavior.Values().Map(x => x + 100).Subscribe(results.Add);
-            behavior.Fire(2);
-            behavior.Fire(7);
-            l.Dispose();
-            behavior.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(109, 102, 107), results);
-        }
+        //[Test]
+        //public void TestValuesThenMap()
+        //{
+        //    var behavior = new BehaviorSink<int>(9);
+        //    var results = new List<int>();
+        //    var l = behavior.Values().Map(x => x + 100).Subscribe(results.Add);
+        //    behavior.Fire(2);
+        //    behavior.Fire(7);
+        //    l.Dispose();
+        //    behavior.Dispose();
+        //    AssertArraysEqual(Arrays<int>.AsList(109, 102, 107), results);
+        //}
 
-        [Test]
-        public void TestValuesTwiceThenMap()
-        {
-            var behavior = new BehaviorSink<int>(9);
-            var results = new List<int>();
-            var listener = DoubleUp(behavior.Values()).Map(x => x + 100).Subscribe(results.Add);
-            behavior.Fire(2);
-            behavior.Fire(7);
-            listener.Dispose();
-            behavior.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(109, 109, 102, 102, 107, 107), results);
-        }
+        //[Test]
+        //public void TestValuesTwiceThenMap()
+        //{
+        //    var behavior = new BehaviorSink<int>(9);
+        //    var results = new List<int>();
+        //    var listener = DoubleUp(behavior.Values()).Map(x => x + 100).Subscribe(results.Add);
+        //    behavior.Fire(2);
+        //    behavior.Fire(7);
+        //    listener.Dispose();
+        //    behavior.Dispose();
+        //    AssertArraysEqual(Arrays<int>.AsList(109, 109, 102, 102, 107, 107), results);
+        //}
 
-        [Test]
-        public void TestValuesThenCoalesce()
-        {
-            var behavior = new BehaviorSink<int>(9);
-            var results = new List<int>();
-            var listener = behavior.Values().Coalesce((fst, snd) => snd).Subscribe(results.Add);
-            behavior.Fire(2);
-            behavior.Fire(7);
-            listener.Dispose();
-            behavior.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(9, 2, 7), results);
-        }
+        //[Test]
+        //public void TestValuesThenCoalesce()
+        //{
+        //    var behavior = new BehaviorSink<int>(9);
+        //    var results = new List<int>();
+        //    var listener = behavior.Values().Coalesce((fst, snd) => snd).Subscribe(results.Add);
+        //    behavior.Fire(2);
+        //    behavior.Fire(7);
+        //    listener.Dispose();
+        //    behavior.Dispose();
+        //    AssertArraysEqual(Arrays<int>.AsList(9, 2, 7), results);
+        //}
 
-        [Test]
-        public void TestValuesTwiceThenCoalesce()
-        {
-            var behavior = new BehaviorSink<int>(9);
-            var results = new List<int>();
-            var listener = DoubleUp(behavior.Values()).Coalesce((fst, snd) => fst + snd).Subscribe(results.Add);
-            behavior.Fire(2);
-            behavior.Fire(7);
-            listener.Dispose();
-            behavior.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(18, 4, 14), results);
-        }
+        //[Test]
+        //public void TestValuesTwiceThenCoalesce()
+        //{
+        //    var behavior = new BehaviorSink<int>(9);
+        //    var results = new List<int>();
+        //    var listener = DoubleUp(behavior.Values()).Coalesce((fst, snd) => fst + snd).Subscribe(results.Add);
+        //    behavior.Fire(2);
+        //    behavior.Fire(7);
+        //    listener.Dispose();
+        //    behavior.Dispose();
+        //    AssertArraysEqual(Arrays<int>.AsList(18, 4, 14), results);
+        //}
 
-        [Test]
-        public void TestValuesThenSnapshot()
-        {
-            var behaviorInt32 = new BehaviorSink<int>(9);
-            var behaviorChar = new BehaviorSink<char>('a');
-            var results = new List<char>();
-            var listener = behaviorInt32.Values().Snapshot(behaviorChar).Subscribe(results.Add);
-            behaviorChar.Fire('b');
-            behaviorInt32.Fire(2);
-            behaviorChar.Fire('c');
-            behaviorInt32.Fire(7);
-            listener.Dispose();
-            behaviorInt32.Dispose();
-            behaviorChar.Dispose();
-            AssertArraysEqual(Arrays<char>.AsList('a', 'b', 'c'), results);
-        }
+        //[Test]
+        //public void TestValuesThenSnapshot()
+        //{
+        //    var behaviorInt32 = new BehaviorSink<int>(9);
+        //    var behaviorChar = new BehaviorSink<char>('a');
+        //    var results = new List<char>();
+        //    var listener = behaviorInt32.Values().Snapshot(behaviorChar).Subscribe(results.Add);
+        //    behaviorChar.Fire('b');
+        //    behaviorInt32.Fire(2);
+        //    behaviorChar.Fire('c');
+        //    behaviorInt32.Fire(7);
+        //    listener.Dispose();
+        //    behaviorInt32.Dispose();
+        //    behaviorChar.Dispose();
+        //    AssertArraysEqual(Arrays<char>.AsList('a', 'b', 'c'), results);
+        //}
 
-        [Test]
-        public void TestValuesTwiceThenSnapshot()
-        {
-            var behaviorInt32 = new BehaviorSink<int>(9);
-            var behaviorChar = new BehaviorSink<char>('a');
-            var results = new List<char>();
-            var listener = DoubleUp(behaviorInt32.Values()).Snapshot(behaviorChar).Subscribe(results.Add);
-            behaviorChar.Fire('b');
-            behaviorInt32.Fire(2);
-            behaviorChar.Fire('c');
-            behaviorInt32.Fire(7);
-            listener.Dispose();
-            behaviorInt32.Dispose();
-            behaviorChar.Dispose();
-            AssertArraysEqual(Arrays<char>.AsList('a', 'a', 'b', 'b', 'c', 'c'), results);
-        }
+        //[Test]
+        //public void TestValuesTwiceThenSnapshot()
+        //{
+        //    var behaviorInt32 = new BehaviorSink<int>(9);
+        //    var behaviorChar = new BehaviorSink<char>('a');
+        //    var results = new List<char>();
+        //    var listener = DoubleUp(behaviorInt32.Values()).Snapshot(behaviorChar).Subscribe(results.Add);
+        //    behaviorChar.Fire('b');
+        //    behaviorInt32.Fire(2);
+        //    behaviorChar.Fire('c');
+        //    behaviorInt32.Fire(7);
+        //    listener.Dispose();
+        //    behaviorInt32.Dispose();
+        //    behaviorChar.Dispose();
+        //    AssertArraysEqual(Arrays<char>.AsList('a', 'a', 'b', 'b', 'c', 'c'), results);
+        //}
 
-        [Test]
-        public void TestValuesThenMerge()
-        {
-            var behavior1 = new BehaviorSink<int>(9);
-            var behavior2 = new BehaviorSink<int>(2);
-            var results = new List<int>();
-            var listener = behavior1.Values().Merge(behavior2.Values(), (x, y) => x + y).Subscribe(results.Add);
-            behavior1.Fire(1);
-            behavior2.Fire(4);
-            listener.Dispose();
-            behavior1.Dispose();
-            behavior2.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(11, 1, 4), results);
-        }
+        //[Test]
+        //public void TestValuesThenMerge()
+        //{
+        //    var behavior1 = new BehaviorSink<int>(9);
+        //    var behavior2 = new BehaviorSink<int>(2);
+        //    var results = new List<int>();
+        //    var listener = behavior1.Values().Merge(behavior2.Values(), (x, y) => x + y).Subscribe(results.Add);
+        //    behavior1.Fire(1);
+        //    behavior2.Fire(4);
+        //    listener.Dispose();
+        //    behavior1.Dispose();
+        //    behavior2.Dispose();
+        //    AssertArraysEqual(Arrays<int>.AsList(11, 1, 4), results);
+        //}
 
-        [Test]
-        public void TestValuesThenFilter()
-        {
-            var behavior = new BehaviorSink<int>(9);
-            var results = new List<int>();
-            var listener = behavior.Values().Filter(a => true).Subscribe(results.Add);
-            behavior.Fire(2);
-            behavior.Fire(7);
-            listener.Dispose();
-            behavior.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(9, 2, 7), results);
-        }
+        //[Test]
+        //public void TestValuesThenFilter()
+        //{
+        //    var behavior = new BehaviorSink<int>(9);
+        //    var results = new List<int>();
+        //    var listener = behavior.Values().Filter(a => true).Subscribe(results.Add);
+        //    behavior.Fire(2);
+        //    behavior.Fire(7);
+        //    listener.Dispose();
+        //    behavior.Dispose();
+        //    AssertArraysEqual(Arrays<int>.AsList(9, 2, 7), results);
+        //}
 
-        [Test]
-        public void TestValuesTwiceThenFilter()
-        {
-            var behavior = new BehaviorSink<int>(9);
-            var results = new List<int>();
-            var listener = DoubleUp(behavior.Values()).Filter(a => true).Subscribe(results.Add);
-            behavior.Fire(2);
-            behavior.Fire(7);
-            listener.Dispose();
-            behavior.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(9, 9, 2, 2, 7, 7), results);
-        }
+        //[Test]
+        //public void TestValuesTwiceThenFilter()
+        //{
+        //    var behavior = new BehaviorSink<int>(9);
+        //    var results = new List<int>();
+        //    var listener = DoubleUp(behavior.Values()).Filter(a => true).Subscribe(results.Add);
+        //    behavior.Fire(2);
+        //    behavior.Fire(7);
+        //    listener.Dispose();
+        //    behavior.Dispose();
+        //    AssertArraysEqual(Arrays<int>.AsList(9, 9, 2, 2, 7, 7), results);
+        //}
 
-        [Test]
-        public void TestValuesThenOnce()
-        {
-            var behavior = new BehaviorSink<int>(9);
-            var results = new List<int>();
-            var listener = behavior.Values().Once().Subscribe(results.Add);
-            behavior.Fire(2);
-            behavior.Fire(7);
-            listener.Dispose();
-            behavior.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(9), results);
-        }
+        //[Test]
+        //public void TestValuesThenOnce()
+        //{
+        //    var behavior = new BehaviorSink<int>(9);
+        //    var results = new List<int>();
+        //    var listener = behavior.Values().Once().Subscribe(results.Add);
+        //    behavior.Fire(2);
+        //    behavior.Fire(7);
+        //    listener.Dispose();
+        //    behavior.Dispose();
+        //    AssertArraysEqual(Arrays<int>.AsList(9), results);
+        //}
 
-        [Test]
-        public void TestValuesTwiceThenOnce()
-        {
-            var behavior = new BehaviorSink<int>(9);
-            var results = new List<int>();
-            var listener = DoubleUp(behavior.Values()).Once().Subscribe(results.Add);
-            behavior.Fire(2);
-            behavior.Fire(7);
-            listener.Dispose();
-            behavior.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(9), results);
-        }
+        //[Test]
+        //public void TestValuesTwiceThenOnce()
+        //{
+        //    var behavior = new BehaviorSink<int>(9);
+        //    var results = new List<int>();
+        //    var listener = DoubleUp(behavior.Values()).Once().Subscribe(results.Add);
+        //    behavior.Fire(2);
+        //    behavior.Fire(7);
+        //    listener.Dispose();
+        //    behavior.Dispose();
+        //    AssertArraysEqual(Arrays<int>.AsList(9), results);
+        //}
 
-        [Test]
-        public void TestValuesLateListen()
-        {
-            var behavior = new BehaviorSink<int>(9);
-            var results = new List<int>();
-            var value = behavior.Values();
-            behavior.Fire(8);
-            var listener = value.Subscribe(results.Add);
-            behavior.Fire(2);
-            listener.Dispose();
-            behavior.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(8, 2), results);
-        }
+        //[Test]
+        //public void TestValuesLateListen()
+        //{
+        //    var behavior = new BehaviorSink<int>(9);
+        //    var results = new List<int>();
+        //    var value = behavior.Values();
+        //    behavior.Fire(8);
+        //    var listener = value.Subscribe(results.Add);
+        //    behavior.Fire(2);
+        //    listener.Dispose();
+        //    behavior.Dispose();
+        //    AssertArraysEqual(Arrays<int>.AsList(8, 2), results);
+        //}
 
         [Test]
         public void TestMapB()
