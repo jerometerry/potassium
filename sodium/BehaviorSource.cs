@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Sodium
+﻿namespace Sodium
 {
+    using System;
+
     internal class BehaviorSource<T> : IBehaviorSource<T>
     {
         Event<T> source;
@@ -20,12 +17,12 @@ namespace Sodium
             this.source = source;
         }
 
-        public Event<T> Coalesce(Func<T, T, T> coalesce)
+        public ISnapshot<T> Coalesce(Func<T, T, T> coalesce)
         {
             return this.source.Coalesce(coalesce);
         }
 
-        public Event<TB> Map<TB>(Func<T, TB> map)
+        public IHoldable<TB> Map<TB>(Func<T, TB> map)
         {
             return this.source.Map(map);
         }

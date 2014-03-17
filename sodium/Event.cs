@@ -10,7 +10,7 @@ namespace Sodium
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the event.</typeparam>
     /// <remarks>Events that fire in the same Transaction are known as Simultaneous Events.</remarks>
-    public class Event<T> : Observable<T>
+    public class Event<T> : Observable<T>, IHoldable<T>, ISnapshot<T>
     {
         /// <summary>
         /// List of ISubscriptions that are currently listening for firings 

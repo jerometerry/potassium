@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Sodium
+﻿namespace Sodium
 {
+    using System;
+
     /// <summary>
     /// Interface required for sources for use with Behaviors
     /// </summary>
@@ -24,7 +21,7 @@ namespace Sodium
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
         /// </remarks>
-        Event<T> Coalesce(Func<T, T, T> coalesce);
+        ISnapshot<T> Coalesce(Func<T, T, T> coalesce);
 
         /// <summary>
         /// Map firings of the current event using the supplied mapping function.
@@ -33,7 +30,7 @@ namespace Sodium
         /// <param name="map">A map from T -> TB</param>
         /// <returns>A new Event that fires whenever the current Event fires, the
         /// the mapped value is computed using the supplied mapping.</returns>
-        Event<TB> Map<TB>(Func<T, TB> map);
+        IHoldable<TB> Map<TB>(Func<T, TB> map);
 
         /// <summary>
         /// Listen for firings of this event.
