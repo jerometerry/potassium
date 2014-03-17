@@ -47,37 +47,6 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Listen for firings of this event.
-        /// </summary>
-        /// <param name="callback">An Action to be invoked when the current Event fires.</param>
-        /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
-        public override ISubscription<T> Subscribe(Action<T> callback)
-        {
-            return this.Subscribe(new SodiumCallback<T>((a, t) => callback(a)), Rank.Highest);
-        }
-
-        /// <summary>
-        /// Stop the given subscription from receiving updates from the current Event
-        /// </summary>
-        /// <param name="subscription">The subscription to remove</param>
-        /// <returns>True if the subscription was removed, false otherwise</returns>
-        public override bool CancelSubscription(ISubscription<T> subscription)
-        {
-            if (subscription == null)
-            {
-                return false;
-            }
-
-            var l = (Subscription<T>)subscription;
-
-            lock (Constants.SubscriptionLock)
-            {
-                Rank.RemoveSuperior(l.Rank);
-                return this.Subscriptions.Remove(l);
-            }
-        }
-
-        /// <summary>
         /// Map firings of the current event using the supplied mapping function.
         /// </summary>
         /// <typeparam name="TB">The return type of the map</typeparam>
@@ -291,31 +260,14 @@ namespace Sodium
             return eb;
         }
 
-        internal ISubscription<T> CreateSubscription(ISodiumCallback<T> source, Rank superior, Transaction transaction)
-        {
-            Subscription<T> subscription;
-            lock (Constants.SubscriptionLock)
-            {
-                if (this.rank.AddSuperior(superior))
-                {
-                    transaction.Reprioritize = true;
-                }
-
-                subscription = new Subscription<T>(this, source, superior);
-                this.Subscriptions.Add(subscription);
-            }
-
-            this.OnSubscribe(subscription, transaction);
-            return subscription;
-        }
-
         /// <summary>
-        /// 
+        /// Listen for firings of this event.
         /// </summary>
-        /// <param name="subscription"></param>
-        /// <param name="transaction"></param>
-        protected virtual void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
+        /// <param name="callback">An Action to be invoked when the current Event fires.</param>
+        /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
+        public override ISubscription<T> Subscribe(Action<T> callback)
         {
+            return this.Subscribe(new SodiumCallback<T>((a, t) => callback(a)), Rank.Highest);
         }
 
         /// <summary>
@@ -356,6 +308,27 @@ namespace Sodium
         }
 
         /// <summary>
+        /// Stop the given subscription from receiving updates from the current Event
+        /// </summary>
+        /// <param name="subscription">The subscription to remove</param>
+        /// <returns>True if the subscription was removed, false otherwise</returns>
+        public override bool CancelSubscription(ISubscription<T> subscription)
+        {
+            if (subscription == null)
+            {
+                return false;
+            }
+
+            var l = (Subscription<T>)subscription;
+
+            lock (Constants.SubscriptionLock)
+            {
+                Rank.RemoveSuperior(l.Rank);
+                return this.Subscriptions.Remove(l);
+            }
+        }
+
+        /// <summary>
         /// Create a behavior with the specified initial value, that gets updated
         /// by the values coming through the event. The 'current value' of the behavior
         /// is notionally the value as it was 'at the start of the transaction'.
@@ -371,6 +344,33 @@ namespace Sodium
             var b = new Behavior<T>(source, initValue);
             b.RegisterFinalizer(source);
             return b;
+        }
+
+        internal ISubscription<T> CreateSubscription(ISodiumCallback<T> source, Rank superior, Transaction transaction)
+        {
+            Subscription<T> subscription;
+            lock (Constants.SubscriptionLock)
+            {
+                if (this.rank.AddSuperior(superior))
+                {
+                    transaction.Reprioritize = true;
+                }
+
+                subscription = new Subscription<T>(this, source, superior);
+                this.Subscriptions.Add(subscription);
+            }
+
+            this.OnSubscribe(subscription, transaction);
+            return subscription;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="subscription"></param>
+        /// <param name="transaction"></param>
+        protected virtual void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
+        {
         }
 
         /// <summary>

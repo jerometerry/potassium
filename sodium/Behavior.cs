@@ -101,35 +101,10 @@ namespace Sodium
         /// <returns>The new applied Behavior</returns>
         public IBehavior<TB> Apply<TB>(IBehavior<Func<T, TB>> bf)
         {
-            var evt = new BehaviorApplyEvent<T, TB>((Behavior<Func<T, TB>>)bf, (Behavior<T>)this);
+            var evt = new BehaviorApplyEvent<T, TB>((Behavior<Func<T, TB>>)bf, this);
             var behavior = evt.Behavior;
             behavior.RegisterFinalizer(evt);
             return behavior;
-        }
-
-        /// <summary>
-        /// Listen to the underlying event for updates
-        /// </summary>
-        /// <param name="callback">The action to invoke when the underlying event fires</param>
-        /// <returns>The event subscription</returns>
-        public override ISubscription<T> Subscribe(Action<T> callback)
-        {
-            return this.Source.Subscribe(callback);
-        }
-
-        /// <summary>
-        /// Listen to the underlying event for updates
-        /// </summary>
-        /// <param name="callback"> action to invoke when the underlying event fires</param>
-        /// <returns>The event subscription</returns>
-        /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
-        /// current value of the behavior.</remarks>
-        public ISubscription<T> SubscribeAndFire(Action<T> callback)
-        { 
-            var v = this.StartTransaction(this.Values);
-            var s = (Subscription<T>)v.Subscribe(callback);
-            s.RegisterFinalizer(v);
-            return s;
         }
 
         /// <summary>
@@ -223,9 +198,43 @@ namespace Sodium
             return result;
         }
 
-        public override bool CancelSubscription(ISubscription<T> subscription)
+        /// <summary>
+        /// Listen to the underlying event for updates
+        /// </summary>
+        /// <param name="callback">The action to invoke when the underlying event fires</param>
+        /// <returns>The event subscription</returns>
+        public override ISubscription<T> Subscribe(Action<T> callback)
         {
-            return this.Source.CancelSubscription(subscription);
+            return this.Source.Subscribe(callback);
+        }
+
+        /// <summary>
+        /// Listen to the underlying event for updates
+        /// </summary>
+        /// <param name="callback"> action to invoke when the underlying event fires</param>
+        /// <returns>The event subscription</returns>
+        /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
+        /// current value of the behavior.</remarks>
+        public ISubscription<T> SubscribeAndFire(Action<T> callback)
+        {
+            return this.SubscribeAndFire(new SodiumCallback<T>((a, t) => callback(a)), Rank.Highest);
+        }
+
+        /// <summary>
+        /// Listen to the underlying event for updates
+        /// </summary>
+        /// <param name="callback"> action to invoke when the underlying event fires</param>
+        /// <param name="rank">A rank that will be added as a superior of the Rank of the current Event</param>
+        /// <returns>The event subscription</returns>
+        /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
+        /// current value of the behavior.</remarks>
+        public ISubscription<T> SubscribeAndFire(ISodiumCallback<T> callback, Rank rank)
+        {
+            var beh = this;
+            var v = this.StartTransaction(t => new ValuesListFiringEvent<T>(beh, t));
+            var s = (Subscription<T>)v.Subscribe(callback, rank);
+            s.RegisterFinalizer(v);
+            return s;
         }
 
         public override ISubscription<T> Subscribe(ISodiumCallback<T> callback)
@@ -248,22 +257,6 @@ namespace Sodium
         /// <summary>
         /// Listen to the underlying event for updates
         /// </summary>
-        /// <param name="callback"> action to invoke when the underlying event fires</param>
-        /// <param name="rank">A rank that will be added as a superior of the Rank of the current Event</param>
-        /// <returns>The event subscription</returns>
-        /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
-        /// current value of the behavior.</remarks>
-        public ISubscription<T> SubscribeAndFire(ISodiumCallback<T> callback, Rank rank)
-        {
-            var v = this.StartTransaction(this.Values);
-            var s = (Subscription<T>)v.Subscribe(callback, rank);
-            s.RegisterFinalizer(v);
-            return s;
-        }
-
-        /// <summary>
-        /// Listen to the underlying event for updates
-        /// </summary>
         /// <param name="callback">The action to invoke when the underlying event fires</param>
         /// <param name="rank">The rank of the action, used as a superior to the rank of the underlying action.</param>
         /// <param name="transaction">The transaction used to order actions</param>
@@ -273,23 +266,9 @@ namespace Sodium
             return this.Source.Subscribe(callback, rank, transaction);
         }
 
-        /// <summary>
-        /// An event that is guaranteed to fire once when you subscribe to it, giving
-        /// the current value of the behavior, and thereafter behaves like updates(),
-        /// firing for each update to the behavior's value.
-        /// </summary>
-        /// <param name="transaction">The transaction to run the Value operation on</param>
-        /// <returns>An event that will fire when it's subscribed to, and every time it's 
-        /// value changes thereafter</returns>
-        public IEvent<T> Values(Transaction transaction)
+        public override bool CancelSubscription(ISubscription<T> subscription)
         {
-            var valueStream = new ValueEventSink<T>(this, transaction);
-
-            // Needed in case of an initial value and an update
-            // in the same transaction.
-            var values = new LastFiringEvent<T>(valueStream, transaction);
-            values.RegisterFinalizer(valueStream);
-            return values;
+            return this.Source.CancelSubscription(subscription);
         }
 
         /// <summary>

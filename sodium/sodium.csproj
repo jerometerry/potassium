@@ -87,6 +87,7 @@
     <Compile Include="OnceEvent.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ValuesListFiringEvent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behavior.cs" />
