@@ -46,7 +46,17 @@
             return this.source.Map(map);
         }
 
+        public bool CancelSubscription(ISubscription<T> subscription)
+        {
+            return this.source.CancelSubscription(subscription);
+        }
+
         public ISubscription<T> Subscribe(Action<T> callback)
+        {
+            return this.source.Subscribe(callback);
+        }
+
+        public ISubscription<T> Subscribe(ISodiumCallback<T> callback)
         {
             return this.source.Subscribe(callback);
         }

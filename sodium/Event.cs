@@ -61,7 +61,7 @@ namespace Sodium
         /// </summary>
         /// <param name="subscription">The subscription to remove</param>
         /// <returns>True if the subscription was removed, false otherwise</returns>
-        public bool CancelSubscription(ISubscription<T> subscription)
+        public override bool CancelSubscription(ISubscription<T> subscription)
         {
             if (subscription == null)
             {
@@ -323,7 +323,7 @@ namespace Sodium
         /// </summary>
         /// <param name="callback">An Action to be invoked when the current Event fires.</param>
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
-        internal ISubscription<T> Subscribe(ISodiumCallback<T> callback)
+        public override ISubscription<T> Subscribe(ISodiumCallback<T> callback)
         {
             return this.Subscribe(callback, Rank.Highest);
         }
@@ -337,7 +337,7 @@ namespace Sodium
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Subscribe operation that takes a thread. This ensures that any other
         /// actions triggered during Subscribe requiring a transaction all get the same instance.</remarks>
-        internal override ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank subscriptionRank)
+        public override ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank subscriptionRank)
         {
             return this.StartTransaction(t => this.Subscribe(callback, subscriptionRank, t));
         }
@@ -350,7 +350,7 @@ namespace Sodium
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An ISubscription to be used to stop listening for events.</returns>
         /// <remarks>Any firings that have occurred on the current transaction will be re-fired immediate after subscribing.</remarks>
-        internal ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank superior, Transaction transaction)
+        public override ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank superior, Transaction transaction)
         {
             return this.CreateSubscription(callback, superior, transaction);
         }

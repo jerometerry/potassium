@@ -243,6 +243,16 @@ namespace Sodium
             return result;
         }
 
+        public override bool CancelSubscription(ISubscription<T> subscription)
+        {
+            return this.Source.CancelSubscription(subscription);
+        }
+
+        public override ISubscription<T> Subscribe(ISodiumCallback<T> callback)
+        {
+            return this.Source.Subscribe(callback);
+        }
+
         /// <summary>
         /// Listen to the underlying event for updates
         /// </summary>
@@ -250,7 +260,7 @@ namespace Sodium
         /// <param name="rank">The rank of the action, used as a superior to the rank of the underlying action.</param>
         /// <returns>The event subscription</returns>
         /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
-        internal override ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank rank)
+        public override ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank rank)
         {
             return this.Source.Subscribe(callback, rank);
         }
@@ -278,7 +288,7 @@ namespace Sodium
         /// <param name="rank">The rank of the action, used as a superior to the rank of the underlying action.</param>
         /// <param name="transaction">The transaction used to order actions</param>
         /// <returns>The event subscription</returns>
-        internal ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank rank, Transaction transaction)
+        public override ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank rank, Transaction transaction)
         {
             return this.Source.Subscribe(callback, rank, transaction);
         }
