@@ -227,13 +227,7 @@ namespace Sodium
         /// is true.</returns>
         public IEvent<T> Gate(IValue<bool> predicate)
         {
-            Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
-            var sn = this.Snapshot(predicate, snapshot);
-            var filter = sn.FilterNotNull();
-            var map = filter.Map(a => a.Value());
-            map.RegisterFinalizer(filter);
-            map.RegisterFinalizer(sn);
-            return map;
+            return new GateEvent<T>(this, predicate);
         }
 
         /// <summary>
