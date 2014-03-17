@@ -38,7 +38,7 @@
             this.wrappedEventSubscriptionCallback = this.CreateFireCallback();
             this.wrappedSubscription = source.Value.Subscribe(this.wrappedEventSubscriptionCallback, this.Rank, transaction);
 
-            var behaviorEventChanged = new ActionCallback<IEvent<T>>(this.UpdateWrappedEventSubscription);
+            var behaviorEventChanged = new SodiumCallback<IEvent<T>>(this.UpdateWrappedEventSubscription);
             this.behaviorSubscription = source.Subscribe(behaviorEventChanged, this.Rank, transaction);
 
             return Unit.Nothing;

@@ -16,7 +16,7 @@ namespace Sodium
             this.snapshot = snapshot;
             this.behavior = behavior;
 
-            var callback = new ActionCallback<T>(this.Fire);
+            var callback = new SodiumCallback<T>(this.Fire);
             this.subscription = source.Subscribe(callback, this.Rank);
         }
 

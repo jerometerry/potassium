@@ -15,7 +15,7 @@ namespace Sodium
             this.source = source;
             this.coalesce = coalesce;
 
-            var callback = new ActionCallback<T>(this.Accumulate);
+            var callback = new SodiumCallback<T>(this.Accumulate);
             this.subscription = source.Subscribe(callback, this.Rank, transaction);
         }
 

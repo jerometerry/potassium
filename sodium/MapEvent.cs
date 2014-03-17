@@ -13,7 +13,7 @@
         {
             this.source = source;
             this.map = map;
-            this.subscription = source.Subscribe(new ActionCallback<T>(this.Fire), this.Rank);
+            this.subscription = source.Subscribe(new SodiumCallback<T>(this.Fire), this.Rank);
         }
 
         public void Fire(T firing, Transaction trans)

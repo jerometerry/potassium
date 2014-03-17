@@ -6,7 +6,7 @@ namespace Sodium
     /// ActionCallback wraps an System.Action used to subscribe to Observables.
     /// </summary>
     /// <typeparam name="T">The type of value that will be fired</typeparam>
-    internal sealed class ActionCallback<T> : ISodiumCallback<T>
+    internal sealed class SodiumCallback<T> : ISodiumCallback<T>
     {
         private readonly Action<T, Transaction> action;
 
@@ -14,7 +14,7 @@ namespace Sodium
         /// Constructs a new SodiumCallback from the given Action
         /// </summary>
         /// <param name="action">The Action to invoke when the Observable fires</param>
-        public ActionCallback(Action<T, Transaction> action)
+        public SodiumCallback(Action<T, Transaction> action)
         {
             this.action = action;
         }

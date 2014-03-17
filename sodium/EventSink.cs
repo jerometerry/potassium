@@ -35,7 +35,7 @@
         /// <returns>In ISodiumCallback that calls Fire, when invoked.</returns>
         internal ISodiumCallback<T> CreateFireCallback()
         {
-            return new ActionCallback<T>((t, v) => this.Fire(t, v));
+            return new SodiumCallback<T>((t, v) => this.Fire(t, v));
         }
 
         internal void FireSubscriptionCallbacks(T firing, Transaction transaction)

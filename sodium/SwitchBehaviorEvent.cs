@@ -8,7 +8,7 @@
 
         public SwitchBehaviorEvent(IFiringObservable<IBehavior<T>> source)
         {
-            var callback = new ActionCallback<IBehavior<T>>(this.Invoke);
+            var callback = new SodiumCallback<IBehavior<T>>(this.Invoke);
             this.subscription = source.SubscribeAndFire(callback, this.Rank);
         }
 

@@ -53,7 +53,7 @@ namespace Sodium
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
         public override ISubscription<T> Subscribe(Action<T> callback)
         {
-            return this.Subscribe(new ActionCallback<T>((a, t) => callback(a)), Rank.Highest);
+            return this.Subscribe(new SodiumCallback<T>((a, t) => callback(a)), Rank.Highest);
         }
 
         /// <summary>
