@@ -6,7 +6,7 @@
     /// Base class for Event and Behavior
     /// </summary>
     /// <typeparam name="T">The type of value that will be fired through the Observable</typeparam>
-    public abstract class Observable<T> : DisposableObject
+    public abstract class Observable<T> : DisposableObject, IObservable<T>
     {
         private TransactionContext Context
         {
