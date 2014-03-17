@@ -49,9 +49,11 @@
     <Compile Include="BehaviorApplyEvent.cs" />
     <Compile Include="BehaviorLoop.cs" />
     <Compile Include="BehaviorSink.cs" />
+    <Compile Include="BehaviorSource.cs" />
     <Compile Include="DelayEvent.cs" />
     <Compile Include="EventLoop.cs" />
     <Compile Include="EventSink.cs" />
+    <Compile Include="IBehaviorSource.cs" />
     <Compile Include="InitialFireEventSink.cs" />
     <Compile Include="LastFiringEvent.cs" />
     <Compile Include="Observable.cs" />

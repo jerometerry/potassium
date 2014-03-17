@@ -11,7 +11,7 @@
         /// </summary>
         /// <param name="initialValue">The initial value of the Behavior</param>
         public BehaviorSink(T initialValue) 
-            : base(new EventSink<T>(), initialValue)
+            : base(new BehaviorSource<T>(new EventSink<T>()), initialValue)
         {
             this.RegisterFinalizer(this.Source);
         }
@@ -23,7 +23,9 @@
         /// <returns>True if fired, false otherwise</returns>
         public bool Fire(T firing)
         {
-            return ((EventSink<T>)Source).Fire(firing);
+            var source = (BehaviorSource<T>)Source;
+            var sink = (EventSink<T>)source.Event;
+            return sink.Fire(firing);
         }
     }
 }

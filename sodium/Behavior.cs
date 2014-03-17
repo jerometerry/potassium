@@ -25,7 +25,7 @@ namespace Sodium
         /// </summary>
         /// <param name="initValue">The initial value of the Behavior</param>
         public Behavior(T initValue)
-            : this(new Event<T>(), initValue)
+            : this(new BehaviorSource<T>(new Event<T>()), initValue)
         {
             this.RegisterFinalizer(this.Source);
         }
@@ -35,7 +35,7 @@ namespace Sodium
         /// </summary>
         /// <param name="source">The Event to listen for updates from</param>
         /// <param name="initValue">The initial value of the Behavior</param>
-        public Behavior(Event<T> source, T initValue)
+        public Behavior(IBehaviorSource<T> source, T initValue)
         {
             this.Source = source;
             this.Value = initValue;
@@ -60,7 +60,7 @@ namespace Sodium
         /// The underlying event that gives the updates for the behavior. If this behavior was created
         /// with a hold, then Source gives you an event equivalent to the one that was held.
         /// </summary>
-        protected Event<T> Source { get; private set; }
+        protected IBehaviorSource<T> Source { get; private set; }
 
         /// <summary>
         /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.

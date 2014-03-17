@@ -8,7 +8,7 @@
     /// </summary>
     public class DisposableObject : IDisposable
     {
-        private List<DisposableObject> finalizers;
+        private List<IDisposable> finalizers;
 
         /// <summary>
         /// Constructs a new SodiumObject
@@ -32,11 +32,11 @@
         /// SodiumObject is disposed.
         /// </summary>
         /// <param name="o">The SodiumObject to register for disposal</param>
-        public void RegisterFinalizer(DisposableObject o)
+        public void RegisterFinalizer(IDisposable o)
         {
             if (finalizers == null)
             {
-                finalizers = new List<DisposableObject>();
+                finalizers = new List<IDisposable>();
             }
 
             finalizers.Add(o);
