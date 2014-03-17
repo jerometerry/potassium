@@ -11,7 +11,7 @@
         /// </summary>
         /// <param name="initialValue">The initial value of the Behavior</param>
         public BehaviorSink(T initialValue) 
-            : base(new EventSink<T>(), initialValue)
+            : base(new Sink<T>(), initialValue)
         {
             this.RegisterFinalizer(this.Source);
         }

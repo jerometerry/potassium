@@ -5,7 +5,7 @@ namespace Sodium
     /// and fires all updates thereafter.
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Behavior</typeparam>
-    internal sealed class ValueEventSink<T> : InitialFireEventSink<T>
+    internal sealed class ValueSink<T> : InitialFireSink<T>
     {
         private IValue<T> valueStream;
         private ISubscription<T> subscription;
@@ -15,7 +15,7 @@ namespace Sodium
         /// </summary>
         /// <param name="valueStream">The Behavior to monitor</param>
         /// <param name="transaction">The Transaction to use to create a subscription on the given Behavior</param>
-        public ValueEventSink(IValue<T> valueStream, Transaction transaction)
+        public ValueSink(IValue<T> valueStream, Transaction transaction)
         {
             this.valueStream = valueStream;
             this.CreateLoop(transaction);

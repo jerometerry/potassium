@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal sealed class BehaviorApplyEvent<T, TB> : EventSink<TB>
+    internal sealed class BehaviorApply<T, TB> : Sink<TB>
     {
         private Behavior<Func<T, TB>> bf;
         private Behavior<T> source;
@@ -14,7 +14,7 @@
         /// </summary>
         private bool fired;
 
-        public BehaviorApplyEvent(Behavior<Func<T, TB>> bf, Behavior<T> source)
+        public BehaviorApply(Behavior<Func<T, TB>> bf, Behavior<T> source)
         {
             this.bf = bf;
             this.source = source;

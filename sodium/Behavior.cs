@@ -103,7 +103,7 @@ namespace Sodium
         /// <returns>The Behavior with the given value</returns>
         public static IBehavior<T> Hold(IObservable<T> source, T initValue, Transaction t)
         {
-            var s = new LastFiringEvent<T>(source, t);
+            var s = new LastFiring<T>(source, t);
             var b = new Behavior<T>(s, initValue);
             b.RegisterFinalizer(s);
             return b;
@@ -120,7 +120,7 @@ namespace Sodium
         {
             var innerBehavior = source.Value;
             var initValue = innerBehavior.Value;
-            var sink = new SwitchBehaviorEvent<T>(source);
+            var sink = new SwitchBehavior<T>(source);
             var result = sink.Hold(initValue);
             result.RegisterFinalizer(sink);
             return result;
@@ -140,7 +140,7 @@ namespace Sodium
         /// </remarks>
         public static IObservable<T> SwitchE(IBehavior<IObservable<T>> behavior)
         {
-            return new SwitchEvent<T>(behavior);
+            return new Switch<T>(behavior);
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace Sodium
         /// <returns>The new applied Behavior</returns>
         public IBehavior<TB> Apply<TB>(IBehavior<Func<T, TB>> bf)
         {
-            var evt = new BehaviorApplyEvent<T, TB>((Behavior<Func<T, TB>>)bf, this);
+            var evt = new BehaviorApply<T, TB>((Behavior<Func<T, TB>>)bf, this);
             var behavior = evt.Behavior;
             behavior.RegisterFinalizer(evt);
             return behavior;
@@ -282,7 +282,7 @@ namespace Sodium
         public ISubscription<T> SubscribeAndFire(ISodiumCallback<T> callback, Rank rank)
         {
             var beh = this;
-            var v = this.StartTransaction(t => new ValuesListFiringEvent<T>(beh, t));
+            var v = this.StartTransaction(t => new ValuesListFiring<T>(beh, t));
             var s = (Subscription<T>)v.Subscribe(callback, rank);
             s.RegisterFinalizer(v);
             return s;

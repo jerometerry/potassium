@@ -1,8 +1,8 @@
 ﻿namespace Sodium
 {
-    internal sealed class SuppressedSubscribeEvent<T> : EventLoop<T>
+    internal sealed class SuppressedSubscribe<T> : EventLoop<T>
     {
-        public SuppressedSubscribeEvent(IObservable<T> source)
+        public SuppressedSubscribe(IObservable<T> source)
         {
             this.Loop(source);
         }

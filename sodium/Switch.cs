@@ -1,13 +1,13 @@
 ﻿namespace Sodium
 {
-    internal sealed class SwitchEvent<T> : EventSink<T>
+    internal sealed class Switch<T> : Sink<T>
     {
         private ISubscription<IObservable<T>> behaviorSubscription;
         private ISodiumCallback<T> wrappedEventSubscriptionCallback;
         private ISubscription<T> wrappedSubscription;
         private IValue<IObservable<T>> source;
 
-        public SwitchEvent(IValue<IObservable<T>> source)
+        public Switch(IValue<IObservable<T>> source)
         {
             this.source = source;
             this.StartTransaction(this.Initialize);
@@ -54,7 +54,7 @@
                     this.wrappedSubscription = null;
                 }
 
-                var suppressed = new SuppressedSubscribeEvent<T>(newEvent);
+                var suppressed = new SuppressedSubscribe<T>(newEvent);
                 this.wrappedSubscription = suppressed.Subscribe(this.wrappedEventSubscriptionCallback, this.Rank, transaction);
                 ((DisposableObject)this.wrappedSubscription).RegisterFinalizer(suppressed);
             });

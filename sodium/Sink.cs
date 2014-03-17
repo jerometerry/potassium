@@ -6,7 +6,7 @@
     /// An EventSink is an Event that you can fire updates through
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the Event.</typeparam>
-    public class EventSink<T> : Observable<T>, IFireable<T>
+    public class Sink<T> : Observable<T>, IFireable<T>
     {
         /// <summary>
         /// Fire the given value to all registered subscriptions

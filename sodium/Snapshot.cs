@@ -3,14 +3,14 @@ namespace Sodium
     using System;
     using System.Linq;
 
-    internal sealed class SnapshotEvent<T, TB, TC> : InitialFireEventSink<TC>
+    internal sealed class Snapshot<T, TB, TC> : InitialFireSink<TC>
     {
         private IObservable<T> source;
         private Func<T, TB, TC> snapshot;
         private IValue<TB> behavior;
         private ISubscription<T> subscription;
 
-        public SnapshotEvent(IObservable<T> source, Func<T, TB, TC> snapshot, IValue<TB> behavior)
+        public Snapshot(IObservable<T> source, Func<T, TB, TC> snapshot, IValue<TB> behavior)
         {
             this.source = source;
             this.snapshot = snapshot;

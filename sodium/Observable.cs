@@ -71,7 +71,7 @@
         /// </remarks>
         public IObservable<T> Coalesce(Func<T, T, T> coalesce)
         {
-            return this.StartTransaction(t => new CoalesceEvent<T>(this, coalesce, t));
+            return this.StartTransaction(t => new Coalesce<T>(this, coalesce, t));
         }
 
         /// <summary>
@@ -85,7 +85,7 @@
         /// <returns>An Event that collects new values</returns>
         public IObservable<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
-            return new CollectEvent<T, TB, TS>(this, initState, snapshot);
+            return new Collect<T, TB, TS>(this, initState, snapshot);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@
         /// <returns>An event that is fired with the lowest priority in the current Transaction the current Event is fired in.</returns>
         public IObservable<T> Delay()
         {
-            return new DelayEvent<T>(this);
+            return new Delay<T>(this);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@
         /// the predicate evaluates to true.</returns>
         public IObservable<T> Filter(Func<T, bool> predicate)
         {
-            return new FilterEvent<T>(this, predicate);
+            return new Filter<T>(this, predicate);
         }
 
         /// <summary>
@@ -129,7 +129,7 @@
         /// is true.</returns>
         public IObservable<T> Gate(IValue<bool> predicate)
         {
-            return new GateEvent<T>(this, predicate);
+            return new Gate<T>(this, predicate);
         }
 
         /// <summary>
@@ -156,7 +156,7 @@
         /// the mapped value is computed using the supplied mapping.</returns>
         public IObservable<TB> Map<TB>(Func<T, TB> map)
         {
-            return new MapEvent<T, TB>(this, map);
+            return new Map<T, TB>(this, map);
         }
 
         /// <summary>
@@ -173,7 +173,7 @@
         /// </remarks>
         public IObservable<T> Merge(IObservable<T> source)
         {
-            return new MergeEvent<T>(this, source);
+            return new Merge<T>(this, source);
         }
 
         /// <summary>
@@ -203,7 +203,7 @@
         /// <returns>An Event that only fires one time, the first time the current event fires.</returns>
         public IObservable<T> Once()
         {
-            return new OnceEvent<T>(this);
+            return new Once<T>(this);
         }
 
         /// <summary>
@@ -218,7 +218,7 @@
         /// <returns>A new Event that will produce the snapshot when the current event fires</returns>
         public IObservable<TC> Snapshot<TB, TC>(IValue<TB> valueStream, Func<T, TB, TC> snapshot)
         {
-            return new SnapshotEvent<T, TB, TC>(this, snapshot, valueStream);
+            return new Snapshot<T, TB, TC>(this, snapshot, valueStream);
         }
 
         /// <summary>

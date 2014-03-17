@@ -2,9 +2,9 @@ namespace Sodium
 {
     using System;
 
-    internal class GateEvent<T> : EventLoop<T>
+    internal class Gate<T> : EventLoop<T>
     {
-        public GateEvent(IObservable<T> source, IValue<bool> predicate)
+        public Gate(IObservable<T> source, IValue<bool> predicate)
         {
             Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
             var sn = source.Snapshot(predicate, snapshot);

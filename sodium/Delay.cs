@@ -1,10 +1,10 @@
 ﻿namespace Sodium
 {
-    internal sealed class DelayEvent<T> : EventSink<T>
+    internal sealed class Delay<T> : Sink<T>
     {
         private ISubscription<T> subscription;
 
-        public DelayEvent(IObservable<T> source)
+        public Delay(IObservable<T> source)
         {
             var callback = new SodiumCallback<T>((a, t) => t.Low(() => this.Fire(a)));
             this.subscription = source.Subscribe(callback, this.Rank);

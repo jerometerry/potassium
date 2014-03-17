@@ -8,7 +8,7 @@ namespace Sodium
     /// Transaction when subscribed to.
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Event</typeparam>
-    public abstract class RefireEventSink<T> : EventSink<T>
+    public abstract class RefireSink<T> : Sink<T>
     {
         /// <summary>
         /// List of values that have been fired on the current Event in the current transaction.

@@ -8,7 +8,7 @@ namespace Sodium.MemoryTests
         [TestCase(1000000000)]
         public void Test(int iterations)
         {
-            var evt = new EventSink<int>();
+            var evt = new Sink<int>();
             IObservable<int> nestedEvent = new Observable<int>();
             var behaviorOfEvents = evt.Map(x => nestedEvent).Hold(nestedEvent);
             var observable = Behavior<int>.SwitchE(behaviorOfEvents);

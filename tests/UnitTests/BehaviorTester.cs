@@ -11,7 +11,7 @@ namespace Sodium.Tests
         [Test]
         public void TestHold()
         {
-            var evt = new EventSink<int>();
+            var evt = new Sink<int>();
             var behavior = evt.Hold(0);
             var results = new List<int>();
             var listener = behavior.Subscribe(results.Add);
@@ -27,7 +27,7 @@ namespace Sodium.Tests
         public void TestSnapshot()
         {
             var behavior = new BehaviorSink<int>(0);
-            var evt = new EventSink<long>();
+            var evt = new Sink<long>();
             var results = new List<string>();
             Func<long, int, string> snapshotFunction = (x, y) => string.Format("{0} {1}", x, y);
             var listener = evt.Snapshot(behavior, snapshotFunction).Subscribe(results.Add);
@@ -160,7 +160,7 @@ namespace Sodium.Tests
         [Test]
         public void TestHoldIsDelayed()
         {
-            var evt = new EventSink<int>();
+            var evt = new Sink<int>();
             var behavior = evt.Hold(0);
             var pair = evt.Snapshot(behavior, (a, b) => a + " " + b);
             var results = new List<string>();
@@ -177,7 +177,7 @@ namespace Sodium.Tests
         [Test]
         public void TestSwitchB()
         {
-            var sink = new EventSink<Sb>();
+            var sink = new Sink<Sb>();
 
             // Split each field o of SB so we can update multiple behaviors in a
             // single transaction.
@@ -212,7 +212,7 @@ namespace Sodium.Tests
         [Test]
         public void TestSwitchE()
         {
-            var ese = new EventSink<Se>();
+            var ese = new Sink<Se>();
             var ea = ese.Map(s => s.C1).FilterNotNull();
             var eb = ese.Map(s => s.C2).FilterNotNull();
             var tmp1 = ese.Map(s => s.Event);
@@ -242,7 +242,7 @@ namespace Sodium.Tests
         [Test]
         public void TestLoopBehavior()
         {
-            var ea = new EventSink<int>();
+            var ea = new Sink<int>();
             var sum = new BehaviorLoop<int>();
             var sumOut = ea.Snapshot(sum, (x, y) => x + y).Hold(0);
             sum.Loop(sumOut);
@@ -263,7 +263,7 @@ namespace Sodium.Tests
         [Test]
         public void TestCollect()
         {
-            var ea = new EventSink<int>();
+            var ea = new Sink<int>();
             var o = new List<int>();
             var sum = ea.Hold(100).Collect(0, (a, s) => new Tuple<int, int>(a + s, a + s));
             var l = sum.SubscribeAndFire(o.Add);
@@ -281,7 +281,7 @@ namespace Sodium.Tests
         [Test]
         public void TestAccum()
         {
-            var ea = new EventSink<int>();
+            var ea = new Sink<int>();
             var o = new List<int>();
             var sum = ea.Accum(100, (a, s) => a + s);
             var l = sum.SubscribeAndFire(o.Add);

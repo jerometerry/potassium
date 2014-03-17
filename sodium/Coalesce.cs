@@ -3,13 +3,13 @@ namespace Sodium
     using System;
     using System.Collections.Generic;
 
-    internal class CoalesceEvent<T> : InitialFireEventSink<T>
+    internal class Coalesce<T> : InitialFireSink<T>
     {
         private Func<T, T, T> coalesce;
         private ISubscription<T> subscription;
         private Maybe<T> accumulatedValue = Maybe<T>.Null;
 
-        public CoalesceEvent(IObservable<T> source, Func<T, T, T> coalesce, Transaction transaction)
+        public Coalesce(IObservable<T> source, Func<T, T, T> coalesce, Transaction transaction)
         {
             this.Source = source;
             this.coalesce = coalesce;
@@ -28,7 +28,7 @@ namespace Sodium
                 return null;
             }
             
-            var e = this.Coalesce(events);
+            var e = this.Combine(events);
             return new[] { e };
         }
 
@@ -46,7 +46,7 @@ namespace Sodium
             base.Dispose(disposing);
         }
 
-        private T Coalesce(IList<T> events)
+        private T Combine(IList<T> events)
         {
             var e = events[0];
             for (var i = 1; i < events.Count; i++)

@@ -11,7 +11,7 @@ namespace Sodium.Tests
         [Test]
         public void TestSendEvent()
         {
-            var e = new EventSink<int>();
+            var e = new Sink<int>();
             var o = new List<int>();
             var l = e.Subscribe(o.Add);
             e.Fire(5);
@@ -24,7 +24,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMap()
         {
-            var e = new EventSink<int>();
+            var e = new Sink<int>();
             var m = e.Map(x => x.ToString(CultureInfo.InvariantCulture));
             var o = new List<string>();
             var l = m.Subscribe(o.Add);
@@ -36,8 +36,8 @@ namespace Sodium.Tests
         [Test]
         public void TestMergeNonSimultaneous()
         {
-            var e1 = new EventSink<int>();
-            var e2 = new EventSink<int>();
+            var e1 = new Sink<int>();
+            var e2 = new Sink<int>();
             var o = new List<int>();
             var l = e1.Merge(e2).Subscribe(o.Add);
             e1.Fire(7);
@@ -50,7 +50,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMergeSimultaneous()
         {
-            var e = new EventSink<int>();
+            var e = new Sink<int>();
             var o = new List<int>();
             var l = e.Merge(e).Subscribe(o.Add);
             e.Fire(7);
@@ -62,8 +62,8 @@ namespace Sodium.Tests
         [Test]
         public void TestCoalesce()
         {
-            var e1 = new EventSink<int>();
-            var e2 = new EventSink<int>();
+            var e1 = new Sink<int>();
+            var e2 = new Sink<int>();
             var o = new List<int>();
             var evt2 = e1.Map(x => x * 100);
             var evt = evt2.Merge(e2);
@@ -80,7 +80,7 @@ namespace Sodium.Tests
         [Test]
         public void TestFilter()
         {
-            var e = new EventSink<char>();
+            var e = new Sink<char>();
             var o = new List<char>();
             var l = e.Filter(char.IsUpper).Subscribe(o.Add);
             e.Fire('H');
@@ -93,7 +93,7 @@ namespace Sodium.Tests
         [Test]
         public void TestFilterNotNull()
         {
-            var e = new EventSink<string>();
+            var e = new Sink<string>();
             var o = new List<string>();
             var l = e.FilterNotNull().Subscribe(o.Add);
             e.Fire("tomato");
@@ -106,7 +106,7 @@ namespace Sodium.Tests
         [Test]
         public void TestLoopEvent()
         {
-            var ea = new EventSink<int>();
+            var ea = new Sink<int>();
             var eb = new EventLoop<int>();
             var evt = ea.Map(x => x % 10);
             var ec = evt.Merge(eb, (x, y) => x + y);
@@ -123,7 +123,7 @@ namespace Sodium.Tests
         [Test]
         public void TestGate()
         {
-            var ec = new EventSink<char>();
+            var ec = new Sink<char>();
             var epred = new BehaviorSink<bool>(true);
             var o = new List<char>();
             var l = ec.Gate(epred).Subscribe(o.Add);
@@ -139,7 +139,7 @@ namespace Sodium.Tests
         [Test]
         public void TestCollect()
         {
-            var ea = new EventSink<int>();
+            var ea = new Sink<int>();
             var o = new List<int>();
             var sum = ea.Collect(100, (a, s) => new Tuple<int, int>(a + s, a + s));
             var l = sum.Subscribe(o.Add);
@@ -155,7 +155,7 @@ namespace Sodium.Tests
         [Test]
         public void TestAccum()
         {
-            var ea = new EventSink<int>();
+            var ea = new Sink<int>();
             var o = new List<int>();
             var sum = ea.Accum(100, (a, s) => a + s);
             var l = sum.Subscribe(o.Add);
@@ -171,7 +171,7 @@ namespace Sodium.Tests
         [Test]
         public void TestOnce()
         {
-            var e = new EventSink<char>();
+            var e = new Sink<char>();
             var o = new List<char>();
             var l = e.Once().Subscribe(o.Add);
             e.Fire('A');
@@ -184,7 +184,7 @@ namespace Sodium.Tests
         [Test]
         public void TestDelay()
         {
-            var e = new EventSink<char>();
+            var e = new Sink<char>();
             var b = e.Hold(' ');
             var o = new List<char>();
             var l = e.Delay().Snapshot(b).Subscribe(o.Add);
