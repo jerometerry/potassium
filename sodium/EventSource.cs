@@ -2,19 +2,38 @@
 {
     using System;
 
-    internal class BehaviorSource<T> : IBehaviorSource<T>
+    internal class EventSource<T> : IBehaviorSource<T>
     {
         Event<T> source;
 
         public Event<T> Event
         {
             get { return source; }
-            private set { source = value; }
         }
 
-        public BehaviorSource(Event<T> source)
+        private EventSource(Event<T> source)
         {
             this.source = source;
+        }
+
+        public static EventSource<T> ConstantEventSource()
+        {
+            return new EventSource<T>(new Event<T>());
+        }
+
+        public static EventSource<T> EventSinkSource()
+        {
+            return new EventSource<T>(new EventSink<T>());
+        }
+
+        public static EventSource<T> EventLoopSource()
+        {
+            return new EventSource<T>(new EventLoop<T>());
+        }
+
+        public static EventSource<T> Create(Event<T> source)
+        {
+            return new EventSource<T>(source);
         }
 
         public ISnapshot<T> Coalesce(Func<T, T, T> coalesce)

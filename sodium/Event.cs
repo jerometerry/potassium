@@ -367,7 +367,7 @@ namespace Sodium
         internal Behavior<T> Hold(T initValue, Transaction t)
         {
             var f = new LastFiringEvent<T>(this, t);
-            var source = new BehaviorSource<T>(f);
+            var source = EventSource<T>.Create(f);
             var b = new Behavior<T>(source, initValue);
             b.RegisterFinalizer(source);
             return b;

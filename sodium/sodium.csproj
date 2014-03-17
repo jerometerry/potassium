@@ -49,7 +49,7 @@
     <Compile Include="BehaviorApplyEvent.cs" />
     <Compile Include="BehaviorLoop.cs" />
     <Compile Include="BehaviorSink.cs" />
-    <Compile Include="BehaviorSource.cs" />
+    <Compile Include="EventSource.cs" />
     <Compile Include="DelayEvent.cs" />
     <Compile Include="EventLoop.cs" />
     <Compile Include="EventSink.cs" />

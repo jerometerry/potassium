@@ -25,7 +25,7 @@ namespace Sodium
         /// </summary>
         /// <param name="initValue">The initial value of the Behavior</param>
         public Behavior(T initValue)
-            : this(new BehaviorSource<T>(new Event<T>()), initValue)
+            : this(EventSource<T>.ConstantEventSource(), initValue)
         {
             this.RegisterFinalizer(this.Source);
         }
