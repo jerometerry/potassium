@@ -12,6 +12,6 @@
         
         IBehavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, IBehavior<TB> behavior);
         
-        IBehavior<TB> Map<TB>(Func<T, TB> map);
+        IBehavior<TB> MapB<TB>(Func<T, TB> map);
     }   
 }

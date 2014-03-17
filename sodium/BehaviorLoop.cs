@@ -10,7 +10,7 @@
         /// Default constructor for a BehaviorLoop
         /// </summary>
         public BehaviorLoop()
-            : base(BehaviorEventSource<T>.EventLoopSource(), default(T))
+            : base(new EventLoop<T>(), default(T))
         {
             this.RegisterFinalizer(this.Source);
         }
@@ -23,8 +23,7 @@
         /// an ApplicationException will be raised.</remarks>
         public void Loop(IObservable<T> observable)
         {
-            var source = (BehaviorEventSource<T>)Source;
-            var loop = (ILoop<T>)source.Event;
+            var loop = (ILoop<T>)Source;
             loop.Loop(observable);
         }
     }

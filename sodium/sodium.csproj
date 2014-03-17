@@ -49,7 +49,6 @@
     <Compile Include="BehaviorApplyEvent.cs" />
     <Compile Include="BehaviorLoop.cs" />
     <Compile Include="BehaviorSink.cs" />
-    <Compile Include="BehaviorEventSource.cs" />
     <Compile Include="CollectEvent.cs" />
     <Compile Include="GateEvent.cs" />
     <Compile Include="ValueContainer.cs" />
@@ -59,15 +58,12 @@
     <Compile Include="IBehavior.cs" />
     <Compile Include="IBehaviorSource.cs" />
     <Compile Include="IDisposableObject.cs" />
-    <Compile Include="IEvent.cs" />
     <Compile Include="IFireable.cs" />
-    <Compile Include="IHoldable.cs" />
     <Compile Include="IInitialFiringsObservable.cs" />
     <Compile Include="ILoop.cs" />
     <Compile Include="InitialFireEventSink.cs" />
     <Compile Include="IObservable.cs" />
     <Compile Include="IFiringObservable.cs" />
-    <Compile Include="ISnapshot.cs" />
     <Compile Include="IValue.cs" />
     <Compile Include="LastFiringEvent.cs" />
     <Compile Include="Observable.cs" />
@@ -93,9 +89,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behavior.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Event.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SnapshotEvent.cs" />

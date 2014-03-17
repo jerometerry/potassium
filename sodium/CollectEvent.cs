@@ -4,7 +4,7 @@ namespace Sodium
 
     internal class CollectEvent<T, TB, TS> : EventLoop<TB>
     {
-        public CollectEvent(ISnapshot<T> source, TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
+        public CollectEvent(IObservable<T> source, TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             var es = new EventLoop<TS>();
             var s = es.Hold(initState);

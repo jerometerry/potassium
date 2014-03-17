@@ -21,7 +21,7 @@
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
         /// </remarks>
-        ISnapshot<T> Coalesce(Func<T, T, T> coalesce);
+        IObservable<T> Coalesce(Func<T, T, T> coalesce);
 
         /// <summary>
         /// Map firings of the current event using the supplied mapping function.
@@ -30,6 +30,6 @@
         /// <param name="map">A map from T -> TB</param>
         /// <returns>A new Event that fires whenever the current Event fires, the
         /// the mapped value is computed using the supplied mapping.</returns>
-        IHoldable<TB> Map<TB>(Func<T, TB> map);
+        IObservable<TB> Map<TB>(Func<T, TB> map);
     }
 }

@@ -14,7 +14,7 @@ namespace Sodium
         /// </summary>
         /// <param name="initValue">The initial value of the Behavior</param>
         public Behavior(T initValue)
-            : this(BehaviorEventSource<T>.ConstantEventSource(), initValue)
+            : this(new Observable<T>(), initValue)
         {
             this.RegisterFinalizer(this.Source);
         }
@@ -24,7 +24,7 @@ namespace Sodium
         /// </summary>
         /// <param name="source">The Event to listen for updates from</param>
         /// <param name="initValue">The initial value of the Behavior</param>
-        public Behavior(IBehaviorSource<T> source, T initValue)
+        public Behavior(IObservable<T> source, T initValue)
         {
             this.Source = source;
             this.ValueContainer = new ValueContainer<T>(source, initValue);
@@ -56,7 +56,58 @@ namespace Sodium
         /// The underlying event that gives the updates for the behavior. If this behavior was created
         /// with a hold, then Source gives you an event equivalent to the one that was held.
         /// </summary>
-        protected IBehaviorSource<T> Source { get; private set; }
+        protected IObservable<T> Source { get; private set; }
+
+        /// <summary>
+        /// Accumulate on input event, outputting the new state each time.
+        /// </summary>
+        /// <typeparam name="TS">The return type of the snapshot function</typeparam>
+        /// <param name="source">The source snapshot</param>
+        /// <param name="initState">The initial state of the behavior</param>
+        /// <param name="snapshot">The snapshot generation function</param>
+        /// <returns>A new Behavior starting with the given value, that updates 
+        /// whenever the current event fires, getting a value computed by the snapshot function.</returns>
+        public static IBehavior<TS> Accum<TS>(IObservable<T> source, TS initState, Func<T, TS, TS> snapshot)
+        {
+            var evt = new EventLoop<TS>();
+            var behavior = evt.Hold(initState);
+
+            var snapshotEvent = source.Snapshot(behavior, snapshot);
+            evt.Loop(snapshotEvent);
+
+            var result = snapshotEvent.Hold(initState);
+            result.RegisterFinalizer(evt);
+            result.RegisterFinalizer(behavior);
+            result.RegisterFinalizer(snapshotEvent);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a Behavior from an Observable and an initial value
+        /// </summary>
+        /// <param name="source">The source to update the Behavior from</param>
+        /// <param name="initValue">The initial value of the Behavior</param>
+        /// <returns>The Behavior with the given value</returns>
+        public static IBehavior<T> Hold(IObservable<T> source, T initValue)
+        {
+            return TransactionContext.Current.Run(t => Hold(source, initValue, t));
+        }
+
+        /// <summary>
+        /// Creates a Behavior from an Observable and an initial value
+        /// </summary>
+        /// <param name="source">The source to update the Behavior from</param>
+        /// <param name="initValue">The initial value of the Behavior</param>
+        /// <param name="t">The Transaction to perform the Hold</param>
+        /// <returns>The Behavior with the given value</returns>
+        public static IBehavior<T> Hold(IObservable<T> source, T initValue, Transaction t)
+        {
+            var s = new LastFiringEvent<T>(source, t);
+            var b = new Behavior<T>(s, initValue);
+            b.RegisterFinalizer(s);
+            return b;
+        }
 
         /// <summary>
         /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
@@ -87,7 +138,7 @@ namespace Sodium
         /// Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.
         /// </remarks>
-        public static IEvent<T> SwitchE(IBehavior<IEvent<T>> behavior)
+        public static IObservable<T> SwitchE(IBehavior<IObservable<T>> behavior)
         {
             return new SwitchEvent<T>(behavior);
         }
@@ -115,7 +166,7 @@ namespace Sodium
         /// <returns>A new Behavior that updates whenever the current Behavior updates,
         /// having a value computed by the map function, and starting with the value
         /// of the current event mapped.</returns>
-        public IBehavior<TB> Map<TB>(Func<T, TB> map)
+        public IBehavior<TB> MapB<TB>(Func<T, TB> map)
         {
             var underlyingEvent = Source;
             var mapEvent = underlyingEvent.Map(map);
@@ -139,7 +190,7 @@ namespace Sodium
         public IBehavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, IBehavior<TB> behavior)
         {
             Func<T, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
-            var bf = Map(ffa);
+            var bf = this.MapB(ffa);
             var result = behavior.Apply(bf);
             result.RegisterFinalizer(bf);
             return result;
@@ -161,11 +212,11 @@ namespace Sodium
             var tuple = snapshot(currentValue, initState);
             var loop = new EventLoop<Tuple<TB, TS>>();
             var loopBehavior = loop.Hold(tuple);
-            var snapshotBehavior = loopBehavior.Map(x => x.Item2);
+            var snapshotBehavior = loopBehavior.MapB(x => x.Item2);
             var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
             loop.Loop(coalesceSnapshotEvent);
 
-            var result = loopBehavior.Map(x => x.Item1);
+            var result = loopBehavior.MapB(x => x.Item1);
             result.RegisterFinalizer(loop);
             result.RegisterFinalizer(loopBehavior);
             result.RegisterFinalizer(coalesceEvent);
@@ -189,7 +240,7 @@ namespace Sodium
         public IBehavior<TD> Lift<TB, TC, TD>(Func<T, TB, TC, TD> lift, IBehavior<TB> b, IBehavior<TC> c)
         {
             Func<T, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
-            var bf = Map(map);
+            var bf = this.MapB(map);
             var l1 = b.Apply(bf);
 
             var result = c.Apply(l1);

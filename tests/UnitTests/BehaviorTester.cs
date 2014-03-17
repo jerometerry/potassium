@@ -60,7 +60,7 @@ namespace Sodium.Tests
         {
             var behavior = new BehaviorSink<int>(6);
             var results = new List<string>();
-            var listener = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture)).SubscribeAndFire(results.Add);
+            var listener = behavior.MapB(x => x.ToString(CultureInfo.InvariantCulture)).SubscribeAndFire(results.Add);
             behavior.Fire(8);
             listener.Dispose();
             behavior.Dispose();
@@ -71,7 +71,7 @@ namespace Sodium.Tests
         public void TestMapB2()
         {
             var behavior = new Behavior<int>(1);
-            var behavior1 = behavior.Map(x => x * 3);
+            var behavior1 = behavior.MapB(x => x * 3);
             var results = new List<int>();
             var listener = behavior1.SubscribeAndFire(results.Add);
             listener.Dispose();
@@ -83,7 +83,7 @@ namespace Sodium.Tests
         public void TestMapB3()
         {
             var behavior = new BehaviorSink<int>(1);
-            var behavior1 = behavior.Map(x => x * 3);
+            var behavior1 = behavior.MapB(x => x * 3);
             var results = new List<int>();
             var listener = behavior1.SubscribeAndFire(results.Add);
             behavior.Fire(2);
@@ -97,7 +97,7 @@ namespace Sodium.Tests
         {
             var behavior = new BehaviorSink<int>(6);
             var results = new List<string>();
-            var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
+            var map = behavior.MapB(x => x.ToString(CultureInfo.InvariantCulture));
             behavior.Fire(2);
             var listener = map.SubscribeAndFire(results.Add);
             behavior.Fire(8);
@@ -146,8 +146,8 @@ namespace Sodium.Tests
         public void TestLiftGlitch()
         {
             var behavior = new BehaviorSink<int>(1);
-            var mappedBehavior1 = behavior.Map(x => x * 3);
-            var mappedBehavior2 = behavior.Map(x => x * 5);
+            var mappedBehavior1 = behavior.MapB(x => x * 3);
+            var mappedBehavior2 = behavior.MapB(x => x * 5);
             var results = new List<string>();
             var combinedBehavior = mappedBehavior1.Lift((x, y) => x + " " + y, mappedBehavior2);
             var listener = combinedBehavior.SubscribeAndFire(results.Add);
@@ -215,7 +215,9 @@ namespace Sodium.Tests
             var ese = new EventSink<Se>();
             var ea = ese.Map(s => s.C1).FilterNotNull();
             var eb = ese.Map(s => s.C2).FilterNotNull();
-            var bsw = ese.Map(s => s.Event).FilterNotNull().Hold(ea);
+            var tmp1 = ese.Map(s => s.Event);
+            var tmp2 = tmp1.FilterNotNull();
+            var bsw = tmp2.Hold(ea);
             var o = new List<char>();
             var eo = Behavior<char>.SwitchE(bsw);
             var l = eo.Subscribe(o.Add);
@@ -298,9 +300,9 @@ namespace Sodium.Tests
         {
             public readonly char C1;
             public readonly char C2;
-            public readonly IEvent<char> Event;
+            public readonly Sodium.IObservable<char> Event;
 
-            public Se(char c1, char c2, IEvent<char> evt)
+            public Se(char c1, char c2, Sodium.IObservable<char> evt)
             {
                 C1 = c1;
                 C2 = c2;

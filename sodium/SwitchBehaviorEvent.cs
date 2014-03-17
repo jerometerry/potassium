@@ -4,7 +4,7 @@ namespace Sodium
     {
         private ISubscription<IBehavior<T>> subscription;
         private ISubscription<T> wrappedSubscription;
-        private IEvent<T> wrappedEvent;
+        private IObservable<T> wrappedEvent;
 
         public SwitchBehaviorEvent(IFiringObservable<IBehavior<T>> source)
         {
