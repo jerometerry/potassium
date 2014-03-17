@@ -69,7 +69,7 @@ namespace Sodium
         /// <returns>The new, unwrapped Behavior</returns>
         /// <remarks>Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.</remarks>
-        public static Behavior<T> SwitchB(Behavior<Behavior<T>> source)
+        public static IBehavior<T> SwitchB(IBehavior<Behavior<T>> source)
         {
             var innerBehavior = source.Value;
             var initValue = innerBehavior.Value;
@@ -91,7 +91,7 @@ namespace Sodium
         /// Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.
         /// </remarks>
-        public static Event<T> SwitchE(Behavior<Event<T>> behavior)
+        public static IEvent<T> SwitchE(IBehavior<Event<T>> behavior)
         {
             return new SwitchEvent<T>(behavior);
         }
@@ -273,7 +273,7 @@ namespace Sodium
         /// <returns>The event subscription</returns>
         /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
         /// current value of the behavior.</remarks>
-        internal ISubscription<T> SubscribeWithFire(ISodiumCallback<T> callback, Rank rank)
+        public ISubscription<T> SubscribeWithFire(ISodiumCallback<T> callback, Rank rank)
         {
             var v = this.StartTransaction(this.Values);
             var s = (Subscription<T>)v.Subscribe(callback, rank);
@@ -301,7 +301,7 @@ namespace Sodium
         /// <param name="transaction">The transaction to run the Value operation on</param>
         /// <returns>An event that will fire when it's subscribed to, and every time it's 
         /// value changes thereafter</returns>
-        internal Event<T> Values(Transaction transaction)
+        internal IEvent<T> Values(Transaction transaction)
         {
             var valueStream = new BehaviorEventSink<T>(this, transaction);
 

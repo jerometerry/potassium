@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal class EventSource<T> : IBehaviorSource<T>
+    internal class EventSource<T> : DisposableObject, IBehaviorSource<T>
     {
         IEvent<T> source;
 

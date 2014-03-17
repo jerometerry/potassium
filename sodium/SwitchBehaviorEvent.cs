@@ -6,7 +6,7 @@
         private ISubscription<T> wrappedSubscription;
         private IEvent<T> wrappedEvent;
 
-        public SwitchBehaviorEvent(Behavior<Behavior<T>> source)
+        public SwitchBehaviorEvent(IBehavior<Behavior<T>> source)
         {
             var callback = new ActionCallback<Behavior<T>>(this.Invoke);
             this.subscription = source.SubscribeWithFire(callback, this.Rank);

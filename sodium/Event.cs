@@ -84,7 +84,7 @@ namespace Sodium
         /// <param name="map">A map from T -> TB</param>
         /// <returns>A new Event that fires whenever the current Event fires, the
         /// the mapped value is computed using the supplied mapping.</returns>
-        public Event<TB> Map<TB>(Func<T, TB> map)
+        public IEvent<TB> Map<TB>(Func<T, TB> map)
         {
             return new MapEvent<T, TB>(this, map);
         }
@@ -256,7 +256,7 @@ namespace Sodium
         /// <param name="predicate">A behavior who's current value acts as a predicate</param>
         /// <returns>A new Event that fires whenever the current Event fires and the Behaviors value
         /// is true.</returns>
-        public Event<T> Gate(Behavior<bool> predicate)
+        public IEvent<T> Gate(Behavior<bool> predicate)
         {
             Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
             var sn = this.Snapshot(predicate, snapshot);
@@ -276,7 +276,7 @@ namespace Sodium
         /// <param name="initState">The initial state for the internal Behavior</param>
         /// <param name="snapshot">The mealy machine</param>
         /// <returns>An Event that collects new values</returns>
-        public Event<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
+        public IEvent<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             var es = new EventLoop<TS>();
             var s = es.Hold(initState);

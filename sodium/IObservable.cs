@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Sodium
 {
-    public interface IObservable<T>
+    public interface IObservable<T> : IDisposableObject
     {
         ISubscription<T> Subscribe(Action<T> callback);
 

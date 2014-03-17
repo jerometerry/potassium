@@ -10,6 +10,7 @@ namespace Sodium
         Behavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, Behavior<TB> behavior);
         Behavior<TB> Map<TB>(Func<T, TB> map);
         ISubscription<T> SubscribeWithFire(Action<T> callback);
+        ISubscription<T> SubscribeWithFire(ISodiumCallback<T> callback, Rank rank);
         T Value { get; }
     }
 }
