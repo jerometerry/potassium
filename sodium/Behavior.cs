@@ -69,7 +69,7 @@ namespace Sodium
         /// <returns>The new, unwrapped Behavior</returns>
         /// <remarks>Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.</remarks>
-        public static IBehavior<T> SwitchB(IBehavior<Behavior<T>> source)
+        public static IBehavior<T> SwitchB(IBehavior<IBehavior<T>> source)
         {
             var innerBehavior = source.Value;
             var initValue = innerBehavior.Value;
@@ -91,7 +91,7 @@ namespace Sodium
         /// Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.
         /// </remarks>
-        public static IEvent<T> SwitchE(IBehavior<Event<T>> behavior)
+        public static IEvent<T> SwitchE(IBehavior<IEvent<T>> behavior)
         {
             return new SwitchEvent<T>(behavior);
         }
@@ -103,7 +103,7 @@ namespace Sodium
         /// <typeparam name="TB">The return type of the inner function of the given Behavior</typeparam>
         /// <param name="bf">Behavior of functions that maps from T -> TB</param>
         /// <returns>The new applied Behavior</returns>
-        public Behavior<TB> Apply<TB>(Behavior<Func<T, TB>> bf)
+        public IBehavior<TB> Apply<TB>(IBehavior<Func<T, TB>> bf)
         {
             var evt = new BehaviorApplyEvent<T, TB>(bf, this);
             var behavior = evt.Behavior;
@@ -160,7 +160,7 @@ namespace Sodium
         /// <returns>A new Behavior that updates whenever the current Behavior updates,
         /// having a value computed by the map function, and starting with the value
         /// of the current event mapped.</returns>
-        public Behavior<TB> Map<TB>(Func<T, TB> map)
+        public IBehavior<TB> Map<TB>(Func<T, TB> map)
         {
             var underlyingEvent = Source;
             var mapEvent = underlyingEvent.Map(map);
@@ -181,7 +181,7 @@ namespace Sodium
         /// lift method to the current Behavior.</param>
         /// <returns>A new Behavior who's value is computed using the current Behavior, the given
         /// Behavior, and the lift function.</returns>
-        public Behavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, Behavior<TB> behavior)
+        public IBehavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, IBehavior<TB> behavior)
         {
             Func<T, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
             var bf = Map(ffa);
@@ -199,7 +199,7 @@ namespace Sodium
         /// <param name="initState">Value to pass to the snapshot function</param>
         /// <param name="snapshot">Snapshot function</param>
         /// <returns>A new Behavior that collects values of type TB</returns>
-        public Behavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
+        public IBehavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             var coalesceEvent = Source.Coalesce((a, b) => b);
             var currentValue = Value;
@@ -231,7 +231,7 @@ namespace Sodium
         /// <returns>A new Behavior who's value is computed by applying the lift function to the current
         /// behavior, and the given behaviors.</returns>
         /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
-        public Behavior<TD> Lift<TB, TC, TD>(Func<T, TB, TC, TD> lift, Behavior<TB> b, Behavior<TC> c)
+        public IBehavior<TD> Lift<TB, TC, TD>(Func<T, TB, TC, TD> lift, IBehavior<TB> b, IBehavior<TC> c)
         {
             Func<T, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
             var bf = Map(map);
@@ -301,7 +301,7 @@ namespace Sodium
         /// <param name="transaction">The transaction to run the Value operation on</param>
         /// <returns>An event that will fire when it's subscribed to, and every time it's 
         /// value changes thereafter</returns>
-        internal IEvent<T> Values(Transaction transaction)
+        public IEvent<T> Values(Transaction transaction)
         {
             var valueStream = new BehaviorEventSink<T>(this, transaction);
 

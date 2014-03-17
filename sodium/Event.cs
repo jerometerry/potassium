@@ -99,7 +99,7 @@ namespace Sodium
         /// <param name="initValue">The initial value for the Behavior</param>
         /// <returns>A Behavior that updates when the current event is fired,
         /// having the specified initial value.</returns>
-        public Behavior<T> Hold(T initValue)
+        public IBehavior<T> Hold(T initValue)
         {
             return this.StartTransaction(t => this.Hold(initValue, t));
         }
@@ -114,7 +114,7 @@ namespace Sodium
         /// <param name="behavior">The Behavior to sample when calculating the snapshot</param>
         /// <param name="snapshot">The snapshot generation function.</param>
         /// <returns>A new Event that will produce the snapshot when the current event fires</returns>
-        public Event<TC> Snapshot<TB, TC>(Behavior<TB> behavior, Func<T, TB, TC> snapshot)
+        public IEvent<TC> Snapshot<TB, TC>(IBehavior<TB> behavior, Func<T, TB, TC> snapshot)
         {
             return new SnapshotEvent<T, TB, TC>(this, snapshot, behavior);
         }
@@ -125,7 +125,7 @@ namespace Sodium
         /// <typeparam name="TB">The type of the Behavior</typeparam>
         /// <param name="behavior">The Behavior to sample when taking the snapshot</param>
         /// <returns>An event that captures the Behaviors value when the current event fires</returns>
-        public Event<TB> Snapshot<TB>(Behavior<TB> behavior)
+        public IEvent<TB> Snapshot<TB>(IBehavior<TB> behavior)
         {
             return Snapshot(behavior, (a, b) => b);
         }
@@ -143,7 +143,7 @@ namespace Sodium
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
         /// </remarks>
-        public Event<T> Coalesce(Func<T, T, T> coalesce)
+        public IEvent<T> Coalesce(Func<T, T, T> coalesce)
         {
             return this.StartTransaction(t => Coalesce(coalesce, t));
         }
@@ -154,7 +154,7 @@ namespace Sodium
         /// <returns>A new Event that fires whenever the current Event fires with a non-null value</returns>
         /// <remarks>For value types, comparison against null will always be false. 
         /// FilterNotNull will not filter out any values for value types.</remarks>
-        public Event<T> FilterNotNull()
+        public IEvent<T> FilterNotNull()
         {
             return Filter(a => a != null);
         }
@@ -165,7 +165,7 @@ namespace Sodium
         /// <param name="predicate">A predicate used to include firings</param>
         /// <returns>A new Event that is fired when the current Event fires and
         /// the predicate evaluates to true.</returns>
-        public Event<T> Filter(Func<T, bool> predicate)
+        public IEvent<T> Filter(Func<T, bool> predicate)
         {
             return new FilterEvent<T>(this, predicate);
         }
@@ -178,7 +178,7 @@ namespace Sodium
         /// <param name="snapshot">The snapshot generation function</param>
         /// <returns>A new Behavior starting with the given value, that updates 
         /// whenever the current event fires, getting a value computed by the snapshot function.</returns>
-        public Behavior<TS> Accum<TS>(TS initState, Func<T, TS, TS> snapshot)
+        public IBehavior<TS> Accum<TS>(TS initState, Func<T, TS, TS> snapshot)
         {
             var evt = new EventLoop<TS>();
             var behavior = evt.Hold(initState);
@@ -256,7 +256,7 @@ namespace Sodium
         /// <param name="predicate">A behavior who's current value acts as a predicate</param>
         /// <returns>A new Event that fires whenever the current Event fires and the Behaviors value
         /// is true.</returns>
-        public IEvent<T> Gate(Behavior<bool> predicate)
+        public IEvent<T> Gate(IBehavior<bool> predicate)
         {
             Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
             var sn = this.Snapshot(predicate, snapshot);
@@ -364,7 +364,7 @@ namespace Sodium
         /// </summary>
         /// <returns>A Behavior that updates when the current event is fired,
         /// having the specified initial value.</returns>
-        internal Behavior<T> Hold(T initValue, Transaction t)
+        internal IBehavior<T> Hold(T initValue, Transaction t)
         {
             var f = new LastFiringEvent<T>(this, t);
             var source = EventSource<T>.Create(f);
@@ -385,7 +385,7 @@ namespace Sodium
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
         /// </remarks>
-        internal Event<T> Coalesce(Func<T, T, T> coalesce, Transaction transaction)
+        internal IEvent<T> Coalesce(Func<T, T, T> coalesce, Transaction transaction)
         {
             return new CoalesceEvent<T>(this, coalesce, transaction);
         }

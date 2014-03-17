@@ -18,6 +18,6 @@
         /// <param name="initValue">The initial value for the Behavior</param>
         /// <returns>A Behavior that updates when the current event is fired,
         /// having the specified initial value.</returns>
-        Behavior<T> Hold(T initValue);
+        IBehavior<T> Hold(T initValue);
     }
 }

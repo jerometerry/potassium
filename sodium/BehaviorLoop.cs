@@ -22,7 +22,7 @@
         /// <returns>The current Behavior</returns>
         /// <remarks>Loop can only be called once on a Behavior. If Loop is called multiple times,
         /// an ApplicationException will be raised.</remarks>
-        public Behavior<T> Loop(Behavior<T> b)
+        public Behavior<T> Loop(IBehavior<T> b)
         {
             var source = (EventSource<T>)Source;
             var loop = (EventLoop<T>)source.Event;

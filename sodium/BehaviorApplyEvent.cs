@@ -31,7 +31,7 @@
             this.Behavior = this.Hold(valB);
         }
 
-        public Behavior<TB> Behavior { get; private set; }
+        public IBehavior<TB> Behavior { get; private set; }
 
         protected override void Dispose(bool disposing)
         {

@@ -2,17 +2,17 @@
 {
     internal sealed class SwitchBehaviorEvent<T> : EventSink<T>
     {
-        private ISubscription<Behavior<T>> subscription;
+        private ISubscription<IBehavior<T>> subscription;
         private ISubscription<T> wrappedSubscription;
         private IEvent<T> wrappedEvent;
 
-        public SwitchBehaviorEvent(IBehavior<Behavior<T>> source)
+        public SwitchBehaviorEvent(IBehavior<IBehavior<T>> source)
         {
-            var callback = new ActionCallback<Behavior<T>>(this.Invoke);
+            var callback = new ActionCallback<IBehavior<T>>(this.Invoke);
             this.subscription = source.SubscribeWithFire(callback, this.Rank);
         }
 
-        public void Invoke(Behavior<T> behavior, Transaction transaction)
+        public void Invoke(IBehavior<T> behavior, Transaction transaction)
         {
             // Note: If any switch takes place during a transaction, then the
             // GetValueStream().Subscribe will always cause a sample to be fetched from the

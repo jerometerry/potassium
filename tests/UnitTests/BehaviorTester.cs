@@ -309,9 +309,9 @@ namespace Sodium.Tests
         {
             public readonly char C1;
             public readonly char C2;
-            public readonly Event<char> Event;
+            public readonly IEvent<char> Event;
 
-            public Se(char c1, char c2, Event<char> evt)
+            public Se(char c1, char c2, IEvent<char> evt)
             {
                 C1 = c1;
                 C2 = c2;
@@ -323,9 +323,9 @@ namespace Sodium.Tests
         {
             public readonly char? C1;
             public readonly char? C2;
-            public readonly Behavior<char?> Behavior;
+            public readonly IBehavior<char?> Behavior;
 
-            public Sb(char? c1, char? c2, Behavior<char?> behavior)
+            public Sb(char? c1, char? c2, IBehavior<char?> behavior)
             {
                 C1 = c1;
                 C2 = c2;
