@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Sodium
 {
-    public interface IEvent<T> : ISnapshot<T>
+    public interface IEvent<T> : IObservable<T>, ISnapshot<T>
     {
         Behavior<TS> Accum<TS>(TS initState, Func<T, TS, TS> snapshot);
         bool CancelSubscription(ISubscription<T> subscription);
@@ -16,8 +16,6 @@ namespace Sodium
         Event<T> Merge(Event<T> source);
         Event<T> Merge(Event<T> source, Func<T, T, T> coalesce);
         Event<T> Once();
-        Event<TC> Snapshot<TB, TC>(Behavior<TB> behavior, Func<T, TB, TC> snapshot);
         Event<TB> Snapshot<TB>(Behavior<TB> behavior);
-        ISubscription<T> Subscribe(Action<T> callback);
     }
 }

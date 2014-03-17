@@ -4,8 +4,8 @@
 
     internal sealed class BehaviorApplyEvent<T, TB> : EventSink<TB>
     {
-        private Behavior<Func<T, TB>> bf;
-        private Behavior<T> source;
+        private IBehavior<Func<T, TB>> bf;
+        private IBehavior<T> source;
         private ISubscription<Func<T, TB>> l1;
         private ISubscription<T> l2;
         
@@ -14,7 +14,7 @@
         /// </summary>
         private bool fired;
 
-        public BehaviorApplyEvent(Behavior<Func<T, TB>> bf, Behavior<T> source)
+        public BehaviorApplyEvent(IBehavior<Func<T, TB>> bf, IBehavior<T> source)
         {
             this.bf = bf;
             this.source = source;

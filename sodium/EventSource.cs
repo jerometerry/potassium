@@ -4,14 +4,14 @@
 
     internal class EventSource<T> : IBehaviorSource<T>
     {
-        Event<T> source;
+        IEvent<T> source;
 
-        public Event<T> Event
+        public IEvent<T> Event
         {
             get { return source; }
         }
 
-        private EventSource(Event<T> source)
+        private EventSource(IEvent<T> source)
         {
             this.source = source;
         }

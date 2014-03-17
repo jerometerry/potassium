@@ -5,12 +5,12 @@ namespace Sodium
 
     internal class CoalesceEvent<T> : InitialFireEventSink<T>
     {
-        private Event<T> source;
+        private IEvent<T> source;
         private Func<T, T, T> coalesce;
         private ISubscription<T> subscription;
         private Maybe<T> accumulatedValue = Maybe<T>.Null;
 
-        public CoalesceEvent(Event<T> source, Func<T, T, T> coalesce, Transaction transaction)
+        public CoalesceEvent(IEvent<T> source, Func<T, T, T> coalesce, Transaction transaction)
         {
             this.source = source;
             this.coalesce = coalesce;

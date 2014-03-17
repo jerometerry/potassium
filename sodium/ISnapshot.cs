@@ -8,6 +8,8 @@
     /// <typeparam name="T">The type of value fired through the Observable</typeparam>
     public interface ISnapshot<T> : IDisposable
     {
+        Event<TB> Snapshot<TB>(Behavior<TB> behavior);
+
         /// <summary>
         /// Sample the behavior at the time of the event firing. Note that the 'current value'
         /// of the behavior that's sampled is the value as at the start of the transaction

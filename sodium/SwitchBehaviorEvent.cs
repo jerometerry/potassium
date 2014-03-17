@@ -4,7 +4,7 @@
     {
         private ISubscription<Behavior<T>> subscription;
         private ISubscription<T> wrappedSubscription;
-        private Event<T> wrappedEvent;
+        private IEvent<T> wrappedEvent;
 
         public SwitchBehaviorEvent(Behavior<Behavior<T>> source)
         {

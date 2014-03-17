@@ -8,7 +8,7 @@ namespace Sodium
     /// <remarks>Used by Behavior to support firing of initial values of the Behavior</remarks>
     public abstract class InitialFireEventSink<T> : RefireEventSink<T>
     {
-        internal static TF[] GetInitialFirings<TF>(Event<TF> source)
+        internal static TF[] GetInitialFirings<TF>(IEvent<TF> source)
         {
             var sink = source as InitialFireEventSink<TF>;
             if (sink == null)

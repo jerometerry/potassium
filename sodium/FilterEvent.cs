@@ -5,11 +5,11 @@ namespace Sodium
 
     internal sealed class FilterEvent<T> : InitialFireEventSink<T>
     {
-        private Event<T> source;
+        private IEvent<T> source;
         private Func<T, bool> f;
         private ISubscription<T> subscription;
 
-        public FilterEvent(Event<T> source, Func<T, bool> f)
+        public FilterEvent(IEvent<T> source, Func<T, bool> f)
         {
             this.source = source;
             this.f = f;

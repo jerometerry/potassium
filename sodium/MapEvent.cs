@@ -5,11 +5,11 @@
 
     internal sealed class MapEvent<T, TB> : InitialFireEventSink<TB>
     {
-        private Event<T> source;
+        private IEvent<T> source;
         private Func<T, TB> map;
         private ISubscription<T> subscription;
 
-        public MapEvent(Event<T> source, Func<T, TB> map)
+        public MapEvent(IEvent<T> source, Func<T, TB> map)
         {
             this.source = source;
             this.map = map;
