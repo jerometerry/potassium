@@ -10,17 +10,6 @@ namespace Sodium
     public class Behavior<T> : Observable<T>, IBehavior<T>
     {
         /// <summary>
-        /// Holding tank for updates from the underlying Event, waiting to be 
-        /// moved into the current value of the Behavior.
-        /// </summary>
-        private Maybe<T> valueUpdate = Maybe<T>.Null;
-
-        /// <summary>
-        /// Subscription that listens for firings from the underlying Event.
-        /// </summary>
-        private ISubscription<T> valueUpdateSubscription;
-
-        /// <summary>
         /// A constant behavior
         /// </summary>
         /// <param name="initValue">The initial value of the Behavior</param>
@@ -38,8 +27,7 @@ namespace Sodium
         public Behavior(IBehaviorSource<T> source, T initValue)
         {
             this.Source = source;
-            this.Value = initValue;
-            this.valueUpdateSubscription = this.SubscribeToEventFirings();
+            this.ValueContainer = new ValueContainer<T>(source, initValue);
         }
 
         /// <summary>
@@ -54,7 +42,15 @@ namespace Sodium
         /// b.Source.Subscribe(..) will capture the current value and any updates without risk
         /// of missing any in between.
         /// </remarks>
-        public T Value { get; private set; }
+        public T Value
+        {
+            get
+            {
+                return this.ValueContainer.Value;
+            }
+        }
+
+        internal ValueContainer<T> ValueContainer { get; private set; }
 
         /// <summary>
         /// The underlying event that gives the updates for the behavior. If this behavior was created
@@ -137,22 +133,6 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Gets the updated value of the Behavior that has not yet been moved to the
-        /// current value of the Behavior. 
-        /// </summary>
-        /// <returns>
-        /// The updated value, if any, otherwise the current value
-        /// </returns>
-        /// <remarks>As the underlying event is fired, the current behavior is 
-        /// updated with the value of the firing. However, it doesn't go directly to the
-        /// value field. Instead, the value is put into newValue, and a Last Action is
-        /// scheduled to move the value from newValue to value.</remarks>
-        public T GetNewValue()
-        {
-            return valueUpdate.HasValue ? valueUpdate.Value() : Value;
-        }
-
-        /// <summary>
         /// Transform the behavior's value according to the supplied function.
         /// </summary>
         /// <typeparam name="TB">The return type of the mapping function</typeparam>
@@ -164,7 +144,7 @@ namespace Sodium
         {
             var underlyingEvent = Source;
             var mapEvent = underlyingEvent.Map(map);
-            var currentValue = Value;
+            var currentValue = this.ValueContainer.Value;
             var mappedValue = map(currentValue);
             var behavior = mapEvent.Hold(mappedValue);
             behavior.RegisterFinalizer(mapEvent);
@@ -202,7 +182,7 @@ namespace Sodium
         public IBehavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             var coalesceEvent = Source.Coalesce((a, b) => b);
-            var currentValue = Value;
+            var currentValue = this.ValueContainer.Value;
             var tuple = snapshot(currentValue, initState);
             var loop = new EventLoop<Tuple<TB, TS>>();
             var loopBehavior = loop.Hold(tuple);
@@ -317,61 +297,15 @@ namespace Sodium
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            if (this.valueUpdateSubscription != null)
+            if (this.ValueContainer != null)
             {
-                this.valueUpdateSubscription.Dispose();
-                this.valueUpdateSubscription = null;
+                this.ValueContainer.Dispose();
+                this.ValueContainer = null;
             }
 
             this.Source = null;
 
             base.Dispose(disposing);
-        }
-
-        /// <summary>
-        /// Listen to the underlying event for firings
-        /// </summary>
-        /// <returns>The ISubscription registered with the underlying event.</returns>
-        private ISubscription<T> SubscribeToEventFirings()
-        {
-            return this.StartTransaction(this.SubscribeToEventFirings);
-        }
-
-        /// <summary>
-        /// Listen to the underlying event for firings
-        /// </summary>
-        /// <param name="transaction">The transaction to schedule the subscription on.</param>
-        /// <returns>The ISubscription registered with the underlying event.</returns>
-        private ISubscription<T> SubscribeToEventFirings(Transaction transaction)
-        {
-            var callback = new SodiumCallback<T>(ScheduleApplyValueUpdate);
-            var result = this.Subscribe(callback, Rank.Highest, transaction);
-            return result;
-        }
-
-        /// <summary>
-        /// Store the updated value, and schedule a Transaction.Last action that will move the updated value 
-        /// into the current value.
-        /// </summary>
-        /// <param name="transaction">The transaction to schedule the value update on</param>
-        /// <param name="update">The updated value</param>
-        private void ScheduleApplyValueUpdate(T update, Transaction transaction)
-        {
-            if (!valueUpdate.HasValue)
-            {
-                transaction.Medium(ApplyValueUpdate);
-            }
-
-            valueUpdate = new Maybe<T>(update);
-        }
-
-        /// <summary>
-        /// Store the updated value into the current value, and set the updated value to null.
-        /// </summary>
-        private void ApplyValueUpdate()
-        {
-            Value = valueUpdate.Value();
-            valueUpdate = Maybe<T>.Null;
         }
     }
 }

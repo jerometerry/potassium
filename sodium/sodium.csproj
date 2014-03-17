@@ -50,6 +50,7 @@
     <Compile Include="BehaviorLoop.cs" />
     <Compile Include="BehaviorSink.cs" />
     <Compile Include="BehaviorEventSource.cs" />
+    <Compile Include="ValueContainer.cs" />
     <Compile Include="DelayEvent.cs" />
     <Compile Include="EventLoop.cs" />
     <Compile Include="EventSink.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="LastFiringEvent.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="DisposableObject.cs" />
+    <Compile Include="TransactionalObject.cs" />
     <Compile Include="ValueEventSink.cs" />
     <Compile Include="CoalesceEvent.cs" />
     <Compile Include="Constants.cs" />

@@ -87,8 +87,8 @@
 
         private TB GetNewValue()
         {
-            var map = bf.GetNewValue();
-            var a = source.GetNewValue();
+            var map = bf.ValueContainer.GetNewValue();
+            var a = source.ValueContainer.GetNewValue();
             var b = map(a);
             return b;
         }
