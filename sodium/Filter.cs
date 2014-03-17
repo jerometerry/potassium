@@ -5,11 +5,11 @@ namespace Sodium
 
     internal sealed class Filter<T> : InitialFireSink<T>
     {
-        private IObservable<T> source;
+        private IEvent<T> source;
         private Func<T, bool> f;
         private ISubscription<T> subscription;
 
-        public Filter(IObservable<T> source, Func<T, bool> f)
+        public Filter(IEvent<T> source, Func<T, bool> f)
         {
             this.source = source;
             this.f = f;

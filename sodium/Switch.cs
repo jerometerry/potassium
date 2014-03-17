@@ -2,12 +2,12 @@
 {
     internal sealed class Switch<T> : Sink<T>
     {
-        private ISubscription<IObservable<T>> behaviorSubscription;
+        private ISubscription<IEvent<T>> behaviorSubscription;
         private ISodiumCallback<T> wrappedEventSubscriptionCallback;
         private ISubscription<T> wrappedSubscription;
-        private IValue<IObservable<T>> source;
+        private IValue<IEvent<T>> source;
 
-        public Switch(IValue<IObservable<T>> source)
+        public Switch(IValue<IEvent<T>> source)
         {
             this.source = source;
             this.StartTransaction(this.Initialize);
@@ -38,13 +38,13 @@
             this.wrappedEventSubscriptionCallback = this.CreateFireCallback();
             this.wrappedSubscription = source.Value.Subscribe(this.wrappedEventSubscriptionCallback, this.Rank, transaction);
 
-            var behaviorEventChanged = new SodiumCallback<IObservable<T>>(this.UpdateWrappedEventSubscription);
+            var behaviorEventChanged = new SodiumCallback<IEvent<T>>(this.UpdateWrappedEventSubscription);
             this.behaviorSubscription = source.Subscribe(behaviorEventChanged, this.Rank, transaction);
 
             return Unit.Nothing;
         }
 
-        private void UpdateWrappedEventSubscription(IObservable<T> newEvent, Transaction transaction)
+        private void UpdateWrappedEventSubscription(IEvent<T> newEvent, Transaction transaction)
         {
             transaction.Medium(() =>
             {

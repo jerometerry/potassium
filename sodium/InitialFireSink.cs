@@ -6,7 +6,7 @@ namespace Sodium
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Event</typeparam>
     /// <remarks>Used by Behavior to support firing of initial values of the Behavior</remarks>
-    public abstract class InitialFireSink<T> : RefireSink<T>, IInitialFiringsObservable<T>
+    public abstract class InitialFireSink<T> : RefireSink<T>, IInitialFiringsEvent<T>
     {
         /// <summary>
         /// Gets the values that will be sent to newly added
@@ -19,9 +19,9 @@ namespace Sodium
             return null;
         }
 
-        internal static TF[] GetInitialFirings<TF>(IObservable<TF> source)
+        internal static TF[] GetInitialFirings<TF>(IEvent<TF> source)
         {
-            var sink = source as IInitialFiringsObservable<TF>;
+            var sink = source as IInitialFiringsEvent<TF>;
             return sink == null ? null : sink.InitialFirings();
         }
 

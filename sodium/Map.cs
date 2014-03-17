@@ -5,11 +5,11 @@
 
     internal sealed class Map<T, TB> : InitialFireSink<TB>
     {
-        private IObservable<T> source;
+        private IEvent<T> source;
         private Func<T, TB> map;
         private ISubscription<T> subscription;
 
-        public Map(IObservable<T> source, Func<T, TB> map)
+        public Map(IEvent<T> source, Func<T, TB> map)
         {
             this.source = source;
             this.map = map;

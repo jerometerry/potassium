@@ -15,6 +15,6 @@ namespace Sodium
         /// <summary>
         /// Gets the Event the current ISubscription is listening to
         /// </summary>
-        IObservable<T> Source { get; }
+        IEvent<T> Source { get; }
     }
 }

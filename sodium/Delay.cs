@@ -4,7 +4,7 @@
     {
         private ISubscription<T> subscription;
 
-        public Delay(IObservable<T> source)
+        public Delay(IEvent<T> source)
         {
             var callback = new SodiumCallback<T>((a, t) => t.Low(() => this.Fire(a)));
             this.subscription = source.Subscribe(callback, this.Rank);

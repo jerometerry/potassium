@@ -4,9 +4,9 @@ namespace Sodium
     {
         private ISubscription<IBehavior<T>> subscription;
         private ISubscription<T> wrappedSubscription;
-        private IObservable<T> wrappedEvent;
+        private IEvent<T> wrappedEvent;
 
-        public SwitchBehavior(IFiringObservable<IBehavior<T>> source)
+        public SwitchBehavior(IFiringEvent<IBehavior<T>> source)
         {
             var callback = new SodiumCallback<IBehavior<T>>(this.Invoke);
             this.subscription = source.SubscribeAndFire(callback, this.Rank);

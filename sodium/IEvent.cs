@@ -2,21 +2,21 @@
 {
     using System;
 
-    public interface IObservable<T> : IDisposableObject
+    public interface IEvent<T> : IDisposableObject
     {
         IBehavior<TS> Accum<TS>(TS initState, Func<T, TS, TS> snapshot);
 
-        IObservable<T> Coalesce(Func<T, T, T> coalesce);
+        IEvent<T> Coalesce(Func<T, T, T> coalesce);
 
-        IObservable<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot);
+        IEvent<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot);
 
-        IObservable<T> Delay();
+        IEvent<T> Delay();
 
-        IObservable<T> Filter(Func<T, bool> predicate);
+        IEvent<T> Filter(Func<T, bool> predicate);
 
-        IObservable<T> FilterNotNull();
+        IEvent<T> FilterNotNull();
 
-        IObservable<T> Gate(IValue<bool> predicate);
+        IEvent<T> Gate(IValue<bool> predicate);
 
         /// <summary>
         /// Create a behavior with the specified initial value, that gets updated
@@ -30,13 +30,13 @@
         /// having the specified initial value.</returns>
         IBehavior<T> Hold(T initValue);
 
-        IObservable<TB> Map<TB>(Func<T, TB> map);
+        IEvent<TB> Map<TB>(Func<T, TB> map);
 
-        IObservable<T> Merge(IObservable<T> source);
+        IEvent<T> Merge(IEvent<T> source);
 
-        IObservable<T> Merge(IObservable<T> source, Func<T, T, T> coalesce);
+        IEvent<T> Merge(IEvent<T> source, Func<T, T, T> coalesce);
 
-        IObservable<T> Once();
+        IEvent<T> Once();
 
         /// <summary>
         /// Sample the behavior at the time of the event firing. Note that the 'current value'
@@ -46,7 +46,7 @@
         /// <typeparam name="TB">The type of the Behavior</typeparam>
         /// <param name="valueStream">The Behavior to sample when calculating the snapshot</param>
         /// <returns>A new Event that will produce the snapshot when the current event fires</returns>
-        IObservable<TB> Snapshot<TB>(IValue<TB> valueStream);
+        IEvent<TB> Snapshot<TB>(IValue<TB> valueStream);
 
         /// <summary>
         /// Sample the behavior at the time of the event firing. Note that the 'current value'
@@ -58,7 +58,7 @@
         /// <param name="valueStream">The Behavior to sample when calculating the snapshot</param>
         /// <param name="snapshot">The snapshot generation function.</param>
         /// <returns>A new Event that will produce the snapshot when the current event fires</returns>
-        IObservable<TC> Snapshot<TB, TC>(IValue<TB> valueStream, Func<T, TB, TC> snapshot);
+        IEvent<TC> Snapshot<TB, TC>(IValue<TB> valueStream, Func<T, TB, TC> snapshot);
 
         ISubscription<T> Subscribe(Action<T> callback);
 

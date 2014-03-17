@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Sodium
 {
-    public interface IInitialFiringsObservable<T> : IObservable<T>
+    public interface IInitialFiringsEvent<T> : IEvent<T>
     {
         T[] InitialFirings();
     }

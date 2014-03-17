@@ -7,7 +7,7 @@
     /// during the subscription process.
     /// </summary>
     /// <typeparam name="T">The value fired through the observable</typeparam>
-    public interface IFiringObservable<T> : IObservable<T>
+    public interface IFiringEvent<T> : IEvent<T>
     {
         ISubscription<T> SubscribeAndFire(Action<T> callback);
 

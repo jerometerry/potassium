@@ -300,9 +300,9 @@ namespace Sodium.Tests
         {
             public readonly char C1;
             public readonly char C2;
-            public readonly Sodium.IObservable<char> Event;
+            public readonly Sodium.IEvent<char> Event;
 
-            public Se(char c1, char c2, Sodium.IObservable<char> evt)
+            public Se(char c1, char c2, Sodium.IEvent<char> evt)
             {
                 C1 = c1;
                 C2 = c2;

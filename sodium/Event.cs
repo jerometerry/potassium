@@ -7,7 +7,7 @@
     /// Base class for Event and Behavior
     /// </summary>
     /// <typeparam name="T">The type of value that will be fired through the Observable</typeparam>
-    public class Observable<T> : TransactionalObject, IObservable<T>
+    public class Event<T> : TransactionalObject, IEvent<T>
     {
         /// <summary>
         /// The rank of the current Event. Default to rank zero
@@ -69,7 +69,7 @@
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
         /// </remarks>
-        public IObservable<T> Coalesce(Func<T, T, T> coalesce)
+        public IEvent<T> Coalesce(Func<T, T, T> coalesce)
         {
             return this.StartTransaction(t => new Coalesce<T>(this, coalesce, t));
         }
@@ -83,7 +83,7 @@
         /// <param name="initState">The initial state for the internal Behavior</param>
         /// <param name="snapshot">The mealy machine</param>
         /// <returns>An Event that collects new values</returns>
-        public IObservable<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
+        public IEvent<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             return new Collect<T, TB, TS>(this, initState, snapshot);
         }
@@ -92,7 +92,7 @@
         /// Push each event occurrence onto a new transaction.
         /// </summary>
         /// <returns>An event that is fired with the lowest priority in the current Transaction the current Event is fired in.</returns>
-        public IObservable<T> Delay()
+        public IEvent<T> Delay()
         {
             return new Delay<T>(this);
         }
@@ -103,7 +103,7 @@
         /// <param name="predicate">A predicate used to include firings</param>
         /// <returns>A new Event that is fired when the current Event fires and
         /// the predicate evaluates to true.</returns>
-        public IObservable<T> Filter(Func<T, bool> predicate)
+        public IEvent<T> Filter(Func<T, bool> predicate)
         {
             return new Filter<T>(this, predicate);
         }
@@ -114,7 +114,7 @@
         /// <returns>A new Event that fires whenever the current Event fires with a non-null value</returns>
         /// <remarks>For value types, comparison against null will always be false. 
         /// FilterNotNull will not filter out any values for value types.</remarks>
-        public IObservable<T> FilterNotNull()
+        public IEvent<T> FilterNotNull()
         {
             return Filter(a => a != null);
         }
@@ -127,7 +127,7 @@
         /// <param name="predicate">A behavior who's current value acts as a predicate</param>
         /// <returns>A new Event that fires whenever the current Event fires and the Behaviors value
         /// is true.</returns>
-        public IObservable<T> Gate(IValue<bool> predicate)
+        public IEvent<T> Gate(IValue<bool> predicate)
         {
             return new Gate<T>(this, predicate);
         }
@@ -154,7 +154,7 @@
         /// <param name="map">A map from T -> TB</param>
         /// <returns>A new Event that fires whenever the current Event fires, the
         /// the mapped value is computed using the supplied mapping.</returns>
-        public IObservable<TB> Map<TB>(Func<T, TB> map)
+        public IEvent<TB> Map<TB>(Func<T, TB> map)
         {
             return new Map<T, TB>(this, map);
         }
@@ -171,7 +171,7 @@
         /// their ordering is retained. In many common cases the ordering will
         /// be undefined.
         /// </remarks>
-        public IObservable<T> Merge(IObservable<T> source)
+        public IEvent<T> Merge(IEvent<T> source)
         {
             return new Merge<T>(this, source);
         }
@@ -189,7 +189,7 @@
         /// within the same transaction), they are combined using the same logic as
         /// 'coalesce'.
         /// </remarks>
-        public IObservable<T> Merge(IObservable<T> source, Func<T, T, T> coalesce)
+        public IEvent<T> Merge(IEvent<T> source, Func<T, T, T> coalesce)
         {
             var merge = this.Merge(source);
             var c = merge.Coalesce(coalesce);
@@ -201,7 +201,7 @@
         /// Throw away all event occurrences except for the first one.
         /// </summary>
         /// <returns>An Event that only fires one time, the first time the current event fires.</returns>
-        public IObservable<T> Once()
+        public IEvent<T> Once()
         {
             return new Once<T>(this);
         }
@@ -216,7 +216,7 @@
         /// <param name="valueStream">The Behavior to sample when calculating the snapshot</param>
         /// <param name="snapshot">The snapshot generation function.</param>
         /// <returns>A new Event that will produce the snapshot when the current event fires</returns>
-        public IObservable<TC> Snapshot<TB, TC>(IValue<TB> valueStream, Func<T, TB, TC> snapshot)
+        public IEvent<TC> Snapshot<TB, TC>(IValue<TB> valueStream, Func<T, TB, TC> snapshot)
         {
             return new Snapshot<T, TB, TC>(this, snapshot, valueStream);
         }
@@ -227,7 +227,7 @@
         /// <typeparam name="TB">The type of the Behavior</typeparam>
         /// <param name="valueStream">The Behavior to sample when taking the snapshot</param>
         /// <returns>An event that captures the Behaviors value when the current event fires</returns>
-        public IObservable<TB> Snapshot<TB>(IValue<TB> valueStream)
+        public IEvent<TB> Snapshot<TB>(IValue<TB> valueStream)
         {
             return Snapshot(valueStream, (a, b) => b);
         }

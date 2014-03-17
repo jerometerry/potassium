@@ -7,14 +7,14 @@ namespace Sodium
     /// gets updated as the underlying Event is fired.
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the Behavior.</typeparam>
-    public class Behavior<T> : Observable<T>, IBehavior<T>
+    public class Behavior<T> : Event<T>, IBehavior<T>
     {
         /// <summary>
         /// A constant behavior
         /// </summary>
         /// <param name="initValue">The initial value of the Behavior</param>
         public Behavior(T initValue)
-            : this(new Observable<T>(), initValue)
+            : this(new Event<T>(), initValue)
         {
             this.RegisterFinalizer(this.Source);
         }
@@ -24,7 +24,7 @@ namespace Sodium
         /// </summary>
         /// <param name="source">The Event to listen for updates from</param>
         /// <param name="initValue">The initial value of the Behavior</param>
-        public Behavior(IObservable<T> source, T initValue)
+        public Behavior(IEvent<T> source, T initValue)
         {
             this.Source = source;
             this.ValueContainer = new ValueContainer<T>(source, initValue);
@@ -56,7 +56,7 @@ namespace Sodium
         /// The underlying event that gives the updates for the behavior. If this behavior was created
         /// with a hold, then Source gives you an event equivalent to the one that was held.
         /// </summary>
-        protected IObservable<T> Source { get; private set; }
+        protected IEvent<T> Source { get; private set; }
 
         /// <summary>
         /// Accumulate on input event, outputting the new state each time.
@@ -67,7 +67,7 @@ namespace Sodium
         /// <param name="snapshot">The snapshot generation function</param>
         /// <returns>A new Behavior starting with the given value, that updates 
         /// whenever the current event fires, getting a value computed by the snapshot function.</returns>
-        public static IBehavior<TS> Accum<TS>(IObservable<T> source, TS initState, Func<T, TS, TS> snapshot)
+        public static IBehavior<TS> Accum<TS>(IEvent<T> source, TS initState, Func<T, TS, TS> snapshot)
         {
             var evt = new EventLoop<TS>();
             var behavior = evt.Hold(initState);
@@ -89,7 +89,7 @@ namespace Sodium
         /// <param name="source">The source to update the Behavior from</param>
         /// <param name="initValue">The initial value of the Behavior</param>
         /// <returns>The Behavior with the given value</returns>
-        public static IBehavior<T> Hold(IObservable<T> source, T initValue)
+        public static IBehavior<T> Hold(IEvent<T> source, T initValue)
         {
             return TransactionContext.Current.Run(t => Hold(source, initValue, t));
         }
@@ -101,7 +101,7 @@ namespace Sodium
         /// <param name="initValue">The initial value of the Behavior</param>
         /// <param name="t">The Transaction to perform the Hold</param>
         /// <returns>The Behavior with the given value</returns>
-        public static IBehavior<T> Hold(IObservable<T> source, T initValue, Transaction t)
+        public static IBehavior<T> Hold(IEvent<T> source, T initValue, Transaction t)
         {
             var s = new LastFiring<T>(source, t);
             var b = new Behavior<T>(s, initValue);
@@ -138,7 +138,7 @@ namespace Sodium
         /// Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.
         /// </remarks>
-        public static IObservable<T> SwitchE(IBehavior<IObservable<T>> behavior)
+        public static IEvent<T> SwitchE(IBehavior<IEvent<T>> behavior)
         {
             return new Switch<T>(behavior);
         }
