@@ -50,6 +50,7 @@
     <Compile Include="BehaviorLoop.cs" />
     <Compile Include="BehaviorSink.cs" />
     <Compile Include="BehaviorEventSource.cs" />
+    <Compile Include="CollectEvent.cs" />
     <Compile Include="GateEvent.cs" />
     <Compile Include="ValueContainer.cs" />
     <Compile Include="DelayEvent.cs" />

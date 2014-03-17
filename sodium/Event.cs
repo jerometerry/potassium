@@ -241,17 +241,7 @@ namespace Sodium
         /// <returns>An Event that collects new values</returns>
         public IEvent<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
-            var es = new EventLoop<TS>();
-            var s = es.Hold(initState);
-            var ebs = Snapshot(s, snapshot);
-            var eb = ebs.Map(bs => bs.Item1);
-            var evt = ebs.Map(bs => bs.Item2);
-            es.Loop(evt);
-            eb.RegisterFinalizer(es);
-            eb.RegisterFinalizer(s);
-            eb.RegisterFinalizer(ebs);
-            eb.RegisterFinalizer(evt);
-            return eb;
+            return new CollectEvent<T, TB, TS>(this, initState, snapshot);
         }
 
         /// <summary>
