@@ -7,7 +7,7 @@ namespace Sodium
     /// gets updated as the underlying Event is fired.
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the Behavior.</typeparam>
-    public class Behavior<T> : Event<T>, IBehavior<T>
+    public class Behavior<T> : DelegatedEvent<T>, IBehavior<T>
     {
         /// <summary>
         /// A constant behavior
@@ -25,8 +25,8 @@ namespace Sodium
         /// <param name="source">The Event to listen for updates from</param>
         /// <param name="initValue">The initial value of the Behavior</param>
         public Behavior(IEvent<T> source, T initValue)
+            : base(source)
         {
-            this.Source = source;
             this.ValueContainer = new ValueContainer<T>(source, initValue);
         }
 
@@ -51,12 +51,6 @@ namespace Sodium
         }
 
         internal ValueContainer<T> ValueContainer { get; private set; }
-
-        /// <summary>
-        /// The underlying event that gives the updates for the behavior. If this behavior was created
-        /// with a hold, then Source gives you an event equivalent to the one that was held.
-        /// </summary>
-        protected IEvent<T> Source { get; private set; }
 
         /// <summary>
         /// Accumulate on input event, outputting the new state each time.
@@ -205,7 +199,7 @@ namespace Sodium
         /// <param name="initState">Value to pass to the snapshot function</param>
         /// <param name="snapshot">Snapshot function</param>
         /// <returns>A new Behavior that collects values of type TB</returns>
-        public IBehavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
+        public IBehavior<TB> CollectB<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             var coalesceEvent = Source.Coalesce((a, b) => b);
             var currentValue = this.ValueContainer.Value;
@@ -252,16 +246,6 @@ namespace Sodium
         /// <summary>
         /// Listen to the underlying event for updates
         /// </summary>
-        /// <param name="callback">The action to invoke when the underlying event fires</param>
-        /// <returns>The event subscription</returns>
-        public override ISubscription<T> Subscribe(Action<T> callback)
-        {
-            return this.Source.Subscribe(callback);
-        }
-
-        /// <summary>
-        /// Listen to the underlying event for updates
-        /// </summary>
         /// <param name="callback"> action to invoke when the underlying event fires</param>
         /// <returns>The event subscription</returns>
         /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
@@ -288,40 +272,6 @@ namespace Sodium
             return s;
         }
 
-        public override ISubscription<T> Subscribe(ISodiumCallback<T> callback)
-        {
-            return this.Source.Subscribe(callback);
-        }
-
-        /// <summary>
-        /// Listen to the underlying event for updates
-        /// </summary>
-        /// <param name="callback">The action to invoke when the underlying event fires</param>
-        /// <param name="rank">The rank of the action, used as a superior to the rank of the underlying action.</param>
-        /// <returns>The event subscription</returns>
-        /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
-        public override ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank rank)
-        {
-            return this.Source.Subscribe(callback, rank);
-        }
-
-        /// <summary>
-        /// Listen to the underlying event for updates
-        /// </summary>
-        /// <param name="callback">The action to invoke when the underlying event fires</param>
-        /// <param name="rank">The rank of the action, used as a superior to the rank of the underlying action.</param>
-        /// <param name="transaction">The transaction used to order actions</param>
-        /// <returns>The event subscription</returns>
-        public override ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank rank, Transaction transaction)
-        {
-            return this.Source.Subscribe(callback, rank, transaction);
-        }
-
-        public override bool CancelSubscription(ISubscription<T> subscription)
-        {
-            return this.Source.CancelSubscription(subscription);
-        }
-
         /// <summary>
         /// Dispose of the current Behavior
         /// </summary>
@@ -332,8 +282,6 @@ namespace Sodium
                 this.ValueContainer.Dispose();
                 this.ValueContainer = null;
             }
-
-            this.Source = null;
 
             base.Dispose(disposing);
         }

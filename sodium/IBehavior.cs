@@ -6,7 +6,7 @@
     {
         IBehavior<TB> Apply<TB>(IBehavior<Func<T, TB>> bf);
         
-        IBehavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot);
+        IBehavior<TB> CollectB<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot);
         
         IBehavior<TD> Lift<TB, TC, TD>(Func<T, TB, TC, TD> lift, IBehavior<TB> b, IBehavior<TC> c);
         

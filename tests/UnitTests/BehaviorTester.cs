@@ -265,7 +265,7 @@ namespace Sodium.Tests
         {
             var ea = new Sink<int>();
             var o = new List<int>();
-            var sum = ea.Hold(100).Collect(0, (a, s) => new Tuple<int, int>(a + s, a + s));
+            var sum = ea.Hold(100).CollectB(0, (a, s) => new Tuple<int, int>(a + s, a + s));
             var l = sum.SubscribeAndFire(o.Add);
             ea.Fire(5);
             ea.Fire(7);
