@@ -14,8 +14,8 @@ namespace Sodium
         IEvent<T> Filter(Func<T, bool> predicate);
         
         IEvent<T> FilterNotNull();
-        
-        IEvent<T> Gate(IBehavior<bool> predicate);
+
+        IEvent<T> Gate(IValue<bool> predicate);
         
         IEvent<TB> Map<TB>(Func<T, TB> map);
         

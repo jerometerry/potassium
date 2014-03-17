@@ -61,6 +61,7 @@
     <Compile Include="InitialFireEventSink.cs" />
     <Compile Include="IObservable.cs" />
     <Compile Include="ISnapshot.cs" />
+    <Compile Include="IValue.cs" />
     <Compile Include="LastFiringEvent.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="DisposableObject.cs" />

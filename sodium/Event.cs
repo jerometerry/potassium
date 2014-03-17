@@ -114,7 +114,7 @@ namespace Sodium
         /// <param name="behavior">The Behavior to sample when calculating the snapshot</param>
         /// <param name="snapshot">The snapshot generation function.</param>
         /// <returns>A new Event that will produce the snapshot when the current event fires</returns>
-        public IEvent<TC> Snapshot<TB, TC>(IBehavior<TB> behavior, Func<T, TB, TC> snapshot)
+        public IEvent<TC> Snapshot<TB, TC>(IValue<TB> behavior, Func<T, TB, TC> snapshot)
         {
             return new SnapshotEvent<T, TB, TC>(this, snapshot, behavior);
         }
@@ -125,7 +125,7 @@ namespace Sodium
         /// <typeparam name="TB">The type of the Behavior</typeparam>
         /// <param name="behavior">The Behavior to sample when taking the snapshot</param>
         /// <returns>An event that captures the Behaviors value when the current event fires</returns>
-        public IEvent<TB> Snapshot<TB>(IBehavior<TB> behavior)
+        public IEvent<TB> Snapshot<TB>(IValue<TB> behavior)
         {
             return Snapshot(behavior, (a, b) => b);
         }
@@ -256,7 +256,7 @@ namespace Sodium
         /// <param name="predicate">A behavior who's current value acts as a predicate</param>
         /// <returns>A new Event that fires whenever the current Event fires and the Behaviors value
         /// is true.</returns>
-        public IEvent<T> Gate(IBehavior<bool> predicate)
+        public IEvent<T> Gate(IValue<bool> predicate)
         {
             Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
             var sn = this.Snapshot(predicate, snapshot);

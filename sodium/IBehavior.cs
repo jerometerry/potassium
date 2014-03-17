@@ -1,10 +1,9 @@
 ﻿using System;
 namespace Sodium
 {
-    public interface IBehavior<T> : IObservable<T>
-    {
-        T Value { get; }
 
+    public interface IBehavior<T> : IObservable<T>, IValue<T>
+    {
         IEvent<T> Values(Transaction transaction);
 
         T GetNewValue();

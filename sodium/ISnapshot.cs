@@ -8,7 +8,7 @@
     /// <typeparam name="T">The type of value fired through the Observable</typeparam>
     public interface ISnapshot<T> : IDisposable
     {
-        IEvent<TB> Snapshot<TB>(IBehavior<TB> behavior);
+        IEvent<TB> Snapshot<TB>(IValue<TB> behavior);
 
         /// <summary>
         /// Sample the behavior at the time of the event firing. Note that the 'current value'
@@ -20,6 +20,6 @@
         /// <param name="behavior">The Behavior to sample when calculating the snapshot</param>
         /// <param name="snapshot">The snapshot generation function.</param>
         /// <returns>A new Event that will produce the snapshot when the current event fires</returns>
-        IEvent<TC> Snapshot<TB, TC>(IBehavior<TB> behavior, Func<T, TB, TC> snapshot);
+        IEvent<TC> Snapshot<TB, TC>(IValue<TB> behavior, Func<T, TB, TC> snapshot);
     }
 }

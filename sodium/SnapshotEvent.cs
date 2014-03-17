@@ -7,10 +7,10 @@ namespace Sodium
     {
         private IEvent<T> source;
         private Func<T, TB, TC> snapshot;
-        private IBehavior<TB> behavior;
+        private IValue<TB> behavior;
         private ISubscription<T> subscription;
 
-        public SnapshotEvent(IEvent<T> source, Func<T, TB, TC> snapshot, IBehavior<TB> behavior)
+        public SnapshotEvent(IEvent<T> source, Func<T, TB, TC> snapshot, IValue<TB> behavior)
         {
             this.source = source;
             this.snapshot = snapshot;
