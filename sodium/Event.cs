@@ -10,7 +10,7 @@ namespace Sodium
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the event.</typeparam>
     /// <remarks>Events that fire in the same Transaction are known as Simultaneous Events.</remarks>
-    public class Event<T> : Observable<T>, IHoldable<T>, IEvent<T>
+    public class Event<T> : Observable<T>, IEvent<T>
     {
         /// <summary>
         /// List of ISubscriptions that are currently listening for firings 
@@ -111,23 +111,23 @@ namespace Sodium
         /// </summary>
         /// <typeparam name="TB">The type of the Behavior</typeparam>
         /// <typeparam name="TC">The return type of the snapshot function</typeparam>
-        /// <param name="behavior">The Behavior to sample when calculating the snapshot</param>
+        /// <param name="valueStream">The Behavior to sample when calculating the snapshot</param>
         /// <param name="snapshot">The snapshot generation function.</param>
         /// <returns>A new Event that will produce the snapshot when the current event fires</returns>
-        public IEvent<TC> Snapshot<TB, TC>(IValue<TB> behavior, Func<T, TB, TC> snapshot)
+        public IEvent<TC> Snapshot<TB, TC>(IValue<TB> valueStream, Func<T, TB, TC> snapshot)
         {
-            return new SnapshotEvent<T, TB, TC>(this, snapshot, behavior);
+            return new SnapshotEvent<T, TB, TC>(this, snapshot, valueStream);
         }
 
         /// <summary>
         /// Variant of snapshot that throws away the event's value and captures the behavior's.
         /// </summary>
         /// <typeparam name="TB">The type of the Behavior</typeparam>
-        /// <param name="behavior">The Behavior to sample when taking the snapshot</param>
+        /// <param name="valueStream">The Behavior to sample when taking the snapshot</param>
         /// <returns>An event that captures the Behaviors value when the current event fires</returns>
-        public IEvent<TB> Snapshot<TB>(IValue<TB> behavior)
+        public IEvent<TB> Snapshot<TB>(IValue<TB> valueStream)
         {
-            return Snapshot(behavior, (a, b) => b);
+            return Snapshot(valueStream, (a, b) => b);
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace Sodium
         /// <param name="snapshot">The snapshot generation function</param>
         /// <returns>A new Behavior starting with the given value, that updates 
         /// whenever the current event fires, getting a value computed by the snapshot function.</returns>
-        public IBehavior<TS> Accum<TS>(TS initState, Func<T, TS, TS> snapshot)
+        public IFiringObservable<TS> Accum<TS>(TS initState, Func<T, TS, TS> snapshot)
         {
             var evt = new EventLoop<TS>();
             var behavior = evt.Hold(initState);
@@ -367,7 +367,7 @@ namespace Sodium
         internal IBehavior<T> Hold(T initValue, Transaction t)
         {
             var f = new LastFiringEvent<T>(this, t);
-            var source = EventSource<T>.Create(f);
+            var source = BehaviorEventSource<T>.Create(f);
             var b = new Behavior<T>(source, initValue);
             b.RegisterFinalizer(source);
             return b;

@@ -6,10 +6,10 @@
         private ISubscription<T> wrappedSubscription;
         private IEvent<T> wrappedEvent;
 
-        public SwitchBehaviorEvent(IBehavior<IBehavior<T>> source)
+        public SwitchBehaviorEvent(IFiringObservable<IBehavior<T>> source)
         {
             var callback = new ActionCallback<IBehavior<T>>(this.Invoke);
-            this.subscription = source.SubscribeWithFire(callback, this.Rank);
+            this.subscription = source.SubscribeAndFire(callback, this.Rank);
         }
 
         public void Invoke(IBehavior<T> behavior, Transaction transaction)

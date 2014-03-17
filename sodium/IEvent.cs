@@ -1,9 +1,10 @@
-﻿using System;
-namespace Sodium
+﻿namespace Sodium
 {
+    using System;
+
     public interface IEvent<T> : IObservable<T>, ISnapshot<T>, IHoldable<T>
     {
-        IBehavior<TS> Accum<TS>(TS initState, Func<T, TS, TS> snapshot);
+        IFiringObservable<TS> Accum<TS>(TS initState, Func<T, TS, TS> snapshot);
 
         IEvent<T> Coalesce(Func<T, T, T> coalesce);
         

@@ -2,7 +2,7 @@
 {
     using System;
 
-    public interface IBehavior<T> : IObservableBehavior<T>, IValue<T>
+    public interface IBehavior<T> : IFiringObservable<T>, IValue<T>
     {
         IBehavior<TB> Apply<TB>(IBehavior<Func<T, TB>> bf);
         

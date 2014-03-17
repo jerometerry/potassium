@@ -5,12 +5,12 @@
         private ISubscription<IEvent<T>> behaviorSubscription;
         private ISodiumCallback<T> wrappedEventSubscriptionCallback;
         private ISubscription<T> wrappedSubscription;
-        private IBehavior<IEvent<T>> source;
+        private IValue<IEvent<T>> source;
 
-        public SwitchEvent(IBehavior<IEvent<T>> source)
+        public SwitchEvent(IValue<IEvent<T>> source)
         {
             this.source = source;
-            this.StartTransaction<Unit>(this.Initialize);
+            this.StartTransaction(this.Initialize);
         }
 
         protected override void Dispose(bool disposing)

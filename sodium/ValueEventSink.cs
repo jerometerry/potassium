@@ -5,26 +5,26 @@ namespace Sodium
     /// and fires all updates thereafter.
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Behavior</typeparam>
-    internal sealed class BehaviorEventSink<T> : InitialFireEventSink<T>
+    internal sealed class ValueEventSink<T> : InitialFireEventSink<T>
     {
-        private IBehavior<T> behavior;
+        private IValue<T> valueStream;
         private ISubscription<T> subscription;
 
         /// <summary>
         /// Constructs a new BehaviorEventSink
         /// </summary>
-        /// <param name="behavior">The Behavior to monitor</param>
+        /// <param name="valueStream">The Behavior to monitor</param>
         /// <param name="transaction">The Transaction to use to create a subscription on the given Behavior</param>
-        public BehaviorEventSink(IBehavior<T> behavior, Transaction transaction)
+        public ValueEventSink(IValue<T> valueStream, Transaction transaction)
         {
-            this.behavior = behavior;
+            this.valueStream = valueStream;
             this.CreateLoop(transaction);
         }
 
         public override T[] InitialFirings()
         {
-            // When the BehaviorEventSink is subscribed to, fire off the current value of the Behavior
-            return new[] { behavior.Value };
+            // When the ValueEventSink is subscribed to, fire off the current value of the Behavior
+            return new[] { this.valueStream.Value };
         }
 
         protected override void Dispose(bool disposing)
@@ -35,7 +35,7 @@ namespace Sodium
                 this.subscription = null;
             }
 
-            behavior = null;
+            this.valueStream = null;
 
             base.Dispose(disposing);
         }
@@ -47,7 +47,7 @@ namespace Sodium
         private void CreateLoop(Transaction transaction)
         {
             var forward = this.CreateFireCallback();
-            this.subscription = behavior.Subscribe(forward, this.Rank, transaction);
+            this.subscription = this.valueStream.Subscribe(forward, this.Rank, transaction);
         }
     }
 }

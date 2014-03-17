@@ -2,38 +2,38 @@
 {
     using System;
 
-    internal class EventSource<T> : DisposableObject, IBehaviorSource<T>
+    internal class BehaviorEventSource<T> : DisposableObject, IBehaviorSource<T>
     {
-        IEvent<T> source;
+        private IEvent<T> source;
+
+        private BehaviorEventSource(IEvent<T> source)
+        {
+            this.source = source;
+        }
 
         public IEvent<T> Event
         {
             get { return source; }
         }
 
-        private EventSource(IEvent<T> source)
+        public static BehaviorEventSource<T> ConstantEventSource()
         {
-            this.source = source;
+            return new BehaviorEventSource<T>(new Event<T>());
         }
 
-        public static EventSource<T> ConstantEventSource()
+        public static BehaviorEventSource<T> EventSinkSource()
         {
-            return new EventSource<T>(new Event<T>());
+            return new BehaviorEventSource<T>(new EventSink<T>());
         }
 
-        public static EventSource<T> EventSinkSource()
+        public static BehaviorEventSource<T> EventLoopSource()
         {
-            return new EventSource<T>(new EventSink<T>());
+            return new BehaviorEventSource<T>(new EventLoop<T>());
         }
 
-        public static EventSource<T> EventLoopSource()
+        public static BehaviorEventSource<T> Create(Event<T> source)
         {
-            return new EventSource<T>(new EventLoop<T>());
-        }
-
-        public static EventSource<T> Create(Event<T> source)
-        {
-            return new EventSource<T>(source);
+            return new BehaviorEventSource<T>(source);
         }
 
         public ISnapshot<T> Coalesce(Func<T, T, T> coalesce)
@@ -71,13 +71,18 @@
             return this.source.Subscribe(callback, rank, transaction);
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (this.source != null)
+            if (disposing)
             {
-                this.source.Dispose();
-                this.source = null;
+                if (this.source != null)
+                {
+                    this.source.Dispose();
+                    this.source = null;
+                }
             }
+
+            base.Dispose(disposing);
         }
     }
 }

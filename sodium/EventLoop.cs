@@ -7,7 +7,7 @@
     /// to subscriptions of the current event.
     /// </summary>
     /// <typeparam name="T">The type of the value fired through the event</typeparam>
-    public class EventLoop<T> : RefireEventSink<T>
+    public class EventLoop<T> : RefireEventSink<T>, ILoop<T>
     {
         private IObservable<T> source;
         private ISubscription<T> subscription;
@@ -15,20 +15,19 @@
         /// <summary>
         /// Firings on the given Event will be forwarded to the current Event
         /// </summary>
-        /// <param name="toLoop">Event who's firings will be looped to the current Event</param>
+        /// <param name="observable">Event who's firings will be looped to the current Event</param>
         /// <returns>The current EventLoop</returns>
         /// <remarks>Loop can only be called once on an Event. If Loop is called multiple times,
         /// an ApplicationException will be raised.</remarks>
-        public IEvent<T> Loop(IObservable<T> toLoop)
+        public void Loop(IObservable<T> observable)
         {
             if (this.source != null)
             {
                 throw new ApplicationException("EventLoop looped more than once");
             }
 
-            this.source = toLoop;
+            this.source = observable;
             this.subscription = source.Subscribe(this.CreateFireCallback(), Rank);
-            return this;
         }
 
         /// <summary>

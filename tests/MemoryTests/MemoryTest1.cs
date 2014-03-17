@@ -48,7 +48,7 @@ namespace Sodium.MemoryTests
             var tensTupleBehavior = Behavior<Tuple<int?, int?>>.SwitchB(tensTupleWrappedBehavior);
             finalizers.Add(tensTupleBehavior);
 
-            var listener = tensTupleBehavior.SubscribeWithFire(tu => { });
+            var listener = tensTupleBehavior.SubscribeAndFire(tu => { });
             var i = 0;
 
             while (i < iterations)

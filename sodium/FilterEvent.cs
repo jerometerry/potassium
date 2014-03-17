@@ -5,27 +5,17 @@ namespace Sodium
 
     internal sealed class FilterEvent<T> : InitialFireEventSink<T>
     {
-        private IEvent<T> source;
+        private IObservable<T> source;
         private Func<T, bool> f;
         private ISubscription<T> subscription;
 
-        public FilterEvent(IEvent<T> source, Func<T, bool> f)
+        public FilterEvent(IObservable<T> source, Func<T, bool> f)
         {
             this.source = source;
             this.f = f;
 
             var callback = this.CreateFireCallback();
             this.subscription = source.Subscribe(callback, this.Rank);
-        }
-
-        /// <summary>
-        /// Fire the event if the predicate evaluates to true
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="a"></param>
-        internal override bool Fire(T a, Transaction t)
-        {
-            return this.f(a) && base.Fire(a, t);
         }
 
         public override T[] InitialFirings()
@@ -43,6 +33,16 @@ namespace Sodium
             }
 
             return filtered.ToArray();
+        }
+
+        /// <summary>
+        /// Fire the event if the predicate evaluates to true
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="a"></param>
+        internal override bool Fire(T a, Transaction t)
+        {
+            return this.f(a) && base.Fire(a, t);
         }
 
         protected override void Dispose(bool disposing)

@@ -6,7 +6,7 @@
     /// Interface required for sources for use with Behaviors
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Behavior.</typeparam>
-    public interface IBehaviorSource<T> : IObservable<T>, IDisposable
+    public interface IBehaviorSource<T> : IObservable<T>
     {
         /// <summary>
         /// If there's more than one firing in a single transaction, combine them into

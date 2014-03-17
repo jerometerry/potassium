@@ -2,7 +2,7 @@
 {
     using System;
 
-    public interface IValue<T> : IDisposable
+    public interface IValue<T> : IObservable<T>
     {
         T Value { get; }
     }

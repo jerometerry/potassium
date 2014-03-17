@@ -8,17 +8,6 @@ namespace Sodium
     /// <remarks>Used by Behavior to support firing of initial values of the Behavior</remarks>
     public abstract class InitialFireEventSink<T> : RefireEventSink<T>, IInitialFiringsObservable<T>
     {
-        internal static TF[] GetInitialFirings<TF>(IObservable<TF> source)
-        {
-            var sink = source as IInitialFiringsObservable<TF>;
-            if (sink == null)
-            {
-                return null;
-            }
-
-            return sink.InitialFirings();
-        }
-
         /// <summary>
         /// Gets the values that will be sent to newly added
         /// </summary>
@@ -28,6 +17,12 @@ namespace Sodium
         public virtual T[] InitialFirings()
         {
             return null;
+        }
+
+        internal static TF[] GetInitialFirings<TF>(IObservable<TF> source)
+        {
+            var sink = source as IInitialFiringsObservable<TF>;
+            return sink == null ? null : sink.InitialFirings();
         }
 
         /// <summary>

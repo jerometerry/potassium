@@ -25,7 +25,7 @@ namespace Sodium
         /// </summary>
         /// <param name="initValue">The initial value of the Behavior</param>
         public Behavior(T initValue)
-            : this(EventSource<T>.ConstantEventSource(), initValue)
+            : this(BehaviorEventSource<T>.ConstantEventSource(), initValue)
         {
             this.RegisterFinalizer(this.Source);
         }
@@ -128,7 +128,7 @@ namespace Sodium
         /// <returns>The event subscription</returns>
         /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
         /// current value of the behavior.</remarks>
-        public ISubscription<T> SubscribeWithFire(Action<T> callback)
+        public ISubscription<T> SubscribeAndFire(Action<T> callback)
         { 
             var v = this.StartTransaction(this.Values);
             var s = (Subscription<T>)v.Subscribe(callback);
@@ -273,7 +273,7 @@ namespace Sodium
         /// <returns>The event subscription</returns>
         /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
         /// current value of the behavior.</remarks>
-        public ISubscription<T> SubscribeWithFire(ISodiumCallback<T> callback, Rank rank)
+        public ISubscription<T> SubscribeAndFire(ISodiumCallback<T> callback, Rank rank)
         {
             var v = this.StartTransaction(this.Values);
             var s = (Subscription<T>)v.Subscribe(callback, rank);
@@ -303,7 +303,7 @@ namespace Sodium
         /// value changes thereafter</returns>
         public IEvent<T> Values(Transaction transaction)
         {
-            var valueStream = new BehaviorEventSink<T>(this, transaction);
+            var valueStream = new ValueEventSink<T>(this, transaction);
 
             // Needed in case of an initial value and an update
             // in the same transaction.

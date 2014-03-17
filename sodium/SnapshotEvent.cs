@@ -5,12 +5,12 @@ namespace Sodium
 
     internal sealed class SnapshotEvent<T, TB, TC> : InitialFireEventSink<TC>
     {
-        private IEvent<T> source;
+        private IObservable<T> source;
         private Func<T, TB, TC> snapshot;
         private IValue<TB> behavior;
         private ISubscription<T> subscription;
 
-        public SnapshotEvent(IEvent<T> source, Func<T, TB, TC> snapshot, IValue<TB> behavior)
+        public SnapshotEvent(IObservable<T> source, Func<T, TB, TC> snapshot, IValue<TB> behavior)
         {
             this.source = source;
             this.snapshot = snapshot;
