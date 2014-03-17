@@ -7,14 +7,13 @@ namespace Sodium
         bool CancelSubscription(ISubscription<T> subscription);
         Event<T> Coalesce(Func<T, T, T> coalesce);
         IEvent<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot);
-        Event<T> Delay();
+        IEvent<T> Delay();
         Event<T> Filter(Func<T, bool> predicate);
         Event<T> FilterNotNull();
         IEvent<T> Gate(Behavior<bool> predicate);
         IEvent<TB> Map<TB>(Func<T, TB> map);
-        Event<T> Merge(Event<T> source);
-        Event<T> Merge(Event<T> source, Func<T, T, T> coalesce);
-        Event<T> Once();
-        Event<TB> Snapshot<TB>(Behavior<TB> behavior);
+        IEvent<T> Merge(IEvent<T> source);
+        IEvent<T> Merge(IEvent<T> source, Func<T, T, T> coalesce);
+        IEvent<T> Once();
     }
 }

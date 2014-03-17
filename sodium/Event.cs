@@ -204,7 +204,7 @@ namespace Sodium
         /// their ordering is retained. In many common cases the ordering will
         /// be undefined.
         /// </remarks>
-        public Event<T> Merge(Event<T> source)
+        public IEvent<T> Merge(IEvent<T> source)
         {
             return new MergeEvent<T>(this, source);
         }
@@ -222,7 +222,7 @@ namespace Sodium
         /// within the same transaction), they are combined using the same logic as
         /// 'coalesce'.
         /// </remarks>
-        public Event<T> Merge(Event<T> source, Func<T, T, T> coalesce)
+        public IEvent<T> Merge(IEvent<T> source, Func<T, T, T> coalesce)
         {
             var merge = this.Merge(source);
             var c = merge.Coalesce(coalesce);
@@ -234,7 +234,7 @@ namespace Sodium
         /// Throw away all event occurrences except for the first one.
         /// </summary>
         /// <returns>An Event that only fires one time, the first time the current event fires.</returns>
-        public Event<T> Once()
+        public IEvent<T> Once()
         {
             return new OnceEvent<T>(this);
         }
@@ -243,7 +243,7 @@ namespace Sodium
         /// Push each event occurrence onto a new transaction.
         /// </summary>
         /// <returns>An event that is fired with the lowest priority in the current Transaction the current Event is fired in.</returns>
-        public Event<T> Delay()
+        public IEvent<T> Delay()
         {
             return new DelayEvent<T>(this);
         }

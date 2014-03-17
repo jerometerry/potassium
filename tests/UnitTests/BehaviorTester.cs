@@ -300,7 +300,7 @@ namespace Sodium.Tests
         /// This needs testing separately, because the code must be done carefully to achieve
         /// this.
         /// </summary>
-        private static Event<int> DoubleUp(Event<int> ev)
+        private static IEvent<int> DoubleUp(Event<int> ev)
         {
             return ev.Merge(ev);
         }
