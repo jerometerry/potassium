@@ -15,7 +15,7 @@ namespace Sodium
             this.subscriptions[0] = source.Subscribe(new ActionCallback<T>((a, t) => this.Fire(this.subscriptions, a, t)), this.Rank);
         }
 
-        protected internal override T[] InitialFirings()
+        public override T[] InitialFirings()
         {
             var firings = GetInitialFirings(this.source);
             if (firings == null)

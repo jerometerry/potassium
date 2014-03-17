@@ -21,7 +21,7 @@ namespace Sodium
             this.CreateLoop(transaction);
         }
 
-        protected internal override T[] InitialFirings()
+        public override T[] InitialFirings()
         {
             // When the BehaviorEventSink is subscribed to, fire off the current value of the Behavior
             return new[] { behavior.Value };

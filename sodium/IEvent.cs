@@ -19,9 +19,9 @@ namespace Sodium
         
         IEvent<TB> Map<TB>(Func<T, TB> map);
         
-        IEvent<T> Merge(IEvent<T> source);
-        
-        IEvent<T> Merge(IEvent<T> source, Func<T, T, T> coalesce);
+        IEvent<T> Merge(IObservable<T> source);
+
+        IEvent<T> Merge(IObservable<T> source, Func<T, T, T> coalesce);
         
         IEvent<T> Once();
     }

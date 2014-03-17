@@ -204,7 +204,7 @@ namespace Sodium
         /// their ordering is retained. In many common cases the ordering will
         /// be undefined.
         /// </remarks>
-        public IEvent<T> Merge(IEvent<T> source)
+        public IEvent<T> Merge(IObservable<T> source)
         {
             return new MergeEvent<T>(this, source);
         }
@@ -222,7 +222,7 @@ namespace Sodium
         /// within the same transaction), they are combined using the same logic as
         /// 'coalesce'.
         /// </remarks>
-        public IEvent<T> Merge(IEvent<T> source, Func<T, T, T> coalesce)
+        public IEvent<T> Merge(IObservable<T> source, Func<T, T, T> coalesce)
         {
             var merge = this.Merge(source);
             var c = merge.Coalesce(coalesce);
@@ -374,23 +374,6 @@ namespace Sodium
         }
 
         /// <summary>
-        /// If there's more than one firing in a single transaction, combine them into
-        /// one using the specified combining function.
-        /// </summary>
-        /// <param name="transaction"></param>
-        /// <param name="coalesce"></param>
-        /// <remarks>
-        /// If the event firings are ordered, then the first will appear at the left
-        /// input of the combining function. In most common cases it's best not to
-        /// make any assumptions about the ordering, and the combining function would
-        /// ideally be commutative.
-        /// </remarks>
-        internal IEvent<T> Coalesce(Func<T, T, T> coalesce, Transaction transaction)
-        {
-            return new CoalesceEvent<T>(this, coalesce, transaction);
-        }
-
-        /// <summary>
         /// Cleanup the current Event, disposing of any subscriptions.
         /// </summary>
         protected override void Dispose(bool disposing)
@@ -403,6 +386,23 @@ namespace Sodium
             }
 
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// If there's more than one firing in a single transaction, combine them into
+        /// one using the specified combining function.
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <param name="coalesce"></param>
+        /// <remarks>
+        /// If the event firings are ordered, then the first will appear at the left
+        /// input of the combining function. In most common cases it's best not to
+        /// make any assumptions about the ordering, and the combining function would
+        /// ideally be commutative.
+        /// </remarks>
+        private IEvent<T> Coalesce(Func<T, T, T> coalesce, Transaction transaction)
+        {
+            return new CoalesceEvent<T>(this, coalesce, transaction);
         }
     }
 }

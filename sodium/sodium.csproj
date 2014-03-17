@@ -58,8 +58,10 @@
     <Compile Include="IDisposableObject.cs" />
     <Compile Include="IEvent.cs" />
     <Compile Include="IHoldable.cs" />
+    <Compile Include="IInitialFiringsObservable.cs" />
     <Compile Include="InitialFireEventSink.cs" />
     <Compile Include="IObservable.cs" />
+    <Compile Include="IObservableBehavior.cs" />
     <Compile Include="ISnapshot.cs" />
     <Compile Include="IValue.cs" />
     <Compile Include="LastFiringEvent.cs" />

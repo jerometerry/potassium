@@ -32,7 +32,8 @@
                 this.wrappedEvent = null;
             }
 
-            this.wrappedEvent = behavior.Values(transaction);
+            var beh = (Behavior<T>)behavior;
+            this.wrappedEvent = beh.Values(transaction);
             this.wrappedSubscription = wrappedEvent.Subscribe(this.CreateFireCallback(), Rank, transaction);
         }
 

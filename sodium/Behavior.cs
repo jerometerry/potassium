@@ -105,7 +105,7 @@ namespace Sodium
         /// <returns>The new applied Behavior</returns>
         public IBehavior<TB> Apply<TB>(IBehavior<Func<T, TB>> bf)
         {
-            var evt = new BehaviorApplyEvent<T, TB>(bf, this);
+            var evt = new BehaviorApplyEvent<T, TB>((Behavior<Func<T, TB>>)bf, (Behavior<T>)this);
             var behavior = evt.Behavior;
             behavior.RegisterFinalizer(evt);
             return behavior;

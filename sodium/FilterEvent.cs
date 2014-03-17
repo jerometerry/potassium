@@ -28,7 +28,7 @@ namespace Sodium
             return this.f(a) && base.Fire(a, t);
         }
 
-        protected internal override T[] InitialFirings()
+        public override T[] InitialFirings()
         {
             var events = GetInitialFirings(this.source);
             if (events == null)

@@ -6,11 +6,11 @@ namespace Sodium
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Event</typeparam>
     /// <remarks>Used by Behavior to support firing of initial values of the Behavior</remarks>
-    public abstract class InitialFireEventSink<T> : RefireEventSink<T>
+    public abstract class InitialFireEventSink<T> : RefireEventSink<T>, IInitialFiringsObservable<T>
     {
-        internal static TF[] GetInitialFirings<TF>(IEvent<TF> source)
+        internal static TF[] GetInitialFirings<TF>(IObservable<TF> source)
         {
-            var sink = source as InitialFireEventSink<TF>;
+            var sink = source as IInitialFiringsObservable<TF>;
             if (sink == null)
             {
                 return null;
@@ -25,7 +25,7 @@ namespace Sodium
         /// <returns>An Array of values that will be fired to all registered subscriptions</returns>
         /// <remarks>InitialFirings is used to support initial firings of behaviors when 
         /// the underlying event is subscribed to</remarks>
-        protected internal virtual T[] InitialFirings()
+        public virtual T[] InitialFirings()
         {
             return null;
         }

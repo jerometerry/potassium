@@ -22,7 +22,7 @@
             this.Fire(v, trans);
         }
 
-        protected internal override TB[] InitialFirings()
+        public override TB[] InitialFirings()
         {
             var firings = GetInitialFirings(source);
             if (firings == null)

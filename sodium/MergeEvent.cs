@@ -4,12 +4,12 @@ namespace Sodium
 
     internal sealed class MergeEvent<T> : InitialFireEventSink<T>
     {
-        private IEvent<T> source1;
-        private IEvent<T> source2;
+        private IObservable<T> source1;
+        private IObservable<T> source2;
         private ISubscription<T> l1;
         private ISubscription<T> l2;
 
-        public MergeEvent(IEvent<T> source1, IEvent<T> source2)
+        public MergeEvent(IObservable<T> source1, IObservable<T> source2)
         {
             this.source1 = source1;
             this.source2 = source2;
@@ -19,7 +19,7 @@ namespace Sodium
             l2 = source2.Subscribe(callback, this.Rank);
         }
 
-        protected internal override T[] InitialFirings()
+        public override T[] InitialFirings()
         {
             var firings1 = GetInitialFirings(source1);
             var firings2 = GetInitialFirings(source2);
