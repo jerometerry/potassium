@@ -7,16 +7,15 @@ namespace Sodium
     /// gets updated as the underlying Event is fired.
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the Behavior.</typeparam>
-    public class Behavior<T> : DelegatedEvent<T>, IBehavior<T>
+    public class Behavior<T> : EventLoop<T>, IBehavior<T>
     {
         /// <summary>
         /// A constant behavior
         /// </summary>
         /// <param name="initValue">The initial value of the Behavior</param>
         public Behavior(T initValue)
-            : this(new Event<T>(), initValue)
         {
-            this.RegisterFinalizer(this.Source);
+            this.ValueContainer = new ValueContainer<T>(initValue);
         }
 
         /// <summary>
@@ -25,9 +24,9 @@ namespace Sodium
         /// <param name="source">The Event to listen for updates from</param>
         /// <param name="initValue">The initial value of the Behavior</param>
         public Behavior(IEvent<T> source, T initValue)
-            : base(source)
         {
-            this.ValueContainer = new ValueContainer<T>(source, initValue);
+            this.Loop(source);
+            this.ValueContainer = new ValueContainer<T>(this, initValue);
         }
 
         /// <summary>
@@ -162,7 +161,7 @@ namespace Sodium
         /// of the current event mapped.</returns>
         public IBehavior<TB> MapB<TB>(Func<T, TB> map)
         {
-            var underlyingEvent = Source;
+            var underlyingEvent = this;
             var mapEvent = underlyingEvent.Map(map);
             var currentValue = this.ValueContainer.Value;
             var mappedValue = map(currentValue);
@@ -201,7 +200,7 @@ namespace Sodium
         /// <returns>A new Behavior that collects values of type TB</returns>
         public IBehavior<TB> CollectB<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
-            var coalesceEvent = Source.Coalesce((a, b) => b);
+            var coalesceEvent = this.Coalesce((a, b) => b);
             var currentValue = this.ValueContainer.Value;
             var tuple = snapshot(currentValue, initState);
             var loop = new EventLoop<Tuple<TB, TS>>();

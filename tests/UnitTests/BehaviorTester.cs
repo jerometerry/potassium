@@ -243,7 +243,7 @@ namespace Sodium.Tests
         public void TestLoopBehavior()
         {
             var ea = new Sink<int>();
-            var sum = new BehaviorLoop<int>();
+            var sum = new BehaviorSink<int>(0);
             var sumOut = ea.Snapshot(sum, (x, y) => x + y).Hold(0);
             sum.Loop(sumOut);
             var o = new List<int>();

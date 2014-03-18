@@ -13,18 +13,6 @@
         public BehaviorSink(T initialValue) 
             : base(new Sink<T>(), initialValue)
         {
-            this.RegisterFinalizer(this.Source);
-        }
-
-        /// <summary>
-        /// Fire the given value on the underlying Event
-        /// </summary>
-        /// <param name="firing">The value to fire</param>
-        /// <returns>True if fired, false otherwise</returns>
-        public bool Fire(T firing)
-        {
-            var sink = (IFireable<T>)Source;
-            return sink.Fire(firing);
         }
     }
 }

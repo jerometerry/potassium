@@ -15,6 +15,11 @@ namespace Sodium
         /// </summary>
         private ISubscription<T> subscription;
 
+        public ValueContainer(T initValue)
+        {
+            this.Value = initValue;
+        }
+
         public ValueContainer(IEvent<T> source, T initValue)
         {
             this.source = source;
