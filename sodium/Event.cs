@@ -18,7 +18,7 @@
         /// whenever the current event fires, getting a value computed by the snapshot function.</returns>
         public IBehavior<TS> Accum<TS>(TS initState, Func<T, TS, TS> snapshot)
         {
-            return Behavior<T>.Accum(this, initState, snapshot);
+            return Transformer.Default.Accum(this, initState, snapshot);
         }
 
         /// <summary>
@@ -36,7 +36,7 @@
         /// </remarks>
         public IEvent<T> Coalesce(Func<T, T, T> coalesce)
         {
-            return this.StartTransaction(t => new CoalesceEvent<T>(this, coalesce, t));
+            return Transformer.Default.Coalesce(this, coalesce);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@
         /// <returns>An Event that collects new values</returns>
         public IEvent<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
-            return new CollectEvent<T, TB, TS>(this, initState, snapshot);
+            return Transformer.Default.Collect(this, initState, snapshot);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@
         /// <returns>An event that is fired with the lowest priority in the current Transaction the current Event is fired in.</returns>
         public IEvent<T> Delay()
         {
-            return new DelayEvent<T>(this);
+            return Transformer.Default.Delay(this);
         }
 
         /// <summary>
@@ -70,7 +70,7 @@
         /// the predicate evaluates to true.</returns>
         public IEvent<T> Filter(Func<T, bool> predicate)
         {
-            return new FilterEvent<T>(this, predicate);
+            return Transformer.Default.Filter(this, predicate);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@
         /// FilterNotNull will not filter out any values for value types.</remarks>
         public IEvent<T> FilterNotNull()
         {
-            return new NotNullFilterEvent<T>(this);
+            return Transformer.Default.FilterNotNull(this);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@
         /// is true.</returns>
         public IEvent<T> Gate(IValue<bool> predicate)
         {
-            return new GateEvent<T>(this, predicate);
+            return Transformer.Default.Gate(this, predicate);
         }
 
         /// <summary>
@@ -109,7 +109,7 @@
         /// having the specified initial value.</returns>
         public IBehavior<T> Hold(T initValue)
         {
-            return Behavior<T>.Hold(this, initValue);
+            return Transformer.Default.Hold(this, initValue);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@
         /// the mapped value is computed using the supplied mapping.</returns>
         public IEvent<TB> Map<TB>(Func<T, TB> map)
         {
-            return new MapEvent<T, TB>(this, map);
+            return Transformer.Default.Map(this, map);
         }
 
         /// <summary>
@@ -138,7 +138,7 @@
         /// </remarks>
         public IEvent<T> Merge(IObservable<T> source)
         {
-            return new MergeEvent<T>(this, source);
+            return Transformer.Default.Merge(this, source);
         }
 
         /// <summary>
@@ -156,10 +156,7 @@
         /// </remarks>
         public IEvent<T> Merge(IObservable<T> source, Func<T, T, T> coalesce)
         {
-            var merge = this.Merge(source);
-            var c = merge.Coalesce(coalesce);
-            c.Register(merge);
-            return c;
+            return Transformer.Default.Merge(this, source, coalesce);
         }
 
         /// <summary>
@@ -168,7 +165,7 @@
         /// <returns>An Event that only fires one time, the first time the current event fires.</returns>
         public IEvent<T> Once()
         {
-            return new OnceEvent<T>(this);
+            return Transformer.Default.Once(this);
         }
 
         /// <summary>
@@ -183,7 +180,7 @@
         /// <returns>A new Event that will produce the snapshot when the current event fires</returns>
         public IEvent<TC> Snapshot<TB, TC>(IValue<TB> valueStream, Func<T, TB, TC> snapshot)
         {
-            return new SnapshotEvent<T, TB, TC>(this, snapshot, valueStream);
+            return Transformer.Default.Snapshot(this, valueStream, snapshot);
         }
 
         /// <summary>
@@ -194,7 +191,7 @@
         /// <returns>An event that captures the Behaviors value when the current event fires</returns>
         public IEvent<TB> Snapshot<TB>(IValue<TB> valueStream)
         {
-            return Snapshot(valueStream, (a, b) => b);
+            return Transformer.Default.Snapshot(this, valueStream);
         }
     }
 }

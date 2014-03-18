@@ -27,7 +27,7 @@ namespace Sodium
         {
             this.ScheduleClearFirings(transaction);
             this.AddFiring(firing);
-            this.FireSubscriptionCallbacks(firing, transaction);
+            this.NotifySubscribers(firing, transaction);
             return true;
         }
 
@@ -39,8 +39,8 @@ namespace Sodium
         /// <param name="subscription"></param>
         protected virtual bool Refire(ISubscription<T> subscription, Transaction transaction)
         {
-            var toFire = this.firings;
-            this.Fire(subscription, toFire, transaction);
+            var values = this.firings;
+            this.NotifySubscriber(subscription, values, transaction);
             return true;
         }
 

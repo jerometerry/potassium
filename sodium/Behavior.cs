@@ -69,91 +69,7 @@ namespace Sodium
         /// <summary>
         /// Gets the underlying Event of the current Behavior
         /// </summary>
-        protected IEvent<T> Source { get; private set; }
-
-        /// <summary>
-        /// Accumulate on input event, outputting the new state each time.
-        /// </summary>
-        /// <typeparam name="TS">The return type of the snapshot function</typeparam>
-        /// <param name="source">The source snapshot</param>
-        /// <param name="initState">The initial state of the behavior</param>
-        /// <param name="snapshot">The snapshot generation function</param>
-        /// <returns>A new Behavior starting with the given value, that updates 
-        /// whenever the current event fires, getting a value computed by the snapshot function.</returns>
-        public static IBehavior<TS> Accum<TS>(IEvent<T> source, TS initState, Func<T, TS, TS> snapshot)
-        {
-            var evt = new EventLoop<TS>();
-            var behavior = evt.Hold(initState);
-
-            var snapshotEvent = source.Snapshot(behavior, snapshot);
-            evt.Loop(snapshotEvent);
-
-            var result = snapshotEvent.Hold(initState);
-            result.Register(evt);
-            result.Register(behavior);
-            result.Register(snapshotEvent);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Creates a Behavior from an Observable and an initial value
-        /// </summary>
-        /// <param name="source">The source to update the Behavior from</param>
-        /// <param name="initValue">The initial value of the Behavior</param>
-        /// <returns>The Behavior with the given value</returns>
-        public static IBehavior<T> Hold(IObservable<T> source, T initValue)
-        {
-            return TransactionContext.Current.Run(t => Hold(source, initValue, t));
-        }
-
-        /// <summary>
-        /// Creates a Behavior from an Observable and an initial value
-        /// </summary>
-        /// <param name="source">The source to update the Behavior from</param>
-        /// <param name="initValue">The initial value of the Behavior</param>
-        /// <param name="t">The Transaction to perform the Hold</param>
-        /// <returns>The Behavior with the given value</returns>
-        public static IBehavior<T> Hold(IObservable<T> source, T initValue, Transaction t)
-        {
-            var s = new LastFiringEvent<T>(source, t);
-            var b = new Behavior<T>(s, initValue);
-            b.Register(s);
-            return b;
-        }
-
-        /// <summary>
-        /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
-        /// </summary>
-        /// <param name="source">The Behavior with an inner Behavior to unwrap.</param>
-        /// <returns>The new, unwrapped Behavior</returns>
-        /// <remarks>Switch allows the reactive network to change dynamically, using 
-        /// reactive logic to modify reactive logic.</remarks>
-        public static IBehavior<T> SwitchB(IBehavior<IBehavior<T>> source)
-        {
-            var initValue = source.Value.Value;
-            var sink = new SwitchBehavior<T>(source);
-            var result = sink.Hold(initValue);
-            result.Register(sink);
-            return result;
-        }
-
-        /// <summary>
-        /// Unwrap an event inside a behavior to give a time-varying event implementation.
-        /// </summary>
-        /// <param name="behavior">The behavior that wraps the event</param>
-        /// <returns>The unwrapped event</returns>
-        /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
-        /// UnwrapEvent operation that takes a thread. This ensures that any other
-        /// actions triggered during UnwrapEvent requiring a transaction all get the same instance.
-        /// 
-        /// Switch allows the reactive network to change dynamically, using 
-        /// reactive logic to modify reactive logic.
-        /// </remarks>
-        public static IEvent<T> SwitchE(IBehavior<IEvent<T>> behavior)
-        {
-            return new SwitchEvent<T>(behavior);
-        }
+        public IEvent<T> Source { get; private set; }
 
         /// <summary>
         /// Apply a value inside a behavior to a function inside a behavior. This is the
@@ -164,10 +80,7 @@ namespace Sodium
         /// <returns>The new applied Behavior</returns>
         public IBehavior<TB> Apply<TB>(IBehavior<Func<T, TB>> bf)
         {
-            var evt = new BehaviorApply<T, TB>(bf, this);
-            var behavior = evt.Behavior;
-            behavior.Register(evt);
-            return behavior;
+            return Transformer.Default.Apply(this, bf);
         }
 
         /// <summary>
@@ -180,10 +93,7 @@ namespace Sodium
         /// of the current event mapped.</returns>
         public IBehavior<TB> Map<TB>(Func<T, TB> map)
         {
-            var mapEvent = this.Source.Map(map);
-            var behavior = mapEvent.Hold(map(Value));
-            behavior.Register(mapEvent);
-            return behavior;
+            return Transformer.Default.Map(this, map);
         }
 
         /// <summary>
@@ -198,11 +108,7 @@ namespace Sodium
         /// Behavior, and the lift function.</returns>
         public IBehavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, IBehavior<TB> behavior)
         {
-            Func<T, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
-            var bf = this.Map(ffa);
-            var result = behavior.Apply(bf);
-            result.Register(bf);
-            return result;
+            return Transformer.Default.Lift(this, lift, behavior);
         }
 
         /// <summary>
@@ -216,22 +122,7 @@ namespace Sodium
         /// <returns>A new Behavior that collects values of type TB</returns>
         public IBehavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
-            var coalesceEvent = this.Source.Coalesce((a, b) => b);
-            var currentValue = this.Value;
-            var tuple = snapshot(currentValue, initState);
-            var loop = new EventLoop<Tuple<TB, TS>>();
-            var loopBehavior = loop.Hold(tuple);
-            var snapshotBehavior = loopBehavior.Map(x => x.Item2);
-            var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
-            loop.Loop(coalesceSnapshotEvent);
-
-            var result = loopBehavior.Map(x => x.Item1);
-            result.Register(loop);
-            result.Register(loopBehavior);
-            result.Register(coalesceEvent);
-            result.Register(coalesceSnapshotEvent);
-            result.Register(snapshotBehavior);
-            return result;
+            return Transformer.Default.Collect(this, initState, snapshot);
         }
 
         /// <summary>
@@ -248,14 +139,7 @@ namespace Sodium
         /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
         public IBehavior<TD> Lift<TB, TC, TD>(Func<T, TB, TC, TD> lift, IBehavior<TB> b, IBehavior<TC> c)
         {
-            Func<T, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
-            var bf = this.Map(map);
-            var l1 = b.Apply(bf);
-
-            var result = c.Apply(l1);
-            result.Register(bf);
-            result.Register(l1);
-            return result;
+            return Transformer.Default.Lift(this, lift, b, c);
         }
 
         /// <summary>
@@ -267,7 +151,7 @@ namespace Sodium
         /// current value of the behavior.</remarks>
         public ISubscription<T> SubscribeValues(Action<T> callback)
         {
-            return this.SubscribeValues(new SodiumCallback<T>((a, t) => callback(a)), Rank.Highest);
+            return Transformer.Default.SubscribeValues(this, callback);
         }
 
         /// <summary>
@@ -280,11 +164,7 @@ namespace Sodium
         /// current value of the behavior.</remarks>
         public ISubscription<T> SubscribeValues(ISodiumCallback<T> callback, Rank rank)
         {
-            var beh = this;
-            var v = this.StartTransaction(t => new SubscribeFireLastValueEvent<T>(beh, t));
-            var s = (Subscription<T>)v.Subscribe(callback, rank);
-            s.Register(v);
-            return s;
+            return Transformer.Default.SubscribeValues(this, callback, rank);
         }
 
         /// <summary>

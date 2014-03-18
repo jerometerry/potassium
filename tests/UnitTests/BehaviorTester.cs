@@ -184,7 +184,7 @@ namespace Sodium.Tests
             var behaviorA = sink.Map(s => s.C1).FilterNotNull().Hold('A');
             var behaviorB = sink.Map(s => s.C2).FilterNotNull().Hold('a');
             var bsw = sink.Map(s => s.Behavior).FilterNotNull().Hold(behaviorA);
-            var behavior = Behavior<char?>.SwitchB(bsw);
+            var behavior = Transformer.Default.SwitchB(bsw);
             var results = new List<char>();
             var listener = behavior.SubscribeValues(c =>
             {
@@ -219,7 +219,7 @@ namespace Sodium.Tests
             var tmp2 = tmp1.FilterNotNull();
             var bsw = tmp2.Hold(ea);
             var o = new List<char>();
-            var eo = Behavior<char>.SwitchE(bsw);
+            var eo = Transformer.Default.SwitchE(bsw);
             var l = eo.Subscribe(o.Add);
             ese.Fire(new Se('A', 'a', null));
             ese.Fire(new Se('B', 'b', null));

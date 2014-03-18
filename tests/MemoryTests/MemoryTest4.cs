@@ -11,7 +11,7 @@ namespace Sodium.MemoryTests
             var evt = new EventSink<int>();
             IEvent<int> nestedEvent = new Event<int>();
             var behaviorOfEvents = evt.Map(x => nestedEvent).Hold(nestedEvent);
-            var observable = Behavior<int>.SwitchE(behaviorOfEvents);
+            var observable = Transformer.Default.SwitchE(behaviorOfEvents);
             var listen = observable.Subscribe(tt => { });
             var i = 0;
             while (i < iterations)

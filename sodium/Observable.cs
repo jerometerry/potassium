@@ -125,7 +125,7 @@
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            var clone = new List<ISubscription<T>>(this.Subscriptions);
+            var clone = this.Subscriptions.ToArray();
             this.Subscriptions.Clear();
             foreach (var subscription in clone)
             {

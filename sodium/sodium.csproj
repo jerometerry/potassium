@@ -52,6 +52,7 @@
     <Compile Include="CollectEvent.cs" />
     <Compile Include="ConstantBehavior.cs" />
     <Compile Include="EventSink.cs" />
+    <Compile Include="Transformer.cs" />
     <Compile Include="GateEvent.cs" />
     <Compile Include="IEventSink.cs" />
     <Compile Include="IObservable.cs" />

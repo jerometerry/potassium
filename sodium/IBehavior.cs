@@ -9,6 +9,11 @@
     public interface IBehavior<T> : IValue<T>
     {
         /// <summary>
+        /// 
+        /// </summary>
+        IEvent<T> Source { get; }
+
+        /// <summary>
         /// Apply a value inside a behavior to a function inside a behavior. This is the
         /// primitive for all function lifting.
         /// </summary>

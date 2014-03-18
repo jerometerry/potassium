@@ -32,19 +32,9 @@ namespace Sodium
         /// <param name="transaction"></param>
         protected override void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
         {
-            this.Fire(subscription, transaction);
+            var values = this.SubscriptionFirings();
+            this.NotifySubscriber(subscription, values, transaction);
             base.OnSubscribe(subscription, transaction);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="subscription"></param>
-        /// <param name="transaction"></param>
-        private void Fire(ISubscription<T> subscription, Transaction transaction)
-        {
-            var toFire = this.SubscriptionFirings();
-            this.Fire(subscription, toFire, transaction);
         }
     }
 }

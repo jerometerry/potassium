@@ -22,12 +22,12 @@ namespace Sodium
         /// <summary>
         /// Invokes the callback
         /// </summary>
-        /// <param name="firing">The value to be fired to the </param>
+        /// <param name="value">The value to be fired to the </param>
         /// <param name="subscription">The subscription that holds the current callback</param>
         /// <param name="transaction">The Transaction used to order the firing</param>
-        public void Fire(T firing, ISubscription<T> subscription, Transaction transaction)
+        public void Invoke(T value, ISubscription<T> subscription, Transaction transaction)
         {
-            action(firing, transaction);
+            action(value, transaction);
         }
     }
 }

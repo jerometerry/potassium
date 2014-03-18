@@ -25,7 +25,7 @@
         /// <param name="firing">The value to fire to registered callbacks</param>
         protected virtual bool Fire(T firing, Transaction transaction)
         {
-            this.FireSubscriptionCallbacks(firing, transaction);
+            this.NotifySubscribers(firing, transaction);
             return true;
         }
 
@@ -41,14 +41,14 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="firing"></param>
+        /// <param name="value"></param>
         /// <param name="transaction"></param>
-        protected void FireSubscriptionCallbacks(T firing, Transaction transaction)
+        protected void NotifySubscribers(T value, Transaction transaction)
         {
-            var clone = new List<ISubscription<T>>(this.Subscriptions);
+            var clone = this.Subscriptions.ToArray();
             foreach (var subscription in clone)
             {
-                this.FireSubscriptionCallback(firing, subscription, transaction);
+                subscription.Callback.Invoke(value, subscription, transaction);
             }
         }
 
@@ -56,25 +56,19 @@
         /// 
         /// </summary>
         /// <param name="subscription"></param>
-        /// <param name="toFire"></param>
+        /// <param name="values"></param>
         /// <param name="transaction"></param>
-        protected void Fire(ISubscription<T> subscription, ICollection<T> toFire, Transaction transaction)
+        protected void NotifySubscriber(ISubscription<T> subscription, ICollection<T> values, Transaction transaction)
         {
-            if (toFire == null || toFire.Count == 0)
+            if (values == null || values.Count == 0)
             {
                 return;
             }
 
-            foreach (var firing in toFire)
+            foreach (var value in values)
             {
-                this.FireSubscriptionCallback(firing, subscription, transaction);
+                subscription.Callback.Invoke(value, subscription, transaction);
             }
-        }
-
-        private void FireSubscriptionCallback(T firing, ISubscription<T> subscription, Transaction transaction)
-        {
-            var l = (Subscription<T>)subscription;
-            l.Callback.Fire(firing, subscription, transaction);
         }
     }
 }

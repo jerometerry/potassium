@@ -9,9 +9,9 @@ namespace Sodium
         /// <summary>
         /// Fire the given value to the subscription
         /// </summary>
-        /// <param name="firing">The value to fire</param>
+        /// <param name="value">The value to fire</param>
         /// <param name="subscription">The subscription that holds the current callback</param>
         /// <param name="transaction">The transaction to use to schedule the firing</param>
-        void Fire(T firing, ISubscription<T> subscription, Transaction transaction);
+        void Invoke(T value, ISubscription<T> subscription, Transaction transaction);
     }
 }

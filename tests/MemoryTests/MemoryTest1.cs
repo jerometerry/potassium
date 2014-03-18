@@ -45,7 +45,7 @@ namespace Sodium.MemoryTests
             var tensTupleWrappedBehavior = eventOfBehaviors.Hold(behaviorMap);
             finalizers.Add(tensTupleWrappedBehavior);
 
-            var tensTupleBehavior = Behavior<Tuple<int?, int?>>.SwitchB(tensTupleWrappedBehavior);
+            var tensTupleBehavior = Transformer.Default.SwitchB(tensTupleWrappedBehavior);
             finalizers.Add(tensTupleBehavior);
 
             var listener = tensTupleBehavior.SubscribeValues(tu => { });
