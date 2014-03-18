@@ -35,7 +35,7 @@
             { 
                 var clone = new List<ISubscription<T>>(subscriptions);
                 subscriptions.Clear();
-                foreach(var subscription in clone)
+                foreach (var subscription in clone)
                 {
                     subscription.Dispose();
                 }

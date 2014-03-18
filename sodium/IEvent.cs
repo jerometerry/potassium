@@ -15,10 +15,18 @@
         IBehavior<TS> Accum<TS>(TS initState, Func<T, TS, TS> snapshot);
 
         /// <summary>
-        /// Stop the given subscription from receiving updates from the current Event
+        /// If there's more than one firing in a single transaction, combine them into
+        /// one using the specified combining function.
         /// </summary>
-        /// <param name="subscription">The subscription to remove</param>
-        /// <returns>True if the subscription was removed, false otherwise</returns>
+        /// <param name="coalesce">A function that takes two firings of the same type, and returns
+        /// produces a new firing of the same type.</param>
+        /// <returns>A new Event that fires the coalesced values</returns>
+        /// <remarks>
+        /// If the event firings are ordered, then the first will appear at the left
+        /// input of the combining function. In most common cases it's best not to
+        /// make any assumptions about the ordering, and the combining function would
+        /// ideally be commutative.
+        /// </remarks>
         IEvent<T> Coalesce(Func<T, T, T> coalesce);
 
         /// <summary>

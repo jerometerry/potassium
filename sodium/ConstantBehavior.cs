@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Sodium
+﻿namespace Sodium
 {
     /// <summary>
     /// A Behavior who's value never changes, even if fired new values.
