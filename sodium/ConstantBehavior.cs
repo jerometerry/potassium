@@ -11,8 +11,9 @@
         /// </summary>
         /// <param name="initValue">The constant initial value of the Behavior</param>
         public ConstantBehavior(T initValue)
-            : base(new ValueContainer<T>(initValue))
+            : base(new Event<T>(), initValue)
         {
+            this.Register(this.Source);
         }
     }
 }

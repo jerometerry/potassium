@@ -2,11 +2,7 @@
 {
     using System.Collections.Generic;
 
-    /// <summary>
-    /// A Sink is an Observable that you can fire updates through
-    /// </summary>
-    /// <typeparam name="T">The type of values that will be fired through the Event.</typeparam>
-    public abstract class Sink<T> : Observable<T>, ISink<T>
+    public class EventSink<T> : Event<T>
     {
         /// <summary>
         /// Fire the given value to all registered subscriptions

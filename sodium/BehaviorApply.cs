@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal sealed class BehaviorApply<T, TB> : Event<TB>
+    internal sealed class BehaviorApply<T, TB> : EventSink<TB>
     {
         private IBehavior<Func<T, TB>> bf;
         private IBehavior<T> source;

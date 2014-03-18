@@ -5,7 +5,7 @@
     /// without all the bells and whistles
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Event</typeparam>
-    public interface IValue<T> : IEvent<T>
+    public interface IValue<T> : IObservable<T>
     {
         /// <summary>
         /// Gets the current Value

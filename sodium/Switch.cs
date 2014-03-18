@@ -1,6 +1,6 @@
 ﻿namespace Sodium
 {
-    internal sealed class Switch<T> : Event<T>
+    internal sealed class Switch<T> : EventSink<T>
     {
         private ISubscription<IEvent<T>> behaviorSubscription;
         private ISodiumCallback<T> wrappedEventSubscriptionCallback;

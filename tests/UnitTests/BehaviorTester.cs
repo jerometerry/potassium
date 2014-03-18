@@ -11,7 +11,7 @@ namespace Sodium.Tests
         [Test]
         public void TestHold()
         {
-            var evt = new Event<int>();
+            var evt = new EventSink<int>();
             var behavior = evt.Hold(0);
             var results = new List<int>();
             var listener = behavior.Subscribe(results.Add);
@@ -26,8 +26,8 @@ namespace Sodium.Tests
         [Test]
         public void TestSnapshot()
         {
-            var behavior = new Behavior<int>(0);
-            var evt = new Event<long>();
+            var behavior = new BehaviorSink<int>(0);
+            var evt = new EventSink<long>();
             var results = new List<string>();
             Func<long, int, string> snapshotFunction = (x, y) => string.Format("{0} {1}", x, y);
             var listener = evt.Snapshot(behavior, snapshotFunction).Subscribe(results.Add);
@@ -58,7 +58,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMapB()
         {
-            var behavior = new Behavior<int>(6);
+            var behavior = new BehaviorSink<int>(6);
             var results = new List<string>();
             var listener = behavior.MapB(x => x.ToString(CultureInfo.InvariantCulture)).SubscribeValues(results.Add);
             behavior.Fire(8);
@@ -82,7 +82,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMapB3()
         {
-            var behavior = new Behavior<int>(1);
+            var behavior = new BehaviorSink<int>(1);
             var behavior1 = behavior.MapB(x => x * 3);
             var results = new List<int>();
             var listener = behavior1.SubscribeValues(results.Add);
@@ -95,7 +95,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMapBLateListen()
         {
-            var behavior = new Behavior<int>(6);
+            var behavior = new BehaviorSink<int>(6);
             var results = new List<string>();
             var map = behavior.MapB(x => x.ToString(CultureInfo.InvariantCulture));
             behavior.Fire(2);
@@ -109,8 +109,8 @@ namespace Sodium.Tests
         [Test]
         public void TestApply()
         {
-            var bf = new Behavior<Func<long, string>>(b => "1 " + b);
-            var ba = new Behavior<long>(5L);
+            var bf = new BehaviorSink<Func<long, string>>(b => "1 " + b);
+            var ba = new BehaviorSink<long>(5L);
             var results = new List<string>();
             var listener = ba.Apply(bf).SubscribeValues(results.Add);
             bf.Fire(b => "12 " + b);
@@ -124,8 +124,8 @@ namespace Sodium.Tests
         [Test]
         public void TestLift()
         {
-            var behavior1 = new Behavior<int>(1);
-            var behavior2 = new Behavior<long>(5L);
+            var behavior1 = new BehaviorSink<int>(1);
+            var behavior2 = new BehaviorSink<long>(5L);
             var results = new List<string>();
             var combinedBehavior = behavior1.Lift((x, y) => x + " " + y, behavior2);
             var listener = combinedBehavior.SubscribeValues(results.Add);
@@ -145,7 +145,7 @@ namespace Sodium.Tests
         [Test]
         public void TestLiftGlitch()
         {
-            var behavior = new Behavior<int>(1);
+            var behavior = new BehaviorSink<int>(1);
             var mappedBehavior1 = behavior.MapB(x => x * 3);
             var mappedBehavior2 = behavior.MapB(x => x * 5);
             var results = new List<string>();
@@ -160,7 +160,7 @@ namespace Sodium.Tests
         [Test]
         public void TestHoldIsDelayed()
         {
-            var evt = new Event<int>();
+            var evt = new EventSink<int>();
             var behavior = evt.Hold(0);
             var pair = evt.Snapshot(behavior, (a, b) => a + " " + b);
             var results = new List<string>();
@@ -177,7 +177,7 @@ namespace Sodium.Tests
         [Test]
         public void TestSwitchB()
         {
-            var sink = new Event<Sb>();
+            var sink = new EventSink<Sb>();
 
             // Split each field o of SB so we can update multiple behaviors in a
             // single transaction.
@@ -212,7 +212,7 @@ namespace Sodium.Tests
         [Test]
         public void TestSwitchE()
         {
-            var ese = new Event<Se>();
+            var ese = new EventSink<Se>();
             var ea = ese.Map(s => s.C1).FilterNotNull();
             var eb = ese.Map(s => s.C2).FilterNotNull();
             var tmp1 = ese.Map(s => s.Event);
@@ -242,8 +242,8 @@ namespace Sodium.Tests
         [Test]
         public void TestLoopBehavior()
         {
-            var ea = new Event<int>();
-            var sum = new Behavior<int>(0);
+            var ea = new EventSink<int>();
+            var sum = new BehaviorLoop<int>(0);
             var sumOut = ea.Snapshot(sum, (x, y) => x + y).Hold(0);
             sum.Loop(sumOut);
             var o = new List<int>();
@@ -263,7 +263,7 @@ namespace Sodium.Tests
         [Test]
         public void TestCollect()
         {
-            var ea = new Event<int>();
+            var ea = new EventSink<int>();
             var o = new List<int>();
             var sum = ea.Hold(100).CollectB(0, (a, s) => new Tuple<int, int>(a + s, a + s));
             var l = sum.SubscribeValues(o.Add);
@@ -281,7 +281,7 @@ namespace Sodium.Tests
         [Test]
         public void TestAccum()
         {
-            var ea = new Event<int>();
+            var ea = new EventSink<int>();
             var o = new List<int>();
             var sum = ea.Accum(100, (a, s) => a + s);
             var l = sum.SubscribeValues(o.Add);

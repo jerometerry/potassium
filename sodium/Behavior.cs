@@ -7,7 +7,7 @@ namespace Sodium
     /// gets updated as the underlying Event is fired.
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the Behavior.</typeparam>
-    public class Behavior<T> : EventLoop<T>, IBehavior<T>
+    public class Behavior<T> : Observer<T>, IBehavior<T>
     {
         private ValueContainer<T> valueContainer;
 
@@ -16,8 +16,9 @@ namespace Sodium
         /// </summary>
         /// <param name="initValue">The initial value of the Behavior</param>
         public Behavior(T initValue)
+            : this(new Event<T>(), initValue)
         {
-            this.valueContainer = new ValueContainer<T>(this, initValue);
+            this.Register(this.Source);
         }
 
         /// <summary>
@@ -25,24 +26,11 @@ namespace Sodium
         /// </summary>
         /// <param name="source">The Event to listen for updates from</param>
         /// <param name="initValue">The initial value of the Behavior</param>
-        public Behavior(IObservable<T> source, T initValue)
+        public Behavior(IEvent<T> source, T initValue)
+            : base(source)
         {
-            this.Loop(source);
-            this.valueContainer = new ValueContainer<T>(this, initValue);
-        }
-
-        /// <summary>
-        /// Create a behavior with a time varying value from a ValueContainer
-        /// </summary>
-        /// <param name="container">Container that holds the Behaviors value,
-        /// that can be updated from an IObservable.</param>
-        /// <remarks>Typically, the ValueContainer is updated from the current Behavior.
-        /// However, to implement a constant behavior, a ValueContainer that's not
-        /// subscribed to any IObservables would do the trick.
-        /// </remarks>
-        internal Behavior(ValueContainer<T> container)
-        {
-            this.valueContainer = container;
+            this.Source = source;
+            this.valueContainer = new ValueContainer<T>(source, initValue);
         }
 
         /// <summary>
@@ -77,6 +65,8 @@ namespace Sodium
                 return this.valueContainer.NewValue;
             }
         }
+
+        public IEvent<T> Source { get; set; }
 
         /// <summary>
         /// Accumulate on input event, outputting the new state each time.
@@ -187,7 +177,7 @@ namespace Sodium
         /// of the current event mapped.</returns>
         public IBehavior<TB> MapB<TB>(Func<T, TB> map)
         {
-            var mapEvent = Map(map);
+            var mapEvent = this.Source.Map(map);
             var behavior = mapEvent.Hold(map(Value));
             behavior.Register(mapEvent);
             return behavior;
@@ -223,7 +213,7 @@ namespace Sodium
         /// <returns>A new Behavior that collects values of type TB</returns>
         public IBehavior<TB> CollectB<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
-            var coalesceEvent = this.Coalesce((a, b) => b);
+            var coalesceEvent = this.Source.Coalesce((a, b) => b);
             var currentValue = this.Value;
             var tuple = snapshot(currentValue, initState);
             var loop = new EventLoop<Tuple<TB, TS>>();

@@ -12,9 +12,9 @@
             Up
         }
 
-        private IEvent<MouseEventArgs> mouseMoveEvent;
+        private EventSink<MouseEventArgs> mouseMoveEvent;
         private IEvent<MouseEventArgs> mouseDragEvent;
-        private IEvent<MouseStatus> mouseButtonEvent;
+        private EventSink<MouseStatus> mouseButtonEvent;
         private IBehavior<MouseStatus> mouseButtonBehavior;
         private IBehavior<bool> mouseButtonDownBehavior;
         private static readonly CultureInfo ci = CultureInfo.InvariantCulture;
@@ -27,8 +27,8 @@
 
         private void InitializeMouseHandler()
         {
-            this.mouseButtonEvent = new Event<MouseStatus>();
-            this.mouseMoveEvent = new Event<MouseEventArgs>();
+            this.mouseButtonEvent = new EventSink<MouseStatus>();
+            this.mouseMoveEvent = new EventSink<MouseEventArgs>();
             this.mouseButtonBehavior = this.mouseButtonEvent.Hold(MouseStatus.Up);
             this.mouseButtonDownBehavior = this.mouseButtonBehavior.MapB(s => s == MouseStatus.Down);
             this.mouseDragEvent = this.mouseMoveEvent.Gate(this.mouseButtonDownBehavior);
