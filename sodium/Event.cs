@@ -1,7 +1,6 @@
 ﻿namespace Sodium
 {
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Base class for Event and Behavior
@@ -82,7 +81,7 @@
         /// FilterNotNull will not filter out any values for value types.</remarks>
         public IEvent<T> FilterNotNull()
         {
-            return Filter(a => a != null);
+            return new NotNullFilter<T>(this);
         }
 
         /// <summary>

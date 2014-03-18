@@ -51,6 +51,7 @@
     <Compile Include="ConstantBehavior.cs" />
     <Compile Include="Gate.cs" />
     <Compile Include="IObservable.cs" />
+    <Compile Include="NotNullFilter.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="ValueContainer.cs" />
     <Compile Include="Delay.cs" />
