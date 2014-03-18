@@ -65,18 +65,18 @@
         IBehavior<TB> MapB<TB>(Func<T, TB> map);
 
         /// <summary>
-        /// Listen to the underlying event for updates
+        /// Listen to the Behavior for updates
         /// </summary>
-        /// <param name="callback"> action to invoke when the underlying event fires</param>
+        /// <param name="callback">action to invoke when the Behavior fires</param>
         /// <returns>The event subscription</returns>
         /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
         /// current value of the behavior.</remarks>
         ISubscription<T> SubscribeAndFire(Action<T> callback);
 
         /// <summary>
-        /// Listen to the underlying event for updates
+        /// Listen to the Behavior for updates
         /// </summary>
-        /// <param name="callback"> action to invoke when the underlying event fires</param>
+        /// <param name="callback"> action to invoke when the Behavior fires</param>
         /// <param name="rank">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>The event subscription</returns>
         /// <remarks>Immediately after creating the subscription, the callback will be fired with the 

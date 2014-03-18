@@ -3,6 +3,10 @@
     using System;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// Observable is the base class for Events and Behaviors, containing the subscription logic (i.e. the Observer Pattern).
+    /// </summary>
+    /// <typeparam name="T">The type of value fired through the Observable</typeparam>
     public class Observable<T> : TransactionalObject, IObservable<T>
     {
         /// <summary>
@@ -19,7 +23,7 @@
         /// <summary>
         /// The current Rank of the Event, used to prioritize firings on the current transaction.
         /// </summary>
-        internal Rank Rank
+        protected Rank Rank
         {
             get
             {
