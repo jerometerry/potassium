@@ -56,21 +56,18 @@
     <Compile Include="Sink.cs" />
     <Compile Include="IBehavior.cs" />
     <Compile Include="IDisposableObject.cs" />
-    <Compile Include="IFireable.cs" />
-    <Compile Include="IInitialFiringsEvent.cs" />
-    <Compile Include="InitialFireSink.cs" />
+    <Compile Include="FireOnSubscribeEvent.cs" />
     <Compile Include="IEvent.cs" />
-    <Compile Include="IFiringEvent.cs" />
     <Compile Include="IValue.cs" />
     <Compile Include="LastFiring.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="TransactionalObject.cs" />
-    <Compile Include="ValueSink.cs" />
+    <Compile Include="FireValueOnSubscribeEvent.cs" />
     <Compile Include="Coalesce.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="PrioritizedAction.cs" />
-    <Compile Include="RefireSink.cs" />
+    <Compile Include="RefireEvent.cs" />
     <Compile Include="SuppressedSubscribe.cs" />
     <Compile Include="SwitchBehavior.cs" />
     <Compile Include="Filter.cs" />
@@ -82,7 +79,7 @@
     <Compile Include="Once.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ValuesListFiring.cs" />
+    <Compile Include="FireLastValueOnSubscribeEvent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behavior.cs" />

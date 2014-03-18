@@ -6,7 +6,7 @@ namespace Sodium
         private ISubscription<T> wrappedSubscription;
         private IEvent<T> wrappedEvent;
 
-        public SwitchBehavior(IFiringEvent<IBehavior<T>> source)
+        public SwitchBehavior(IBehavior<IBehavior<T>> source)
         {
             var callback = new SodiumCallback<IBehavior<T>>(this.Invoke);
             this.subscription = source.SubscribeAndFire(callback, this.Rank);
@@ -55,7 +55,7 @@ namespace Sodium
                 this.wrappedEvent = null;
             }
 
-            this.wrappedEvent = new ValuesListFiring<T>(behavior, transaction);
+            this.wrappedEvent = new FireLastValueOnSubscribeEvent<T>(behavior, transaction);
             this.wrappedSubscription = this.wrappedEvent.Subscribe(this.CreateFireCallback(), this.Rank, transaction);
         }
     }

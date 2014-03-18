@@ -3,7 +3,7 @@ namespace Sodium
     using System;
     using System.Collections.Generic;
 
-    internal class Coalesce<T> : InitialFireSink<T>
+    internal class Coalesce<T> : FireOnSubscribeEvent<T>
     {
         private Func<T, T, T> coalesce;
         private ISubscription<T> subscription;
@@ -20,9 +20,9 @@ namespace Sodium
 
         protected IEvent<T> Source { get; private set; }
 
-        public override T[] InitialFirings()
+        public override T[] SubscriptionFirings()
         {
-            var events = GetInitialFirings(this.Source);
+            var events = GetSubscribeFirings(this.Source);
             if (events == null)
             {
                 return null;

@@ -3,7 +3,7 @@ namespace Sodium
     using System;
     using System.Linq;
 
-    internal sealed class Filter<T> : InitialFireSink<T>
+    internal sealed class Filter<T> : FireOnSubscribeEvent<T>
     {
         private IEvent<T> source;
         private Func<T, bool> f;
@@ -18,9 +18,9 @@ namespace Sodium
             this.subscription = source.Subscribe(callback, this.Rank);
         }
 
-        public override T[] InitialFirings()
+        public override T[] SubscriptionFirings()
         {
-            var events = GetInitialFirings(this.source);
+            var events = GetSubscribeFirings(this.source);
             if (events == null)
             {
                 return null;

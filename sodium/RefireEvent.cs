@@ -4,11 +4,11 @@ namespace Sodium
     using System.Linq;
 
     /// <summary>
-    /// RefireEventSink is an EventSink that refires values that have been fired in the current
+    /// RefireEvent is an Event that refires values that have been fired in the current
     /// Transaction when subscribed to.
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Event</typeparam>
-    public abstract class RefireSink<T> : Sink<T>
+    public abstract class RefireEvent<T> : Sink<T>
     {
         /// <summary>
         /// List of values that have been fired on the current Event in the current transaction.

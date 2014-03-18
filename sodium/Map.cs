@@ -3,7 +3,7 @@
     using System;
     using System.Linq;
 
-    internal sealed class Map<T, TB> : InitialFireSink<TB>
+    internal sealed class Map<T, TB> : FireOnSubscribeEvent<TB>
     {
         private IEvent<T> source;
         private Func<T, TB> map;
@@ -22,9 +22,9 @@
             this.Fire(v, trans);
         }
 
-        public override TB[] InitialFirings()
+        public override TB[] SubscriptionFirings()
         {
-            var firings = GetInitialFirings(source);
+            var firings = GetSubscribeFirings(source);
             if (firings == null)
             { 
                 return null;

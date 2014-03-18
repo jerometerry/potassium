@@ -1,12 +1,12 @@
 namespace Sodium
 {
     /// <summary>
-    /// InitialFireEventSink is an EventSink that is fired some initial values 
+    /// SubscribeFireEvent is an Event that fires some initial values 
     /// when subscribed to.
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Event</typeparam>
     /// <remarks>Used by Behavior to support firing of initial values of the Behavior</remarks>
-    public abstract class InitialFireSink<T> : RefireSink<T>, IInitialFiringsEvent<T>
+    public abstract class FireOnSubscribeEvent<T> : RefireEvent<T>
     {
         /// <summary>
         /// Gets the values that will be sent to newly added
@@ -14,15 +14,15 @@ namespace Sodium
         /// <returns>An Array of values that will be fired to all registered subscriptions</returns>
         /// <remarks>InitialFirings is used to support initial firings of behaviors when 
         /// the underlying event is subscribed to</remarks>
-        public virtual T[] InitialFirings()
+        public virtual T[] SubscriptionFirings()
         {
             return null;
         }
 
-        internal static TF[] GetInitialFirings<TF>(IEvent<TF> source)
+        internal static TF[] GetSubscribeFirings<TF>(IEvent<TF> source)
         {
-            var sink = source as IInitialFiringsEvent<TF>;
-            return sink == null ? null : sink.InitialFirings();
+            var sink = source as FireOnSubscribeEvent<TF>;
+            return sink == null ? null : sink.SubscriptionFirings();
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Sodium
         /// <param name="transaction"></param>
         protected override void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
         {
-            this.InitialFire(subscription, transaction);
+            this.Fire(subscription, transaction);
             base.OnSubscribe(subscription, transaction);
         }
 
@@ -41,9 +41,9 @@ namespace Sodium
         /// </summary>
         /// <param name="subscription"></param>
         /// <param name="transaction"></param>
-        private void InitialFire(ISubscription<T> subscription, Transaction transaction)
+        private void Fire(ISubscription<T> subscription, Transaction transaction)
         {
-            var toFire = this.InitialFirings();
+            var toFire = this.SubscriptionFirings();
             this.Fire(subscription, toFire, transaction);
         }
     }

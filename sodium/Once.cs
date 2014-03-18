@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    internal sealed class Once<T> : InitialFireSink<T>
+    internal sealed class Once<T> : FireOnSubscribeEvent<T>
     {
         private IEvent<T> source;
         private ISubscription<T>[] subscriptions;
@@ -15,9 +15,9 @@ namespace Sodium
             this.subscriptions[0] = source.Subscribe(new SodiumCallback<T>((a, t) => this.Fire(this.subscriptions, a, t)), this.Rank);
         }
 
-        public override T[] InitialFirings()
+        public override T[] SubscriptionFirings()
         {
-            var firings = GetInitialFirings(this.source);
+            var firings = GetSubscribeFirings(this.source);
             if (firings == null)
             {
                 return null;

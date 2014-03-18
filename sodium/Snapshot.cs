@@ -3,7 +3,7 @@ namespace Sodium
     using System;
     using System.Linq;
 
-    internal sealed class Snapshot<T, TB, TC> : InitialFireSink<TC>
+    internal sealed class Snapshot<T, TB, TC> : FireOnSubscribeEvent<TC>
     {
         private IEvent<T> source;
         private Func<T, TB, TC> snapshot;
@@ -27,9 +27,9 @@ namespace Sodium
             this.Fire(v, transaction);
         }
 
-        public override TC[] InitialFirings()
+        public override TC[] SubscriptionFirings()
         {
-            var events = GetInitialFirings(source);
+            var events = GetSubscribeFirings(source);
             if (events == null)
             {
                 return null;

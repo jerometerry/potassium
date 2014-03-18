@@ -278,7 +278,7 @@ namespace Sodium
         public ISubscription<T> SubscribeAndFire(ISodiumCallback<T> callback, Rank rank)
         {
             var beh = this;
-            var v = this.StartTransaction(t => new ValuesListFiring<T>(beh, t));
+            var v = this.StartTransaction(t => new FireLastValueOnSubscribeEvent<T>(beh, t));
             var s = (Subscription<T>)v.Subscribe(callback, rank);
             s.RegisterFinalizer(v);
             return s;

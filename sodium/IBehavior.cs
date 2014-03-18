@@ -2,7 +2,7 @@
 {
     using System;
 
-    public interface IBehavior<T> : IFiringEvent<T>, IValue<T>
+    public interface IBehavior<T> : IValue<T>
     {
         IBehavior<TB> Apply<TB>(IBehavior<Func<T, TB>> bf);
         
@@ -13,5 +13,9 @@
         IBehavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, IBehavior<TB> behavior);
         
         IBehavior<TB> MapB<TB>(Func<T, TB> map);
+
+        ISubscription<T> SubscribeAndFire(Action<T> callback);
+
+        ISubscription<T> SubscribeAndFire(ISodiumCallback<T> callback, Rank rank);
     }   
 }

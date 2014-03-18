@@ -2,7 +2,7 @@ namespace Sodium
 {
     using System.Linq;
 
-    internal sealed class Merge<T> : InitialFireSink<T>
+    internal sealed class Merge<T> : FireOnSubscribeEvent<T>
     {
         private IEvent<T> source1;
         private IEvent<T> source2;
@@ -19,10 +19,10 @@ namespace Sodium
             l2 = source2.Subscribe(callback, this.Rank);
         }
 
-        public override T[] InitialFirings()
+        public override T[] SubscriptionFirings()
         {
-            var firings1 = GetInitialFirings(source1);
-            var firings2 = GetInitialFirings(source2);
+            var firings1 = GetSubscribeFirings(source1);
+            var firings2 = GetSubscribeFirings(source2);
 
             if (firings1 != null && firings2 != null)
             {
