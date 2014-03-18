@@ -109,7 +109,7 @@ namespace Sodium
         /// <param name="source">The source to update the Behavior from</param>
         /// <param name="initValue">The initial value of the Behavior</param>
         /// <returns>The Behavior with the given value</returns>
-        public static IBehavior<T> Hold(IEvent<T> source, T initValue)
+        public static IBehavior<T> Hold(IObservable<T> source, T initValue)
         {
             return TransactionContext.Current.Run(t => Hold(source, initValue, t));
         }
@@ -121,7 +121,7 @@ namespace Sodium
         /// <param name="initValue">The initial value of the Behavior</param>
         /// <param name="t">The Transaction to perform the Hold</param>
         /// <returns>The Behavior with the given value</returns>
-        public static IBehavior<T> Hold(IEvent<T> source, T initValue, Transaction t)
+        public static IBehavior<T> Hold(IObservable<T> source, T initValue, Transaction t)
         {
             var s = new LastFiring<T>(source, t);
             var b = new Behavior<T>(s, initValue);
@@ -172,7 +172,7 @@ namespace Sodium
         /// <returns>The new applied Behavior</returns>
         public IBehavior<TB> Apply<TB>(IBehavior<Func<T, TB>> bf)
         {
-            var evt = new BehaviorApply<T, TB>((Behavior<Func<T, TB>>)bf, this);
+            var evt = new BehaviorApply<T, TB>(bf, this);
             var behavior = evt.Behavior;
             behavior.RegisterFinalizer(evt);
             return behavior;
@@ -276,9 +276,9 @@ namespace Sodium
         /// <returns>The event subscription</returns>
         /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
         /// current value of the behavior.</remarks>
-        public ISubscription<T> SubscribeAndFire(Action<T> callback)
+        public ISubscription<T> SubscribeValues(Action<T> callback)
         {
-            return this.SubscribeAndFire(new SodiumCallback<T>((a, t) => callback(a)), Rank.Highest);
+            return this.SubscribeValues(new SodiumCallback<T>((a, t) => callback(a)), Rank.Highest);
         }
 
         /// <summary>
@@ -289,7 +289,7 @@ namespace Sodium
         /// <returns>The event subscription</returns>
         /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
         /// current value of the behavior.</remarks>
-        public ISubscription<T> SubscribeAndFire(ISodiumCallback<T> callback, Rank rank)
+        public ISubscription<T> SubscribeValues(ISodiumCallback<T> callback, Rank rank)
         {
             var beh = this;
             var v = this.StartTransaction(t => new FireLastValueOnSubscribeEvent<T>(beh, t));

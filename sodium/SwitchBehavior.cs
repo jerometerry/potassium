@@ -9,7 +9,7 @@ namespace Sodium
         public SwitchBehavior(IBehavior<IBehavior<T>> source)
         {
             var callback = new SodiumCallback<IBehavior<T>>(this.Invoke);
-            this.subscription = source.SubscribeAndFire(callback, this.Rank);
+            this.subscription = source.SubscribeValues(callback, this.Rank);
         }
 
         protected override void Dispose(bool disposing)

@@ -109,7 +109,7 @@
         /// their ordering is retained. In many common cases the ordering will
         /// be undefined.
         /// </remarks>
-        IEvent<T> Merge(IEvent<T> source);
+        IEvent<T> Merge(IObservable<T> source);
 
         /// <summary>
         /// Merge two streams of events of the same type, combining simultaneous
@@ -124,7 +124,7 @@
         /// within the same transaction), they are combined using the same logic as
         /// 'coalesce'.
         /// </remarks>
-        IEvent<T> Merge(IEvent<T> source, Func<T, T, T> coalesce);
+        IEvent<T> Merge(IObservable<T> source, Func<T, T, T> coalesce);
 
         /// <summary>
         /// Throw away all event occurrences except for the first one.
