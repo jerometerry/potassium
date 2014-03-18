@@ -6,7 +6,7 @@
     /// Interface for Events
     /// </summary>
     /// <typeparam name="T">The type of value fired through the Event</typeparam>
-    public interface IEvent<T> : IObservable<T>
+    public interface IEvent<T> : ISink<T>
     {
         /// <summary>
         /// Accumulate on input event, outputting the new state each time.
