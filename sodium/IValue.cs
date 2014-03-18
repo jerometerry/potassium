@@ -11,5 +11,10 @@
         /// Gets the current Value
         /// </summary>
         T Value { get; }
+
+        /// <summary>
+        /// Gets the new Value
+        /// </summary>
+        T NewValue { get; }
     }
 }

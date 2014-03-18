@@ -4,8 +4,8 @@
 
     internal sealed class BehaviorApply<T, TB> : Sink<TB>
     {
-        private Behavior<Func<T, TB>> bf;
-        private Behavior<T> source;
+        private IBehavior<Func<T, TB>> bf;
+        private IBehavior<T> source;
         private ISubscription<Func<T, TB>> l1;
         private ISubscription<T> l2;
         
@@ -14,7 +14,7 @@
         /// </summary>
         private bool fired;
 
-        public BehaviorApply(Behavior<Func<T, TB>> bf, Behavior<T> source)
+        public BehaviorApply(IBehavior<Func<T, TB>> bf, IBehavior<T> source)
         {
             this.bf = bf;
             this.source = source;

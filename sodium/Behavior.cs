@@ -12,7 +12,7 @@ namespace Sodium
         private ValueContainer<T> valueContainer;
 
         /// <summary>
-        /// A constant behavior
+        /// Create a behavior with a time varying value from an initial value
         /// </summary>
         /// <param name="initValue">The initial value of the Behavior</param>
         public Behavior(T initValue)
@@ -21,7 +21,7 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Create A behavior with a time varying value from an Event and an initial value
+        /// Create a behavior with a time varying value from an Event and an initial value
         /// </summary>
         /// <param name="source">The Event to listen for updates from</param>
         /// <param name="initValue">The initial value of the Behavior</param>
@@ -31,17 +31,28 @@ namespace Sodium
             this.valueContainer = new ValueContainer<T>(this, initValue);
         }
 
+        /// <summary>
+        /// Create a behavior with a time varying value from a ValueContainer
+        /// </summary>
+        /// <param name="container">Container that holds the Behaviors value,
+        /// that can be updated from an IObservable.</param>
+        /// <remarks>Typically, the ValueContainer is updated from the current Behavior.
+        /// However, to implement a constant behavior, a ValueContainer that's not
+        /// subscribed to any IObservables would do the trick.
+        /// </remarks>
         internal Behavior(ValueContainer<T> container)
         {
             this.valueContainer = container;
         }
 
         /// <summary>
-        /// Sample the behavior's current value.
+        /// Sample the behavior's current value
         /// </summary>
         /// <remarks>
-        /// This should generally be avoided in favor of GetValueStream().Subscribe(..) so you don't
+        /// This should generally be avoided in favor of SubscribeAndFire(..) so you don't
         /// miss any updates, but in many circumstances it makes sense.
+        /// 
+        /// Value is the value of the Behavior at the start of a Transaction
         ///
         /// It can be best to use it inside an explicit transaction (using TransactionContext.Current.Run()).
         /// For example, a b.Value inside an explicit transaction along with a
@@ -56,7 +67,10 @@ namespace Sodium
             }
         }
 
-        internal T NewValue
+        /// <summary>
+        /// New value of the Behavior that will be posted to Value when the Transaction completes
+        /// </summary>
+        public T NewValue
         {
             get
             {
