@@ -3,13 +3,13 @@ namespace Sodium
     using System;
     using System.Collections.Generic;
 
-    internal class Coalesce<T> : SubscribeFireEvent<T>
+    internal class CoalesceEvent<T> : SubscribeFireEvent<T>
     {
         private Func<T, T, T> coalesce;
         private ISubscription<T> subscription;
         private Maybe<T> accumulatedValue = Maybe<T>.Null;
 
-        public Coalesce(IObservable<T> source, Func<T, T, T> coalesce, Transaction transaction)
+        public CoalesceEvent(IObservable<T> source, Func<T, T, T> coalesce, Transaction transaction)
         {
             this.Source = source;
             this.coalesce = coalesce;

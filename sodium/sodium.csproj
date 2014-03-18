@@ -49,41 +49,41 @@
     <Compile Include="BehaviorApply.cs" />
     <Compile Include="BehaviorLoop.cs" />
     <Compile Include="BehaviorSink.cs" />
-    <Compile Include="Collect.cs" />
+    <Compile Include="CollectEvent.cs" />
     <Compile Include="ConstantBehavior.cs" />
     <Compile Include="EventSink.cs" />
-    <Compile Include="Gate.cs" />
+    <Compile Include="GateEvent.cs" />
     <Compile Include="IEventSink.cs" />
     <Compile Include="IObservable.cs" />
-    <Compile Include="NotNullFilter.cs" />
+    <Compile Include="NotNullFilterEvent.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="Observer.cs" />
     <Compile Include="ValueContainer.cs" />
-    <Compile Include="Delay.cs" />
+    <Compile Include="DelayEvent.cs" />
     <Compile Include="EventLoop.cs" />
     <Compile Include="IBehavior.cs" />
     <Compile Include="IDisposableObject.cs" />
     <Compile Include="SubscribeFireEvent.cs" />
     <Compile Include="IEvent.cs" />
     <Compile Include="IValue.cs" />
-    <Compile Include="LastFiring.cs" />
+    <Compile Include="LastFiringEvent.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="TransactionalObject.cs" />
     <Compile Include="SubscribeFireValueEvent.cs" />
-    <Compile Include="Coalesce.cs" />
+    <Compile Include="CoalesceEvent.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="PrioritizedAction.cs" />
     <Compile Include="RefireEvent.cs" />
-    <Compile Include="SuppressedSubscribe.cs" />
+    <Compile Include="SuppressedSubscribeEvent.cs" />
     <Compile Include="SwitchBehavior.cs" />
-    <Compile Include="Filter.cs" />
+    <Compile Include="FilterEvent.cs" />
     <Compile Include="ISubscription.cs" />
     <Compile Include="Subscription.cs" />
-    <Compile Include="Map.cs" />
+    <Compile Include="MapEvent.cs" />
     <Compile Include="Maybe.cs" />
-    <Compile Include="Merge.cs" />
-    <Compile Include="Once.cs" />
+    <Compile Include="MergeEvent.cs" />
+    <Compile Include="OnceEvent.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubscribeFireLastValueEvent.cs" />
@@ -92,8 +92,8 @@
     <Compile Include="Behavior.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Snapshot.cs" />
-    <Compile Include="Switch.cs" />
+    <Compile Include="SnapshotEvent.cs" />
+    <Compile Include="SwitchEvent.cs" />
     <Compile Include="Transaction.cs" />
   </ItemGroup>
   <ItemGroup>

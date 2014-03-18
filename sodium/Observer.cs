@@ -5,7 +5,7 @@
     /// <summary>
     /// An Observer observes an IObservable, forwarding all calls to the IObservable.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of value fired through the IObservable</typeparam>
     public abstract class Observer<T> : TransactionalObject, IObservable<T>
     {
         private IObservable<T> source;
@@ -14,7 +14,7 @@
         /// Constructs a new Observer
         /// </summary>
         /// <param name="source">The IObservable to forward all calls to.</param>
-        public Observer(IObservable<T> source)
+        protected Observer(IObservable<T> source)
         {
             this.source = source;
         }

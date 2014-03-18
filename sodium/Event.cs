@@ -36,7 +36,7 @@
         /// </remarks>
         public IEvent<T> Coalesce(Func<T, T, T> coalesce)
         {
-            return this.StartTransaction(t => new Coalesce<T>(this, coalesce, t));
+            return this.StartTransaction(t => new CoalesceEvent<T>(this, coalesce, t));
         }
 
         /// <summary>
@@ -50,7 +50,7 @@
         /// <returns>An Event that collects new values</returns>
         public IEvent<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
-            return new Collect<T, TB, TS>(this, initState, snapshot);
+            return new CollectEvent<T, TB, TS>(this, initState, snapshot);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@
         /// <returns>An event that is fired with the lowest priority in the current Transaction the current Event is fired in.</returns>
         public IEvent<T> Delay()
         {
-            return new Delay<T>(this);
+            return new DelayEvent<T>(this);
         }
 
         /// <summary>
@@ -70,7 +70,7 @@
         /// the predicate evaluates to true.</returns>
         public IEvent<T> Filter(Func<T, bool> predicate)
         {
-            return new Filter<T>(this, predicate);
+            return new FilterEvent<T>(this, predicate);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@
         /// FilterNotNull will not filter out any values for value types.</remarks>
         public IEvent<T> FilterNotNull()
         {
-            return new NotNullFilter<T>(this);
+            return new NotNullFilterEvent<T>(this);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@
         /// is true.</returns>
         public IEvent<T> Gate(IValue<bool> predicate)
         {
-            return new Gate<T>(this, predicate);
+            return new GateEvent<T>(this, predicate);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@
         /// the mapped value is computed using the supplied mapping.</returns>
         public IEvent<TB> Map<TB>(Func<T, TB> map)
         {
-            return new Map<T, TB>(this, map);
+            return new MapEvent<T, TB>(this, map);
         }
 
         /// <summary>
@@ -138,7 +138,7 @@
         /// </remarks>
         public IEvent<T> Merge(IObservable<T> source)
         {
-            return new Merge<T>(this, source);
+            return new MergeEvent<T>(this, source);
         }
 
         /// <summary>
@@ -168,7 +168,7 @@
         /// <returns>An Event that only fires one time, the first time the current event fires.</returns>
         public IEvent<T> Once()
         {
-            return new Once<T>(this);
+            return new OnceEvent<T>(this);
         }
 
         /// <summary>
@@ -183,7 +183,7 @@
         /// <returns>A new Event that will produce the snapshot when the current event fires</returns>
         public IEvent<TC> Snapshot<TB, TC>(IValue<TB> valueStream, Func<T, TB, TC> snapshot)
         {
-            return new Snapshot<T, TB, TC>(this, snapshot, valueStream);
+            return new SnapshotEvent<T, TB, TC>(this, snapshot, valueStream);
         }
 
         /// <summary>

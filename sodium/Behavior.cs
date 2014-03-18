@@ -66,7 +66,10 @@ namespace Sodium
             }
         }
 
-        public IEvent<T> Source { get; set; }
+        /// <summary>
+        /// Gets the underlying Event of the current Behavior
+        /// </summary>
+        protected IEvent<T> Source { get; private set; }
 
         /// <summary>
         /// Accumulate on input event, outputting the new state each time.
@@ -113,7 +116,7 @@ namespace Sodium
         /// <returns>The Behavior with the given value</returns>
         public static IBehavior<T> Hold(IObservable<T> source, T initValue, Transaction t)
         {
-            var s = new LastFiring<T>(source, t);
+            var s = new LastFiringEvent<T>(source, t);
             var b = new Behavior<T>(s, initValue);
             b.Register(s);
             return b;
@@ -149,7 +152,7 @@ namespace Sodium
         /// </remarks>
         public static IEvent<T> SwitchE(IBehavior<IEvent<T>> behavior)
         {
-            return new Switch<T>(behavior);
+            return new SwitchEvent<T>(behavior);
         }
 
         /// <summary>

@@ -3,13 +3,13 @@
     using System;
     using System.Linq;
 
-    internal sealed class Map<T, TB> : SubscribeFireEvent<TB>
+    internal sealed class MapEvent<T, TB> : SubscribeFireEvent<TB>
     {
         private IObservable<T> source;
         private Func<T, TB> map;
         private ISubscription<T> subscription;
 
-        public Map(IObservable<T> source, Func<T, TB> map)
+        public MapEvent(IObservable<T> source, Func<T, TB> map)
         {
             this.source = source;
             this.map = map;

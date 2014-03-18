@@ -3,13 +3,13 @@ namespace Sodium
     using System;
     using System.Linq;
 
-    internal class Filter<T> : SubscribeFireEvent<T>
+    internal class FilterEvent<T> : SubscribeFireEvent<T>
     {
         private IObservable<T> source;
         private Func<T, bool> f;
         private ISubscription<T> subscription;
 
-        public Filter(IObservable<T> source, Func<T, bool> f)
+        public FilterEvent(IObservable<T> source, Func<T, bool> f)
         {
             this.source = source;
             this.f = f;
