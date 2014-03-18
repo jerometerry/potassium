@@ -138,8 +138,7 @@ namespace Sodium
         /// reactive logic to modify reactive logic.</remarks>
         public static IBehavior<T> SwitchB(IBehavior<IBehavior<T>> source)
         {
-            var innerBehavior = source.Value;
-            var initValue = innerBehavior.Value;
+            var initValue = source.Value.Value;
             var sink = new SwitchBehavior<T>(source);
             var result = sink.Hold(initValue);
             result.Register(sink);
@@ -188,11 +187,8 @@ namespace Sodium
         /// of the current event mapped.</returns>
         public IBehavior<TB> MapB<TB>(Func<T, TB> map)
         {
-            var underlyingEvent = this;
-            var mapEvent = underlyingEvent.Map(map);
-            var currentValue = this.valueContainer.Value;
-            var mappedValue = map(currentValue);
-            var behavior = mapEvent.Hold(mappedValue);
+            var mapEvent = Map(map);
+            var behavior = mapEvent.Hold(map(Value));
             behavior.Register(mapEvent);
             return behavior;
         }
@@ -228,7 +224,7 @@ namespace Sodium
         public IBehavior<TB> CollectB<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             var coalesceEvent = this.Coalesce((a, b) => b);
-            var currentValue = this.valueContainer.Value;
+            var currentValue = this.Value;
             var tuple = snapshot(currentValue, initState);
             var loop = new EventLoop<Tuple<TB, TS>>();
             var loopBehavior = loop.Hold(tuple);
