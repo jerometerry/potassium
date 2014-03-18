@@ -6,7 +6,7 @@
 
     public partial class Form1 : Form
     {
-        private Sink<MouseEventArgs> evt;
+        private Event<MouseEventArgs> evt;
 
         public Form1()
         {
@@ -23,7 +23,7 @@
         private void InitializeMouseHandler()
         {
             // Initialize the Sodium Event
-            evt = new Sink<MouseEventArgs>();
+            evt = new Event<MouseEventArgs>();
             evt.Map(Format).Subscribe(DisplayMousePosition);
 
             // Register the mouse move event to fire on the Sodium.Event

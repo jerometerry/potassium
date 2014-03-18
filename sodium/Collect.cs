@@ -14,11 +14,11 @@ namespace Sodium
             es.Loop(evt);
             this.Loop(eb);
 
-            this.RegisterFinalizer(es);
-            this.RegisterFinalizer(s);
-            this.RegisterFinalizer(ebs);
-            this.RegisterFinalizer(evt);
-            this.RegisterFinalizer(eb);
+            this.Register(es);
+            this.Register(s);
+            this.Register(ebs);
+            this.Register(evt);
+            this.Register(eb);
         }
     }
 }

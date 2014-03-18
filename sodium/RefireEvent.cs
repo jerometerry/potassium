@@ -8,7 +8,7 @@ namespace Sodium
     /// Transaction when subscribed to.
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Event</typeparam>
-    public abstract class RefireEvent<T> : Sink<T>
+    public abstract class RefireEvent<T> : Event<T>
     {
         /// <summary>
         /// List of values that have been fired on the current Event in the current transaction.
@@ -17,7 +17,7 @@ namespace Sodium
         /// </summary>
         private readonly List<T> firings = new List<T>();
 
-        internal override bool Fire(T firing, Transaction transaction)
+        protected override bool Fire(T firing, Transaction transaction)
         {
             this.ScheduleClearFirings(transaction);
             this.AddFiring(firing);
@@ -38,6 +38,11 @@ namespace Sodium
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="subscription"></param>
+        /// <param name="transaction"></param>
         protected override void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
         {
             this.Refire(subscription, transaction);

@@ -7,7 +7,7 @@
     /// Observable is the base class for Events and Behaviors, containing the subscription logic (i.e. the Observer Pattern).
     /// </summary>
     /// <typeparam name="T">The type of value fired through the Observable</typeparam>
-    public class Observable<T> : TransactionalObject, IObservable<T>
+    public abstract class Observable<T> : TransactionalObject, IObservable<T>
     {
         /// <summary>
         /// The rank of the current Event. Default to rank zero

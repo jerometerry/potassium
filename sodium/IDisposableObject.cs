@@ -21,6 +21,7 @@
         /// <summary>
         /// Register the given IDisposable to be disposed when the current IDisposableObject is disposed.
         /// </summary>
-        void RegisterFinalizer(IDisposable o);
+        /// <param name="o">The object to be registered for disposal</param>
+        void Register(IDisposable o);
     }
 }

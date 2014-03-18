@@ -53,9 +53,10 @@ namespace Sodium
 
         /// <summary>
         /// Add the given superior rank to the list of superiors for the current rank. As a result,
-        /// the superiors rank will be increased unti it outranks the current rank. The superiors
+        /// the superiors rank will be increased until it outranks the current rank. The superiors
         /// superiors will have their ranks increased recursively.
         /// </summary>
+        /// <param name="superior">Superior to add to the current Rank</param>
         /// <returns>True if any Rank priorities where changed.</returns>
         public bool AddSuperior(Rank superior)
         {

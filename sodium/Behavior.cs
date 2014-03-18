@@ -96,9 +96,9 @@ namespace Sodium
             evt.Loop(snapshotEvent);
 
             var result = snapshotEvent.Hold(initState);
-            result.RegisterFinalizer(evt);
-            result.RegisterFinalizer(behavior);
-            result.RegisterFinalizer(snapshotEvent);
+            result.Register(evt);
+            result.Register(behavior);
+            result.Register(snapshotEvent);
 
             return result;
         }
@@ -125,7 +125,7 @@ namespace Sodium
         {
             var s = new LastFiring<T>(source, t);
             var b = new Behavior<T>(s, initValue);
-            b.RegisterFinalizer(s);
+            b.Register(s);
             return b;
         }
 
@@ -142,7 +142,7 @@ namespace Sodium
             var initValue = innerBehavior.Value;
             var sink = new SwitchBehavior<T>(source);
             var result = sink.Hold(initValue);
-            result.RegisterFinalizer(sink);
+            result.Register(sink);
             return result;
         }
 
@@ -174,7 +174,7 @@ namespace Sodium
         {
             var evt = new BehaviorApply<T, TB>(bf, this);
             var behavior = evt.Behavior;
-            behavior.RegisterFinalizer(evt);
+            behavior.Register(evt);
             return behavior;
         }
 
@@ -193,7 +193,7 @@ namespace Sodium
             var currentValue = this.valueContainer.Value;
             var mappedValue = map(currentValue);
             var behavior = mapEvent.Hold(mappedValue);
-            behavior.RegisterFinalizer(mapEvent);
+            behavior.Register(mapEvent);
             return behavior;
         }
 
@@ -212,7 +212,7 @@ namespace Sodium
             Func<T, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
             var bf = this.MapB(ffa);
             var result = behavior.Apply(bf);
-            result.RegisterFinalizer(bf);
+            result.Register(bf);
             return result;
         }
 
@@ -237,11 +237,11 @@ namespace Sodium
             loop.Loop(coalesceSnapshotEvent);
 
             var result = loopBehavior.MapB(x => x.Item1);
-            result.RegisterFinalizer(loop);
-            result.RegisterFinalizer(loopBehavior);
-            result.RegisterFinalizer(coalesceEvent);
-            result.RegisterFinalizer(coalesceSnapshotEvent);
-            result.RegisterFinalizer(snapshotBehavior);
+            result.Register(loop);
+            result.Register(loopBehavior);
+            result.Register(coalesceEvent);
+            result.Register(coalesceSnapshotEvent);
+            result.Register(snapshotBehavior);
             return result;
         }
 
@@ -264,8 +264,8 @@ namespace Sodium
             var l1 = b.Apply(bf);
 
             var result = c.Apply(l1);
-            result.RegisterFinalizer(bf);
-            result.RegisterFinalizer(l1);
+            result.Register(bf);
+            result.Register(l1);
             return result;
         }
 
@@ -294,7 +294,7 @@ namespace Sodium
             var beh = this;
             var v = this.StartTransaction(t => new SubscribeFireLastValueEvent<T>(beh, t));
             var s = (Subscription<T>)v.Subscribe(callback, rank);
-            s.RegisterFinalizer(v);
+            s.Register(v);
             return s;
         }
 

@@ -12,9 +12,9 @@ namespace Sodium
             var map = filter.Map(a => a.Value());
             this.Loop(map);
 
-            this.RegisterFinalizer(filter);
-            this.RegisterFinalizer(sn);
-            this.RegisterFinalizer(map);
+            this.Register(filter);
+            this.Register(sn);
+            this.Register(map);
         }
     }
 }

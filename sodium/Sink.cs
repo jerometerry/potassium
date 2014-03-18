@@ -3,10 +3,10 @@
     using System.Collections.Generic;
 
     /// <summary>
-    /// An EventSink is an Event that you can fire updates through
+    /// A Sink is an Observable that you can fire updates through
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the Event.</typeparam>
-    public class Sink<T> : Event<T>
+    public abstract class Sink<T> : Observable<T>
     {
         /// <summary>
         /// Fire the given value to all registered subscriptions
@@ -23,7 +23,7 @@
         /// </summary>
         /// <param name="transaction">The transaction to invoke the callbacks on</param>
         /// <param name="firing">The value to fire to registered callbacks</param>
-        internal virtual bool Fire(T firing, Transaction transaction)
+        protected virtual bool Fire(T firing, Transaction transaction)
         {
             this.FireSubscriptionCallbacks(firing, transaction);
             return true;
@@ -33,12 +33,12 @@
         /// Creates a callback that calls the Fire method on the current Event when invoked
         /// </summary>
         /// <returns>In ISodiumCallback that calls Fire, when invoked.</returns>
-        internal ISodiumCallback<T> CreateFireCallback()
+        protected ISodiumCallback<T> CreateFireCallback()
         {
             return new SodiumCallback<T>((t, v) => this.Fire(t, v));
         }
 
-        internal void FireSubscriptionCallbacks(T firing, Transaction transaction)
+        protected void FireSubscriptionCallbacks(T firing, Transaction transaction)
         {
             var clone = new List<ISubscription<T>>(this.Subscriptions);
             foreach (var subscription in clone)
@@ -47,6 +47,12 @@
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="subscription"></param>
+        /// <param name="toFire"></param>
+        /// <param name="transaction"></param>
         protected void Fire(ISubscription<T> subscription, ICollection<T> toFire, Transaction transaction)
         {
             if (toFire == null || toFire.Count == 0)

@@ -7,7 +7,7 @@
     /// Base class for Event and Behavior
     /// </summary>
     /// <typeparam name="T">The type of value that will be fired through the Observable</typeparam>
-    public class Event<T> : Observable<T>, IEvent<T>
+    public class Event<T> : Sink<T>, IEvent<T>
     {
         /// <summary>
         /// Accumulate on input event, outputting the new state each time.
@@ -159,7 +159,7 @@
         {
             var merge = this.Merge(source);
             var c = merge.Coalesce(coalesce);
-            c.RegisterFinalizer(merge);
+            c.Register(merge);
             return c;
         }
 
