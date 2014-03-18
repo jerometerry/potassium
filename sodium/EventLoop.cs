@@ -1,6 +1,5 @@
 ﻿namespace Sodium
 {
-    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -19,7 +18,7 @@
         /// <returns>The current EventLoop</returns>
         /// <remarks>Loop can only be called once on an Event. If Loop is called multiple times,
         /// an ApplicationException will be raised.</remarks>
-        public ISubscription<T> Loop(IEvent<T> source)
+        public ISubscription<T> Loop(IObservable<T> source)
         {
             var subscription = source.Subscribe(this.CreateFireCallback(), Rank);
             subscriptions.Add(subscription);
@@ -35,6 +34,7 @@
             { 
                 var clone = new List<ISubscription<T>>(subscriptions);
                 subscriptions.Clear();
+                subscriptions = null;
                 foreach (var subscription in clone)
                 {
                     subscription.Dispose();

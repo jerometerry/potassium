@@ -9,7 +9,7 @@ namespace Sodium
         private ISubscription<T> subscription;
         private Maybe<T> accumulatedValue = Maybe<T>.Null;
 
-        public Coalesce(IEvent<T> source, Func<T, T, T> coalesce, Transaction transaction)
+        public Coalesce(IObservable<T> source, Func<T, T, T> coalesce, Transaction transaction)
         {
             this.Source = source;
             this.coalesce = coalesce;
@@ -18,7 +18,7 @@ namespace Sodium
             this.subscription = source.Subscribe(callback, this.Rank, transaction);
         }
 
-        protected IEvent<T> Source { get; private set; }
+        protected IObservable<T> Source { get; private set; }
 
         public override T[] SubscriptionFirings()
         {

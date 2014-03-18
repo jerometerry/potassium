@@ -4,12 +4,12 @@ namespace Sodium
 
     internal sealed class Merge<T> : FireOnSubscribeEvent<T>
     {
-        private IEvent<T> source1;
-        private IEvent<T> source2;
+        private IObservable<T> source1;
+        private IObservable<T> source2;
         private ISubscription<T> l1;
         private ISubscription<T> l2;
 
-        public Merge(IEvent<T> source1, IEvent<T> source2)
+        public Merge(IObservable<T> source1, IObservable<T> source2)
         {
             this.source1 = source1;
             this.source2 = source2;

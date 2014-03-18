@@ -19,7 +19,7 @@ namespace Sodium
             return null;
         }
 
-        internal static TF[] GetSubscribeFirings<TF>(IEvent<TF> source)
+        internal static TF[] GetSubscribeFirings<TF>(IObservable<TF> source)
         {
             var sink = source as FireOnSubscribeEvent<TF>;
             return sink == null ? null : sink.SubscriptionFirings();

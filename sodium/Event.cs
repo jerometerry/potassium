@@ -9,8 +9,6 @@
     /// <typeparam name="T">The type of value that will be fired through the Observable</typeparam>
     public class Event<T> : Observable<T>, IEvent<T>
     {
-        
-
         /// <summary>
         /// Accumulate on input event, outputting the new state each time.
         /// </summary>

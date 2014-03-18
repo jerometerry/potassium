@@ -25,7 +25,7 @@ namespace Sodium
         /// </summary>
         /// <param name="source">The Event to listen for updates from</param>
         /// <param name="initValue">The initial value of the Behavior</param>
-        public Behavior(IEvent<T> source, T initValue)
+        public Behavior(IObservable<T> source, T initValue)
         {
             this.Loop(source);
             this.valueContainer = new ValueContainer<T>(this, initValue);
