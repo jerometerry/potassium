@@ -3,7 +3,7 @@ namespace Sodium
     using System;
     using System.Linq;
 
-    internal sealed class Snapshot<T, TB, TC> : FireOnSubscribeEvent<TC>
+    internal sealed class Snapshot<T, TB, TC> : SubscribeFireEvent<TC>
     {
         private IObservable<T> source;
         private Func<T, TB, TC> snapshot;

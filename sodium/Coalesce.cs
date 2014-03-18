@@ -3,7 +3,7 @@ namespace Sodium
     using System;
     using System.Collections.Generic;
 
-    internal class Coalesce<T> : FireOnSubscribeEvent<T>
+    internal class Coalesce<T> : SubscribeFireEvent<T>
     {
         private Func<T, T, T> coalesce;
         private ISubscription<T> subscription;

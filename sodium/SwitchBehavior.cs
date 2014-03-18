@@ -55,7 +55,7 @@ namespace Sodium
                 this.wrappedEvent = null;
             }
 
-            this.wrappedEvent = new FireLastValueOnSubscribeEvent<T>(behavior, transaction);
+            this.wrappedEvent = new SubscribeFireLastValueEvent<T>(behavior, transaction);
             this.wrappedSubscription = this.wrappedEvent.Subscribe(this.CreateFireCallback(), this.Rank, transaction);
         }
     }

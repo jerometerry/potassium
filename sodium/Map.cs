@@ -3,7 +3,7 @@
     using System;
     using System.Linq;
 
-    internal sealed class Map<T, TB> : FireOnSubscribeEvent<TB>
+    internal sealed class Map<T, TB> : SubscribeFireEvent<TB>
     {
         private IObservable<T> source;
         private Func<T, TB> map;

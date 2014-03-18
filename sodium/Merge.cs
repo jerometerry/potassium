@@ -2,7 +2,7 @@ namespace Sodium
 {
     using System.Linq;
 
-    internal sealed class Merge<T> : FireOnSubscribeEvent<T>
+    internal sealed class Merge<T> : SubscribeFireEvent<T>
     {
         private IObservable<T> source1;
         private IObservable<T> source2;

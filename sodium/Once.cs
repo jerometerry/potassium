@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    internal sealed class Once<T> : FireOnSubscribeEvent<T>
+    internal sealed class Once<T> : SubscribeFireEvent<T>
     {
         private IObservable<T> source;
         private ISubscription<T>[] subscriptions;
