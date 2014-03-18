@@ -9,13 +9,15 @@ namespace Sodium
     /// <typeparam name="T">The type of values that will be fired through the Behavior.</typeparam>
     public class Behavior<T> : EventLoop<T>, IBehavior<T>
     {
+        private ValueContainer<T> valueContainer;
+
         /// <summary>
         /// A constant behavior
         /// </summary>
         /// <param name="initValue">The initial value of the Behavior</param>
         public Behavior(T initValue)
         {
-            this.ValueContainer = new ValueContainer<T>(initValue);
+            this.valueContainer = new ValueContainer<T>(this, initValue);
         }
 
         /// <summary>
@@ -26,7 +28,12 @@ namespace Sodium
         public Behavior(IEvent<T> source, T initValue)
         {
             this.Loop(source);
-            this.ValueContainer = new ValueContainer<T>(this, initValue);
+            this.valueContainer = new ValueContainer<T>(this, initValue);
+        }
+
+        internal Behavior(ValueContainer<T> container)
+        {
+            this.valueContainer = container;
         }
 
         /// <summary>
@@ -45,11 +52,17 @@ namespace Sodium
         {
             get
             {
-                return this.ValueContainer.Value;
+                return this.valueContainer.Value;
             }
         }
 
-        internal ValueContainer<T> ValueContainer { get; private set; }
+        internal T NewValue
+        {
+            get
+            {
+                return this.valueContainer.NewValue;
+            }
+        }
 
         /// <summary>
         /// Accumulate on input event, outputting the new state each time.
@@ -163,7 +176,7 @@ namespace Sodium
         {
             var underlyingEvent = this;
             var mapEvent = underlyingEvent.Map(map);
-            var currentValue = this.ValueContainer.Value;
+            var currentValue = this.valueContainer.Value;
             var mappedValue = map(currentValue);
             var behavior = mapEvent.Hold(mappedValue);
             behavior.RegisterFinalizer(mapEvent);
@@ -201,7 +214,7 @@ namespace Sodium
         public IBehavior<TB> CollectB<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             var coalesceEvent = this.Coalesce((a, b) => b);
-            var currentValue = this.ValueContainer.Value;
+            var currentValue = this.valueContainer.Value;
             var tuple = snapshot(currentValue, initState);
             var loop = new EventLoop<Tuple<TB, TS>>();
             var loopBehavior = loop.Hold(tuple);
@@ -276,10 +289,10 @@ namespace Sodium
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            if (this.ValueContainer != null)
+            if (this.valueContainer != null)
             {
-                this.ValueContainer.Dispose();
-                this.ValueContainer = null;
+                this.valueContainer.Dispose();
+                this.valueContainer = null;
             }
 
             base.Dispose(disposing);

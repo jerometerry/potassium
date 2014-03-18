@@ -26,7 +26,7 @@ namespace Sodium.Tests
         [Test]
         public void TestSnapshot()
         {
-            var behavior = new BehaviorSink<int>(0);
+            var behavior = new Behavior<int>(0);
             var evt = new Sink<long>();
             var results = new List<string>();
             Func<long, int, string> snapshotFunction = (x, y) => string.Format("{0} {1}", x, y);
@@ -47,7 +47,7 @@ namespace Sodium.Tests
         [Test]
         public void TestConstantBehavior()
         {
-            var behavior = new Behavior<int>(12);
+            var behavior = new ConstantBehavior<int>(12);
             var results = new List<int>();
             var listener = behavior.SubscribeAndFire(results.Add);
             listener.Dispose();
@@ -58,7 +58,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMapB()
         {
-            var behavior = new BehaviorSink<int>(6);
+            var behavior = new Behavior<int>(6);
             var results = new List<string>();
             var listener = behavior.MapB(x => x.ToString(CultureInfo.InvariantCulture)).SubscribeAndFire(results.Add);
             behavior.Fire(8);
@@ -70,7 +70,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMapB2()
         {
-            var behavior = new Behavior<int>(1);
+            var behavior = new ConstantBehavior<int>(1);
             var behavior1 = behavior.MapB(x => x * 3);
             var results = new List<int>();
             var listener = behavior1.SubscribeAndFire(results.Add);
@@ -82,7 +82,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMapB3()
         {
-            var behavior = new BehaviorSink<int>(1);
+            var behavior = new Behavior<int>(1);
             var behavior1 = behavior.MapB(x => x * 3);
             var results = new List<int>();
             var listener = behavior1.SubscribeAndFire(results.Add);
@@ -95,7 +95,7 @@ namespace Sodium.Tests
         [Test]
         public void TestMapBLateListen()
         {
-            var behavior = new BehaviorSink<int>(6);
+            var behavior = new Behavior<int>(6);
             var results = new List<string>();
             var map = behavior.MapB(x => x.ToString(CultureInfo.InvariantCulture));
             behavior.Fire(2);
@@ -109,8 +109,8 @@ namespace Sodium.Tests
         [Test]
         public void TestApply()
         {
-            var bf = new BehaviorSink<Func<long, string>>(b => "1 " + b);
-            var ba = new BehaviorSink<long>(5L);
+            var bf = new Behavior<Func<long, string>>(b => "1 " + b);
+            var ba = new Behavior<long>(5L);
             var results = new List<string>();
             var listener = ba.Apply(bf).SubscribeAndFire(results.Add);
             bf.Fire(b => "12 " + b);
@@ -124,8 +124,8 @@ namespace Sodium.Tests
         [Test]
         public void TestLift()
         {
-            var behavior1 = new BehaviorSink<int>(1);
-            var behavior2 = new BehaviorSink<long>(5L);
+            var behavior1 = new Behavior<int>(1);
+            var behavior2 = new Behavior<long>(5L);
             var results = new List<string>();
             var combinedBehavior = behavior1.Lift((x, y) => x + " " + y, behavior2);
             var listener = combinedBehavior.SubscribeAndFire(results.Add);
@@ -145,7 +145,7 @@ namespace Sodium.Tests
         [Test]
         public void TestLiftGlitch()
         {
-            var behavior = new BehaviorSink<int>(1);
+            var behavior = new Behavior<int>(1);
             var mappedBehavior1 = behavior.MapB(x => x * 3);
             var mappedBehavior2 = behavior.MapB(x => x * 5);
             var results = new List<string>();
@@ -243,7 +243,7 @@ namespace Sodium.Tests
         public void TestLoopBehavior()
         {
             var ea = new Sink<int>();
-            var sum = new BehaviorSink<int>(0);
+            var sum = new Behavior<int>(0);
             var sumOut = ea.Snapshot(sum, (x, y) => x + y).Hold(0);
             sum.Loop(sumOut);
             var o = new List<int>();

@@ -52,9 +52,12 @@ namespace Sodium
         /// updated with the value of the firing. However, it doesn't go directly to the
         /// value field. Instead, the value is put into newValue, and a Last Action is
         /// scheduled to move the value from newValue to value.</remarks>
-        public T GetNewValue()
+        public T NewValue
         {
-            return this.update.HasValue ? this.update.Value() : this.Value;
+            get
+            {
+                return this.update.HasValue ? this.update.Value() : this.Value;
+            }
         }
 
         /// <summary>
