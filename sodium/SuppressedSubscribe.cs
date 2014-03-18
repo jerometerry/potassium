@@ -7,7 +7,7 @@
             this.Loop(source);
         }
 
-        internal override bool Refire(ISubscription<T> subscription, Transaction transaction)
+        protected override bool Refire(ISubscription<T> subscription, Transaction transaction)
         {
             return false;
         }

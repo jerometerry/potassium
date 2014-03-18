@@ -17,6 +17,12 @@ namespace Sodium
         /// </summary>
         private readonly List<T> firings = new List<T>();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="firing"></param>
+        /// <param name="transaction"></param>
+        /// <returns></returns>
         protected override bool Fire(T firing, Transaction transaction)
         {
             this.ScheduleClearFirings(transaction);
@@ -31,7 +37,7 @@ namespace Sodium
         /// </summary>
         /// <param name="transaction"></param>
         /// <param name="subscription"></param>
-        internal virtual bool Refire(ISubscription<T> subscription, Transaction transaction)
+        protected virtual bool Refire(ISubscription<T> subscription, Transaction transaction)
         {
             var toFire = this.firings;
             this.Fire(subscription, toFire, transaction);

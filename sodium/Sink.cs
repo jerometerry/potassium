@@ -38,6 +38,11 @@
             return new SodiumCallback<T>((t, v) => this.Fire(t, v));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="firing"></param>
+        /// <param name="transaction"></param>
         protected void FireSubscriptionCallbacks(T firing, Transaction transaction)
         {
             var clone = new List<ISubscription<T>>(this.Subscriptions);
