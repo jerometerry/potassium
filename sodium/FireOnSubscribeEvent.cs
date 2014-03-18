@@ -6,7 +6,7 @@ namespace Sodium
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Event</typeparam>
     /// <remarks>Used by Behavior to support firing of initial values of the Behavior</remarks>
-    public abstract class FireOnSubscribeEvent<T> : RefireEvent<T>
+    internal abstract class FireOnSubscribeEvent<T> : RefireEvent<T>
     {
         /// <summary>
         /// Gets the values that will be sent to newly added

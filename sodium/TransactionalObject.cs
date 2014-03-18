@@ -2,6 +2,9 @@
 {
     using System;
 
+    /// <summary>
+    /// Base class for objects requiring starting of new Transactions
+    /// </summary>
     public class TransactionalObject : DisposableObject
     {
         private TransactionContext Context
