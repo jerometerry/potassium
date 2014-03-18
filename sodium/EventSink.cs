@@ -2,7 +2,11 @@
 {
     using System.Collections.Generic;
 
-    public class EventSink<T> : Event<T>
+    /// <summary>
+    /// An EventSink is an Event that can be Fired.
+    /// </summary>
+    /// <typeparam name="T">The type of values fired through the Event</typeparam>
+    public class EventSink<T> : Event<T>, IEventSink<T>
     {
         /// <summary>
         /// Fire the given value to all registered subscriptions

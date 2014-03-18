@@ -26,7 +26,7 @@
         /// <param name="initState">Value to pass to the snapshot function</param>
         /// <param name="snapshot">Snapshot function</param>
         /// <returns>A new Behavior that collects values of type TB</returns>
-        IBehavior<TB> CollectB<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot);
+        IBehavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot);
 
         /// <summary>
         /// Lift a binary function into behaviors.
@@ -62,7 +62,7 @@
         /// <returns>A new Behavior that updates whenever the current Behavior updates,
         /// having a value computed by the map function, and starting with the value
         /// of the current event mapped.</returns>
-        IBehavior<TB> MapB<TB>(Func<T, TB> map);
+        IBehavior<TB> Map<TB>(Func<T, TB> map);
 
         /// <summary>
         /// Listen to the Behavior for updates

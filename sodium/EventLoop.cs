@@ -1,6 +1,6 @@
 ﻿namespace Sodium
 {
-    using System.Collections.Generic;
+    using System;
 
     /// <summary>
     /// An EventLoop listens for updates from another Event, and forwards them 
@@ -9,7 +9,7 @@
     /// <typeparam name="T">The type of the value fired through the event</typeparam>
     public class EventLoop<T> : RefireEvent<T>
     {
-        private List<ISubscription<T>> subscriptions = new List<ISubscription<T>>();
+        private ISubscription<T> subscription;
 
         /// <summary>
         /// Firings on the given Event will be forwarded to the current Event
@@ -20,8 +20,12 @@
         /// an ApplicationException will be raised.</remarks>
         public ISubscription<T> Loop(IObservable<T> source)
         {
-            var subscription = source.Subscribe(this.CreateFireCallback(), Rank);
-            subscriptions.Add(subscription);
+            if (subscription != null)
+            {
+                throw new ApplicationException("EventLoop has already been looped.");
+            }
+
+            this.subscription = source.Subscribe(this.CreateFireCallback(), Rank);
             return subscription;
         }
 
@@ -32,12 +36,10 @@
         {
             if (disposing)
             { 
-                var clone = new List<ISubscription<T>>(subscriptions);
-                subscriptions.Clear();
-                subscriptions = null;
-                foreach (var subscription in clone)
+                if (subscription != null)
                 {
                     subscription.Dispose();
+                    subscription = null;
                 }
             }
 

@@ -33,13 +33,13 @@ namespace Sodium.MemoryTests
             var eventOfBehaviors = changeTens.Map(tens =>
             {
                 DisposeFinalizers(behaviorMapFinalizers);
-                var mapped = behavior.MapB(tt => new Tuple<int?, int?>(tens, tt));
+                var mapped = behavior.Map(tt => new Tuple<int?, int?>(tens, tt));
                 behaviorMapFinalizers.Add(mapped);
                 return mapped;
             });
             finalizers.Add(eventOfBehaviors);
 
-            var behaviorMap = behavior.MapB(tt => new Tuple<int?, int?>(0, tt));
+            var behaviorMap = behavior.Map(tt => new Tuple<int?, int?>(0, tt));
             finalizers.Add(behaviorMap);
 
             var tensTupleWrappedBehavior = eventOfBehaviors.Hold(behaviorMap);

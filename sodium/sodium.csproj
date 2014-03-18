@@ -53,6 +53,7 @@
     <Compile Include="ConstantBehavior.cs" />
     <Compile Include="EventSink.cs" />
     <Compile Include="Gate.cs" />
+    <Compile Include="IEventSink.cs" />
     <Compile Include="IObservable.cs" />
     <Compile Include="NotNullFilter.cs" />
     <Compile Include="Observable.cs" />

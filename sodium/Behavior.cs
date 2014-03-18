@@ -175,7 +175,7 @@ namespace Sodium
         /// <returns>A new Behavior that updates whenever the current Behavior updates,
         /// having a value computed by the map function, and starting with the value
         /// of the current event mapped.</returns>
-        public IBehavior<TB> MapB<TB>(Func<T, TB> map)
+        public IBehavior<TB> Map<TB>(Func<T, TB> map)
         {
             var mapEvent = this.Source.Map(map);
             var behavior = mapEvent.Hold(map(Value));
@@ -196,7 +196,7 @@ namespace Sodium
         public IBehavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, IBehavior<TB> behavior)
         {
             Func<T, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
-            var bf = this.MapB(ffa);
+            var bf = this.Map(ffa);
             var result = behavior.Apply(bf);
             result.Register(bf);
             return result;
@@ -211,18 +211,18 @@ namespace Sodium
         /// <param name="initState">Value to pass to the snapshot function</param>
         /// <param name="snapshot">Snapshot function</param>
         /// <returns>A new Behavior that collects values of type TB</returns>
-        public IBehavior<TB> CollectB<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
+        public IBehavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             var coalesceEvent = this.Source.Coalesce((a, b) => b);
             var currentValue = this.Value;
             var tuple = snapshot(currentValue, initState);
             var loop = new EventLoop<Tuple<TB, TS>>();
             var loopBehavior = loop.Hold(tuple);
-            var snapshotBehavior = loopBehavior.MapB(x => x.Item2);
+            var snapshotBehavior = loopBehavior.Map(x => x.Item2);
             var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
             loop.Loop(coalesceSnapshotEvent);
 
-            var result = loopBehavior.MapB(x => x.Item1);
+            var result = loopBehavior.Map(x => x.Item1);
             result.Register(loop);
             result.Register(loopBehavior);
             result.Register(coalesceEvent);
@@ -246,7 +246,7 @@ namespace Sodium
         public IBehavior<TD> Lift<TB, TC, TD>(Func<T, TB, TC, TD> lift, IBehavior<TB> b, IBehavior<TC> c)
         {
             Func<T, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
-            var bf = this.MapB(map);
+            var bf = this.Map(map);
             var l1 = b.Apply(bf);
 
             var result = c.Apply(l1);

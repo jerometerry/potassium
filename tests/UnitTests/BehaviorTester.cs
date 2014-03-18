@@ -60,7 +60,7 @@ namespace Sodium.Tests
         {
             var behavior = new BehaviorSink<int>(6);
             var results = new List<string>();
-            var listener = behavior.MapB(x => x.ToString(CultureInfo.InvariantCulture)).SubscribeValues(results.Add);
+            var listener = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture)).SubscribeValues(results.Add);
             behavior.Fire(8);
             listener.Dispose();
             behavior.Dispose();
@@ -71,7 +71,7 @@ namespace Sodium.Tests
         public void TestMapB2()
         {
             var behavior = new ConstantBehavior<int>(1);
-            var behavior1 = behavior.MapB(x => x * 3);
+            var behavior1 = behavior.Map(x => x * 3);
             var results = new List<int>();
             var listener = behavior1.SubscribeValues(results.Add);
             listener.Dispose();
@@ -83,7 +83,7 @@ namespace Sodium.Tests
         public void TestMapB3()
         {
             var behavior = new BehaviorSink<int>(1);
-            var behavior1 = behavior.MapB(x => x * 3);
+            var behavior1 = behavior.Map(x => x * 3);
             var results = new List<int>();
             var listener = behavior1.SubscribeValues(results.Add);
             behavior.Fire(2);
@@ -97,7 +97,7 @@ namespace Sodium.Tests
         {
             var behavior = new BehaviorSink<int>(6);
             var results = new List<string>();
-            var map = behavior.MapB(x => x.ToString(CultureInfo.InvariantCulture));
+            var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
             behavior.Fire(2);
             var listener = map.SubscribeValues(results.Add);
             behavior.Fire(8);
@@ -146,8 +146,8 @@ namespace Sodium.Tests
         public void TestLiftGlitch()
         {
             var behavior = new BehaviorSink<int>(1);
-            var mappedBehavior1 = behavior.MapB(x => x * 3);
-            var mappedBehavior2 = behavior.MapB(x => x * 5);
+            var mappedBehavior1 = behavior.Map(x => x * 3);
+            var mappedBehavior2 = behavior.Map(x => x * 5);
             var results = new List<string>();
             var combinedBehavior = mappedBehavior1.Lift((x, y) => x + " " + y, mappedBehavior2);
             var listener = combinedBehavior.SubscribeValues(results.Add);
@@ -265,7 +265,7 @@ namespace Sodium.Tests
         {
             var ea = new EventSink<int>();
             var o = new List<int>();
-            var sum = ea.Hold(100).CollectB(0, (a, s) => new Tuple<int, int>(a + s, a + s));
+            var sum = ea.Hold(100).Collect(0, (a, s) => new Tuple<int, int>(a + s, a + s));
             var l = sum.SubscribeValues(o.Add);
             ea.Fire(5);
             ea.Fire(7);
