@@ -50,6 +50,8 @@
     <Compile Include="Collect.cs" />
     <Compile Include="ConstantBehavior.cs" />
     <Compile Include="Gate.cs" />
+    <Compile Include="IObservable.cs" />
+    <Compile Include="Observable.cs" />
     <Compile Include="ValueContainer.cs" />
     <Compile Include="Delay.cs" />
     <Compile Include="EventLoop.cs" />

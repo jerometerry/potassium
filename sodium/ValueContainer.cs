@@ -2,7 +2,7 @@ namespace Sodium
 {
     internal class ValueContainer<T> : TransactionalObject
     {
-        private IEvent<T> source;
+        private IObservable<T> source;
 
         /// <summary>
         /// Holding tank for updates from the underlying Event, waiting to be 
@@ -20,7 +20,7 @@ namespace Sodium
             this.Value = initValue;
         }
 
-        public ValueContainer(IEvent<T> source, T initValue)
+        public ValueContainer(IObservable<T> source, T initValue)
         {
             this.source = source;
             this.Value = initValue;

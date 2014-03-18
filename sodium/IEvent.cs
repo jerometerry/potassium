@@ -2,7 +2,7 @@
 {
     using System;
 
-    public interface IEvent<T> : IDisposableObject
+    public interface IEvent<T> : IObservable<T>
     {
         /// <summary>
         /// Accumulate on input event, outputting the new state each time.
