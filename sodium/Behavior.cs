@@ -7,7 +7,7 @@ namespace Sodium
     /// gets updated as the underlying Observable is published.
     /// </summary>
     /// <typeparam name="T">The type of values that will be published through the Behavior.</typeparam>
-    public class Behavior<T> : Observable<T>
+    public class Behavior<T> : DisposableObject
     {
         private ValueContainer<T> valueContainer;
 
@@ -83,20 +83,15 @@ namespace Sodium
             return s;
         }
 
-        #region Subscribe Overrides
-        
-        /* Override Subscribe methods, forwarding subscription to the underlying Observable. */
-
-        internal override ISubscription<T> CreateSubscription(Publisher<T> publisher, Rank superior, Transaction transaction)
+        /// <summary>
+        /// Subscribe to publications of the current Observable.
+        /// </summary>
+        /// <param name="callback">An Action to be invoked when the current Observable publishes values.</param>
+        /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
+        public ISubscription<T> Subscribe(Action<T> callback)
         {
-            return Source.CreateSubscription(publisher, superior, transaction);
+            return this.Source.Subscribe(callback);
         }
-
-        internal override bool CancelSubscription(ISubscription<T> subscription)
-        {
-            return Source.CancelSubscription(subscription);
-        }
-        #endregion
 
         /// <summary>
         /// Dispose of the current Behavior

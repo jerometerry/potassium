@@ -39,7 +39,7 @@
             this.wrappedSubscription = source.Value.CreateSubscription(this.wrappedEventSubscriptionCallback, this.Rank, transaction);
 
             var behaviorEventChanged = new Publisher<Event<T>>(this.UpdateWrappedEventSubscription);
-            this.behaviorSubscription = source.CreateSubscription(behaviorEventChanged, this.Rank, transaction);
+            this.behaviorSubscription = source.Source.CreateSubscription(behaviorEventChanged, this.Rank, transaction);
 
             return Unit.Nothing;
         }
