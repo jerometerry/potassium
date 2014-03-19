@@ -3,12 +3,21 @@ namespace Sodium
     using System;
 
     /// <summary>
-    /// ActionCallback wraps an System.Action used to subscribe to Observables.
+    /// Notification wraps an System.Action used to subscribe to Observables.
     /// </summary>
     /// <typeparam name="T">The type of value that will be fired</typeparam>
-    public sealed class Notification<T> : INotification<T>
+    internal sealed class Notification<T> : INotification<T>
     {
         private readonly Action<T, Transaction> action;
+
+        /// <summary>
+        /// Constructs a new Notification from the given Action
+        /// </summary>
+        /// <param name="action">The Action to invoke when the Observable fires</param>
+        public Notification(Action<T> action)
+            : this((a, t) => action(a))
+        {
+        }
 
         /// <summary>
         /// Constructs a new Notification from the given Action

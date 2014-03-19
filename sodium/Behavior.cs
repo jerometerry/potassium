@@ -150,7 +150,7 @@ namespace Sodium
         public ISubscription<T> SubscribeValues(Action<T> callback)
         {
             var evt = Transformer.Default.Values(this);
-            var s = (Subscription<T>)evt.Subscribe(new Notification<T>((a, t) => callback(a)), Rank.Highest);
+            var s = (Subscription<T>)evt.Subscribe(new Notification<T>(callback), Rank.Highest);
             s.Register(evt);
             return s;
         }

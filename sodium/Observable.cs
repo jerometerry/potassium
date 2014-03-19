@@ -50,7 +50,7 @@
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
         public ISubscription<T> Subscribe(Action<T> callback)
         {
-            return this.Subscribe(new Notification<T>((a, t) => callback(a)), Rank.Highest);
+            return this.Subscribe(new Notification<T>(callback), Rank.Highest);
         }
 
         /// <summary>
