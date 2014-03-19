@@ -48,9 +48,9 @@
   <ItemGroup>
     <Compile Include="BehaviorApplyEvent.cs" />
     <Compile Include="BehaviorLoop.cs" />
-    <Compile Include="BehaviorSink.cs" />
+    <Compile Include="BehaviorPublisher.cs" />
     <Compile Include="ConstantBehavior.cs" />
-    <Compile Include="EventSink.cs" />
+    <Compile Include="EventPublisher.cs" />
     <Compile Include="Transformer.cs" />
     <Compile Include="IObservable.cs" />
     <Compile Include="Observable.cs" />
@@ -58,7 +58,7 @@
     <Compile Include="ValueContainer.cs" />
     <Compile Include="DelayEvent.cs" />
     <Compile Include="EventLoop.cs" />
-    <Compile Include="SubscribeFireEvent.cs" />
+    <Compile Include="SubscribePublishEvent.cs" />
     <Compile Include="LastFiringEvent.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="DisposableObject.cs" />
@@ -67,7 +67,7 @@
     <Compile Include="CoalesceEvent.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="PrioritizedAction.cs" />
-    <Compile Include="SubscribeRefireEvent.cs" />
+    <Compile Include="SubscribeRepublishEvent.cs" />
     <Compile Include="SuppressedSubscribeEvent.cs" />
     <Compile Include="SwitchBehaviorEvent.cs" />
     <Compile Include="FilterEvent.cs" />
@@ -99,9 +99,6 @@
     <Compile Include="Notification.cs" />
     <Compile Include="TransactionContext.cs" />
     <Compile Include="Unit.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Sodium.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

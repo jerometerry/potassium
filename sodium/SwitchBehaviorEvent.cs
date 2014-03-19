@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    internal sealed class SwitchBehaviorEvent<T> : EventSink<T>
+    internal sealed class SwitchBehaviorEvent<T> : EventPublisher<T>
     {
         private ISubscription<Behavior<T>> subscription;
         private ISubscription<T> wrappedSubscription;
@@ -41,7 +41,7 @@ namespace Sodium
             // Note: If any switch takes place during a transaction, then the
             // GetValueStream().Subscribe will always cause a sample to be fetched from the
             // one we just switched to. The caller will be fetching our output
-            // using GetValueStream().Subscribe, and GetValueStream() throws away all firings except
+            // using GetValueStream().Subscribe, and GetValueStream() throws away all publishings except
             // for the last one. Therefore, anything from the old input behavior
             // that might have happened during this transaction will be suppressed.
             if (this.wrappedSubscription != null)
@@ -57,7 +57,7 @@ namespace Sodium
             }
 
             this.wrappedEvent = new BehaviorLastValueEvent<T>(behavior, transaction);
-            this.wrappedSubscription = this.wrappedEvent.Subscribe(this.CreateFireCallback(), this.Rank, transaction);
+            this.wrappedSubscription = this.wrappedEvent.Subscribe(this.CreatePublishCallback(), this.Rank, transaction);
         }
     }
 }

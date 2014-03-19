@@ -3,7 +3,7 @@
     /// <summary>
     /// BehaviorLoop is a Behavior where the underlying Event is an EventLoop.
     /// </summary>
-    /// <typeparam name="T">The type of values fired through the Behavior</typeparam>
+    /// <typeparam name="T">The type of values published through the Behavior</typeparam>
     public class BehaviorLoop<T> : Behavior<T>
     {
         /// <summary>
@@ -19,7 +19,7 @@
         /// <summary>
         ///  Firings on the given Event will be forwarded to the current Event
         /// </summary>
-        /// <param name="source">Event who's firings will be looped to the current Event</param>
+        /// <param name="source">Event who's publishings will be looped to the current Event</param>
         public void Loop(IObservable<T> source)
         {
             var loop = (EventLoop<T>)this.Source;

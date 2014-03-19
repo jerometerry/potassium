@@ -3,19 +3,19 @@
     using System.Collections.Generic;
 
     /// <summary>
-    /// An EventSink is an Event that can be Fired.
+    /// An EventPublisher is an Event that allows callers to publish values to subscribers.
     /// </summary>
-    /// <typeparam name="T">The type of values fired through the Event</typeparam>
-    public class EventSink<T> : Event<T>
+    /// <typeparam name="T">The type of values published through the Event</typeparam>
+    public class EventPublisher<T> : Event<T>
     {
         /// <summary>
-        /// Fire the given value to all registered subscriptions
+        /// Publish the given value to all registered subscriptions
         /// </summary>
-        /// <param name="firing">The value to be fired</param>
-        /// <returns>True if the fire was successful, false otherwise.</returns>
-        public bool Fire(T firing)
+        /// <param name="value">The value to be published</param>
+        /// <returns>True if the publish was successful, false otherwise.</returns>
+        public bool Publish(T value)
         {
-            return this.StartTransaction(t => this.Fire(firing, t));
+            return this.StartTransaction(t => this.Publish(value, t));
         }
 
         /// <summary>
@@ -43,9 +43,9 @@
         }
 
         /// <summary>
-        /// Fire the given value to all subscribers
+        /// Publish the given value to all subscribers
         /// </summary>
-        /// <param name="value">The value to fire</param>
+        /// <param name="value">The value to publish</param>
         /// <param name="transaction">The current transaction</param>
         protected void NotifySubscribers(T value, Transaction transaction)
         {
@@ -57,23 +57,23 @@
         }
 
         /// <summary>
-        /// Fire the given value to all registered callbacks
+        /// Publish the given value to all registered callbacks
         /// </summary>
         /// <param name="transaction">The transaction to invoke the callbacks on</param>
-        /// <param name="firing">The value to fire to registered callbacks</param>
-        protected virtual bool Fire(T firing, Transaction transaction)
+        /// <param name="value">The value to publish to registered callbacks</param>
+        protected virtual bool Publish(T value, Transaction transaction)
         {
-            this.NotifySubscribers(firing, transaction);
+            this.NotifySubscribers(value, transaction);
             return true;
         }
 
         /// <summary>
-        /// Creates a callback that calls the Fire method on the current Event when invoked
+        /// Creates a callback that calls the Publish method on the current Event when invoked
         /// </summary>
-        /// <returns>In INotification that calls Fire, when invoked.</returns>
-        protected INotification<T> CreateFireCallback()
+        /// <returns>In INotification that calls Publish, when invoked.</returns>
+        protected INotification<T> CreatePublishCallback()
         {
-            return new Notification<T>((t, v) => this.Fire(t, v));
+            return new Notification<T>((t, v) => this.Publish(t, v));
         }
     }
 }

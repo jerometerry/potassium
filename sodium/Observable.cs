@@ -6,7 +6,7 @@
     /// <summary>
     /// Observable is the base class for Events and Behaviors, containing the subscription logic (i.e. the Observer Pattern).
     /// </summary>
-    /// <typeparam name="T">The type of value fired through the Observable</typeparam>
+    /// <typeparam name="T">The type of value published through the Observable</typeparam>
     public abstract class Observable<T> : TransactionalObject, IObservable<T>
     {
         /// <summary>
@@ -15,13 +15,13 @@
         private readonly Rank rank = new Rank();
 
         /// <summary>
-        /// List of ISubscriptions that are currently listening for firings 
+        /// List of ISubscriptions that are currently listening for publishings 
         /// from the current Event.
         /// </summary>
         private readonly List<ISubscription<T>> subscriptions = new List<ISubscription<T>>();
 
         /// <summary>
-        /// The current Rank of the Event, used to prioritize firings on the current transaction.
+        /// The current Rank of the Event, used to prioritize publishings on the current transaction.
         /// </summary>
         protected Rank Rank
         {
@@ -32,7 +32,7 @@
         }
 
         /// <summary>
-        /// List of ISubscriptions that are currently listening for firings 
+        /// List of ISubscriptions that are currently listening for publishings 
         /// from the current Event.
         /// </summary>
         protected List<ISubscription<T>> Subscriptions
@@ -44,9 +44,9 @@
         }
 
         /// <summary>
-        /// Listen for firings of this event.
+        /// Listen for publishings of this event.
         /// </summary>
-        /// <param name="callback">An Action to be invoked when the current Event fires.</param>
+        /// <param name="callback">An Action to be invoked when the current Event publishes.</param>
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
         public ISubscription<T> Subscribe(Action<T> callback)
         {
@@ -54,9 +54,9 @@
         }
 
         /// <summary>
-        /// Listen for firings of this event.
+        /// Listen for publishings of this event.
         /// </summary>
-        /// <param name="callback">An Action to be invoked when the current Event fires.</param>
+        /// <param name="callback">An Action to be invoked when the current Event publishes.</param>
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
         public ISubscription<T> Subscribe(INotification<T> callback)
         {
@@ -64,9 +64,9 @@
         }
 
         /// <summary>
-        /// Listen for firings on the current event
+        /// Listen for publishings on the current event
         /// </summary>
-        /// <param name="callback">The action to invoke on a firing</param>
+        /// <param name="callback">The action to invoke on a publishing</param>
         /// <param name="subscriptionRank">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An ISubscription to be used to stop listening for events</returns>
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
@@ -78,13 +78,13 @@
         }
 
         /// <summary>
-        /// Listen for firings on the current event
+        /// Listen for publishings on the current event
         /// </summary>
-        /// <param name="transaction">Transaction to send any firings on</param>
-        /// <param name="callback">The action to invoke on a firing</param>
+        /// <param name="transaction">Transaction to send any publishings on</param>
+        /// <param name="callback">The action to invoke on a publishing</param>
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An ISubscription to be used to stop listening for events.</returns>
-        /// <remarks>Any firings that have occurred on the current transaction will be re-fired immediate after subscribing.</remarks>
+        /// <remarks>Any publishings that have occurred on the current transaction will be re-published immediate after subscribing.</remarks>
         public ISubscription<T> Subscribe(INotification<T> callback, Rank superior, Transaction transaction)
         {
             return this.CreateSubscription(callback, superior, transaction);

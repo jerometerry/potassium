@@ -11,7 +11,7 @@ namespace Sodium
         private Maybe<T> update = Maybe<T>.Null;
 
         /// <summary>
-        /// Subscription that listens for firings from the underlying Event.
+        /// Subscription that listens for publishings from the underlying Event.
         /// </summary>
         private ISubscription<T> subscription;
 
@@ -48,8 +48,8 @@ namespace Sodium
         /// <returns>
         /// The updated value, if any, otherwise the current value
         /// </returns>
-        /// <remarks>As the underlying event is fired, the current behavior is 
-        /// updated with the value of the firing. However, it doesn't go directly to the
+        /// <remarks>As the underlying event is published, the current behavior is 
+        /// updated with the value of the publishing. However, it doesn't go directly to the
         /// value field. Instead, the value is put into newValue, and a Last Action is
         /// scheduled to move the value from newValue to value.</remarks>
         public T NewValue
@@ -98,7 +98,7 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Listen to the underlying event for firings
+        /// Listen to the underlying event for publishings
         /// </summary>
         /// <returns>The ISubscription registered with the underlying event.</returns>
         private ISubscription<T> Subscribe()
@@ -107,7 +107,7 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Listen to the underlying event for firings
+        /// Listen to the underlying event for publishings
         /// </summary>
         /// <param name="transaction">The transaction to schedule the subscription on.</param>
         /// <returns>The ISubscription registered with the underlying event.</returns>

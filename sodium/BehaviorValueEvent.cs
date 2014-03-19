@@ -1,11 +1,11 @@
 namespace Sodium
 {
     /// <summary>
-    /// BehaviorValueEvent is an Event that fires the current value when subscribed to,
-    /// and fires all updates thereafter.
+    /// BehaviorValueEvent is an Event that publishes the current value when subscribed to,
+    /// and publishes all updates thereafter.
     /// </summary>
-    /// <typeparam name="T">The type of values fired through the Behavior</typeparam>
-    internal sealed class BehaviorValueEvent<T> : SubscribeFireEvent<T>
+    /// <typeparam name="T">The type of values published through the Behavior</typeparam>
+    internal sealed class BehaviorValueEvent<T> : SubscribePublishEvent<T>
     {
         private Behavior<T> source;
         private ISubscription<T> subscription;
@@ -23,7 +23,7 @@ namespace Sodium
 
         public override T[] SubscriptionFirings()
         {
-            // When the ValueEventSink is subscribed to, fire off the current value of the Behavior
+            // When the ValueEventSink is subscribed to, publish off the current value of the Behavior
             return new[] { this.source.Value };
         }
 
@@ -41,12 +41,12 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Forward firings from the behavior to the current BehaviorEventSink
+        /// Forward publishings from the behavior to the current BehaviorEventSink
         /// </summary>
         /// <param name="transaction"></param>
         private void CreateLoop(Transaction transaction)
         {
-            var forward = this.CreateFireCallback();
+            var forward = this.CreatePublishCallback();
             this.subscription = this.source.Subscribe(forward, this.Rank, transaction);
         }
     }

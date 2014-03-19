@@ -8,7 +8,7 @@ namespace Sodium.MemoryTests
         [TestCase(1000000000)]
         public void Test(int iterations)
         {
-            var evt = new EventSink<int>();
+            var evt = new EventPublisher<int>();
             var et = new Event<int>();
             var behavior = et.Hold(0);
             var eventOfBehaviors = evt.Map(x => behavior).Hold(behavior);
@@ -17,7 +17,7 @@ namespace Sodium.MemoryTests
             var i = 0;
             while (i < iterations)
             {
-                evt.Fire(i);
+                evt.Publish(i);
                 i++;
             }
 

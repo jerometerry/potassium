@@ -1,6 +1,6 @@
 ﻿namespace Sodium
 {
-    internal sealed class SwitchEvent<T> : EventSink<T>
+    internal sealed class SwitchEvent<T> : EventPublisher<T>
     {
         private ISubscription<Event<T>> behaviorSubscription;
         private INotification<T> wrappedEventSubscriptionCallback;
@@ -35,7 +35,7 @@
 
         private Unit Initialize(Transaction transaction)
         {
-            this.wrappedEventSubscriptionCallback = this.CreateFireCallback();
+            this.wrappedEventSubscriptionCallback = this.CreatePublishCallback();
             this.wrappedSubscription = source.Value.Subscribe(this.wrappedEventSubscriptionCallback, this.Rank, transaction);
 
             var behaviorEventChanged = new Notification<Event<T>>(this.UpdateWrappedEventSubscription);

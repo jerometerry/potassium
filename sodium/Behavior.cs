@@ -4,9 +4,9 @@ namespace Sodium
 
     /// <summary>
     /// A Behavior is a time varying value. It starts with an initial value which 
-    /// gets updated as the underlying IObservable is fired.
+    /// gets updated as the underlying IObservable is published.
     /// </summary>
-    /// <typeparam name="T">The type of values that will be fired through the Behavior.</typeparam>
+    /// <typeparam name="T">The type of values that will be published through the Behavior.</typeparam>
     public class Behavior<T> : Observer<T>
     {
         private ValueContainer<T> valueContainer;
@@ -24,7 +24,7 @@ namespace Sodium
         /// <summary>
         /// Create a behavior with a time varying value from an Event and an initial value
         /// </summary>
-        /// <param name="source">The Event to listen for updates from</param>
+        /// <param name="source">The IObservable to listen for updates from</param>
         /// <param name="initValue">The initial value of the Behavior</param>
         public Behavior(IObservable<T> source, T initValue)
             : base(source)
@@ -37,7 +37,7 @@ namespace Sodium
         /// Sample the behavior's current value
         /// </summary>
         /// <remarks>
-        /// This should generally be avoided in favor of SubscribeAndFire(..) so you don't
+        /// This should generally be avoided in favor of SubscribeValues(..) so you don't
         /// miss any updates, but in many circumstances it makes sense.
         /// 
         /// Value is the value of the Behavior at the start of a Transaction
@@ -98,7 +98,7 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Lift a binary function into behaviors.
+        /// Lift a binary function into a Behavior.
         /// </summary>
         /// <typeparam name="TB">The type of the given Behavior</typeparam>
         /// <typeparam name="TC">The return type of the lift function.</typeparam>
@@ -109,11 +109,11 @@ namespace Sodium
         /// Behavior, and the lift function.</returns>
         public Behavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, Behavior<TB> behavior)
         {
-            return Transformer.Default.Lift(this, lift, behavior);
+            return Transformer.Default.Lift(lift, this, behavior);
         }
 
         /// <summary>
-        /// Lift a ternary function into behaviors.
+        /// Lift a ternary function into a Behavior.
         /// </summary>
         /// <typeparam name="TB">Type of Behavior b</typeparam>
         /// <typeparam name="TC">Type of Behavior c</typeparam>
@@ -126,7 +126,7 @@ namespace Sodium
         /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
         public Behavior<TD> Lift<TB, TC, TD>(Func<T, TB, TC, TD> lift, Behavior<TB> b, Behavior<TC> c)
         {
-            return Transformer.Default.Lift(this, lift, b, c);
+            return Transformer.Default.Lift(lift, this, b, c);
         }
 
         /// <summary>
@@ -143,9 +143,9 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Listen to the underlying event for updates, firing the current value of the Behavior immediately.
+        /// Listen to the underlying event for updates, publishing the current value of the Behavior immediately.
         /// </summary>
-        /// <param name="callback"> action to invoke when the underlying event fires</param>
+        /// <param name="callback"> action to invoke when the underlying event publishes</param>
         /// <returns>The event subscription</returns>
         public ISubscription<T> SubscribeValues(Action<T> callback)
         {

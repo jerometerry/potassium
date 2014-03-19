@@ -3,16 +3,16 @@
     using System;
 
     /// <summary>
-    /// Fire the mapped value once per transaction if either the source Behavior or Behavior Map fires.
+    /// Publish the mapped value once per transaction if either the source Behavior or Behavior Map publishes.
     /// </summary>
-    /// <typeparam name="T">The type of value fired through the source Behavior</typeparam>
+    /// <typeparam name="T">The type of value published through the source Behavior</typeparam>
     /// <typeparam name="TB">The return type of the Behavior Mapping functions</typeparam>
-    internal sealed class BehaviorApplyEvent<T, TB> : EventSink<TB>
+    internal sealed class BehaviorApplyEvent<T, TB> : EventPublisher<TB>
     {
         /// <summary>
-        /// Set to true when waiting for the Fire Priority Action to run.
+        /// Set to true when waiting for the Publish Priority Action to run.
         /// </summary>
-        private bool fired;
+        private bool published;
         private Behavior<T> source;
         private Behavior<Func<T, TB>> behaviorMap;
         
@@ -38,45 +38,45 @@
 
         private void SubscribeSource()
         {
-            var valueChanged = new Notification<T>((a, t) => this.ScheduleFire(t));
+            var valueChanged = new Notification<T>((a, t) => this.SchedulePublish(t));
             var subscription = source.Subscribe(valueChanged, this.Rank);
             this.Register(subscription);
         }
 
         private void SubscribeMap()
         {
-            var functionChanged = new Notification<Func<T, TB>>((f, t) => this.ScheduleFire(t));
+            var functionChanged = new Notification<Func<T, TB>>((f, t) => this.SchedulePublish(t));
             var subscription = behaviorMap.Subscribe(functionChanged, this.Rank);
             this.Register(subscription);
         }
 
         /// <summary>
-        /// Schedule prioritized firing on the given transaction
+        /// Schedule prioritized publishing on the given transaction
         /// </summary>
-        /// <param name="transaction">The transaction to fire the value on</param>
-        /// <returns>True if firing was added as a priority action on the given 
-        /// transaction, false if there is already an scheduled firing that 
-        /// is yet to fire.</returns>
-        private bool ScheduleFire(Transaction transaction)
+        /// <param name="transaction">The transaction to publish the value on</param>
+        /// <returns>True if publishing was added as a priority action on the given 
+        /// transaction, false if there is already an scheduled publishing that 
+        /// is yet to publish.</returns>
+        private bool SchedulePublish(Transaction transaction)
         {
-            if (fired)
+            if (published)
             {
                 return false;
             }
 
-            fired = true;
-            transaction.High(Fire, this.Rank);
+            published = true;
+            transaction.High(Publish, this.Rank);
             return true;
         }
 
-        private void Fire(Transaction transaction)
+        private void Publish(Transaction transaction)
         {
-            var value = this.GetValueToFire();
-            this.Fire(value, transaction);
-            fired = false;
+            var value = this.GetValueToPublish();
+            this.Publish(value, transaction);
+            published = false;
         }
 
-        private TB GetValueToFire()
+        private TB GetValueToPublish()
         {
             var map = this.behaviorMap.NewValue;
             var a = this.source.NewValue;

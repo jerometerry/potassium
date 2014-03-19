@@ -12,9 +12,9 @@
             Up
         }
 
-        private EventSink<MouseEventArgs> mouseMoveEvent;
+        private EventPublisher<MouseEventArgs> mouseMoveEvent;
         private Event<MouseEventArgs> mouseDragEvent;
-        private EventSink<MouseStatus> mouseButtonEvent;
+        private EventPublisher<MouseStatus> mouseButtonEvent;
         private Behavior<MouseStatus> mouseButtonBehavior;
         private Behavior<bool> mouseButtonDownBehavior;
         private static readonly CultureInfo ci = CultureInfo.InvariantCulture;
@@ -27,8 +27,8 @@
 
         private void InitializeMouseHandler()
         {
-            this.mouseButtonEvent = new EventSink<MouseStatus>();
-            this.mouseMoveEvent = new EventSink<MouseEventArgs>();
+            this.mouseButtonEvent = new EventPublisher<MouseStatus>();
+            this.mouseMoveEvent = new EventPublisher<MouseEventArgs>();
             this.mouseButtonBehavior = this.mouseButtonEvent.Hold(MouseStatus.Up);
             this.mouseButtonDownBehavior = this.mouseButtonBehavior.Map(s => s == MouseStatus.Down);
             this.mouseDragEvent = this.mouseMoveEvent.Gate(this.mouseButtonDownBehavior);
@@ -44,9 +44,9 @@
                 y.Text = t.Item2;
             });
 
-            MouseMove += (s, e) => this.mouseMoveEvent.Fire(e);
-            MouseDown += (s, e) => this.mouseButtonEvent.Fire(MouseStatus.Down);
-            MouseUp += (s, e) => this.mouseButtonEvent.Fire(MouseStatus.Up);
+            MouseMove += (s, e) => this.mouseMoveEvent.Publish(e);
+            MouseDown += (s, e) => this.mouseButtonEvent.Publish(MouseStatus.Down);
+            MouseUp += (s, e) => this.mouseButtonEvent.Publish(MouseStatus.Up);
         }
     }
 }

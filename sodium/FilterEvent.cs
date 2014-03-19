@@ -3,7 +3,7 @@ namespace Sodium
     using System;
     using System.Linq;
 
-    internal class FilterEvent<T> : SubscribeFireEvent<T>
+    internal class FilterEvent<T> : SubscribePublishEvent<T>
     {
         private IObservable<T> source;
         private Func<T, bool> f;
@@ -14,7 +14,7 @@ namespace Sodium
             this.source = source;
             this.f = f;
 
-            var callback = this.CreateFireCallback();
+            var callback = this.CreatePublishCallback();
             this.subscription = source.Subscribe(callback, this.Rank);
         }
 
@@ -36,13 +36,13 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Fire the event if the predicate evaluates to true
+        /// Publish the event if the predicate evaluates to true
         /// </summary>
         /// <param name="t"></param>
-        /// <param name="a"></param>
-        protected override bool Fire(T a, Transaction t)
+        /// <param name="value"></param>
+        protected override bool Publish(T value, Transaction t)
         {
-            return this.f(a) && base.Fire(a, t);
+            return this.f(value) && base.Publish(value, t);
         }
 
         protected override void Dispose(bool disposing)

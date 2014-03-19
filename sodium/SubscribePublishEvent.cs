@@ -1,18 +1,18 @@
 namespace Sodium
 {
     /// <summary>
-    /// SubscribeFireEvent is an Event that fires some initial values 
+    /// SubscribePublishEvent is an Event that publishes some initial values 
     /// when subscribed to.
     /// </summary>
-    /// <typeparam name="T">The type of values fired through the Event</typeparam>
-    /// <remarks>Used by Behavior to support firing of initial values of the Behavior</remarks>
-    internal abstract class SubscribeFireEvent<T> : SubscribeRefireEvent<T>
+    /// <typeparam name="T">The type of values published through the Event</typeparam>
+    /// <remarks>Used by Behavior to support publishing of initial values of the Behavior</remarks>
+    internal abstract class SubscribePublishEvent<T> : SubscribeRepublishEvent<T>
     {
         /// <summary>
         /// Gets the values that will be sent to newly added
         /// </summary>
-        /// <returns>An Array of values that will be fired to all registered subscriptions</returns>
-        /// <remarks>InitialFirings is used to support initial firings of behaviors when 
+        /// <returns>An Array of values that will be published to all registered subscriptions</returns>
+        /// <remarks>InitialFirings is used to support initial publishings of behaviors when 
         /// the underlying event is subscribed to</remarks>
         public virtual T[] SubscriptionFirings()
         {
@@ -21,12 +21,12 @@ namespace Sodium
 
         internal static TF[] GetSubscribeFirings<TF>(IObservable<TF> source)
         {
-            var sink = source as SubscribeFireEvent<TF>;
+            var sink = source as SubscribePublishEvent<TF>;
             return sink == null ? null : sink.SubscriptionFirings();
         }
 
         /// <summary>
-        /// Fires the initial subscription firings to the newly created subscription
+        /// Publishes the initial subscription publishings to the newly created subscription
         /// </summary>
         /// <param name="subscription">The newly created subscription</param>
         /// <param name="transaction">The current transaction</param>

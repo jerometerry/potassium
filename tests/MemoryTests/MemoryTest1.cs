@@ -14,7 +14,7 @@ namespace Sodium.MemoryTests
 
             var behaviorMapFinalizers = new List<IDisposable>();
 
-            var evt = new EventSink<int?>();
+            var evt = new EventPublisher<int?>();
             finalizers.Add(evt);
 
             var behavior = evt.Hold(0);
@@ -53,7 +53,7 @@ namespace Sodium.MemoryTests
 
             while (i < iterations)
             {
-                evt.Fire(i);
+                evt.Publish(i);
                 i++;
             }
 

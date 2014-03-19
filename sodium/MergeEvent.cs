@@ -2,7 +2,7 @@ namespace Sodium
 {
     using System.Linq;
 
-    internal sealed class MergeEvent<T> : SubscribeFireEvent<T>
+    internal sealed class MergeEvent<T> : SubscribePublishEvent<T>
     {
         private IObservable<T> source1;
         private IObservable<T> source2;
@@ -14,7 +14,7 @@ namespace Sodium
             this.source1 = source1;
             this.source2 = source2;
 
-            var callback = this.CreateFireCallback();
+            var callback = this.CreatePublishCallback();
             l1 = source1.Subscribe(callback, this.Rank);
             l2 = source2.Subscribe(callback, this.Rank);
         }

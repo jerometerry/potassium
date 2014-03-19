@@ -3,7 +3,7 @@ namespace Sodium
     using System;
     using System.Linq;
 
-    internal sealed class SnapshotEvent<T, TB, TC> : SubscribeFireEvent<TC>
+    internal sealed class SnapshotEvent<T, TB, TC> : SubscribePublishEvent<TC>
     {
         private IObservable<T> source;
         private Func<T, TB, TC> snapshot;
@@ -16,15 +16,15 @@ namespace Sodium
             this.snapshot = snapshot;
             this.behavior = behavior;
 
-            var callback = new Notification<T>(this.Fire);
+            var callback = new Notification<T>(this.Publish);
             this.subscription = source.Subscribe(callback, this.Rank);
         }
 
-        public void Fire(T firing, Transaction transaction)
+        public void Publish(T publishing, Transaction transaction)
         {
             var f = this.behavior.Value;
-            var v = this.snapshot(firing, f);
-            this.Fire(v, transaction);
+            var v = this.snapshot(publishing, f);
+            this.Publish(v, transaction);
         }
 
         public override TC[] SubscriptionFirings()

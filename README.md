@@ -42,68 +42,68 @@ Here's a code snippit for listeneing to a Behavior of int's.
     var l = b.Listen(v => Console.Write("{0} ", v));
 ``` 
 
-**EventSink** - EventSink is an Event that can be fired (the name of the firing method in Sodium is *Send*).
+**EventPublisher** - EventPublisher is an Event that can be published (the name of the publishing method in Sodium is *Send*).
 
-Here's an example of creating an EventSink, and sending (aka firing) a value to all registered listeners.
+Here's an example of creating an EventPublisher, and sending (aka publishing) a value to all registered listeners.
 ```
-    var e = new EventSink<int>();
+    var e = new EventPublisher<int>();
     ... // register listeners
     e.Send(0);
 ```
 
-**BehaviorSink** - BehaviorSink is a Behavior that can be fired
+**BehaviorPublisher** - BehaviorPublisher is a Behavior that can be published
 
-Here's an example of constructing a BehaviorSink with an initial value of zero, and seding it a new value of one,  after some operations that register listeners.
+Here's an example of constructing a BehaviorPublisher with an initial value of zero, and sending it a new value of one,  after some operations that register listeners.
 ```
-    var b = new BehaviorSink<int>(0);
+    var b = new BehaviorPublisher<int>(0);
     ... // register listeners
     b.Send(1);
 ```
 
-**EventLoop** - EventLoop is an EventSink that listenes another Event for firings, and fires the same value on itself, known as looping. 
+**EventLoop** - EventLoop is an EventPublisher that listens to another Event for publishings, and publishes the same value on itself, known as looping. 
 
 Below is a basic example of using the EventLoop. Firing happens on *e*, which triggers the callback on *loop*, writing the value to the console.
 ```
-    var e = new EventSink<int>(); 
+    var e = new EventPublisher<int>(); 
     var loop = new EventLoop<int>();
     loop.Loop(e);
     var l = loop.Listen(v => Console.Write("{0} ", v);
-    e.Fire(0);
+    e.Publish(0);
 ```
 
-**BehaviorLoop** - BehaviorLoop loops firings from one Behavior to another, similar to EventLoop (internally, Behavior just calls the EventLoop.Loop method).
+**BehaviorLoop** - BehaviorLoop loops publishings from one Behavior to another, similar to EventLoop (internally, Behavior just calls the EventLoop.Loop method).
 
 Below is a basic example of using the BehaviorLoop. Firing happens on *b*, which triggers the callback on *loop*, writing the value to the console.
 ```
-    var b = new BehaviorSink<int>(0);
+    var b = new BehaviorPublisher<int>(0);
     var loop = new BehaviorLoop<int>();
     loop.Loop(b);
     var l = loop.Listen(v => Console.Write("{0} ", v);
-    e.Fire(1);
+    e.Publish(1);
 ```
 
 Key Operations
 ==========
 
-**Hold** - A Hold is an operation on an Event given an initial value, that creates a Behavior with the initial value that updates whenever the Event fires.
+**Hold** - A Hold is an operation on an Event given an initial value, that creates a Behavior with the initial value that updates whenever the Event publishes.
 
 **Map** - A map is the process of converting an Event or Behavior from one type to another, by supplying a mapping function.
 
-**Filter** - Filtering is the process of throwing away any firings from source Events that don't evaluate to true through a given filter predicate.
+**Filter** - Filtering is the process of throwing away any publishings from source Events that don't evaluate to true through a given filter predicate.
 
 **Gate** - Gating is the process of now allowing Firing values that don't evaluate to true through a given gate predicate.
 
 **Merge** - Merging is the process of combining two Events of the same type into a single Event, using a coalesce (combining) function.
 
-**Snapshot** - Snapshot is the process of sampling a Behaviors value at the time of an Event firing, and producing a value (a snapshot) by passing the value of the Behavior at the time of the firing and the value fired on the Event into a snapshot function.
+**Snapshot** - Snapshot is the process of sampling a Behaviors value at the time of an Event publishing, and producing a value (a snapshot) by passing the value of the Behavior at the time of the publishing and the value published on the Event into a snapshot function.
 
 **Apply** - Apply is the process of taking a Behavior and a Behavior of mapping functions, to produce of a new Behavior of the return type of the mapping function inside the Behavior. This is the primitive for Behavior lifting.
 
 **Lift** - Lifting is the process of taking a multi-valued function (2 or 3 valued functions in Sodium), along with Behaviors for each value of the function, and creating a new Behavior that is computed by evaluating the function with the current values of each of the Behaviors values.
 
-A lifted Behavior has the property that if any of the input Behaviors are modified simultaneously, the lifted Behavior should fire only once.
+A lifted Behavior has the property that if any of the input Behaviors are modified simultaneously, the lifted Behavior should publish only once.
 
-**Lift Glitch** - A lift glitch occurs if a lifted Behavior fires multiple times in response to simultaneous updates of it's input Behaviors.
+**Lift Glitch** - A lift glitch occurs if a lifted Behavior publishes multiple times in response to simultaneous updates of it's input Behaviors.
 
 **Coalesce** - Coalesce is the process of combining several simultaneous values into a single value. 
 
@@ -111,9 +111,9 @@ A lifted Behavior has the property that if any of the input Behaviors are modifi
 
 **Transaction** - A Transaction is used to provide the concept of simultaneous Events. 
 
-In Sodium, only one Transaction can be open at a time. A Transaction is requested when registering a listener, or when firing a value. A Transaction is closed when the initial request that created the Transaction completes. 
+In Sodium, only one Transaction can be open at a time. A Transaction is requested when registering a listener, or when publishing a value. A Transaction is closed when the initial request that created the Transaction completes. 
 
-Firing and listening can cause a chain reaction of operations that may cause other firing and listening operations. This chain of operations will all execute inside the same Transaction. 
+Firing and listening can cause a chain reaction of operations that may cause other publishing and listening operations. This chain of operations will all execute inside the same Transaction. 
 
 Once a Transaction has been opened, actions can be added to it, using the High, Medium and Low methods. 
 
@@ -168,7 +168,7 @@ Event Examples
 
 **Echo**
 ```
-    var e = new EventSink<int>();
+    var e = new EventPublisher<int>();
     var l = e.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
         e.Send(i);
@@ -183,7 +183,7 @@ Event Examples
 
 **Map**
 ```
-    var e = new EventSink<int>();
+    var e = new EventPublisher<int>();
     var m = e.Map(v => v.ToString());
     var l = m.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
@@ -199,8 +199,8 @@ Event Examples
 
 **Merge**
 ```
-    var e1 = new EventSink<int>();
-    var e2 = new EventSink<int>();
+    var e1 = new EventPublisher<int>();
+    var e2 = new EventPublisher<int>();
     var m = e1.Merge(e2);
     var l = m.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 10; i++) {
@@ -223,7 +223,7 @@ Event Examples
 
 **Filter**
 ```
-    var e = new EventSink<char>();
+    var e = new EventPublisher<char>();
     var f = e.Filter(c => char.IsUpper(c));
     var l = f.Listen(v => Console.Write("{0} ", v));
     e.Send('H');
@@ -241,7 +241,7 @@ Behavior Examples
 
 **Echo**
 ```
-    var b = new BehaviorSink<int>(0);
+    var b = new BehaviorPublisher<int>(0);
     var l = b.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
         b.Send(i);
@@ -255,7 +255,7 @@ Behavior Examples
 
 **Hold**
 ```
-    var e = new EventSink<int>();
+    var e = new EventPublisher<int>();
     var b = e.Hold(0);
     var l = b.Listen(v => Console.Write("{0} ", v));
     for (var i = 1; i <= 5; i++) 
@@ -271,7 +271,7 @@ Behavior Examples
 
 **Values**
 ```
-    var e = new EventSink<int>();
+    var e = new EventPublisher<int>();
     var b = e.Hold(0);
     var v = b.Values();
     var l = v.Listen(v => Console.Write("{0} ", v));

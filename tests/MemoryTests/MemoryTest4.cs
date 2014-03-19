@@ -8,7 +8,7 @@ namespace Sodium.MemoryTests
         [TestCase(1000000000)]
         public void Test(int iterations)
         {
-            var evt = new EventSink<int>();
+            var evt = new EventPublisher<int>();
             Event<int> nestedEvent = new Event<int>();
             var behaviorOfEvents = evt.Map(x => nestedEvent).Hold(nestedEvent);
             var observable = Transformer.Default.SwitchE(behaviorOfEvents);
@@ -16,7 +16,7 @@ namespace Sodium.MemoryTests
             var i = 0;
             while (i < iterations)
             {
-                evt.Fire(i);
+                evt.Publish(i);
                 i++;
             }
 

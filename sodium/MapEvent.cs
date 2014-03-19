@@ -3,7 +3,7 @@
     using System;
     using System.Linq;
 
-    internal sealed class MapEvent<T, TB> : SubscribeFireEvent<TB>
+    internal sealed class MapEvent<T, TB> : SubscribePublishEvent<TB>
     {
         private IObservable<T> source;
         private Func<T, TB> map;
@@ -13,24 +13,24 @@
         {
             this.source = source;
             this.map = map;
-            this.subscription = source.Subscribe(new Notification<T>(this.Fire), this.Rank);
+            this.subscription = source.Subscribe(new Notification<T>(this.Publish), this.Rank);
         }
 
-        public void Fire(T firing, Transaction trans)
+        public void Publish(T publishing, Transaction trans)
         {
-            var v = this.map(firing);
-            this.Fire(v, trans);
+            var v = this.map(publishing);
+            this.Publish(v, trans);
         }
 
         public override TB[] SubscriptionFirings()
         {
-            var firings = GetSubscribeFirings(source);
-            if (firings == null)
+            var publishings = GetSubscribeFirings(source);
+            if (publishings == null)
             { 
                 return null;
             }
 
-            return firings.Select(e => map(e)).ToArray();
+            return publishings.Select(e => map(e)).ToArray();
         }
 
         protected override void Dispose(bool disposing)

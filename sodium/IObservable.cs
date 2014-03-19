@@ -5,27 +5,27 @@ namespace Sodium
     /// <summary>
     /// IObservable is the interface for Observable objects (Events and Behaviors) in Sodium.net
     /// </summary>
-    /// <typeparam name="T">The type of value fired through the IObservable</typeparam>
+    /// <typeparam name="T">The type of value published through the IObservable</typeparam>
     public interface IObservable<T> : IDisposable
     {
         /// <summary>
-        /// Listen for firings of this event.
+        /// Listen for publishings of this event.
         /// </summary>
-        /// <param name="callback">An Action to be invoked when the current Event fires.</param>
+        /// <param name="callback">An Action to be invoked when the current Event publishes.</param>
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
         ISubscription<T> Subscribe(Action<T> callback);
 
         /// <summary>
-        /// Listen for firings of this event.
+        /// Listen for publishings of this event.
         /// </summary>
-        /// <param name="callback">An Action to be invoked when the current Event fires.</param>
+        /// <param name="callback">An Action to be invoked when the current Event publishes.</param>
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
         ISubscription<T> Subscribe(INotification<T> callback);
 
         /// <summary>
-        /// Listen for firings on the current event
+        /// Listen for publishings on the current event
         /// </summary>
-        /// <param name="callback">The action to invoke on a firing</param>
+        /// <param name="callback">The action to invoke on a publishing</param>
         /// <param name="subscriptionRank">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An ISubscription to be used to stop listening for events</returns>
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
@@ -34,13 +34,13 @@ namespace Sodium
         ISubscription<T> Subscribe(INotification<T> callback, Rank subscriptionRank);
 
         /// <summary>
-        /// Listen for firings on the current event
+        /// Listen for publishings on the current event
         /// </summary>
-        /// <param name="transaction">Transaction to send any firings on</param>
-        /// <param name="callback">The action to invoke on a firing</param>
+        /// <param name="transaction">Transaction to send any publishings on</param>
+        /// <param name="callback">The action to invoke on a publishing</param>
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An ISubscription to be used to stop listening for events.</returns>
-        /// <remarks>Any firings that have occurred on the current transaction will be re-fired immediate after subscribing.</remarks>
+        /// <remarks>Any publishings that have occurred on the current transaction will be re-published immediate after subscribing.</remarks>
         ISubscription<T> Subscribe(INotification<T> callback, Rank superior, Transaction transaction);
 
         /// <summary>

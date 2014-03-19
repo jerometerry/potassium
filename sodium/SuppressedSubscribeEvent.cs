@@ -7,7 +7,7 @@
             this.Loop(source);
         }
 
-        protected override bool Refire(ISubscription<T> subscription, Transaction transaction)
+        protected override bool Republish(ISubscription<T> subscription, Transaction transaction)
         {
             return false;
         }

@@ -1,9 +1,9 @@
 ﻿namespace Sodium
 {
     /// <summary>
-    /// A Behavior who's value never changes, even if fired new values.
+    /// A Behavior who's value never changes, even if published new values.
     /// </summary>
-    /// <typeparam name="T">The type of values fired through the Behavior</typeparam>
+    /// <typeparam name="T">The type of values published through the Behavior</typeparam>
     public class ConstantBehavior<T> : Behavior<T>
     {
         /// <summary>

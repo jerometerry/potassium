@@ -4,13 +4,13 @@ namespace Sodium
 
     /// <summary>
     /// ISubscription is the return value of Event.Subscribe, and is used to stop 
-    /// the Event from firing the action that was passed to the Listen method.
+    /// the Event from publishing the action that was passed to the Listen method.
     /// </summary>
-    /// <typeparam name="T">The type of values that are fired through the event being subscribed to.</typeparam>
+    /// <typeparam name="T">The type of values that are published through the event being subscribed to.</typeparam>
     public interface ISubscription<T> : IDisposable
     {
         /// <summary>
-        /// The notification that will be sent when the subscribed Observable fires
+        /// The notification that will be sent when the subscribed Observable publishes
         /// </summary>
         INotification<T> Notification { get; }
 

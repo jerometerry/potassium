@@ -83,7 +83,7 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Clean up the current Transaction, purging any actions without firing
+        /// Clean up the current Transaction, purging any actions without publishing
         /// </summary>
         protected override void Dispose(bool disposing)
         {
