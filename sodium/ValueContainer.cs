@@ -113,7 +113,7 @@ namespace Sodium
         /// <returns>The ISubscription registered with the underlying event.</returns>
         private ISubscription<T> Subscribe(Transaction transaction)
         {
-            var callback = new SodiumCallback<T>(this.ScheduleApplyValueUpdate);
+            var callback = new Notification<T>(this.ScheduleApplyValueUpdate);
             var result = this.source.Subscribe(callback, Rank.Highest, transaction);
             return result;
         }

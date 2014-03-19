@@ -19,6 +19,44 @@
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="subscription"></param>
+        /// <param name="values"></param>
+        /// <param name="transaction"></param>
+        protected static void NotifySubscriber(ISubscription<T> subscription, ICollection<T> values, Transaction transaction)
+        {
+            if (values == null || values.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var value in values)
+            {
+                NotifySubscriber(value, subscription, transaction);
+            }
+        }
+
+        protected static void NotifySubscriber(T value, ISubscription<T> subscription, Transaction transaction)
+        {
+            subscription.Notification.Send(value, transaction);
+        }
+
+        /// <summary>
+        /// Fire the given value to all subscribers
+        /// </summary>
+        /// <param name="value">The value to fire</param>
+        /// <param name="transaction">The current transaction</param>
+        protected void NotifySubscribers(T value, Transaction transaction)
+        {
+            var clone = this.Subscriptions.ToArray();
+            foreach (var subscription in clone)
+            {
+                NotifySubscriber(value, subscription, transaction);
+            }
+        }
+
+        /// <summary>
         /// Fire the given value to all registered callbacks
         /// </summary>
         /// <param name="transaction">The transaction to invoke the callbacks on</param>
@@ -32,43 +70,10 @@
         /// <summary>
         /// Creates a callback that calls the Fire method on the current Event when invoked
         /// </summary>
-        /// <returns>In ISodiumCallback that calls Fire, when invoked.</returns>
-        protected ISodiumCallback<T> CreateFireCallback()
+        /// <returns>In INotification that calls Fire, when invoked.</returns>
+        protected INotification<T> CreateFireCallback()
         {
-            return new SodiumCallback<T>((t, v) => this.Fire(t, v));
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="transaction"></param>
-        protected void NotifySubscribers(T value, Transaction transaction)
-        {
-            var clone = this.Subscriptions.ToArray();
-            foreach (var subscription in clone)
-            {
-                subscription.Callback.Invoke(value, subscription, transaction);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="subscription"></param>
-        /// <param name="values"></param>
-        /// <param name="transaction"></param>
-        protected void NotifySubscriber(ISubscription<T> subscription, ICollection<T> values, Transaction transaction)
-        {
-            if (values == null || values.Count == 0)
-            {
-                return;
-            }
-
-            foreach (var value in values)
-            {
-                subscription.Callback.Invoke(value, subscription, transaction);
-            }
+            return new Notification<T>((t, v) => this.Fire(t, v));
         }
     }
 }

@@ -13,9 +13,9 @@ namespace Sodium
     public interface ISubscription<T> : IDisposable
     {
         /// <summary>
-        /// The callback that will be invoked when the subscribed Observable fires
+        /// The notification that will be sent when the subscribed Observable fires
         /// </summary>
-        ISodiumCallback<T> Callback { get; }
+        INotification<T> Notification { get; }
 
         /// <summary>
         /// Gets the Event the current ISubscription is listening to

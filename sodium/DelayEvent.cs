@@ -6,7 +6,7 @@
 
         public DelayEvent(IObservable<T> source)
         {
-            var callback = new SodiumCallback<T>((a, t) => t.Low(() => this.Fire(a)));
+            var callback = new Notification<T>((a, t) => t.Low(() => this.Fire(a)));
             this.subscription = source.Subscribe(callback, this.Rank);
         }
 

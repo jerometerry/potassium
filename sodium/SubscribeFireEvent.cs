@@ -6,7 +6,7 @@ namespace Sodium
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Event</typeparam>
     /// <remarks>Used by Behavior to support firing of initial values of the Behavior</remarks>
-    internal abstract class SubscribeFireEvent<T> : RefireEvent<T>
+    internal abstract class SubscribeFireEvent<T> : SubscribeRefireEvent<T>
     {
         /// <summary>
         /// Gets the values that will be sent to newly added
@@ -26,14 +26,14 @@ namespace Sodium
         }
 
         /// <summary>
-        /// 
+        /// Fires the initial subscription firings to the newly created subscription
         /// </summary>
-        /// <param name="subscription"></param>
-        /// <param name="transaction"></param>
+        /// <param name="subscription">The newly created subscription</param>
+        /// <param name="transaction">The current transaction</param>
         protected override void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
         {
             var values = this.SubscriptionFirings();
-            this.NotifySubscriber(subscription, values, transaction);
+            NotifySubscriber(subscription, values, transaction);
             base.OnSubscribe(subscription, transaction);
         }
     }

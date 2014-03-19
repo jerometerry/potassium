@@ -12,7 +12,7 @@ namespace Sodium
             // This is a bit long-winded but it's efficient because it de-registers
             // the subscription.
             this.subscriptions = new ISubscription<T>[1];
-            this.subscriptions[0] = source.Subscribe(new SodiumCallback<T>((a, t) => this.Fire(this.subscriptions, a, t)), this.Rank);
+            this.subscriptions[0] = source.Subscribe(new Notification<T>((a, t) => this.Fire(this.subscriptions, a, t)), this.Rank);
         }
 
         public override T[] SubscriptionFirings()

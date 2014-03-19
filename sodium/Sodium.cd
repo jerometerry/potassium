@@ -204,11 +204,11 @@
       <FileName>Snapshot.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Sodium.SodiumCallback&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Sodium.Notification&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="49.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>SodiumCallback.cs</FileName>
+      <FileName>Notification.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
@@ -332,11 +332,11 @@
       <FileName>IObservable.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Sodium.ISodiumCallback&lt;T&gt;" Collapsed="true">
+  <Interface Name="Sodium.INotification&lt;T&gt;" Collapsed="true">
     <Position X="45.75" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ISodiumCallback.cs</FileName>
+      <FileName>INotification.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Sodium.ISubscription&lt;T&gt;" Collapsed="true">

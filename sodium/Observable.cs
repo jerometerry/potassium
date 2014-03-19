@@ -50,7 +50,7 @@
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
         public ISubscription<T> Subscribe(Action<T> callback)
         {
-            return this.Subscribe(new SodiumCallback<T>((a, t) => callback(a)), Rank.Highest);
+            return this.Subscribe(new Notification<T>((a, t) => callback(a)), Rank.Highest);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@
         /// </summary>
         /// <param name="callback">An Action to be invoked when the current Event fires.</param>
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
-        public ISubscription<T> Subscribe(ISodiumCallback<T> callback)
+        public ISubscription<T> Subscribe(INotification<T> callback)
         {
             return this.Subscribe(callback, Rank.Highest);
         }
@@ -72,7 +72,7 @@
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Subscribe operation that takes a thread. This ensures that any other
         /// actions triggered during Subscribe requiring a transaction all get the same instance.</remarks>
-        public ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank subscriptionRank)
+        public ISubscription<T> Subscribe(INotification<T> callback, Rank subscriptionRank)
         {
             return this.StartTransaction(t => this.Subscribe(callback, subscriptionRank, t));
         }
@@ -85,7 +85,7 @@
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An ISubscription to be used to stop listening for events.</returns>
         /// <remarks>Any firings that have occurred on the current transaction will be re-fired immediate after subscribing.</remarks>
-        public ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank superior, Transaction transaction)
+        public ISubscription<T> Subscribe(INotification<T> callback, Rank superior, Transaction transaction)
         {
             return this.CreateSubscription(callback, superior, transaction);
         }
@@ -112,10 +112,10 @@
         }
 
         /// <summary>
-        /// 
+        /// Performs additional steps during the subscription process
         /// </summary>
-        /// <param name="subscription"></param>
-        /// <param name="transaction"></param>
+        /// <param name="subscription">The newly created subscription</param>
+        /// <param name="transaction">The current transaction</param>
         protected virtual void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
         {
         }
@@ -135,7 +135,7 @@
             base.Dispose(disposing);
         }
 
-        private ISubscription<T> CreateSubscription(ISodiumCallback<T> source, Rank superior, Transaction transaction)
+        private ISubscription<T> CreateSubscription(INotification<T> callback, Rank superior, Transaction transaction)
         {
             Subscription<T> subscription;
             lock (Constants.SubscriptionLock)
@@ -145,7 +145,7 @@
                     transaction.Reprioritize = true;
                 }
 
-                subscription = new Subscription<T>(this, source, superior);
+                subscription = new Subscription<T>(this, callback, superior);
                 this.Subscriptions.Add(subscription);
             }
 

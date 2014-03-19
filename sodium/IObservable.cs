@@ -6,7 +6,7 @@ namespace Sodium
     /// IObservable is the interface for Observable objects (Events and Behaviors) in Sodium.net
     /// </summary>
     /// <typeparam name="T">The type of value fired through the IObservable</typeparam>
-    public interface IObservable<T>  : IDisposable
+    public interface IObservable<T> : IDisposable
     {
         /// <summary>
         /// Listen for firings of this event.
@@ -20,7 +20,7 @@ namespace Sodium
         /// </summary>
         /// <param name="callback">An Action to be invoked when the current Event fires.</param>
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
-        ISubscription<T> Subscribe(ISodiumCallback<T> callback);
+        ISubscription<T> Subscribe(INotification<T> callback);
 
         /// <summary>
         /// Listen for firings on the current event
@@ -31,7 +31,7 @@ namespace Sodium
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Subscribe operation that takes a thread. This ensures that any other
         /// actions triggered during Subscribe requiring a transaction all get the same instance.</remarks>
-        ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank subscriptionRank);
+        ISubscription<T> Subscribe(INotification<T> callback, Rank subscriptionRank);
 
         /// <summary>
         /// Listen for firings on the current event
@@ -41,7 +41,7 @@ namespace Sodium
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An ISubscription to be used to stop listening for events.</returns>
         /// <remarks>Any firings that have occurred on the current transaction will be re-fired immediate after subscribing.</remarks>
-        ISubscription<T> Subscribe(ISodiumCallback<T> callback, Rank superior, Transaction transaction);
+        ISubscription<T> Subscribe(INotification<T> callback, Rank superior, Transaction transaction);
 
         /// <summary>
         /// Stop the given subscription from receiving updates from the current Event

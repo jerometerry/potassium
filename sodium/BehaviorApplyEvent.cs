@@ -38,14 +38,14 @@
 
         private void SubscribeSource()
         {
-            var valueChanged = new SodiumCallback<T>((a, t) => this.ScheduleFire(t));
+            var valueChanged = new Notification<T>((a, t) => this.ScheduleFire(t));
             var subscription = source.Subscribe(valueChanged, this.Rank);
             this.Register(subscription);
         }
 
         private void SubscribeMap()
         {
-            var functionChanged = new SodiumCallback<Func<T, TB>>((f, t) => this.ScheduleFire(t));
+            var functionChanged = new Notification<Func<T, TB>>((f, t) => this.ScheduleFire(t));
             var subscription = behaviorMap.Subscribe(functionChanged, this.Rank);
             this.Register(subscription);
         }

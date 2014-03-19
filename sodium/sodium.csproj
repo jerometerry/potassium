@@ -67,7 +67,7 @@
     <Compile Include="CoalesceEvent.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="PrioritizedAction.cs" />
-    <Compile Include="RefireEvent.cs" />
+    <Compile Include="SubscribeRefireEvent.cs" />
     <Compile Include="SuppressedSubscribeEvent.cs" />
     <Compile Include="SwitchBehaviorEvent.cs" />
     <Compile Include="FilterEvent.cs" />
@@ -93,10 +93,10 @@
     <Compile Include="Rank.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ISodiumCallback.cs" />
+    <Compile Include="INotification.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SodiumCallback.cs" />
+    <Compile Include="Notification.cs" />
     <Compile Include="TransactionContext.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>

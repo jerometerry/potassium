@@ -4,11 +4,11 @@ namespace Sodium
     using System.Linq;
 
     /// <summary>
-    /// RefireEvent is an Event that refires values that have been fired in the current
+    /// SubscribeRefireEvent is an Event that refires values that have been fired in the current
     /// Transaction when subscribed to.
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Event</typeparam>
-    public abstract class RefireEvent<T> : EventSink<T>
+    public abstract class SubscribeRefireEvent<T> : EventSink<T>
     {
         /// <summary>
         /// List of values that have been fired on the current Event in the current transaction.
@@ -18,11 +18,12 @@ namespace Sodium
         private readonly List<T> firings = new List<T>();
 
         /// <summary>
-        /// 
+        /// Fire the given value to all registered callbacks, and stores the firing 
+        /// to be refired to any subscribers in the same transaction.
         /// </summary>
-        /// <param name="firing"></param>
-        /// <param name="transaction"></param>
-        /// <returns></returns>
+        /// <param name="transaction">The transaction to invoke the callbacks on</param>
+        /// <param name="firing">The value to fire to registered callbacks</param>
+        /// <remarks>Overrides EventSink.Fire</remarks>
         protected override bool Fire(T firing, Transaction transaction)
         {
             this.ScheduleClearFirings(transaction);
@@ -40,15 +41,15 @@ namespace Sodium
         protected virtual bool Refire(ISubscription<T> subscription, Transaction transaction)
         {
             var values = this.firings;
-            this.NotifySubscriber(subscription, values, transaction);
+            NotifySubscriber(subscription, values, transaction);
             return true;
         }
 
         /// <summary>
-        /// 
+        /// Refires any values fired in the current transaction to the given subscription
         /// </summary>
-        /// <param name="subscription"></param>
-        /// <param name="transaction"></param>
+        /// <param name="subscription">The newly created subscription</param>
+        /// <param name="transaction">The current transaction</param>
         protected override void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
         {
             this.Refire(subscription, transaction);
