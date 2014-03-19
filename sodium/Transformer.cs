@@ -30,7 +30,7 @@ namespace Sodium
         /// <param name="snapshot">The snapshot generation function</param>
         /// <returns>A new Behavior starting with the given value, that updates 
         /// whenever the current event fires, getting a value computed by the snapshot function.</returns>
-        public IBehavior<TS> Accum<T, TS>(IObservable<T> source, TS initState, Func<T, TS, TS> snapshot)
+        public Behavior<TS> Accum<T, TS>(IObservable<T> source, TS initState, Func<T, TS, TS> snapshot)
         {
             var evt = new EventLoop<TS>();
             var behavior = Hold(evt, initState);
@@ -55,7 +55,7 @@ namespace Sodium
         /// <param name="source">The source behavior</param>
         /// <param name="bf">Behavior of functions that maps from T -> TB</param>
         /// <returns>The new applied Behavior</returns>
-        public IBehavior<TB> Apply<T, TB>(IBehavior<T> source, IBehavior<Func<T, TB>> bf)
+        public Behavior<TB> Apply<T, TB>(Behavior<T> source, Behavior<Func<T, TB>> bf)
         {
             var evt = new BehaviorApplyEvent<T, TB>(source, bf);
             var map = bf.Value;
@@ -81,7 +81,7 @@ namespace Sodium
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
         /// </remarks>
-        public IEvent<T> Coalesce<T>(IObservable<T> source, Func<T, T, T> coalesce)
+        public Event<T> Coalesce<T>(IObservable<T> source, Func<T, T, T> coalesce)
         {
             return this.StartTransaction(t => new CoalesceEvent<T>(source, coalesce, t));
         }
@@ -97,7 +97,7 @@ namespace Sodium
         /// <param name="initState">The initial state for the internal Behavior</param>
         /// <param name="snapshot">The mealy machine</param>
         /// <returns>An Event that collects new values</returns>
-        public IEvent<TB> Collect<T, TB, TS>(IObservable<T> source, TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
+        public Event<TB> Collect<T, TB, TS>(IObservable<T> source, TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             return new CollectEvent<T, TB, TS>(source, initState, snapshot);
         }
@@ -113,7 +113,7 @@ namespace Sodium
         /// <param name="initState">Value to pass to the snapshot function</param>
         /// <param name="snapshot">Snapshot function</param>
         /// <returns>A new Behavior that collects values of type TB</returns>
-        public IBehavior<TB> Collect<T, TB, TS>(IBehavior<T> source, TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
+        public Behavior<TB> Collect<T, TB, TS>(Behavior<T> source, TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             var coalesceEvent = Coalesce(source.Source, (a, b) => b);
             var currentValue = source.Value;
@@ -139,7 +139,7 @@ namespace Sodium
         /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="source">The source Event</param>
         /// <returns>An event that is fired with the lowest priority in the current Transaction the current Event is fired in.</returns>
-        public IEvent<T> Delay<T>(IObservable<T> source)
+        public Event<T> Delay<T>(IObservable<T> source)
         {
             return new DelayEvent<T>(source);
         }
@@ -152,7 +152,7 @@ namespace Sodium
         /// <param name="predicate">A predicate used to include firings</param>
         /// <returns>A new Event that is fired when the current Event fires and
         /// the predicate evaluates to true.</returns>
-        public IEvent<T> Filter<T>(IObservable<T> source, Func<T, bool> predicate)
+        public Event<T> Filter<T>(IObservable<T> source, Func<T, bool> predicate)
         {
             return new FilterEvent<T>(source, predicate);
         }
@@ -165,7 +165,7 @@ namespace Sodium
         /// <returns>A new Event that fires whenever the current Event fires with a non-null value</returns>
         /// <remarks>For value types, comparison against null will always be false. 
         /// FilterNotNull will not filter out any values for value types.</remarks>
-        public IEvent<T> FilterNotNull<T>(IObservable<T> source)
+        public Event<T> FilterNotNull<T>(IObservable<T> source)
         {
             return new NotNullFilterEvent<T>(source);
         }
@@ -180,7 +180,7 @@ namespace Sodium
         /// <param name="predicate">A behavior who's current value acts as a predicate</param>
         /// <returns>A new Event that fires whenever the current Event fires and the Behaviors value
         /// is true.</returns>
-        public IEvent<T> Gate<T>(IObservable<T> source, IValue<bool> predicate)
+        public Event<T> Gate<T>(IObservable<T> source, Behavior<bool> predicate)
         {
             return new GateEvent<T>(source, predicate);
         }
@@ -197,7 +197,7 @@ namespace Sodium
         /// <param name="initValue">The initial value for the Behavior</param>
         /// <returns>A Behavior that updates when the current event is fired,
         /// having the specified initial value.</returns>
-        public IBehavior<T> Hold<T>(IObservable<T> source, T initValue)
+        public Behavior<T> Hold<T>(IObservable<T> source, T initValue)
         {
             return this.StartTransaction(t => Hold(source, initValue, t));
         }
@@ -209,7 +209,7 @@ namespace Sodium
         /// <param name="initValue">The initial value of the Behavior</param>
         /// <param name="t">The Transaction to perform the Hold</param>
         /// <returns>The Behavior with the given value</returns>
-        public IBehavior<T> Hold<T>(IObservable<T> source, T initValue, Transaction t)
+        public Behavior<T> Hold<T>(IObservable<T> source, T initValue, Transaction t)
         {
             var s = new LastFiringEvent<T>(source, t);
             var b = new Behavior<T>(s, initValue);
@@ -229,7 +229,7 @@ namespace Sodium
         /// lift method to the current Behavior.</param>
         /// <returns>A new Behavior who's value is computed using the current Behavior, the given
         /// Behavior, and the lift function.</returns>
-        public IBehavior<TC> Lift<T, TB, TC>(IBehavior<T> source, Func<T, TB, TC> lift, IBehavior<TB> behavior)
+        public Behavior<TC> Lift<T, TB, TC>(Behavior<T> source, Func<T, TB, TC> lift, Behavior<TB> behavior)
         {
             Func<T, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
             var bf = this.Map(source, ffa);
@@ -252,7 +252,7 @@ namespace Sodium
         /// <returns>A new Behavior who's value is computed by applying the lift function to the current
         /// behavior, and the given behaviors.</returns>
         /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
-        public IBehavior<TD> Lift<T, TB, TC, TD>(IBehavior<T> source, Func<T, TB, TC, TD> lift, IBehavior<TB> b, IBehavior<TC> c)
+        public Behavior<TD> Lift<T, TB, TC, TD>(Behavior<T> source, Func<T, TB, TC, TD> lift, Behavior<TB> b, Behavior<TC> c)
         {
             Func<T, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
             var bf = this.Map(source, map);
@@ -274,7 +274,7 @@ namespace Sodium
         /// <returns>A new Behavior that updates whenever the current Behavior updates,
         /// having a value computed by the map function, and starting with the value
         /// of the current event mapped.</returns>
-        public IBehavior<TB> Map<T, TB>(IBehavior<T> source, Func<T, TB> map)
+        public Behavior<TB> Map<T, TB>(Behavior<T> source, Func<T, TB> map)
         {
             var mapEvent = Map(source.Source, map);
             var behavior = Hold(mapEvent, map(source.Value));
@@ -291,7 +291,7 @@ namespace Sodium
         /// <param name="map">A map from T -> TB</param>
         /// <returns>A new Event that fires whenever the current Event fires, the
         /// the mapped value is computed using the supplied mapping.</returns>
-        public IEvent<TB> Map<T, TB>(IObservable<T> source, Func<T, TB> map)
+        public Event<TB> Map<T, TB>(IObservable<T> source, Func<T, TB> map)
         {
             return new MapEvent<T, TB>(source, map);
         }
@@ -310,7 +310,7 @@ namespace Sodium
         /// their ordering is retained. In many common cases the ordering will
         /// be undefined.
         /// </remarks>
-        public IEvent<T> Merge<T>(IObservable<T> source, IObservable<T> observable)
+        public Event<T> Merge<T>(IObservable<T> source, IObservable<T> observable)
         {
             return new MergeEvent<T>(source, observable);
         }
@@ -330,7 +330,7 @@ namespace Sodium
         /// within the same transaction), they are combined using the same logic as
         /// 'coalesce'.
         /// </remarks>
-        public IEvent<T> Merge<T>(IObservable<T> source, IObservable<T> observable, Func<T, T, T> coalesce)
+        public Event<T> Merge<T>(IObservable<T> source, IObservable<T> observable, Func<T, T, T> coalesce)
         {
             var merge = this.Merge(source, observable);
             var c = this.Coalesce(merge, coalesce);
@@ -344,7 +344,7 @@ namespace Sodium
         /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="source">The source Event</param>
         /// <returns>An Event that only fires one time, the first time the current event fires.</returns>
-        public IEvent<T> Once<T>(IObservable<T> source)
+        public Event<T> Once<T>(IObservable<T> source)
         {
             return new OnceEvent<T>(source);
         }
@@ -361,7 +361,7 @@ namespace Sodium
         /// <param name="valueStream">The Behavior to sample when calculating the snapshot</param>
         /// <param name="snapshot">The snapshot generation function.</param>
         /// <returns>A new Event that will produce the snapshot when the current event fires</returns>
-        public IEvent<TC> Snapshot<T, TB, TC>(IObservable<T> source, IValue<TB> valueStream, Func<T, TB, TC> snapshot)
+        public Event<TC> Snapshot<T, TB, TC>(IObservable<T> source, Behavior<TB> valueStream, Func<T, TB, TC> snapshot)
         {
             return new SnapshotEvent<T, TB, TC>(source, snapshot, valueStream);
         }
@@ -374,7 +374,7 @@ namespace Sodium
         /// <param name="source">The source Event</param>
         /// <param name="valueStream">The Behavior to sample when taking the snapshot</param>
         /// <returns>An event that captures the Behaviors value when the current event fires</returns>
-        public IEvent<TB> Snapshot<T, TB>(IObservable<T> source, IValue<TB> valueStream)
+        public Event<TB> Snapshot<T, TB>(IObservable<T> source, Behavior<TB> valueStream)
         {
             return this.Snapshot(source, valueStream, (a, b) => b);
         }
@@ -387,7 +387,7 @@ namespace Sodium
         /// <returns>The new, unwrapped Behavior</returns>
         /// <remarks>Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.</remarks>
-        public IBehavior<T> SwitchB<T>(IBehavior<IBehavior<T>> source)
+        public Behavior<T> SwitchB<T>(Behavior<Behavior<T>> source)
         {
             var initValue = source.Value.Value;
             var sink = new SwitchBehaviorEvent<T>(source);
@@ -409,7 +409,7 @@ namespace Sodium
         /// Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.
         /// </remarks>
-        public IEvent<T> SwitchE<T>(IBehavior<IEvent<T>> behavior)
+        public Event<T> SwitchE<T>(Behavior<Event<T>> behavior)
         {
             return new SwitchEvent<T>(behavior);
         }
@@ -420,7 +420,7 @@ namespace Sodium
         /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="source">The source Behavior</param>
         /// <returns>The event streams</returns>
-        public Event<T> Values<T>(IBehavior<T> source)
+        public Event<T> Values<T>(Behavior<T> source)
         {
             return this.StartTransaction(t => new BehaviorLastValueEvent<T>(source, t));
         }

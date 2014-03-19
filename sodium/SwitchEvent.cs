@@ -2,12 +2,12 @@
 {
     internal sealed class SwitchEvent<T> : EventSink<T>
     {
-        private ISubscription<IEvent<T>> behaviorSubscription;
+        private ISubscription<Event<T>> behaviorSubscription;
         private ISodiumCallback<T> wrappedEventSubscriptionCallback;
         private ISubscription<T> wrappedSubscription;
-        private IValue<IEvent<T>> source;
+        private Behavior<Event<T>> source;
 
-        public SwitchEvent(IValue<IEvent<T>> source)
+        public SwitchEvent(Behavior<Event<T>> source)
         {
             this.source = source;
             this.StartTransaction(this.Initialize);
@@ -38,13 +38,13 @@
             this.wrappedEventSubscriptionCallback = this.CreateFireCallback();
             this.wrappedSubscription = source.Value.Subscribe(this.wrappedEventSubscriptionCallback, this.Rank, transaction);
 
-            var behaviorEventChanged = new SodiumCallback<IEvent<T>>(this.UpdateWrappedEventSubscription);
+            var behaviorEventChanged = new SodiumCallback<Event<T>>(this.UpdateWrappedEventSubscription);
             this.behaviorSubscription = source.Subscribe(behaviorEventChanged, this.Rank, transaction);
 
             return Unit.Nothing;
         }
 
-        private void UpdateWrappedEventSubscription(IEvent<T> newEvent, Transaction transaction)
+        private void UpdateWrappedEventSubscription(Event<T> newEvent, Transaction transaction)
         {
             transaction.Medium(() =>
             {

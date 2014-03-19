@@ -6,7 +6,7 @@ namespace Sodium
     /// IObservable is the interface for Observable objects (Events and Behaviors) in Sodium.net
     /// </summary>
     /// <typeparam name="T">The type of value fired through the IObservable</typeparam>
-    public interface IObservable<T> : IDisposableObject
+    public interface IObservable<T>  : IDisposable
     {
         /// <summary>
         /// Listen for firings of this event.

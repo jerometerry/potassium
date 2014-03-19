@@ -2,14 +2,14 @@ namespace Sodium
 {
     internal sealed class SwitchBehaviorEvent<T> : EventSink<T>
     {
-        private ISubscription<IBehavior<T>> subscription;
+        private ISubscription<Behavior<T>> subscription;
         private ISubscription<T> wrappedSubscription;
-        private IEvent<T> wrappedEvent;
+        private Event<T> wrappedEvent;
 
-        public SwitchBehaviorEvent(IBehavior<IBehavior<T>> source)
+        public SwitchBehaviorEvent(Behavior<Behavior<T>> source)
         {
             var evt = Transformer.Default.Values(source);
-            var callback = new SodiumCallback<IBehavior<T>>(this.Invoke);
+            var callback = new SodiumCallback<Behavior<T>>(this.Invoke);
             this.subscription = evt.Subscribe(callback, this.Rank);
         }
 
@@ -36,7 +36,7 @@ namespace Sodium
             base.Dispose(disposing);
         }
 
-        private void Invoke(IBehavior<T> behavior, Transaction transaction)
+        private void Invoke(Behavior<T> behavior, Transaction transaction)
         {
             // Note: If any switch takes place during a transaction, then the
             // GetValueStream().Subscribe will always cause a sample to be fetched from the

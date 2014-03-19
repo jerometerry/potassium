@@ -7,7 +7,7 @@ namespace Sodium
     /// <typeparam name="T">The type of values fired through the Behavior</typeparam>
     internal sealed class BehaviorValueEvent<T> : SubscribeFireEvent<T>
     {
-        private IBehavior<T> source;
+        private Behavior<T> source;
         private ISubscription<T> subscription;
 
         /// <summary>
@@ -15,7 +15,7 @@ namespace Sodium
         /// </summary>
         /// <param name="source">The Behavior to monitor</param>
         /// <param name="transaction">The Transaction to use to create a subscription on the given Behavior</param>
-        public BehaviorValueEvent(IBehavior<T> source, Transaction transaction)
+        public BehaviorValueEvent(Behavior<T> source, Transaction transaction)
         {
             this.source = source;
             this.CreateLoop(transaction);

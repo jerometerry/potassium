@@ -7,7 +7,7 @@ namespace Sodium
     /// gets updated as the underlying Event is fired.
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the Behavior.</typeparam>
-    public class Behavior<T> : Observer<T>, IBehavior<T>
+    public class Behavior<T> : Observer<T>
     {
         private ValueContainer<T> valueContainer;
 
@@ -26,7 +26,7 @@ namespace Sodium
         /// </summary>
         /// <param name="source">The Event to listen for updates from</param>
         /// <param name="initValue">The initial value of the Behavior</param>
-        public Behavior(IEvent<T> source, T initValue)
+        public Behavior(Event<T> source, T initValue)
             : base(source)
         {
             this.Source = source;
@@ -69,7 +69,7 @@ namespace Sodium
         /// <summary>
         /// Gets the underlying Event of the current Behavior
         /// </summary>
-        public IEvent<T> Source { get; private set; }
+        public Event<T> Source { get; private set; }
 
         /// <summary>
         /// Apply a value inside a behavior to a function inside a behavior. This is the
@@ -78,7 +78,7 @@ namespace Sodium
         /// <typeparam name="TB">The return type of the inner function of the given Behavior</typeparam>
         /// <param name="bf">Behavior of functions that maps from T -> TB</param>
         /// <returns>The new applied Behavior</returns>
-        public IBehavior<TB> Apply<TB>(IBehavior<Func<T, TB>> bf)
+        public Behavior<TB> Apply<TB>(Behavior<Func<T, TB>> bf)
         {
             return Transformer.Default.Apply(this, bf);
         }
@@ -92,7 +92,7 @@ namespace Sodium
         /// <param name="initState">Value to pass to the snapshot function</param>
         /// <param name="snapshot">Snapshot function</param>
         /// <returns>A new Behavior that collects values of type TB</returns>
-        public IBehavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
+        public Behavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             return Transformer.Default.Collect(this, initState, snapshot);
         }
@@ -107,7 +107,7 @@ namespace Sodium
         /// lift method to the current Behavior.</param>
         /// <returns>A new Behavior who's value is computed using the current Behavior, the given
         /// Behavior, and the lift function.</returns>
-        public IBehavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, IBehavior<TB> behavior)
+        public Behavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, Behavior<TB> behavior)
         {
             return Transformer.Default.Lift(this, lift, behavior);
         }
@@ -124,7 +124,7 @@ namespace Sodium
         /// <returns>A new Behavior who's value is computed by applying the lift function to the current
         /// behavior, and the given behaviors.</returns>
         /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
-        public IBehavior<TD> Lift<TB, TC, TD>(Func<T, TB, TC, TD> lift, IBehavior<TB> b, IBehavior<TC> c)
+        public Behavior<TD> Lift<TB, TC, TD>(Func<T, TB, TC, TD> lift, Behavior<TB> b, Behavior<TC> c)
         {
             return Transformer.Default.Lift(this, lift, b, c);
         }
@@ -137,7 +137,7 @@ namespace Sodium
         /// <returns>A new Behavior that updates whenever the current Behavior updates,
         /// having a value computed by the map function, and starting with the value
         /// of the current event mapped.</returns>
-        public IBehavior<TB> Map<TB>(Func<T, TB> map)
+        public Behavior<TB> Map<TB>(Func<T, TB> map)
         {
             return Transformer.Default.Map(this, map);
         }

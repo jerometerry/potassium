@@ -54,7 +54,6 @@
     <Compile Include="EventSink.cs" />
     <Compile Include="Transformer.cs" />
     <Compile Include="GateEvent.cs" />
-    <Compile Include="IEventSink.cs" />
     <Compile Include="IObservable.cs" />
     <Compile Include="NotNullFilterEvent.cs" />
     <Compile Include="Observable.cs" />
@@ -62,11 +61,7 @@
     <Compile Include="ValueContainer.cs" />
     <Compile Include="DelayEvent.cs" />
     <Compile Include="EventLoop.cs" />
-    <Compile Include="IBehavior.cs" />
-    <Compile Include="IDisposableObject.cs" />
     <Compile Include="SubscribeFireEvent.cs" />
-    <Compile Include="IEvent.cs" />
-    <Compile Include="IValue.cs" />
     <Compile Include="LastFiringEvent.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="DisposableObject.cs" />

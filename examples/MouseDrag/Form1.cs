@@ -13,10 +13,10 @@
         }
 
         private EventSink<MouseEventArgs> mouseMoveEvent;
-        private IEvent<MouseEventArgs> mouseDragEvent;
+        private Event<MouseEventArgs> mouseDragEvent;
         private EventSink<MouseStatus> mouseButtonEvent;
-        private IBehavior<MouseStatus> mouseButtonBehavior;
-        private IBehavior<bool> mouseButtonDownBehavior;
+        private Behavior<MouseStatus> mouseButtonBehavior;
+        private Behavior<bool> mouseButtonDownBehavior;
         private static readonly CultureInfo ci = CultureInfo.InvariantCulture;
 
         public Form1()
