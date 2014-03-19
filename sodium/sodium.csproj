@@ -52,7 +52,6 @@
     <Compile Include="ConstantBehavior.cs" />
     <Compile Include="EventPublisher.cs" />
     <Compile Include="Transformer.cs" />
-    <Compile Include="IObservable.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="Observer.cs" />
     <Compile Include="ValueContainer.cs" />

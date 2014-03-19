@@ -2,16 +2,16 @@ namespace Sodium
 {
     internal sealed class Subscription<T> : DisposableObject, ISubscription<T>
     {
-        public Subscription(IObservable<T> source, IPublisher<T> callback, Rank rank)
+        public Subscription(Observable<T> source, IPublisher<T> callback, Rank rank)
         {
             this.Source = source;
-            this.Notification = callback;
+            this.Publisher = callback;
             this.Rank = rank;
         }
 
-        public IObservable<T> Source { get; private set; }
+        public Observable<T> Source { get; private set; }
 
-        public IPublisher<T> Notification { get; private set; }
+        public IPublisher<T> Publisher { get; private set; }
 
         public Rank Rank { get; private set; }
 
@@ -28,7 +28,7 @@ namespace Sodium
                 this.Source = null;
             }
 
-            this.Notification = null;
+            this.Publisher = null;
             Rank = null;
 
             base.Dispose(disposing);

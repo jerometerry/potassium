@@ -5,12 +5,12 @@ namespace Sodium
 
     internal sealed class SnapshotEvent<T, TB, TC> : SubscribePublishEvent<TC>
     {
-        private IObservable<T> source;
+        private Observable<T> source;
         private Func<T, TB, TC> snapshot;
         private Behavior<TB> behavior;
         private ISubscription<T> subscription;
 
-        public SnapshotEvent(IObservable<T> source, Func<T, TB, TC> snapshot, Behavior<TB> behavior)
+        public SnapshotEvent(Observable<T> source, Func<T, TB, TC> snapshot, Behavior<TB> behavior)
         {
             this.source = source;
             this.snapshot = snapshot;

@@ -136,7 +136,7 @@
         /// their ordering is retained. In many common cases the ordering will
         /// be undefined.
         /// </remarks>
-        public Event<T> Merge(IObservable<T> source)
+        public Event<T> Merge(Observable<T> source)
         {
             return Transformer.Default.Merge(this, source);
         }
@@ -154,7 +154,7 @@
         /// within the same transaction), they are combined using the same logic as
         /// 'coalesce'.
         /// </remarks>
-        public Event<T> Merge(IObservable<T> source, Func<T, T, T> coalesce)
+        public Event<T> Merge(Observable<T> source, Func<T, T, T> coalesce)
         {
             return Transformer.Default.Merge(this, source, coalesce);
         }

@@ -10,14 +10,9 @@ namespace Sodium
     public interface ISubscription<T> : IDisposable
     {
         /// <summary>
-        /// The notification that will be sent when the subscribed Observable publishes
-        /// </summary>
-        IPublisher<T> Notification { get; }
-
-        /// <summary>
         /// Gets the IObserverable the current ISubscription is subscribed to
         /// </summary>
-        IObservable<T> Source { get; }
+        Observable<T> Source { get; }
 
         /// <summary>
         /// Cancels the current subscription

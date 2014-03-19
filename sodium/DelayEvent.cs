@@ -4,7 +4,7 @@
     {
         private ISubscription<T> subscription;
 
-        public DelayEvent(IObservable<T> source)
+        public DelayEvent(Observable<T> source)
         {
             var callback = new Publisher<T>((a, t) => t.Low(() => this.Publish(a)));
             this.subscription = source.Subscribe(callback, this.Rank);

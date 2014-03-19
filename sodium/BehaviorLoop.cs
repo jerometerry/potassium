@@ -20,7 +20,7 @@
         ///  Firings on the given Event will be forwarded to the current Event
         /// </summary>
         /// <param name="source">Event who's publishings will be looped to the current Event</param>
-        public void Loop(IObservable<T> source)
+        public void Loop(Observable<T> source)
         {
             var loop = (EventLoop<T>)this.Source;
             loop.Loop(source);

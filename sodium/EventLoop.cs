@@ -18,7 +18,7 @@
         /// <returns>The current EventLoop</returns>
         /// <remarks>Loop can only be called once on an Event. If Loop is called multiple times,
         /// an ApplicationException will be raised.</remarks>
-        public ISubscription<T> Loop(IObservable<T> source)
+        public ISubscription<T> Loop(Observable<T> source)
         {
             if (subscription != null)
             {

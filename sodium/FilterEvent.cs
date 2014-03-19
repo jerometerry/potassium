@@ -5,11 +5,11 @@ namespace Sodium
 
     internal class FilterEvent<T> : SubscribePublishEvent<T>
     {
-        private IObservable<T> source;
+        private Observable<T> source;
         private Func<T, bool> f;
         private ISubscription<T> subscription;
 
-        public FilterEvent(IObservable<T> source, Func<T, bool> f)
+        public FilterEvent(Observable<T> source, Func<T, bool> f)
         {
             this.source = source;
             this.f = f;

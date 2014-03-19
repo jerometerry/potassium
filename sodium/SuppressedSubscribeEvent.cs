@@ -2,7 +2,7 @@
 {
     internal sealed class SuppressedSubscribeEvent<T> : EventLoop<T>
     {
-        public SuppressedSubscribeEvent(IObservable<T> source)
+        public SuppressedSubscribeEvent(Observable<T> source)
         {
             this.Loop(source);
         }

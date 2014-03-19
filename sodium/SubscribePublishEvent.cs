@@ -19,7 +19,7 @@ namespace Sodium
             return null;
         }
 
-        internal static TF[] GetSubscribeFirings<TF>(IObservable<TF> source)
+        internal static TF[] GetSubscribeFirings<TF>(Observable<TF> source)
         {
             var sink = source as SubscribePublishEvent<TF>;
             return sink == null ? null : sink.SubscriptionFirings();
@@ -33,7 +33,7 @@ namespace Sodium
         protected override void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
         {
             var values = this.SubscriptionFirings();
-            NotifySubscriber(subscription, values, transaction);
+            PublishToSubscriber(subscription, values, transaction);
             base.OnSubscribe(subscription, transaction);
         }
     }

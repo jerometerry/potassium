@@ -19,12 +19,21 @@
         }
 
         /// <summary>
+        /// Creates a callback that calls the Publish method on the current Event when invoked
+        /// </summary>
+        /// <returns>In IPublisher that calls Publish, when invoked.</returns>
+        internal IPublisher<T> CreatePublisher()
+        {
+            return new Publisher<T>((t, v) => this.Publish(t, v));
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="subscription"></param>
         /// <param name="values"></param>
         /// <param name="transaction"></param>
-        protected static void NotifySubscriber(ISubscription<T> subscription, ICollection<T> values, Transaction transaction)
+        protected static void PublishToSubscriber(ISubscription<T> subscription, ICollection<T> values, Transaction transaction)
         {
             if (values == null || values.Count == 0)
             {
@@ -33,13 +42,14 @@
 
             foreach (var value in values)
             {
-                NotifySubscriber(value, subscription, transaction);
+                PublishToSubscriber(value, subscription, transaction);
             }
         }
 
-        protected static void NotifySubscriber(T value, ISubscription<T> subscription, Transaction transaction)
+        protected static void PublishToSubscriber(T value, ISubscription<T> subscription, Transaction transaction)
         {
-            subscription.Notification.Publish(value, transaction);
+            var s = (Subscription<T>)subscription;
+            s.Publisher.Publish(value, transaction);
         }
 
         /// <summary>
@@ -52,7 +62,7 @@
             var clone = this.Subscriptions.ToArray();
             foreach (var subscription in clone)
             {
-                NotifySubscriber(value, subscription, transaction);
+                PublishToSubscriber(value, subscription, transaction);
             }
         }
 
@@ -65,15 +75,6 @@
         {
             this.NotifySubscribers(value, transaction);
             return true;
-        }
-
-        /// <summary>
-        /// Creates a callback that calls the Publish method on the current Event when invoked
-        /// </summary>
-        /// <returns>In IPublisher that calls Publish, when invoked.</returns>
-        protected IPublisher<T> CreatePublisher()
-        {
-            return new Publisher<T>((t, v) => this.Publish(t, v));
         }
     }
 }

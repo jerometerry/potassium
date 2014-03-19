@@ -5,11 +5,11 @@
 
     internal sealed class MapEvent<T, TB> : SubscribePublishEvent<TB>
     {
-        private IObservable<T> source;
+        private Observable<T> source;
         private Func<T, TB> map;
         private ISubscription<T> subscription;
 
-        public MapEvent(IObservable<T> source, Func<T, TB> map)
+        public MapEvent(Observable<T> source, Func<T, TB> map)
         {
             this.source = source;
             this.map = map;

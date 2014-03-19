@@ -4,7 +4,7 @@ namespace Sodium
     /// IPublisher is used to publish a value to a registered subscription
     /// </summary>
     /// <typeparam name="T">The type of values published through the associated Event</typeparam>
-    public interface IPublisher<in T>
+    internal interface IPublisher<in T>
     {
         /// <summary>
         /// Publish the given value to the subscription
