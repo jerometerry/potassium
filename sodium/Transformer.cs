@@ -99,7 +99,19 @@ namespace Sodium
         /// <returns>An Event that collects new values</returns>
         public Event<TB> Collect<T, TB, TS>(IObservable<T> source, TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
-            return new CollectEvent<T, TB, TS>(source, initState, snapshot);
+            var es = new EventLoop<TS>();
+            var s = Hold(es, initState);
+            var ebs = Snapshot(source, s, snapshot);
+            var eb = Map(ebs, bs => bs.Item1);
+            var evt = Map(ebs, bs => bs.Item2);
+            es.Loop(evt);
+
+            eb.Register(es);
+            eb.Register(s);
+            eb.Register(ebs);
+            eb.Register(evt);
+
+            return eb;
         }
 
         /// <summary>
@@ -167,7 +179,7 @@ namespace Sodium
         /// FilterNotNull will not filter out any values for value types.</remarks>
         public Event<T> FilterNotNull<T>(IObservable<T> source)
         {
-            return new NotNullFilterEvent<T>(source);
+            return new FilterEvent<T>(source, a => a != null);
         }
 
         /// <summary>
@@ -182,7 +194,13 @@ namespace Sodium
         /// is true.</returns>
         public Event<T> Gate<T>(IObservable<T> source, Behavior<bool> predicate)
         {
-            return new GateEvent<T>(source, predicate);
+            Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
+            var sn = Snapshot(source, predicate, snapshot);
+            var filter = FilterNotNull(sn);
+            var map = Map(filter, a => a.Value());
+            map.Register(filter);
+            map.Register(sn);
+            return map;
         }
 
         /// <summary>

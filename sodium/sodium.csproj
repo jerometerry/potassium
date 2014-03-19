@@ -49,13 +49,10 @@
     <Compile Include="BehaviorApplyEvent.cs" />
     <Compile Include="BehaviorLoop.cs" />
     <Compile Include="BehaviorSink.cs" />
-    <Compile Include="CollectEvent.cs" />
     <Compile Include="ConstantBehavior.cs" />
     <Compile Include="EventSink.cs" />
     <Compile Include="Transformer.cs" />
-    <Compile Include="GateEvent.cs" />
     <Compile Include="IObservable.cs" />
-    <Compile Include="NotNullFilterEvent.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="Observer.cs" />
     <Compile Include="ValueContainer.cs" />

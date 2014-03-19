@@ -30,7 +30,7 @@
         }
 
         /// <summary>
-        /// A Maybe object wihtout a value
+        /// A Maybe object without a value
         /// </summary>
         public static Maybe<T> Null
         {

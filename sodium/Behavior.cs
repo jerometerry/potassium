@@ -58,7 +58,7 @@ namespace Sodium
         /// <summary>
         /// New value of the Behavior that will be posted to Value when the Transaction completes
         /// </summary>
-        public T NewValue
+        internal T NewValue
         {
             get
             {
@@ -69,7 +69,7 @@ namespace Sodium
         /// <summary>
         /// Gets the underlying Event of the current Behavior
         /// </summary>
-        public Event<T> Source { get; private set; }
+        internal Event<T> Source { get; private set; }
 
         /// <summary>
         /// Apply a value inside a behavior to a function inside a behavior. This is the
