@@ -26,19 +26,19 @@ namespace Sodium
         /// <typeparam name="T">The type of values published through the source</typeparam>
         /// <typeparam name="TS">The return type of the snapshot function</typeparam>
         /// <param name="source">The source Event</param>
-        /// <param name="initState">The initial state of the behavior</param>
+        /// <param name="value">The initial state of the behavior</param>
         /// <param name="snapshot">The snapshot generation function</param>
         /// <returns>A new Behavior starting with the given value, that updates 
         /// whenever the current event publishes, getting a value computed by the snapshot function.</returns>
-        public Behavior<TS> Accum<T, TS>(Observable<T> source, TS initState, Func<T, TS, TS> snapshot)
+        public Behavior<TS> Accum<T, TS>(Observable<T> source, TS value, Func<T, TS, TS> snapshot)
         {
             var evt = new EventLoop<TS>();
-            var behavior = Hold(evt, initState);
+            var behavior = Hold(evt, value);
 
             var snapshotEvent = Snapshot(source, behavior, snapshot);
             evt.Loop(snapshotEvent);
 
-            var result = Hold(snapshotEvent, initState);
+            var result = Hold(snapshotEvent, value);
             result.Register(evt);
             result.Register(behavior);
             result.Register(snapshotEvent);
@@ -216,25 +216,25 @@ namespace Sodium
         /// </summary>
         /// <typeparam name="T">The type of values published through the source</typeparam>
         /// <param name="source">The source Event</param>
-        /// <param name="initValue">The initial value for the Behavior</param>
+        /// <param name="value">The initial value for the Behavior</param>
         /// <returns>A Behavior that updates when the current event is published,
         /// having the specified initial value.</returns>
-        public Behavior<T> Hold<T>(Observable<T> source, T initValue)
+        public Behavior<T> Hold<T>(Observable<T> source, T value)
         {
-            return Transaction.Start(t => Hold(source, initValue, t));
+            return Transaction.Start(t => Hold(source, value, t));
         }
 
         /// <summary>
         /// Creates a Behavior from an Observable and an initial value
         /// </summary>
         /// <param name="source">The source to update the Behavior from</param>
-        /// <param name="initValue">The initial value of the Behavior</param>
+        /// <param name="value">The initial value of the Behavior</param>
         /// <param name="t">The Transaction to perform the Hold</param>
         /// <returns>The Behavior with the given value</returns>
-        public Behavior<T> Hold<T>(Observable<T> source, T initValue, Transaction t)
+        public Behavior<T> Hold<T>(Observable<T> source, T value, Transaction t)
         {
             var s = new LastFiringEvent<T>(source, t);
-            var b = new Behavior<T>(s, initValue);
+            var b = new Behavior<T>(s, value);
             b.Register(s);
             return b;
         }
@@ -411,9 +411,9 @@ namespace Sodium
         /// reactive logic to modify reactive logic.</remarks>
         public Behavior<T> SwitchB<T>(Behavior<Behavior<T>> source)
         {
-            var initValue = source.Value.Value;
+            var value = source.Value.Value;
             var sink = new SwitchBehaviorEvent<T>(source);
-            var result = Hold(sink, initValue);
+            var result = Hold(sink, value);
             result.Register(sink);
             return result;
         }

@@ -2,7 +2,7 @@
 <topic id="ffc5eed7-48fe-4cc5-bb25-9bf0131edb45" revisionNumber="1">
 	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
 		<introduction>
-			<para>The topics in this section describe the various changes made to the [TODO: Project Title] over the
+			<para>The topics in this section describe the various changes made to the Sodium.net Functional Reactive Programming Library over the
 life of the project.</para>
 		</introduction>
 
@@ -15,11 +15,6 @@ life of the project.</para>
 					<listItem>
 						<para><link xlink:href="cd73863c-cd02-44da-89df-a83737ac75d2" /></para>
 					</listItem>
-
-					<listItem>
-						<para>[TODO: Add links to each specific version page]</para>
-					</listItem>
-
 				</list>
 
 			</content>

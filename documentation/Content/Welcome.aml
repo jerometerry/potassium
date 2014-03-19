@@ -2,53 +2,166 @@
 <topic id="89e8c167-b620-4a41-9657-af64fb0101ce" revisionNumber="1">
 	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
 		<introduction>
-			<para>Sodium.net is a C# implementation of <externalLink><linkText>Sodium</linkText><linkUri>https://github.com/kentuckyfriedtakahe/sodium</linkUri></externalLink> </para>
+			<para>Sodium.net is a Functional Reactive Programming Library for .NET, based on <externalLink><linkText>Sodium</linkText><linkUri>https://github.com/kentuckyfriedtakahe/sodium</linkUri></externalLink>. </para>
 		</introduction>
 
 		<section>
-			<title>Getting Started</title>
+			<title>Overview</title>
 			<content>
-				<para>To get started, add a documentation source to the project (a Visual Studio solution, project, or
-assembly and XML comments file).  See the <legacyBold>Getting Started</legacyBold> topics in the Sandcastle Help
-File Builder's help file for more information.  The following default items are included in this project:</para>
+                <para>Sodium is made up of 2 primitives with 12 operations.</para>
 
-				<list class="bullet">
-					<listItem>
-						<para><localUri>ContentLayout.content</localUri> - Use the content layout file to manage the
-conceptual content in the project and define its layout in the table of contents.</para>
-					</listItem>
+                <para>The primitives are <legacyBold>Event</legacyBold>, and <legacyBold>Behavior</legacyBold>, both subclasses of <legacyBold>Observable</legacyBold> (the Observer Pattern).</para>
 
-					<listItem>
-						<para>The <localUri>.\Media</localUri> folder - Place images in this folder that you will reference
-from conceptual content using <codeInline>medialLink</codeInline> or <codeInline>mediaLinkInline</codeInline>
-elements.  If you will not have any images in the file, you may remove this folder.</para>
-					</listItem>
+                <para>The operations are Accum, Apply, Coalesce, Collect, Filter, Gate, Hold, Lift, Map, Merge, Snapshot, Switch</para>
 
-					<listItem>
-						<para>The <localUri>.\icons</localUri> folder - This contains a default logo for the help file.  You
-may replace it or remove it and the folder if not wanted.  If removed or if you change the file name, update
-the <ui>Transform Args</ui> project properties page by removing or changing the filename in the
-<codeInline>logoFile</codeInline> transform argument.  Note that unlike images referenced from conceptual topics,
-the logo file should have its <legacyBold>BuildAction</legacyBold> property set to <codeInline>Content</codeInline>.</para>
-					</listItem>
+                <para>Sodium.net uses the Publish / Subscribe Pattern</para>
 
-					<listItem>
-						<para>The <localUri>.\Content</localUri> folder - Use this to store your conceptual topics.  You may
-name the files and organize them however you like.  One suggestion is to lay the files out on disk as you have
-them in the content layout file as shown in this project but the choice is yours.  Files can be added via the
-Solution Explorer or from within the content layout file editor.  Files must appear in the content layout file
-in order to be compiled into the help file.</para>
-					</listItem>
-				</list>
+                <list class="bullet">
+                    <listItem>
+                        EventPublisher / BehaviorPublisher are the Publishers
+                    </listItem>
 
-				<para>See the <legacyBold>Conceptual Content</legacyBold> topics in the Sandcastle Help File Builder's
-help file for more information.  See the <legacyBold> Sandcastle MAML Guide</legacyBold> for details on Microsoft
-Assistance Markup Language (MAML) which is used to create these topics.</para>
+                    <listItem>
+                        Observable.Subscribe is used to create subscriptions
+                    </listItem>
+                </list>
 			</content>
 		</section>
 
+        <section>
+            <title>Key Operations</title>
+            <content>
+                <list class="bullet">
+                    <listItem>
+                        <legacyBold>Accum</legacyBold> - Accum converts an Event, an initial value, and a snapshot function into a Behavior that accumulates a value as the Event fires. 
+                        
+                        <para>An example would having a running sum total, starting with an initial value and using the addition operation as the snapshot.</para>
+                    </listItem>
+                    
+                    <listItem>
+                        <legacyBold>Apply</legacyBold> - Apply is the process of taking a Behavior and a Behavior of mapping functions, to produce of a new Behavior of the return type of the mapping function inside the Behavior. This is the primitive for Behavior lifting.
+                    </listItem>
+
+                    <listItem>
+                        <legacyBold>Coalesce</legacyBold> - Coalesce is the process of combining several simultaneous values into a single value.
+                    </listItem>
+                    
+                    <listItem>
+                        <legacyBold>Filter</legacyBold> - Filtering is the process of throwing away any publishings from source Events that don't evaluate to true through a given filter predicate.
+                    </listItem>
+
+                    <listItem>
+                        <legacyBold>Gate</legacyBold> - Gating is the process of now allowing Firing values that don't evaluate to true through a given gate predicate.
+                    </listItem>
+                    
+                    <listItem>
+                        <legacyBold>Hold</legacyBold> - A Hold is an operation on an Event given an initial value, that creates a Behavior with the initial value that updates whenever the Event publishes.
+                    </listItem>
+
+                    <listItem>
+                        <para>
+                            <legacyBold>Lift</legacyBold> - Lifting is the process of taking a multi-valued function (2 or 3 valued functions in Sodium), along with Behaviors for each value of the function, and creating a new Behavior that is computed by evaluating the function with the current values of each of the Behaviors values.
+                        </para>
+                        
+                        <para>A lifted Behavior has the property that if any of the input Behaviors are modified simultaneously, the lifted Behavior should publish only once.</para>
+
+                        <para>
+                            <legacyBold>Lift Glitch</legacyBold> - A lift glitch occurs if a lifted Behavior publishes multiple times in response to simultaneous updates of it's input Behaviors.
+                        </para>
+                    </listItem>
+
+                    <listItem>
+                        <legacyBold>Map</legacyBold> - A map is the process of converting an Event or Behavior from one type to another, by supplying a mapping function.
+                    </listItem>
+
+                    <listItem>
+                        <legacyBold>Merge</legacyBold> - Merging is the process of combining two Events of the same type into a single Event, using a coalesce (combining) function.
+                    </listItem>
+
+                    <listItem>
+                        <legacyBold>Snapshot</legacyBold> - Snapshot is the process of sampling a Behaviors value at the time of an Event publishing, and producing a value (a snapshot) by passing the value of the Behavior at the time of the publishing and the value published on the Event into a snapshot function.
+                    </listItem>
+
+                    <listItem>
+                        <legacyBold>Switch</legacyBold> - Switch is the process of unwrapping a Behavior of Behaviors or a Behavior of Events into the inner Behavior or Event. Switch allows the reactive network to change dynamically, using reactive logic to modify reactive logic.
+                    </listItem>
+                </list>
+            </content>
+        </section>
+
+        <section>
+            <title>Related Concepts</title>
+            <content>
+                <para>Below are some additional concepts to be aware of inside of the Sodium.net library.</para>
+                
+                <list class="bullet">
+                    <listItem>
+                        <legacyBold>Transaction</legacyBold> - A Transaction is used to provide the concept of simultaneous Events.
+
+                        <para>In Sodium, only one Transaction can be open at a time. A Transaction is requested when registering a listener, or when publishing a value. A Transaction is closed when the initial request that created the Transaction completes.</para>
+
+                        <para>Firing and listening can cause a chain reaction of operations that may cause other publishing and listening operations. This chain of operations will all execute inside the same Transaction.</para>
+
+                        <para>Once a Transaction has been opened, actions can be added to it, using the High, Medium and Low methods.</para>
+
+                        <para>High registers the action on a Priority Queue using a Rank to order. Medium and Low are run in the order they are added.</para>
+
+                        <para>All High priority actions are run first (using Priority Queue), all Medium Priority actions second (by order added), and all Low priority actions third (by order added).</para>
+
+                        <para>High, Medium and Low priority actions are run when the Transaction is closed when the operation that requested the Transaction completes.</para>
+                    </listItem>
+
+                    <listItem>
+                        <legacyBold>Rank</legacyBold> - Rank is used to determine the order to execute High priority items in a Transaction. A lower priority value executes before a higher priority, as is typically with Priority Queues.
+
+                        <para>A Rank is assigned to an Event, with a default priority of zero. A Rank has an operation to add a superior, with a class invariant that all superiors must have a higher priority than their subordinates.</para>
+
+                        <para>An Events Rank can be modified (increased) when it registers itself to listen to another Event. The subscribers rank should be higher than the source rank, so that the source rank High operations in a Transaction execute before those of their subscribers.</para>
+
+                        <para>The Rank of an Event is used when registering High priority actions on a Transaction, as a means to ensure actions are run on a priority basis.</para>
+                    </listItem>
+                </list>
+            </content>
+        </section>
+
 		<relatedTopics>
 			<link xlink:href="ffc5eed7-48fe-4cc5-bb25-9bf0131edb45" />
-		</relatedTopics>
+            <externalLink>
+                <linkText>Sodium GitHub Page</linkText>
+                <linkUri>https://github.com/kentuckyfriedtakahe/sodium</linkUri>
+            </externalLink>
+            <externalLink>
+                <linkText>Stephen Blackheath's Reactive Programming Blog</linkText>
+                <linkUri>http://blog.reactiveprogramming.org/</linkUri>
+            </externalLink>
+            <externalLink>
+                <linkText>Stephen Blackheath's Talk on FRP</linkText>
+                <linkUri>http://blog.reactiveprogramming.org/?p=136</linkUri>
+            </externalLink>
+            <externalLink>
+                <linkText>Flapjax on GitHub</linkText>
+                <linkUri>https://github.com/brownplt/flapjax/</linkUri>
+            </externalLink>
+            <externalLink>
+                <linkText>Flapjax: A Programming Language for Ajax Applications</linkText>
+                <linkUri>http://cs.brown.edu/~sk/Publications/Papers/Published/mgbcgbk-flapjax/paper.pdf</linkUri>
+            </externalLink>
+            <externalLink>
+                <linkText>Rx.net, Reactive Extensions .NET library from Microsoft</linkText>
+                <linkUri>https://rx.codeplex.com/</linkUri>
+            </externalLink>
+            <externalLink>
+                <linkText>Functional Reactive Programming, Haskell Wiki</linkText>
+                <linkUri>http://www.haskell.org/haskellwiki/Functional_Reactive_Programming</linkUri>
+            </externalLink>
+            <externalLink>
+                <linkText>Functional Reactive Programming from First Principles</linkText>
+                <linkUri>http://haskell.cs.yale.edu/wp-content/uploads/2011/02/frp-1st.pdf</linkUri>
+            </externalLink>
+            <externalLink>
+                <linkText>End-to-End Reactive Programming at Netflix</linkText>
+                <linkUri>http://www.infoq.com/presentations/reactive-programming-netflix</linkUri>
+            </externalLink>
+        </relatedTopics>
 	</developerConceptualDocument>
 </topic>

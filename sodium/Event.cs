@@ -12,13 +12,13 @@
         /// Accumulate on input event, outputting the new state each time.
         /// </summary>
         /// <typeparam name="TS">The return type of the snapshot function</typeparam>
-        /// <param name="initState">The initial state of the behavior</param>
+        /// <param name="value">The initial state of the behavior</param>
         /// <param name="snapshot">The snapshot generation function</param>
         /// <returns>A new Behavior starting with the given value, that updates 
         /// whenever the current event publishes, getting a value computed by the snapshot function.</returns>
-        public Behavior<TS> Accum<TS>(TS initState, Func<T, TS, TS> snapshot)
+        public Behavior<TS> Accum<TS>(TS value, Func<T, TS, TS> snapshot)
         {
-            return Transformer.Default.Accum(this, initState, snapshot);
+            return Transformer.Default.Accum(this, value, snapshot);
         }
 
         /// <summary>
@@ -45,12 +45,12 @@
         /// </summary>
         /// <typeparam name="TB">The return type of the new Event</typeparam>
         /// <typeparam name="TS">The snapshot type</typeparam>
-        /// <param name="initState">The initial state for the internal Behavior</param>
+        /// <param name="value">The initial state for the internal Behavior</param>
         /// <param name="snapshot">The mealy machine</param>
         /// <returns>An Event that collects new values</returns>
-        public Event<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
+        public Event<TB> Collect<TB, TS>(TS value, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
-            return Transformer.Default.Collect(this, initState, snapshot);
+            return Transformer.Default.Collect(this, value, snapshot);
         }
 
         /// <summary>
@@ -104,12 +104,12 @@
         /// That is, state updates caused by event publishings get processed at the end of
         /// the transaction.
         /// </summary>
-        /// <param name="initValue">The initial value for the Behavior</param>
+        /// <param name="value">The initial value for the Behavior</param>
         /// <returns>A Behavior that updates when the current event is published,
         /// having the specified initial value.</returns>
-        public Behavior<T> Hold(T initValue)
+        public Behavior<T> Hold(T value)
         {
-            return Transformer.Default.Hold(this, initValue);
+            return Transformer.Default.Hold(this, value);
         }
 
         /// <summary>

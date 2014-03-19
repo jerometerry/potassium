@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Topics>
-  <Topic id="89e8c167-b620-4a41-9657-af64fb0101ce" visible="True" isDefault="true" isSelected="true" title="Sodium.net API Documentation">
+  <Topic id="89e8c167-b620-4a41-9657-af64fb0101ce" visible="True" isDefault="true" isSelected="true" title="Sodium.net Functional Reactive Programming Library">
     <HelpKeywords>
       <HelpKeyword index="K" term="Welcome" />
     </HelpKeywords>
@@ -9,9 +9,9 @@
     <HelpKeywords>
       <HelpKeyword index="K" term="version, history" />
     </HelpKeywords>
-    <Topic id="cd73863c-cd02-44da-89df-a83737ac75d2" visible="True" title="Version 1.0.0.0">
+    <Topic id="cd73863c-cd02-44da-89df-a83737ac75d2" visible="True" title="Version 0.1.0.0">
       <HelpKeywords>
-        <HelpKeyword index="K" term="version, 1.0.0.0" />
+        <HelpKeyword index="K" term="version, 0.1.0.0" />
       </HelpKeywords>
     </Topic>
   </Topic>

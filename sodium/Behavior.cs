@@ -14,9 +14,9 @@ namespace Sodium
         /// <summary>
         /// Create a behavior with a time varying value from an initial value
         /// </summary>
-        /// <param name="initValue">The initial value of the Behavior</param>
-        public Behavior(T initValue)
-            : this(new Event<T>(), initValue)
+        /// <param name="value">The initial value of the Behavior</param>
+        public Behavior(T value)
+            : this(new Event<T>(), value)
         {
             this.Register(this.Source);
         }
@@ -25,11 +25,11 @@ namespace Sodium
         /// Create a behavior with a time varying value from an Event and an initial value
         /// </summary>
         /// <param name="source">The Observable to listen for updates from</param>
-        /// <param name="initValue">The initial value of the Behavior</param>
-        public Behavior(Observable<T> source, T initValue)
+        /// <param name="value">The initial value of the Behavior</param>
+        public Behavior(Observable<T> source, T value)
         {
             this.Source = source;
-            this.valueContainer = new ValueContainer<T>(source, initValue);
+            this.valueContainer = new ValueContainer<T>(source, value);
         }
 
         /// <summary>

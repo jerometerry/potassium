@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Sodium.Examples.MouseMove")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Sample project showing how to use Sodium.net with the MouseMove event handler")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Sodium.Examples.MouseMove")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCompany("Jerome Terry")]
+[assembly: AssemblyProduct("Sodium.net")]
+[assembly: AssemblyCopyright("Copyright © 2014, Jerome Terry")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.1.0.0")]
+[assembly: AssemblyFileVersion("0.1.0.0")]
