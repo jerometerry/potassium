@@ -1,30 +1,30 @@
 namespace Sodium
 {
     /// <summary>
-    /// SubscribeFireValueEvent is an Event that fires the current value when subscribed to,
+    /// BehaviorValueEvent is an Event that fires the current value when subscribed to,
     /// and fires all updates thereafter.
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Behavior</typeparam>
-    internal sealed class SubscribeFireValueEvent<T> : SubscribeFireEvent<T>
+    internal sealed class BehaviorValueEvent<T> : SubscribeFireEvent<T>
     {
-        private IValue<T> valueStream;
+        private IBehavior<T> source;
         private ISubscription<T> subscription;
 
         /// <summary>
         /// Constructs a new BehaviorEventSink
         /// </summary>
-        /// <param name="valueStream">The Behavior to monitor</param>
+        /// <param name="source">The Behavior to monitor</param>
         /// <param name="transaction">The Transaction to use to create a subscription on the given Behavior</param>
-        public SubscribeFireValueEvent(IValue<T> valueStream, Transaction transaction)
+        public BehaviorValueEvent(IBehavior<T> source, Transaction transaction)
         {
-            this.valueStream = valueStream;
+            this.source = source;
             this.CreateLoop(transaction);
         }
 
         public override T[] SubscriptionFirings()
         {
             // When the ValueEventSink is subscribed to, fire off the current value of the Behavior
-            return new[] { this.valueStream.Value };
+            return new[] { this.source.Value };
         }
 
         protected override void Dispose(bool disposing)
@@ -35,7 +35,7 @@ namespace Sodium
                 this.subscription = null;
             }
 
-            this.valueStream = null;
+            this.source = null;
 
             base.Dispose(disposing);
         }
@@ -47,7 +47,7 @@ namespace Sodium
         private void CreateLoop(Transaction transaction)
         {
             var forward = this.CreateFireCallback();
-            this.subscription = this.valueStream.Subscribe(forward, this.Rank, transaction);
+            this.subscription = this.source.Subscribe(forward, this.Rank, transaction);
         }
     }
 }

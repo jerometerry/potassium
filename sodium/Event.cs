@@ -3,7 +3,7 @@
     using System;
 
     /// <summary>
-    /// Base class for Event and Behavior
+    /// An Event is a series of discrete occurrences
     /// </summary>
     /// <typeparam name="T">The type of value that will be fired through the Observable</typeparam>
     public class Event<T> : Observable<T>, IEvent<T>

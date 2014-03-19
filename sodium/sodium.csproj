@@ -71,7 +71,7 @@
     <Compile Include="Event.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="TransactionalObject.cs" />
-    <Compile Include="SubscribeFireValueEvent.cs" />
+    <Compile Include="BehaviorValueEvent.cs" />
     <Compile Include="CoalesceEvent.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="PrioritizedAction.cs" />
@@ -87,7 +87,7 @@
     <Compile Include="OnceEvent.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SubscribeFireLastValueEvent.cs" />
+    <Compile Include="BehaviorLastValueEvent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behavior.cs" />

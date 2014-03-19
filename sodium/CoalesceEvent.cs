@@ -3,6 +3,11 @@ namespace Sodium
     using System;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// CoalesceEvent combines multiple firings from a source into a single firing, using a 
+    /// combining function.
+    /// </summary>
+    /// <typeparam name="T">The type of values fired through the source</typeparam>
     internal class CoalesceEvent<T> : SubscribeFireEvent<T>
     {
         private Func<T, T, T> coalesce;
@@ -14,72 +19,108 @@ namespace Sodium
             this.Source = source;
             this.coalesce = coalesce;
 
-            var callback = new SodiumCallback<T>(this.Accumulate);
-            this.subscription = source.Subscribe(callback, this.Rank, transaction);
+            var callback = new SodiumCallback<T>(Accumulate);
+            subscription = source.Subscribe(callback, Rank, transaction);
         }
 
         protected IObservable<T> Source { get; private set; }
 
+        private bool PreviouslyFired
+        {
+            get
+            {
+                return this.accumulatedValue.HasValue;
+            }
+        }
+
         public override T[] SubscriptionFirings()
         {
-            var events = GetSubscribeFirings(this.Source);
+            var events = GetSubscribeFirings(Source);
             if (events == null)
             {
                 return null;
             }
-            
-            var e = this.Combine(events);
+
+            var e = Combine(events);
             return new[] { e };
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (this.subscription != null)
+            if (subscription != null)
             {
-                this.subscription.Dispose();
-                this.subscription = null;
+                subscription.Dispose();
+                subscription = null;
             }
 
-            this.Source = null;
+            Source = null;
             coalesce = null;
 
             base.Dispose(disposing);
         }
 
-        private T Combine(IList<T> events)
-        {
-            var e = events[0];
-            for (var i = 1; i < events.Count; i++)
-            {
-                e = this.coalesce(e, events[i]);
-            }
-
-            return e;
-        }
-
         private void Accumulate(T data, Transaction transaction)
         {
-            if (this.accumulatedValue.HasValue)
+            if (PreviouslyFired)
             {
-                this.accumulatedValue = new Maybe<T>(coalesce(this.accumulatedValue.Value(), data));
+                Combine(data);
             }
             else
             {
-                this.ScheduleFiring(transaction);
-                this.accumulatedValue = new Maybe<T>(data);
+                ScheduleFiring(data, transaction);
             }
         }
 
-        private void ScheduleFiring(Transaction transaction)
+        /// <summary>
+        /// There was a previous firing, so combine the new firing with the old firing 
+        /// using the combining function.
+        /// </summary>
+        /// <param name="newFiring">The newly fired value</param>
+        private void Combine(T newFiring)
         {
-            transaction.High(this.Fire, this.Rank);
+            var newValue = coalesce(accumulatedValue.Value(), newFiring);
+            accumulatedValue = new Maybe<T>(newValue);
         }
 
+        /// <summary>
+        /// There is no previous firing, so set the value to the fired value, 
+        /// and schedule a firing that will happen when the transaction is closed.
+        /// </summary>
+        /// <param name="initialValue">The initial value</param>
+        /// <param name="transaction">The current transaction</param>
+        private void ScheduleFiring(T initialValue, Transaction transaction)
+        {
+            accumulatedValue = new Maybe<T>(initialValue);
+            transaction.High(Fire, Rank);
+        }
+
+        /// <summary>
+        /// Callback method that fires the accumulated value when the current
+        /// transaction is closed.
+        /// </summary>
+        /// <param name="transaction">The current transaction</param>
+        /// <remarks>The accumulated value is cleared after the firing.</remarks>
         private void Fire(Transaction transaction)
         {
-            var v = this.accumulatedValue.Value();
-            this.Fire(v, transaction);
-            this.accumulatedValue = Maybe<T>.Null;
+            var v = accumulatedValue.Value();
+            Fire(v, transaction);
+            accumulatedValue = Maybe<T>.Null;
+        }
+
+        /// <summary>
+        /// Combine the list of values to fire during subscription using the combining function
+        /// </summary>
+        /// <param name="firings">The firings to combine</param>
+        /// <returns>The combined value</returns>
+        private T Combine(IList<T> firings)
+        {
+            var e = firings[0];
+            for (var i = 1; i < firings.Count; i++)
+            {
+                e = coalesce(e, firings[i]);
+            }
+
+            return e;
         }
     }
 }

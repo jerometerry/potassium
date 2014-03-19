@@ -23,7 +23,7 @@ namespace Sodium
         /// <summary>
         /// Accumulate on input event, outputting the new state each time.
         /// </summary>
-        /// <typeparam name="T"> </typeparam>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <typeparam name="TS">The return type of the snapshot function</typeparam>
         /// <param name="source">The source Event</param>
         /// <param name="initState">The initial state of the behavior</param>
@@ -50,9 +50,9 @@ namespace Sodium
         /// Apply a value inside a behavior to a function inside a behavior. This is the
         /// primitive for all function lifting.
         /// </summary>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <typeparam name="TB">The return type of the inner function of the given Behavior</typeparam>
-        /// <typeparam name="T"> </typeparam>
-        /// <param name="source"> </param>
+        /// <param name="source">The source behavior</param>
         /// <param name="bf">Behavior of functions that maps from T -> TB</param>
         /// <returns>The new applied Behavior</returns>
         public IBehavior<TB> Apply<T, TB>(IBehavior<T> source, IBehavior<Func<T, TB>> bf)
@@ -70,7 +70,7 @@ namespace Sodium
         /// If there's more than one firing in a single transaction, combine them into
         /// one using the specified combining function.
         /// </summary>
-        /// <typeparam name="T"> </typeparam>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="source">The source Event</param>
         /// <param name="coalesce">A function that takes two firings of the same type, and returns
         /// produces a new firing of the same type.</param>
@@ -90,7 +90,7 @@ namespace Sodium
         /// Transform an event with a generalized state loop (a mealy machine). The function
         /// is passed the input and the old state and returns the new state and output value.
         /// </summary>
-        /// <typeparam name="T"> </typeparam>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <typeparam name="TB">The return type of the new Event</typeparam>
         /// <typeparam name="TS">The snapshot type</typeparam>
         /// <param name="source">The source Event</param>
@@ -106,9 +106,9 @@ namespace Sodium
         /// Transform a behavior with a generalized state loop (a mealy machine). The function
         /// is passed the input and the old state and returns the new state and output value.
         /// </summary>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <typeparam name="TB">The type of the returned Behavior</typeparam>
         /// <typeparam name="TS">The snapshot function</typeparam>
-        /// <typeparam name="T"> </typeparam>
         /// <param name="source"> </param>
         /// <param name="initState">Value to pass to the snapshot function</param>
         /// <param name="snapshot">Snapshot function</param>
@@ -136,7 +136,7 @@ namespace Sodium
         /// <summary>
         /// Push each event occurrence onto a new transaction.
         /// </summary>
-        /// <typeparam name="T"> </typeparam>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="source">The source Event</param>
         /// <returns>An event that is fired with the lowest priority in the current Transaction the current Event is fired in.</returns>
         public IEvent<T> Delay<T>(IObservable<T> source)
@@ -147,7 +147,7 @@ namespace Sodium
         /// <summary>
         /// Only keep event occurrences for which the predicate returns true.
         /// </summary>
-        /// <typeparam name="T"> </typeparam>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="source">The source Event</param>
         /// <param name="predicate">A predicate used to include firings</param>
         /// <returns>A new Event that is fired when the current Event fires and
@@ -160,7 +160,7 @@ namespace Sodium
         /// <summary>
         /// Filter out any event occurrences whose value is null.
         /// </summary>
-        /// <typeparam name="T"> </typeparam>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="source">The source Event</param>
         /// <returns>A new Event that fires whenever the current Event fires with a non-null value</returns>
         /// <remarks>For value types, comparison against null will always be false. 
@@ -175,7 +175,7 @@ namespace Sodium
         /// Note that the behavior's value is as it was at the start of the transaction,
         /// that is, no state changes from the current transaction are taken into account.
         /// </summary>
-        /// <typeparam name="T"> </typeparam>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="source">The source Event</param>
         /// <param name="predicate">A behavior who's current value acts as a predicate</param>
         /// <returns>A new Event that fires whenever the current Event fires and the Behaviors value
@@ -192,7 +192,7 @@ namespace Sodium
         /// That is, state updates caused by event firings get processed at the end of
         /// the transaction.
         /// </summary>
-        /// <typeparam name="T"> </typeparam>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="source">The source Event</param>
         /// <param name="initValue">The initial value for the Behavior</param>
         /// <returns>A Behavior that updates when the current event is fired,
@@ -220,10 +220,10 @@ namespace Sodium
         /// <summary>
         /// Lift a binary function into behaviors.
         /// </summary>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <typeparam name="TB">The type of the given Behavior</typeparam>
         /// <typeparam name="TC">The return type of the lift function.</typeparam>
-        /// <typeparam name="T"> </typeparam>
-        /// <param name="source"> </param>
+        /// <param name="source">The source Behavior</param>
         /// <param name="lift">The function to lift, taking a T and a TB, returning TC</param>
         /// <param name="behavior">The behavior used to apply a partial function by mapping the given 
         /// lift method to the current Behavior.</param>
@@ -241,11 +241,11 @@ namespace Sodium
         /// <summary>
         /// Lift a ternary function into behaviors.
         /// </summary>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <typeparam name="TB">Type of Behavior b</typeparam>
         /// <typeparam name="TC">Type of Behavior c</typeparam>
         /// <typeparam name="TD">Return type of the lift function</typeparam>
-        /// <typeparam name="T"> </typeparam>
-        /// <param name="source"> </param>
+        /// <param name="source">The source Behavior</param>
         /// <param name="lift">The function to lift</param>
         /// <param name="b">Behavior of type TB used to do the lift</param>
         /// <param name="c">Behavior of type TC used to do the lift</param>
@@ -267,9 +267,9 @@ namespace Sodium
         /// <summary>
         /// Transform the behavior's value according to the supplied function.
         /// </summary>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <typeparam name="TB">The return type of the mapping function</typeparam>
-        /// <typeparam name="T"> </typeparam>
-        /// <param name="source"> </param>
+        /// <param name="source">The source Behavior</param>
         /// <param name="map">The mapping function that converts from T -> TB</param>
         /// <returns>A new Behavior that updates whenever the current Behavior updates,
         /// having a value computed by the map function, and starting with the value
@@ -285,7 +285,7 @@ namespace Sodium
         /// <summary>
         /// Map firings of the current event using the supplied mapping function.
         /// </summary>
-        /// <typeparam name="T"> </typeparam>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <typeparam name="TB">The return type of the map</typeparam>
         /// <param name="source">The source Event</param>
         /// <param name="map">A map from T -> TB</param>
@@ -299,7 +299,7 @@ namespace Sodium
         /// <summary>
         /// Merge two streams of events of the same type.
         /// </summary>
-        /// <typeparam name="T"> </typeparam>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="source">The source Event</param>
         /// <param name="observable">The Event to merge with the current Event</param>
         /// <returns>A new Event that fires whenever either the current or source Events fire.</returns>
@@ -319,7 +319,7 @@ namespace Sodium
         /// Merge two streams of events of the same type, combining simultaneous
         /// event occurrences.
         /// </summary>
-        /// <typeparam name="T"> </typeparam>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="source">The source Event</param>
         /// <param name="observable">The Event to merge with the current Event</param>
         /// <param name="coalesce">The coalesce function that combines simultaneous firings.</param>
@@ -341,7 +341,7 @@ namespace Sodium
         /// <summary>
         /// Throw away all event occurrences except for the first one.
         /// </summary>
-        /// <typeparam name="T"> </typeparam>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="source">The source Event</param>
         /// <returns>An Event that only fires one time, the first time the current event fires.</returns>
         public IEvent<T> Once<T>(IObservable<T> source)
@@ -354,9 +354,9 @@ namespace Sodium
         /// of the behavior that's sampled is the value as at the start of the transaction
         /// before any state changes of the current transaction are applied through 'hold's.
         /// </summary>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <typeparam name="TB">The type of the Behavior</typeparam>
         /// <typeparam name="TC">The return type of the snapshot function</typeparam>
-        /// <typeparam name="T"> </typeparam>
         /// <param name="source">The source Event</param>
         /// <param name="valueStream">The Behavior to sample when calculating the snapshot</param>
         /// <param name="snapshot">The snapshot generation function.</param>
@@ -369,8 +369,8 @@ namespace Sodium
         /// <summary>
         /// Variant of snapshot that throws away the event's value and captures the behavior's.
         /// </summary>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <typeparam name="TB">The type of the Behavior</typeparam>
-        /// <typeparam name="T"> </typeparam>
         /// <param name="source">The source Event</param>
         /// <param name="valueStream">The Behavior to sample when taking the snapshot</param>
         /// <returns>An event that captures the Behaviors value when the current event fires</returns>
@@ -380,26 +380,9 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Listen to the underlying event for updates
-        /// </summary>
-        /// <typeparam name="T"> </typeparam>
-        /// <param name="source"> </param>
-        /// <param name="callback"> action to invoke when the underlying event fires</param>
-        /// <param name="rank">A rank that will be added as a superior of the Rank of the current Event</param>
-        /// <returns>The event subscription</returns>
-        /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
-        /// current value of the behavior.</remarks>
-        public ISubscription<T> SubscribeValues<T>(IBehavior<T> source, ISodiumCallback<T> callback, Rank rank)
-        {
-            var evt = this.StartTransaction(t => new SubscribeFireLastValueEvent<T>(source, t));
-            var subscription = (Subscription<T>)evt.Subscribe(callback, rank);
-            subscription.Register(evt);
-            return subscription;
-        }
-
-        /// <summary>
         /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
         /// </summary>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="source">The Behavior with an inner Behavior to unwrap.</param>
         /// <returns>The new, unwrapped Behavior</returns>
         /// <remarks>Switch allows the reactive network to change dynamically, using 
@@ -416,6 +399,7 @@ namespace Sodium
         /// <summary>
         /// Unwrap an event inside a behavior to give a time-varying event implementation.
         /// </summary>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="behavior">The behavior that wraps the event</param>
         /// <returns>The unwrapped event</returns>
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
@@ -428,6 +412,17 @@ namespace Sodium
         public IEvent<T> SwitchE<T>(IBehavior<IEvent<T>> behavior)
         {
             return new SwitchEvent<T>(behavior);
+        }
+
+        /// <summary>
+        /// Get an Event that fires the initial Behaviors value, and whenever the Behaviors value changes.
+        /// </summary>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
+        /// <param name="source">The source Behavior</param>
+        /// <returns>The event streams</returns>
+        public Event<T> Values<T>(IBehavior<T> source)
+        {
+            return this.StartTransaction(t => new BehaviorLastValueEvent<T>(source, t));
         }
     }
 }

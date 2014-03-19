@@ -95,7 +95,7 @@ namespace Sodium
         public IBehavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             return Transformer.Default.Collect(this, initState, snapshot);
-        }       
+        }
 
         /// <summary>
         /// Lift a binary function into behaviors.
@@ -143,15 +143,16 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Listen to the underlying event for updates
+        /// Listen to the underlying event for updates, firing the current value of the Behavior immediately.
         /// </summary>
         /// <param name="callback"> action to invoke when the underlying event fires</param>
         /// <returns>The event subscription</returns>
-        /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
-        /// current value of the behavior.</remarks>
         public ISubscription<T> SubscribeValues(Action<T> callback)
         {
-            return Transformer.Default.SubscribeValues(this, new SodiumCallback<T>((a, t) => callback(a)), Rank.Highest);
+            var evt = Transformer.Default.Values(this);
+            var s = (Subscription<T>)evt.Subscribe(new SodiumCallback<T>((a, t) => callback(a)), Rank.Highest);
+            s.Register(evt);
+            return s;
         }
 
         /// <summary>

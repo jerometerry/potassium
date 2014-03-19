@@ -8,8 +8,9 @@ namespace Sodium
 
         public SwitchBehaviorEvent(IBehavior<IBehavior<T>> source)
         {
+            var evt = Transformer.Default.Values(source);
             var callback = new SodiumCallback<IBehavior<T>>(this.Invoke);
-            this.subscription = Transformer.Default.SubscribeValues(source, callback, this.Rank);
+            this.subscription = evt.Subscribe(callback, this.Rank);
         }
 
         protected override void Dispose(bool disposing)
@@ -55,7 +56,7 @@ namespace Sodium
                 this.wrappedEvent = null;
             }
 
-            this.wrappedEvent = new SubscribeFireLastValueEvent<T>(behavior, transaction);
+            this.wrappedEvent = new BehaviorLastValueEvent<T>(behavior, transaction);
             this.wrappedSubscription = this.wrappedEvent.Subscribe(this.CreateFireCallback(), this.Rank, transaction);
         }
     }
