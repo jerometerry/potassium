@@ -33,12 +33,12 @@ namespace Sodium
         public IBehavior<TS> Accum<T, TS>(IEvent<T> source, TS initState, Func<T, TS, TS> snapshot)
         {
             var evt = new EventLoop<TS>();
-            var behavior = evt.Hold(initState);
+            var behavior = Hold(evt, initState);
 
-            var snapshotEvent = source.Snapshot(behavior, snapshot);
+            var snapshotEvent = Snapshot(source, behavior, snapshot);
             evt.Loop(snapshotEvent);
 
-            var result = snapshotEvent.Hold(initState);
+            var result = Hold(snapshotEvent, initState);
             result.Register(evt);
             result.Register(behavior);
             result.Register(snapshotEvent);
@@ -61,7 +61,7 @@ namespace Sodium
             var map = bf.Value;
             var valA = source.Value;
             var valB = map(valA);
-            var behavior = evt.Hold(valB);
+            var behavior = Hold(evt, valB);
             behavior.Register(evt);
             return behavior;
         }
@@ -115,16 +115,16 @@ namespace Sodium
         /// <returns>A new Behavior that collects values of type TB</returns>
         public IBehavior<TB> Collect<T, TB, TS>(IBehavior<T> source, TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
-            var coalesceEvent = source.Source.Coalesce((a, b) => b);
+            var coalesceEvent = Coalesce(source.Source, (a, b) => b);
             var currentValue = source.Value;
             var tuple = snapshot(currentValue, initState);
             var loop = new EventLoop<Tuple<TB, TS>>();
-            var loopBehavior = loop.Hold(tuple);
-            var snapshotBehavior = loopBehavior.Map(x => x.Item2);
-            var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
+            var loopBehavior = Hold(loop, tuple);
+            var snapshotBehavior = this.Map(loopBehavior, x => x.Item2);
+            var coalesceSnapshotEvent = Snapshot(coalesceEvent, snapshotBehavior, snapshot);
             loop.Loop(coalesceSnapshotEvent);
 
-            var result = loopBehavior.Map(x => x.Item1);
+            var result = this.Map(loopBehavior, x => x.Item1);
             result.Register(loop);
             result.Register(loopBehavior);
             result.Register(coalesceEvent);
@@ -232,8 +232,8 @@ namespace Sodium
         public IBehavior<TC> Lift<T, TB, TC>(IBehavior<T> source, Func<T, TB, TC> lift, IBehavior<TB> behavior)
         {
             Func<T, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
-            var bf = source.Map(ffa);
-            var result = behavior.Apply(bf);
+            var bf = this.Map(source, ffa);
+            var result = this.Apply(behavior, bf);
             result.Register(bf);
             return result;
         }
@@ -255,10 +255,10 @@ namespace Sodium
         public IBehavior<TD> Lift<T, TB, TC, TD>(IBehavior<T> source, Func<T, TB, TC, TD> lift, IBehavior<TB> b, IBehavior<TC> c)
         {
             Func<T, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
-            var bf = source.Map(map);
-            var l1 = b.Apply(bf);
+            var bf = this.Map(source, map);
+            var l1 = this.Apply(b, bf);
 
-            var result = c.Apply(l1);
+            var result = this.Apply(c, l1);
             result.Register(bf);
             result.Register(l1);
             return result;
@@ -276,8 +276,8 @@ namespace Sodium
         /// of the current event mapped.</returns>
         public IBehavior<TB> Map<T, TB>(IBehavior<T> source, Func<T, TB> map)
         {
-            var mapEvent = source.Source.Map(map);
-            var behavior = mapEvent.Hold(map(source.Value));
+            var mapEvent = Map(source.Source, map);
+            var behavior = Hold(mapEvent, map(source.Value));
             behavior.Register(mapEvent);
             return behavior;
         }
@@ -385,20 +385,6 @@ namespace Sodium
         /// <typeparam name="T"> </typeparam>
         /// <param name="source"> </param>
         /// <param name="callback"> action to invoke when the underlying event fires</param>
-        /// <returns>The event subscription</returns>
-        /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
-        /// current value of the behavior.</remarks>
-        public ISubscription<T> SubscribeValues<T>(IBehavior<T> source, Action<T> callback)
-        {
-            return SubscribeValues(source, new SodiumCallback<T>((a, t) => callback(a)), Rank.Highest);
-        }
-
-        /// <summary>
-        /// Listen to the underlying event for updates
-        /// </summary>
-        /// <typeparam name="T"> </typeparam>
-        /// <param name="source"> </param>
-        /// <param name="callback"> action to invoke when the underlying event fires</param>
         /// <param name="rank">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>The event subscription</returns>
         /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
@@ -421,8 +407,8 @@ namespace Sodium
         public IBehavior<T> SwitchB<T>(IBehavior<IBehavior<T>> source)
         {
             var initValue = source.Value.Value;
-            var sink = new SwitchBehavior<T>(source);
-            var result = sink.Hold(initValue);
+            var sink = new SwitchBehaviorEvent<T>(source);
+            var result = Hold(sink, initValue);
             result.Register(sink);
             return result;
         }

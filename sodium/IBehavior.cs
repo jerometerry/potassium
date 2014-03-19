@@ -77,15 +77,5 @@
         /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
         /// current value of the behavior.</remarks>
         ISubscription<T> SubscribeValues(Action<T> callback);
-
-        /// <summary>
-        /// Listen to the Behavior for updates
-        /// </summary>
-        /// <param name="callback"> action to invoke when the Behavior fires</param>
-        /// <param name="rank">A rank that will be added as a superior of the Rank of the current Event</param>
-        /// <returns>The event subscription</returns>
-        /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
-        /// current value of the behavior.</remarks>
-        ISubscription<T> SubscribeValues(ISodiumCallback<T> callback, Rank rank);
     }   
 }

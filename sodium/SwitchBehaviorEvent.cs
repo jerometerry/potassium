@@ -1,15 +1,15 @@
 namespace Sodium
 {
-    internal sealed class SwitchBehavior<T> : EventSink<T>
+    internal sealed class SwitchBehaviorEvent<T> : EventSink<T>
     {
         private ISubscription<IBehavior<T>> subscription;
         private ISubscription<T> wrappedSubscription;
         private IEvent<T> wrappedEvent;
 
-        public SwitchBehavior(IBehavior<IBehavior<T>> source)
+        public SwitchBehaviorEvent(IBehavior<IBehavior<T>> source)
         {
             var callback = new SodiumCallback<IBehavior<T>>(this.Invoke);
-            this.subscription = source.SubscribeValues(callback, this.Rank);
+            this.subscription = Transformer.Default.SubscribeValues(source, callback, this.Rank);
         }
 
         protected override void Dispose(bool disposing)

@@ -84,17 +84,18 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Transform the behavior's value according to the supplied function.
+        /// Transform a behavior with a generalized state loop (a mealy machine). The function
+        /// is passed the input and the old state and returns the new state and output value.
         /// </summary>
-        /// <typeparam name="TB">The return type of the mapping function</typeparam>
-        /// <param name="map">The mapping function that converts from T -> TB</param>
-        /// <returns>A new Behavior that updates whenever the current Behavior updates,
-        /// having a value computed by the map function, and starting with the value
-        /// of the current event mapped.</returns>
-        public IBehavior<TB> Map<TB>(Func<T, TB> map)
+        /// <typeparam name="TB">The type of the returned Behavior</typeparam>
+        /// <typeparam name="TS">The snapshot function</typeparam>
+        /// <param name="initState">Value to pass to the snapshot function</param>
+        /// <param name="snapshot">Snapshot function</param>
+        /// <returns>A new Behavior that collects values of type TB</returns>
+        public IBehavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
-            return Transformer.Default.Map(this, map);
-        }
+            return Transformer.Default.Collect(this, initState, snapshot);
+        }       
 
         /// <summary>
         /// Lift a binary function into behaviors.
@@ -109,20 +110,6 @@ namespace Sodium
         public IBehavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, IBehavior<TB> behavior)
         {
             return Transformer.Default.Lift(this, lift, behavior);
-        }
-
-        /// <summary>
-        /// Transform a behavior with a generalized state loop (a mealy machine). The function
-        /// is passed the input and the old state and returns the new state and output value.
-        /// </summary>
-        /// <typeparam name="TB">The type of the returned Behavior</typeparam>
-        /// <typeparam name="TS">The snapshot function</typeparam>
-        /// <param name="initState">Value to pass to the snapshot function</param>
-        /// <param name="snapshot">Snapshot function</param>
-        /// <returns>A new Behavior that collects values of type TB</returns>
-        public IBehavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
-        {
-            return Transformer.Default.Collect(this, initState, snapshot);
         }
 
         /// <summary>
@@ -143,6 +130,19 @@ namespace Sodium
         }
 
         /// <summary>
+        /// Transform the behavior's value according to the supplied function.
+        /// </summary>
+        /// <typeparam name="TB">The return type of the mapping function</typeparam>
+        /// <param name="map">The mapping function that converts from T -> TB</param>
+        /// <returns>A new Behavior that updates whenever the current Behavior updates,
+        /// having a value computed by the map function, and starting with the value
+        /// of the current event mapped.</returns>
+        public IBehavior<TB> Map<TB>(Func<T, TB> map)
+        {
+            return Transformer.Default.Map(this, map);
+        }
+
+        /// <summary>
         /// Listen to the underlying event for updates
         /// </summary>
         /// <param name="callback"> action to invoke when the underlying event fires</param>
@@ -151,20 +151,7 @@ namespace Sodium
         /// current value of the behavior.</remarks>
         public ISubscription<T> SubscribeValues(Action<T> callback)
         {
-            return Transformer.Default.SubscribeValues(this, callback);
-        }
-
-        /// <summary>
-        /// Listen to the underlying event for updates
-        /// </summary>
-        /// <param name="callback"> action to invoke when the underlying event fires</param>
-        /// <param name="rank">A rank that will be added as a superior of the Rank of the current Event</param>
-        /// <returns>The event subscription</returns>
-        /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
-        /// current value of the behavior.</remarks>
-        public ISubscription<T> SubscribeValues(ISodiumCallback<T> callback, Rank rank)
-        {
-            return Transformer.Default.SubscribeValues(this, callback, rank);
+            return Transformer.Default.SubscribeValues(this, new SodiumCallback<T>((a, t) => callback(a)), Rank.Highest);
         }
 
         /// <summary>

@@ -7,9 +7,9 @@ namespace Sodium
         public GateEvent(IEvent<T> source, IValue<bool> predicate)
         {
             Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
-            var sn = source.Snapshot(predicate, snapshot);
-            var filter = sn.FilterNotNull();
-            var map = filter.Map(a => a.Value());
+            var sn = Transformer.Default.Snapshot(source, predicate, snapshot);
+            var filter = Transformer.Default.FilterNotNull(sn);
+            var map = Transformer.Default.Map(filter, a => a.Value());
             this.Loop(map);
 
             this.Register(filter);

@@ -77,7 +77,7 @@
     <Compile Include="PrioritizedAction.cs" />
     <Compile Include="RefireEvent.cs" />
     <Compile Include="SuppressedSubscribeEvent.cs" />
-    <Compile Include="SwitchBehavior.cs" />
+    <Compile Include="SwitchBehaviorEvent.cs" />
     <Compile Include="FilterEvent.cs" />
     <Compile Include="ISubscription.cs" />
     <Compile Include="Subscription.cs" />
