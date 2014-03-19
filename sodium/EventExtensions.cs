@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Sodium
+﻿namespace Sodium
 {
+    using System;
+
     /// <summary>
     /// Reactive extensions for Events
     /// </summary>
