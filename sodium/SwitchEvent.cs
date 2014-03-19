@@ -10,7 +10,7 @@
         public SwitchEvent(Behavior<Event<T>> source)
         {
             this.source = source;
-            this.StartTransaction(this.Initialize);
+            Transaction.Start(this.Initialize);
         }
 
         protected override void Dispose(bool disposing)
@@ -36,10 +36,10 @@
         private Unit Initialize(Transaction transaction)
         {
             this.wrappedEventSubscriptionCallback = this.CreatePublisher();
-            this.wrappedSubscription = source.Value.Subscribe(this.wrappedEventSubscriptionCallback, this.Rank, transaction);
+            this.wrappedSubscription = source.Value.CreateSubscription(this.wrappedEventSubscriptionCallback, this.Rank, transaction);
 
             var behaviorEventChanged = new Publisher<Event<T>>(this.UpdateWrappedEventSubscription);
-            this.behaviorSubscription = source.Subscribe(behaviorEventChanged, this.Rank, transaction);
+            this.behaviorSubscription = source.CreateSubscription(behaviorEventChanged, this.Rank, transaction);
 
             return Unit.Nothing;
         }
@@ -55,7 +55,7 @@
                 }
 
                 var suppressed = new SuppressedSubscribeEvent<T>(newEvent);
-                this.wrappedSubscription = suppressed.Subscribe(this.wrappedEventSubscriptionCallback, this.Rank, transaction);
+                this.wrappedSubscription = suppressed.CreateSubscription(this.wrappedEventSubscriptionCallback, this.Rank, transaction);
                 ((DisposableObject)this.wrappedSubscription).Register(suppressed);
             });
         }

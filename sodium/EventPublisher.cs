@@ -13,7 +13,7 @@
         /// <returns>True if the publish was successful, false otherwise.</returns>
         public bool Publish(T value)
         {
-            return this.StartTransaction(t => this.Publish(value, t));
+            return Transaction.Start(t => this.Publish(value, t));
         }
 
         /// <summary>

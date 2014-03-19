@@ -1,6 +1,6 @@
 namespace Sodium
 {
-    internal class ValueContainer<T> : TransactionalObject
+    internal class ValueContainer<T> : DisposableObject
     {
         private Observable<T> source;
 
@@ -103,7 +103,7 @@ namespace Sodium
         /// <returns>The ISubscription registered with the underlying event.</returns>
         private ISubscription<T> Subscribe()
         {
-            return this.StartTransaction(this.Subscribe);
+            return Transaction.Start(this.Subscribe);
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Sodium
         private ISubscription<T> Subscribe(Transaction transaction)
         {
             var callback = new Publisher<T>(this.ScheduleApplyValueUpdate);
-            var result = this.source.Subscribe(callback, Rank.Highest, transaction);
+            var result = this.source.CreateSubscription(callback, Rank.Highest, transaction);
             return result;
         }
     }

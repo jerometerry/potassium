@@ -57,7 +57,7 @@ namespace Sodium
             }
 
             this.wrappedEvent = new BehaviorLastValueEvent<T>(behavior, transaction);
-            this.wrappedSubscription = this.wrappedEvent.Subscribe(this.CreatePublisher(), this.Rank, transaction);
+            this.wrappedSubscription = this.wrappedEvent.CreateSubscription(this.CreatePublisher(), this.Rank, transaction);
         }
     }
 }

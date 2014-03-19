@@ -158,34 +158,14 @@ namespace Sodium
         
         /* Override Subscribe methods, forwarding subscription to the underlying Observable. */
 
-        public override ISubscription<T> Subscribe(Action<T> callback)
+        internal override ISubscription<T> CreateSubscription(Publisher<T> publisher, Rank superior, Transaction transaction)
         {
-            return Source.Subscribe(callback);
+            return Source.CreateSubscription(publisher, superior, transaction);
         }
 
         internal override bool CancelSubscription(ISubscription<T> subscription)
         {
             return Source.CancelSubscription(subscription);
-        }
-
-        internal override ISubscription<T> Subscribe(Publisher<T> callback)
-        {
-            return Source.Subscribe(callback);
-        }
-
-        internal override ISubscription<T> Subscribe(Publisher<T> callback, Observable<T> superior)
-        {
-            return Source.Subscribe(callback, superior);
-        }
-
-        internal override ISubscription<T> Subscribe(Publisher<T> callback, Rank subscriptionRank)
-        {
-            return Source.Subscribe(callback, subscriptionRank);
-        }
-
-        internal override ISubscription<T> Subscribe(Publisher<T> callback, Rank superior, Transaction transaction)
-        {
-            return Source.Subscribe(callback, superior, transaction);
         }
         #endregion
 

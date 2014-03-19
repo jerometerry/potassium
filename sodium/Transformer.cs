@@ -5,7 +5,7 @@ namespace Sodium
     /// <summary>
     /// Transformer applies Transforms to Events and Behaviors to produce new Events and Behaviors
     /// </summary>
-    public class Transformer : TransactionalObject
+    public class Transformer
     {
         private static Transformer instance;
 
@@ -83,7 +83,7 @@ namespace Sodium
         /// </remarks>
         public Event<T> Coalesce<T>(Observable<T> source, Func<T, T, T> coalesce)
         {
-            return this.StartTransaction(t => new CoalesceEvent<T>(source, coalesce, t));
+            return Transaction.Start(t => new CoalesceEvent<T>(source, coalesce, t));
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace Sodium
         {
             var evt = new EventPublisher<T>();
             var callback = new Publisher<T>((a, t) => t.Low(() => evt.Publish(a)));
-            var subscription = source.Subscribe(callback, evt);
+            var subscription = source.Subscribe(callback, evt.Rank);
             evt.Register(subscription);
             return evt;
         }
@@ -221,7 +221,7 @@ namespace Sodium
         /// having the specified initial value.</returns>
         public Behavior<T> Hold<T>(Observable<T> source, T initValue)
         {
-            return this.StartTransaction(t => Hold(source, initValue, t));
+            return Transaction.Start(t => Hold(source, initValue, t));
         }
 
         /// <summary>
@@ -444,7 +444,7 @@ namespace Sodium
         /// <returns>The event streams</returns>
         public Event<T> Values<T>(Behavior<T> source)
         {
-            return this.StartTransaction(t => new BehaviorLastValueEvent<T>(source, t));
+            return Transaction.Start(t => new BehaviorLastValueEvent<T>(source, t));
         }
     }
 }

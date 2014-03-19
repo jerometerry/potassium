@@ -60,7 +60,6 @@
     <Compile Include="LastFiringEvent.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="DisposableObject.cs" />
-    <Compile Include="TransactionalObject.cs" />
     <Compile Include="BehaviorValueEvent.cs" />
     <Compile Include="CoalesceEvent.cs" />
     <Compile Include="Constants.cs" />

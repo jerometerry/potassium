@@ -20,7 +20,7 @@ namespace Sodium
             this.coalesce = coalesce;
 
             var callback = new Publisher<T>(Accumulate);
-            subscription = source.Subscribe(callback, Rank, transaction);
+            subscription = source.CreateSubscription(callback, Rank, transaction);
         }
 
         protected Observable<T> Source { get; private set; }

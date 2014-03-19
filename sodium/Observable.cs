@@ -7,7 +7,7 @@
     /// Observable is the base class for Observables and Behaviors, containing the subscription logic (i.e. the Observer Pattern).
     /// </summary>
     /// <typeparam name="T">The type of value published through the Observable</typeparam>
-    public abstract class Observable<T> : TransactionalObject
+    public abstract class Observable<T> : DisposableObject
     {
         /// <summary>
         /// The rank of the current Observable. Default to rank zero
@@ -23,7 +23,7 @@
         /// <summary>
         /// The current Rank of the Observable, used to prioritize publishings on the current transaction.
         /// </summary>
-        protected Rank Rank
+        public Rank Rank
         {
             get
             {
@@ -48,9 +48,59 @@
         /// </summary>
         /// <param name="callback">An Action to be invoked when the current Observable publishes values.</param>
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
-        public virtual ISubscription<T> Subscribe(Action<T> callback)
+        public ISubscription<T> Subscribe(Action<T> callback)
         {
-            return this.Subscribe(new Publisher<T>(callback), Rank.Highest);
+            return Transaction.Start(t => this.CreateSubscription(new Publisher<T>(callback), Rank.Highest, t));
+        }
+
+        /// <summary>
+        /// Subscribe to publications of the current Observable.
+        /// </summary>
+        /// <param name="transaction">Transaction to send any publishings on</param>
+        /// <param name="publisher">The action to invoke on a publishing</param>
+        /// <param name="superior">A rank that will be added as a superior of the Rank of the current Observable</param>
+        /// <returns>An ISubscription to be used to stop listening for Observables.</returns>
+        /// <remarks>Any publishings that have occurred on the current transaction will be re-published immediate after subscribing.</remarks>
+        internal virtual ISubscription<T> CreateSubscription(Publisher<T> publisher, Rank superior, Transaction transaction)
+        {
+            Subscription<T> subscription;
+            lock (Constants.SubscriptionLock)
+            {
+                if (this.rank.AddSuperior(superior))
+                {
+                    transaction.Reprioritize = true;
+                }
+
+                subscription = new Subscription<T>(this, publisher, superior);
+                this.Subscriptions.Add(subscription);
+            }
+
+            this.OnSubscribe(subscription, transaction);
+            return subscription;
+        }
+
+        /// <summary>
+        /// Subscribe to publications of the current Observable.
+        /// </summary>
+        /// <param name="publisher">An Action to be invoked when the current Observable publishes new values.</param>
+        /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
+        internal ISubscription<T> Subscribe(Publisher<T> publisher)
+        {
+            return Transaction.Start(t => this.CreateSubscription(publisher, Rank.Highest, t));
+        }
+
+        /// <summary>
+        /// Subscribe to publications of the current Observable.
+        /// </summary>
+        /// <param name="publisher">The action to invoke on a publishing</param>
+        /// <param name="subscriptionRank">A rank that will be added as a superior of the Rank of the current Observable</param>
+        /// <returns>An ISubscription to be used to stop listening for Observables</returns>
+        /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
+        /// Subscribe operation that takes a thread. This ensures that any other
+        /// actions triggered during Subscribe requiring a transaction all get the same instance.</remarks>
+        internal ISubscription<T> Subscribe(Publisher<T> publisher, Rank subscriptionRank)
+        {
+            return Transaction.Start(t => this.CreateSubscription(publisher, subscriptionRank, t));
         }
 
         /// <summary>
@@ -75,48 +125,6 @@
         }
 
         /// <summary>
-        /// Subscribe to publications of the current Observable.
-        /// </summary>
-        /// <param name="callback">An Action to be invoked when the current Observable publishes new values.</param>
-        /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
-        internal virtual ISubscription<T> Subscribe(Publisher<T> callback)
-        {
-            return this.Subscribe(callback, Rank.Highest);
-        }
-
-        internal virtual ISubscription<T> Subscribe(Publisher<T> callback, Observable<T> superior)
-        {
-            return this.Subscribe(callback, superior.Rank);
-        }
-
-        /// <summary>
-        /// Subscribe to publications of the current Observable.
-        /// </summary>
-        /// <param name="callback">The action to invoke on a publishing</param>
-        /// <param name="subscriptionRank">A rank that will be added as a superior of the Rank of the current Observable</param>
-        /// <returns>An ISubscription to be used to stop listening for Observables</returns>
-        /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
-        /// Subscribe operation that takes a thread. This ensures that any other
-        /// actions triggered during Subscribe requiring a transaction all get the same instance.</remarks>
-        internal virtual ISubscription<T> Subscribe(Publisher<T> callback, Rank subscriptionRank)
-        {
-            return this.StartTransaction(t => this.Subscribe(callback, subscriptionRank, t));
-        }
-
-        /// <summary>
-        /// Subscribe to publications of the current Observable.
-        /// </summary>
-        /// <param name="transaction">Transaction to send any publishings on</param>
-        /// <param name="callback">The action to invoke on a publishing</param>
-        /// <param name="superior">A rank that will be added as a superior of the Rank of the current Observable</param>
-        /// <returns>An ISubscription to be used to stop listening for Observables.</returns>
-        /// <remarks>Any publishings that have occurred on the current transaction will be re-published immediate after subscribing.</remarks>
-        internal virtual ISubscription<T> Subscribe(Publisher<T> callback, Rank superior, Transaction transaction)
-        {
-            return this.CreateSubscription(callback, superior, transaction);
-        }
-
-        /// <summary>
         /// Performs additional steps during the subscription process
         /// </summary>
         /// <param name="subscription">The newly created subscription</param>
@@ -138,24 +146,6 @@
             }
 
             base.Dispose(disposing);
-        }
-
-        private ISubscription<T> CreateSubscription(Publisher<T> publisher, Rank superior, Transaction transaction)
-        {
-            Subscription<T> subscription;
-            lock (Constants.SubscriptionLock)
-            {
-                if (this.rank.AddSuperior(superior))
-                {
-                    transaction.Reprioritize = true;
-                }
-
-                subscription = new Subscription<T>(this, publisher, superior);
-                this.Subscriptions.Add(subscription);
-            }
-
-            this.OnSubscribe(subscription, transaction);
-            return subscription;
         }
     }
 }

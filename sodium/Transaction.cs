@@ -40,6 +40,17 @@ namespace Sodium
         public bool Reprioritize { get; set; }
 
         /// <summary>
+        /// Run the given Function using a Transaction obtained from TransactionContext.Current
+        /// </summary>
+        /// <typeparam name="TR">The return type of the Function</typeparam>
+        /// <param name="f">The Function to run</param>
+        /// <returns>The result of the Function</returns>
+        public static TR Start<TR>(Func<Transaction, TR> f)
+        {
+            return TransactionContext.Current.Run(f);
+        }
+
+        /// <summary>
         /// Add an action to run before all Medium() and Low() actions. Actions are prioritized by rank.
         /// </summary> 
         /// <param name="action">The action to schedule high</param>
