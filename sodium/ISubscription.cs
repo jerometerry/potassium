@@ -12,7 +12,7 @@ namespace Sodium
         /// <summary>
         /// The notification that will be sent when the subscribed Observable publishes
         /// </summary>
-        INotification<T> Notification { get; }
+        IPublisher<T> Notification { get; }
 
         /// <summary>
         /// Gets the IObserverable the current ISubscription is subscribed to

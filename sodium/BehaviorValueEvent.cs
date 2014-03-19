@@ -46,7 +46,7 @@ namespace Sodium
         /// <param name="transaction"></param>
         private void CreateLoop(Transaction transaction)
         {
-            var forward = this.CreatePublishCallback();
+            var forward = this.CreatePublisher();
             this.subscription = this.source.Subscribe(forward, this.Rank, transaction);
         }
     }

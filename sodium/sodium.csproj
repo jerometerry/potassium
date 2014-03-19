@@ -93,10 +93,10 @@
     <Compile Include="Rank.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="INotification.cs" />
+    <Compile Include="IPublisher.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Notification.cs" />
+    <Compile Include="Publisher.cs" />
     <Compile Include="TransactionContext.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>

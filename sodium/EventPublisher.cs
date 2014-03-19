@@ -39,7 +39,7 @@
 
         protected static void NotifySubscriber(T value, ISubscription<T> subscription, Transaction transaction)
         {
-            subscription.Notification.Send(value, transaction);
+            subscription.Notification.Publish(value, transaction);
         }
 
         /// <summary>
@@ -70,10 +70,10 @@
         /// <summary>
         /// Creates a callback that calls the Publish method on the current Event when invoked
         /// </summary>
-        /// <returns>In INotification that calls Publish, when invoked.</returns>
-        protected INotification<T> CreatePublishCallback()
+        /// <returns>In IPublisher that calls Publish, when invoked.</returns>
+        protected IPublisher<T> CreatePublisher()
         {
-            return new Notification<T>((t, v) => this.Publish(t, v));
+            return new Publisher<T>((t, v) => this.Publish(t, v));
         }
     }
 }

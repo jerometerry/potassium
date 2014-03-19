@@ -9,7 +9,7 @@ namespace Sodium
         public SwitchBehaviorEvent(Behavior<Behavior<T>> source)
         {
             var evt = Transformer.Default.Values(source);
-            var callback = new Notification<Behavior<T>>(this.Invoke);
+            var callback = new Publisher<Behavior<T>>(this.Invoke);
             this.subscription = evt.Subscribe(callback, this.Rank);
         }
 
@@ -57,7 +57,7 @@ namespace Sodium
             }
 
             this.wrappedEvent = new BehaviorLastValueEvent<T>(behavior, transaction);
-            this.wrappedSubscription = this.wrappedEvent.Subscribe(this.CreatePublishCallback(), this.Rank, transaction);
+            this.wrappedSubscription = this.wrappedEvent.Subscribe(this.CreatePublisher(), this.Rank, transaction);
         }
     }
 }

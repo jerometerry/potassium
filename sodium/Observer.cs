@@ -24,17 +24,17 @@
             return source.Subscribe(callback);
         }
 
-        public ISubscription<T> Subscribe(INotification<T> callback)
+        public ISubscription<T> Subscribe(IPublisher<T> callback)
         {
             return source.Subscribe(callback);
         }
 
-        public ISubscription<T> Subscribe(INotification<T> callback, Rank subscriptionRank)
+        public ISubscription<T> Subscribe(IPublisher<T> callback, Rank subscriptionRank)
         {
             return source.Subscribe(callback, subscriptionRank);
         }
 
-        public ISubscription<T> Subscribe(INotification<T> callback, Rank superior, Transaction transaction)
+        public ISubscription<T> Subscribe(IPublisher<T> callback, Rank superior, Transaction transaction)
         {
             return source.Subscribe(callback, superior, transaction);
         }

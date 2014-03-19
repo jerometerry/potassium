@@ -50,7 +50,7 @@
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
         public ISubscription<T> Subscribe(Action<T> callback)
         {
-            return this.Subscribe(new Notification<T>(callback), Rank.Highest);
+            return this.Subscribe(new Publisher<T>(callback), Rank.Highest);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@
         /// </summary>
         /// <param name="callback">An Action to be invoked when the current Event publishes.</param>
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
-        public ISubscription<T> Subscribe(INotification<T> callback)
+        public ISubscription<T> Subscribe(IPublisher<T> callback)
         {
             return this.Subscribe(callback, Rank.Highest);
         }
@@ -72,7 +72,7 @@
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Subscribe operation that takes a thread. This ensures that any other
         /// actions triggered during Subscribe requiring a transaction all get the same instance.</remarks>
-        public ISubscription<T> Subscribe(INotification<T> callback, Rank subscriptionRank)
+        public ISubscription<T> Subscribe(IPublisher<T> callback, Rank subscriptionRank)
         {
             return this.StartTransaction(t => this.Subscribe(callback, subscriptionRank, t));
         }
@@ -85,7 +85,7 @@
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
         /// <returns>An ISubscription to be used to stop listening for events.</returns>
         /// <remarks>Any publishings that have occurred on the current transaction will be re-published immediate after subscribing.</remarks>
-        public ISubscription<T> Subscribe(INotification<T> callback, Rank superior, Transaction transaction)
+        public ISubscription<T> Subscribe(IPublisher<T> callback, Rank superior, Transaction transaction)
         {
             return this.CreateSubscription(callback, superior, transaction);
         }
@@ -135,7 +135,7 @@
             base.Dispose(disposing);
         }
 
-        private ISubscription<T> CreateSubscription(INotification<T> callback, Rank superior, Transaction transaction)
+        private ISubscription<T> CreateSubscription(IPublisher<T> callback, Rank superior, Transaction transaction)
         {
             Subscription<T> subscription;
             lock (Constants.SubscriptionLock)

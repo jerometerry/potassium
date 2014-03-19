@@ -38,14 +38,14 @@
 
         private void SubscribeSource()
         {
-            var valueChanged = new Notification<T>((a, t) => this.SchedulePublish(t));
+            var valueChanged = new Publisher<T>((a, t) => this.SchedulePublish(t));
             var subscription = source.Subscribe(valueChanged, this.Rank);
             this.Register(subscription);
         }
 
         private void SubscribeMap()
         {
-            var functionChanged = new Notification<Func<T, TB>>((f, t) => this.SchedulePublish(t));
+            var functionChanged = new Publisher<Func<T, TB>>((f, t) => this.SchedulePublish(t));
             var subscription = behaviorMap.Subscribe(functionChanged, this.Rank);
             this.Register(subscription);
         }

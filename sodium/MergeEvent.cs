@@ -14,7 +14,7 @@ namespace Sodium
             this.source1 = source1;
             this.source2 = source2;
 
-            var callback = this.CreatePublishCallback();
+            var callback = this.CreatePublisher();
             l1 = source1.Subscribe(callback, this.Rank);
             l2 = source2.Subscribe(callback, this.Rank);
         }
