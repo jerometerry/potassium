@@ -21,8 +21,9 @@ The primitives are Event, and Behavior, both subclasses of Observable (the Obser
 The operations are Accum, Apply, Coalesce, Collect, Filter, Gate, Hold, Lift, Map, Merge, Snapshot, Switch
 
 Sodium.net uses the Publish / Subscribe Pattern
-    * EventPublisher / BehaviorPublisher are the Publishers
-    * Observable.Subscribe is used to create subscriptions
+
+* EventPublisher / BehaviorPublisher are the Publishers
+* Observable.Subscribe is used to create subscriptions
 
 Key Classes
 ==========
