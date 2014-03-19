@@ -16,10 +16,13 @@ Overview
 
 Sodium is made up of 2 primitives with 12 opeartions.
 
-The primitives are Event, and Behavior.
+The primitives are Event, and Behavior, both subclasses of Observable (the Observer Pattern).
 
 The operations are Accum, Apply, Coalesce, Collect, Filter, Gate, Hold, Lift, Map, Merge, Snapshot, Switch
 
+Sodium.net uses the Publish / Subscribe Pattern
+    * EventPublisher / BehaviorPublisher are the Publishers
+    * Observable.Subscribe is used to create subscriptions
 
 Key Classes
 ==========
@@ -42,22 +45,22 @@ Here's a code snippit for listeneing to a Behavior of int's.
     var l = b.Listen(v => Console.Write("{0} ", v));
 ``` 
 
-**EventPublisher** - EventPublisher is an Event that can be published (the name of the publishing method in Sodium is *Send*).
+**EventPublisher** - EventPublisher is an Event that can be published.
 
-Here's an example of creating an EventPublisher, and sending (aka publishing) a value to all registered listeners.
+Here's an example of creating an EventPublisher, and publishing a value to all registered subscribers.
 ```
     var e = new EventPublisher<int>();
-    ... // register listeners
-    e.Send(0);
+    ... // register subscribers
+    e.Publish(0);
 ```
 
 **BehaviorPublisher** - BehaviorPublisher is a Behavior that can be published
 
-Here's an example of constructing a BehaviorPublisher with an initial value of zero, and sending it a new value of one,  after some operations that register listeners.
+Here's an example of constructing a BehaviorPublisher with an initial value of zero, and publishing a new value of one,  after some operations that register subscribers.
 ```
     var b = new BehaviorPublisher<int>(0);
-    ... // register listeners
-    b.Send(1);
+    ... // register subscribers
+    b.Publish(1);
 ```
 
 **EventLoop** - EventLoop is an EventPublisher that listens to another Event for publishings, and publishes the same value on itself, known as looping. 
@@ -127,14 +130,14 @@ High, Medium and Low priority actions are run when the Transaction is closed whe
 
 A Rank is assigned to an Event, with a default priority of zero. A Rank has an operation to add a superior, with a class invariant that all superiors must have a higher priority than their subordinates. 
 
-An Events Rank can be modified (increased) when it registers itself to listen to another Event. The listeners rank should be higher than the source rank, so that the source rank High operations in a Transaction execute before those of their listeners.
+An Events Rank can be modified (increased) when it registers itself to listen to another Event. The subscribers rank should be higher than the source rank, so that the source rank High operations in a Transaction execute before those of their subscribers.
 
 The Rank of an Event is used when registering High priority actions on a Transaction, as a means to ensure actions are run on a priority basis.
 
 Memory Management
 ==========
 
-```Event```, ```Behavior``` and ```IEventListener``` all implement ```IDisposable```, and all should be disposed of when you are done with them. 
+```Event```, ```Behavior``` and ```ISubscription``` all implement ```IDisposable```, and all should be disposed of when you are done with them. 
 
 Return values of ```Event``` and ```Behavior``` methods that return other ```Events``` and ```Behaviors``` also need to be disposed of. 
 
@@ -171,7 +174,7 @@ Event Examples
     var e = new EventPublisher<int>();
     var l = e.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
-        e.Send(i);
+        e.Publish(i);
     l.Dispose();
     e.Dispose();
 ```
@@ -187,7 +190,7 @@ Event Examples
     var m = e.Map(v => v.ToString());
     var l = m.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
-        e.Send(i);
+        e.Publish(i);
     l.Dispose();
     m.Dispose();
     e.Dispose();
@@ -205,10 +208,10 @@ Event Examples
     var l = m.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 10; i++) {
         if (i % 2 == 0) {
-            e1.Send(i);
+            e1.Publish(i);
         }
         else {
-            e2.Send(i);
+            e2.Publish(i);
         }
     }
     l.Dispose();
@@ -226,9 +229,9 @@ Event Examples
     var e = new EventPublisher<char>();
     var f = e.Filter(c => char.IsUpper(c));
     var l = f.Listen(v => Console.Write("{0} ", v));
-    e.Send('H');
-    e.Send('o');
-    e.Send('I');
+    e.Publish('H');
+    e.Publish('o');
+    e.Publish('I');
     l.Dispose();
 ```
 *Output*
@@ -244,7 +247,7 @@ Behavior Examples
     var b = new BehaviorPublisher<int>(0);
     var l = b.Listen(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
-        b.Send(i);
+        b.Publish(i);
     l.Dispose();
     b.Dispose();
 ```
@@ -259,7 +262,7 @@ Behavior Examples
     var b = e.Hold(0);
     var l = b.Listen(v => Console.Write("{0} ", v));
     for (var i = 1; i <= 5; i++) 
-        e.Send(i);
+        e.Publish(i);
     l.Dispose();
     b.Dispose();
     e.Dispose();
@@ -276,7 +279,7 @@ Behavior Examples
     var v = b.Values();
     var l = v.Listen(v => Console.Write("{0} ", v));
     for (var i = 1; i <= 5; i++) 
-        e.Send(i);
+        e.Publish(i);
     l.Dispose();
     v.Dispose();
     b.Dispose();

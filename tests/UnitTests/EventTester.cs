@@ -9,7 +9,7 @@ namespace Sodium.Tests
     public class EventTester : SodiumTestCase
     {
         [Test]
-        public void TestSendEvent()
+        public void TestPublishEvent()
         {
             var e = new EventPublisher<int>();
             var o = new List<int>();
