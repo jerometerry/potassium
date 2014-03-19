@@ -3,7 +3,7 @@
     internal sealed class SwitchEvent<T> : EventPublisher<T>
     {
         private ISubscription<Event<T>> behaviorSubscription;
-        private IPublisher<T> wrappedEventSubscriptionCallback;
+        private Publisher<T> wrappedEventSubscriptionCallback;
         private ISubscription<T> wrappedSubscription;
         private Behavior<Event<T>> source;
 

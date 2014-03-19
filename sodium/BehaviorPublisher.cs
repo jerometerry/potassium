@@ -1,7 +1,7 @@
 ﻿namespace Sodium
 {
     /// <summary>
-    /// BehaviorPublisher is a Behavior who's underlying Event is an EventPublisher
+    /// An BehaviorPublisher is an Behavior that allows callers to publish values to subscribers.
     /// </summary>
     /// <typeparam name="T">The type of values published through the Behavior</typeparam>
     public class BehaviorPublisher<T> : Behavior<T>

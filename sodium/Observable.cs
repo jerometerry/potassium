@@ -79,9 +79,14 @@
         /// </summary>
         /// <param name="callback">An Action to be invoked when the current Observable publishes new values.</param>
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
-        internal virtual ISubscription<T> Subscribe(IPublisher<T> callback)
+        internal virtual ISubscription<T> Subscribe(Publisher<T> callback)
         {
             return this.Subscribe(callback, Rank.Highest);
+        }
+
+        internal virtual ISubscription<T> Subscribe(Publisher<T> callback, Observable<T> superior)
+        {
+            return this.Subscribe(callback, superior.Rank);
         }
 
         /// <summary>
@@ -93,7 +98,7 @@
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Subscribe operation that takes a thread. This ensures that any other
         /// actions triggered during Subscribe requiring a transaction all get the same instance.</remarks>
-        internal virtual ISubscription<T> Subscribe(IPublisher<T> callback, Rank subscriptionRank)
+        internal virtual ISubscription<T> Subscribe(Publisher<T> callback, Rank subscriptionRank)
         {
             return this.StartTransaction(t => this.Subscribe(callback, subscriptionRank, t));
         }
@@ -106,7 +111,7 @@
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Observable</param>
         /// <returns>An ISubscription to be used to stop listening for Observables.</returns>
         /// <remarks>Any publishings that have occurred on the current transaction will be re-published immediate after subscribing.</remarks>
-        internal virtual ISubscription<T> Subscribe(IPublisher<T> callback, Rank superior, Transaction transaction)
+        internal virtual ISubscription<T> Subscribe(Publisher<T> callback, Rank superior, Transaction transaction)
         {
             return this.CreateSubscription(callback, superior, transaction);
         }
@@ -135,7 +140,7 @@
             base.Dispose(disposing);
         }
 
-        private ISubscription<T> CreateSubscription(IPublisher<T> publisher, Rank superior, Transaction transaction)
+        private ISubscription<T> CreateSubscription(Publisher<T> publisher, Rank superior, Transaction transaction)
         {
             Subscription<T> subscription;
             lock (Constants.SubscriptionLock)

@@ -51,11 +51,10 @@
     <Compile Include="BehaviorPublisher.cs" />
     <Compile Include="ConstantBehavior.cs" />
     <Compile Include="EventPublisher.cs" />
+    <Compile Include="Publisher.cs" />
     <Compile Include="Transformer.cs" />
     <Compile Include="Observable.cs" />
-    <Compile Include="Observer.cs" />
     <Compile Include="ValueContainer.cs" />
-    <Compile Include="DelayEvent.cs" />
     <Compile Include="EventLoop.cs" />
     <Compile Include="SubscribePublishEvent.cs" />
     <Compile Include="LastFiringEvent.cs" />
@@ -92,10 +91,6 @@
     <Compile Include="Rank.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IPublisher.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Publisher.cs" />
     <Compile Include="TransactionContext.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>

@@ -7,7 +7,7 @@ namespace Sodium
     /// gets updated as the underlying Observable is published.
     /// </summary>
     /// <typeparam name="T">The type of values that will be published through the Behavior.</typeparam>
-    public class Behavior<T> : Observer<T>
+    public class Behavior<T> : Observable<T>
     {
         private ValueContainer<T> valueContainer;
 
@@ -27,7 +27,6 @@ namespace Sodium
         /// <param name="source">The Observable to listen for updates from</param>
         /// <param name="initValue">The initial value of the Behavior</param>
         public Behavior(Observable<T> source, T initValue)
-            : base((Observable<T>)source)
         {
             this.Source = source;
             this.valueContainer = new ValueContainer<T>(source, initValue);
@@ -154,6 +153,41 @@ namespace Sodium
             s.Register(evt);
             return s;
         }
+
+        #region Subscribe Overrides
+        
+        /* Override Subscribe methods, forwarding subscription to the underlying Observable. */
+
+        public override ISubscription<T> Subscribe(Action<T> callback)
+        {
+            return Source.Subscribe(callback);
+        }
+
+        internal override bool CancelSubscription(ISubscription<T> subscription)
+        {
+            return Source.CancelSubscription(subscription);
+        }
+
+        internal override ISubscription<T> Subscribe(Publisher<T> callback)
+        {
+            return Source.Subscribe(callback);
+        }
+
+        internal override ISubscription<T> Subscribe(Publisher<T> callback, Observable<T> superior)
+        {
+            return Source.Subscribe(callback, superior);
+        }
+
+        internal override ISubscription<T> Subscribe(Publisher<T> callback, Rank subscriptionRank)
+        {
+            return Source.Subscribe(callback, subscriptionRank);
+        }
+
+        internal override ISubscription<T> Subscribe(Publisher<T> callback, Rank superior, Transaction transaction)
+        {
+            return Source.Subscribe(callback, superior, transaction);
+        }
+        #endregion
 
         /// <summary>
         /// Dispose of the current Behavior

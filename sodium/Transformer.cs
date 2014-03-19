@@ -153,7 +153,11 @@ namespace Sodium
         /// <returns>An event that is published with the lowest priority in the current Transaction the current Event is published in.</returns>
         public Event<T> Delay<T>(Observable<T> source)
         {
-            return new DelayEvent<T>(source);
+            var evt = new EventPublisher<T>();
+            var callback = new Publisher<T>((a, t) => t.Low(() => evt.Publish(a)));
+            var subscription = source.Subscribe(callback, evt);
+            evt.Register(subscription);
+            return evt;
         }
 
         /// <summary>

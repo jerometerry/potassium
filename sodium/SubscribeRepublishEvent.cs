@@ -28,8 +28,7 @@ namespace Sodium
         {
             this.ScheduleClearPublishings(transaction);
             this.RecordPublishing(value);
-            this.NotifySubscribers(value, transaction);
-            return true;
+            return base.Publish(value, transaction);
         }
 
         /// <summary>
@@ -41,7 +40,7 @@ namespace Sodium
         protected virtual bool Republish(ISubscription<T> subscription, Transaction transaction)
         {
             var values = this.publishings;
-            PublishToSubscriber(subscription, values, transaction);
+            Publisher<T>.PublishToSubscriber(subscription, values, transaction);
             return true;
         }
 
