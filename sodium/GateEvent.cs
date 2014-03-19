@@ -4,7 +4,7 @@ namespace Sodium
 
     internal class GateEvent<T> : EventLoop<T>
     {
-        public GateEvent(IEvent<T> source, IValue<bool> predicate)
+        public GateEvent(IObservable<T> source, IValue<bool> predicate)
         {
             Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
             var sn = Transformer.Default.Snapshot(source, predicate, snapshot);

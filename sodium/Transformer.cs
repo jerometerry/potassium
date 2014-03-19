@@ -30,7 +30,7 @@ namespace Sodium
         /// <param name="snapshot">The snapshot generation function</param>
         /// <returns>A new Behavior starting with the given value, that updates 
         /// whenever the current event fires, getting a value computed by the snapshot function.</returns>
-        public IBehavior<TS> Accum<T, TS>(IEvent<T> source, TS initState, Func<T, TS, TS> snapshot)
+        public IBehavior<TS> Accum<T, TS>(IObservable<T> source, TS initState, Func<T, TS, TS> snapshot)
         {
             var evt = new EventLoop<TS>();
             var behavior = Hold(evt, initState);
@@ -81,7 +81,7 @@ namespace Sodium
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
         /// </remarks>
-        public IEvent<T> Coalesce<T>(IEvent<T> source, Func<T, T, T> coalesce)
+        public IEvent<T> Coalesce<T>(IObservable<T> source, Func<T, T, T> coalesce)
         {
             return this.StartTransaction(t => new CoalesceEvent<T>(source, coalesce, t));
         }
@@ -97,7 +97,7 @@ namespace Sodium
         /// <param name="initState">The initial state for the internal Behavior</param>
         /// <param name="snapshot">The mealy machine</param>
         /// <returns>An Event that collects new values</returns>
-        public IEvent<TB> Collect<T, TB, TS>(IEvent<T> source, TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
+        public IEvent<TB> Collect<T, TB, TS>(IObservable<T> source, TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             return new CollectEvent<T, TB, TS>(source, initState, snapshot);
         }
@@ -139,7 +139,7 @@ namespace Sodium
         /// <typeparam name="T"> </typeparam>
         /// <param name="source">The source Event</param>
         /// <returns>An event that is fired with the lowest priority in the current Transaction the current Event is fired in.</returns>
-        public IEvent<T> Delay<T>(IEvent<T> source)
+        public IEvent<T> Delay<T>(IObservable<T> source)
         {
             return new DelayEvent<T>(source);
         }
@@ -152,7 +152,7 @@ namespace Sodium
         /// <param name="predicate">A predicate used to include firings</param>
         /// <returns>A new Event that is fired when the current Event fires and
         /// the predicate evaluates to true.</returns>
-        public IEvent<T> Filter<T>(IEvent<T> source, Func<T, bool> predicate)
+        public IEvent<T> Filter<T>(IObservable<T> source, Func<T, bool> predicate)
         {
             return new FilterEvent<T>(source, predicate);
         }
@@ -165,7 +165,7 @@ namespace Sodium
         /// <returns>A new Event that fires whenever the current Event fires with a non-null value</returns>
         /// <remarks>For value types, comparison against null will always be false. 
         /// FilterNotNull will not filter out any values for value types.</remarks>
-        public IEvent<T> FilterNotNull<T>(IEvent<T> source)
+        public IEvent<T> FilterNotNull<T>(IObservable<T> source)
         {
             return new NotNullFilterEvent<T>(source);
         }
@@ -180,7 +180,7 @@ namespace Sodium
         /// <param name="predicate">A behavior who's current value acts as a predicate</param>
         /// <returns>A new Event that fires whenever the current Event fires and the Behaviors value
         /// is true.</returns>
-        public IEvent<T> Gate<T>(IEvent<T> source, IValue<bool> predicate)
+        public IEvent<T> Gate<T>(IObservable<T> source, IValue<bool> predicate)
         {
             return new GateEvent<T>(source, predicate);
         }
@@ -291,7 +291,7 @@ namespace Sodium
         /// <param name="map">A map from T -> TB</param>
         /// <returns>A new Event that fires whenever the current Event fires, the
         /// the mapped value is computed using the supplied mapping.</returns>
-        public IEvent<TB> Map<T, TB>(IEvent<T> source, Func<T, TB> map)
+        public IEvent<TB> Map<T, TB>(IObservable<T> source, Func<T, TB> map)
         {
             return new MapEvent<T, TB>(source, map);
         }
