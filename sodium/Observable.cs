@@ -4,24 +4,24 @@
     using System.Collections.Generic;
 
     /// <summary>
-    /// Observable is the base class for Events and Behaviors, containing the subscription logic (i.e. the Observer Pattern).
+    /// Observable is the base class for Observables and Behaviors, containing the subscription logic (i.e. the Observer Pattern).
     /// </summary>
     /// <typeparam name="T">The type of value published through the Observable</typeparam>
     public abstract class Observable<T> : TransactionalObject
     {
         /// <summary>
-        /// The rank of the current Event. Default to rank zero
+        /// The rank of the current Observable. Default to rank zero
         /// </summary>
         private readonly Rank rank = new Rank();
 
         /// <summary>
         /// List of ISubscriptions that are currently listening for publishings 
-        /// from the current Event.
+        /// from the current Observable.
         /// </summary>
         private readonly List<ISubscription<T>> subscriptions = new List<ISubscription<T>>();
 
         /// <summary>
-        /// The current Rank of the Event, used to prioritize publishings on the current transaction.
+        /// The current Rank of the Observable, used to prioritize publishings on the current transaction.
         /// </summary>
         protected Rank Rank
         {
@@ -33,7 +33,7 @@
 
         /// <summary>
         /// List of ISubscriptions that are currently listening for publishings 
-        /// from the current Event.
+        /// from the current Observable.
         /// </summary>
         protected List<ISubscription<T>> Subscriptions
         {
@@ -44,11 +44,21 @@
         }
 
         /// <summary>
-        /// Stop the given subscription from receiving updates from the current Event
+        /// Subscribe to publications of the current Observable.
+        /// </summary>
+        /// <param name="callback">An Action to be invoked when the current Observable publishes values.</param>
+        /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
+        public virtual ISubscription<T> Subscribe(Action<T> callback)
+        {
+            return this.Subscribe(new Publisher<T>(callback), Rank.Highest);
+        }
+
+        /// <summary>
+        /// Stop the given subscription from receiving updates from the current Observable
         /// </summary>
         /// <param name="subscription">The subscription to remove</param>
         /// <returns>True if the subscription was removed, false otherwise</returns>
-        public virtual bool CancelSubscription(ISubscription<T> subscription)
+        internal virtual bool CancelSubscription(ISubscription<T> subscription)
         {
             if (subscription == null)
             {
@@ -65,19 +75,9 @@
         }
 
         /// <summary>
-        /// Listen for publishings of this event.
+        /// Subscribe to publications of the current Observable.
         /// </summary>
-        /// <param name="callback">An Action to be invoked when the current Event publishes.</param>
-        /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
-        public virtual ISubscription<T> Subscribe(Action<T> callback)
-        {
-            return this.Subscribe(new Publisher<T>(callback), Rank.Highest);
-        }
-
-        /// <summary>
-        /// Listen for publishings of this event.
-        /// </summary>
-        /// <param name="callback">An Action to be invoked when the current Event publishes.</param>
+        /// <param name="callback">An Action to be invoked when the current Observable publishes new values.</param>
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
         internal virtual ISubscription<T> Subscribe(IPublisher<T> callback)
         {
@@ -85,11 +85,11 @@
         }
 
         /// <summary>
-        /// Listen for publishings on the current event
+        /// Subscribe to publications of the current Observable.
         /// </summary>
         /// <param name="callback">The action to invoke on a publishing</param>
-        /// <param name="subscriptionRank">A rank that will be added as a superior of the Rank of the current Event</param>
-        /// <returns>An ISubscription to be used to stop listening for events</returns>
+        /// <param name="subscriptionRank">A rank that will be added as a superior of the Rank of the current Observable</param>
+        /// <returns>An ISubscription to be used to stop listening for Observables</returns>
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Subscribe operation that takes a thread. This ensures that any other
         /// actions triggered during Subscribe requiring a transaction all get the same instance.</remarks>
@@ -99,12 +99,12 @@
         }
 
         /// <summary>
-        /// Listen for publishings on the current event
+        /// Subscribe to publications of the current Observable.
         /// </summary>
         /// <param name="transaction">Transaction to send any publishings on</param>
         /// <param name="callback">The action to invoke on a publishing</param>
-        /// <param name="superior">A rank that will be added as a superior of the Rank of the current Event</param>
-        /// <returns>An ISubscription to be used to stop listening for events.</returns>
+        /// <param name="superior">A rank that will be added as a superior of the Rank of the current Observable</param>
+        /// <returns>An ISubscription to be used to stop listening for Observables.</returns>
         /// <remarks>Any publishings that have occurred on the current transaction will be re-published immediate after subscribing.</remarks>
         internal virtual ISubscription<T> Subscribe(IPublisher<T> callback, Rank superior, Transaction transaction)
         {
@@ -121,7 +121,7 @@
         }
 
         /// <summary>
-        /// Cleanup the current Event, disposing of any subscriptions.
+        /// Cleanup the current Observable, disposing of any subscriptions.
         /// </summary>
         protected override void Dispose(bool disposing)
         {
@@ -135,7 +135,7 @@
             base.Dispose(disposing);
         }
 
-        private ISubscription<T> CreateSubscription(IPublisher<T> callback, Rank superior, Transaction transaction)
+        private ISubscription<T> CreateSubscription(IPublisher<T> publisher, Rank superior, Transaction transaction)
         {
             Subscription<T> subscription;
             lock (Constants.SubscriptionLock)
@@ -145,7 +145,7 @@
                     transaction.Reprioritize = true;
                 }
 
-                subscription = new Subscription<T>(this, callback, superior);
+                subscription = new Subscription<T>(this, publisher, superior);
                 this.Subscriptions.Add(subscription);
             }
 

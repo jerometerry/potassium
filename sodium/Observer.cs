@@ -19,14 +19,14 @@
             this.source = source;
         }
 
-        public override bool CancelSubscription(ISubscription<T> subscription)
-        {
-            return source.CancelSubscription(subscription);
-        }
-
         public override ISubscription<T> Subscribe(Action<T> callback)
         {
             return source.Subscribe(callback);
+        }
+
+        internal override bool CancelSubscription(ISubscription<T> subscription)
+        {
+            return source.CancelSubscription(subscription);
         }
 
         internal override ISubscription<T> Subscribe(IPublisher<T> callback)
