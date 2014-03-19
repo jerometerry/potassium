@@ -15,6 +15,11 @@ namespace Sodium
 
         public Rank Rank { get; private set; }
 
+        public void Cancel()
+        {
+            this.Dispose();
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (this.Source != null)

@@ -4,7 +4,7 @@ namespace Sodium
 
     /// <summary>
     /// A Behavior is a time varying value. It starts with an initial value which 
-    /// gets updated as the underlying Event is fired.
+    /// gets updated as the underlying IObservable is fired.
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the Behavior.</typeparam>
     public class Behavior<T> : Observer<T>
@@ -26,7 +26,7 @@ namespace Sodium
         /// </summary>
         /// <param name="source">The Event to listen for updates from</param>
         /// <param name="initValue">The initial value of the Behavior</param>
-        public Behavior(Event<T> source, T initValue)
+        public Behavior(IObservable<T> source, T initValue)
             : base(source)
         {
             this.Source = source;
@@ -67,9 +67,9 @@ namespace Sodium
         }
 
         /// <summary>
-        /// Gets the underlying Event of the current Behavior
+        /// The underlying IObservable of the current Behavior
         /// </summary>
-        internal Event<T> Source { get; private set; }
+        internal IObservable<T> Source { get; private set; }
 
         /// <summary>
         /// Apply a value inside a behavior to a function inside a behavior. This is the
