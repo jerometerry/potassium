@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BehaviorApply.cs" />
+    <Compile Include="BehaviorApplyEvent.cs" />
     <Compile Include="BehaviorLoop.cs" />
     <Compile Include="BehaviorSink.cs" />
     <Compile Include="CollectEvent.cs" />

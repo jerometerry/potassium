@@ -51,130 +51,19 @@ namespace Sodium
         /// primitive for all function lifting.
         /// </summary>
         /// <typeparam name="TB">The return type of the inner function of the given Behavior</typeparam>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="source"> </param>
         /// <param name="bf">Behavior of functions that maps from T -> TB</param>
         /// <returns>The new applied Behavior</returns>
         public IBehavior<TB> Apply<T, TB>(IBehavior<T> source, IBehavior<Func<T, TB>> bf)
         {
-            var evt = new BehaviorApply<T, TB>(bf, source);
-            var behavior = evt.Behavior;
+            var evt = new BehaviorApplyEvent<T, TB>(source, bf);
+            var map = bf.Value;
+            var valA = source.Value;
+            var valB = map(valA);
+            var behavior = evt.Hold(valB);
             behavior.Register(evt);
             return behavior;
-        }
-
-        /// <summary>
-        /// Transform the behavior's value according to the supplied function.
-        /// </summary>
-        /// <typeparam name="TB">The return type of the mapping function</typeparam>
-        /// <param name="map">The mapping function that converts from T -> TB</param>
-        /// <returns>A new Behavior that updates whenever the current Behavior updates,
-        /// having a value computed by the map function, and starting with the value
-        /// of the current event mapped.</returns>
-        public IBehavior<TB> Map<T, TB>(IBehavior<T> source, Func<T, TB> map)
-        {
-            var mapEvent = source.Source.Map(map);
-            var behavior = mapEvent.Hold(map(source.Value));
-            behavior.Register(mapEvent);
-            return behavior;
-        }
-
-        /// <summary>
-        /// Lift a binary function into behaviors.
-        /// </summary>
-        /// <typeparam name="TB">The type of the given Behavior</typeparam>
-        /// <typeparam name="TC">The return type of the lift function.</typeparam>
-        /// <param name="lift">The function to lift, taking a T and a TB, returning TC</param>
-        /// <param name="behavior">The behavior used to apply a partial function by mapping the given 
-        /// lift method to the current Behavior.</param>
-        /// <returns>A new Behavior who's value is computed using the current Behavior, the given
-        /// Behavior, and the lift function.</returns>
-        public IBehavior<TC> Lift<T, TB, TC>(IBehavior<T> source, Func<T, TB, TC> lift, IBehavior<TB> behavior)
-        {
-            Func<T, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
-            var bf = source.Map(ffa);
-            var result = behavior.Apply(bf);
-            result.Register(bf);
-            return result;
-        }
-
-        /// <summary>
-        /// Transform a behavior with a generalized state loop (a mealy machine). The function
-        /// is passed the input and the old state and returns the new state and output value.
-        /// </summary>
-        /// <typeparam name="TB">The type of the returned Behavior</typeparam>
-        /// <typeparam name="TS">The snapshot function</typeparam>
-        /// <param name="initState">Value to pass to the snapshot function</param>
-        /// <param name="snapshot">Snapshot function</param>
-        /// <returns>A new Behavior that collects values of type TB</returns>
-        public IBehavior<TB> Collect<T, TB, TS>(IBehavior<T> source, TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
-        {
-            var coalesceEvent = source.Source.Coalesce((a, b) => b);
-            var currentValue = source.Value;
-            var tuple = snapshot(currentValue, initState);
-            var loop = new EventLoop<Tuple<TB, TS>>();
-            var loopBehavior = loop.Hold(tuple);
-            var snapshotBehavior = loopBehavior.Map(x => x.Item2);
-            var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
-            loop.Loop(coalesceSnapshotEvent);
-
-            var result = loopBehavior.Map(x => x.Item1);
-            result.Register(loop);
-            result.Register(loopBehavior);
-            result.Register(coalesceEvent);
-            result.Register(coalesceSnapshotEvent);
-            result.Register(snapshotBehavior);
-            return result;
-        }
-
-        /// <summary>
-        /// Lift a ternary function into behaviors.
-        /// </summary>
-        /// <typeparam name="TB">Type of Behavior b</typeparam>
-        /// <typeparam name="TC">Type of Behavior c</typeparam>
-        /// <typeparam name="TD">Return type of the lift function</typeparam>
-        /// <param name="lift">The function to lift</param>
-        /// <param name="b">Behavior of type TB used to do the lift</param>
-        /// <param name="c">Behavior of type TC used to do the lift</param>
-        /// <returns>A new Behavior who's value is computed by applying the lift function to the current
-        /// behavior, and the given behaviors.</returns>
-        /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
-        public IBehavior<TD> Lift<T, TB, TC, TD>(IBehavior<T> source, Func<T, TB, TC, TD> lift, IBehavior<TB> b, IBehavior<TC> c)
-        {
-            Func<T, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
-            var bf = source.Map(map);
-            var l1 = b.Apply(bf);
-
-            var result = c.Apply(l1);
-            result.Register(bf);
-            result.Register(l1);
-            return result;
-        }
-
-        /// <summary>
-        /// Listen to the underlying event for updates
-        /// </summary>
-        /// <param name="callback"> action to invoke when the underlying event fires</param>
-        /// <returns>The event subscription</returns>
-        /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
-        /// current value of the behavior.</remarks>
-        public ISubscription<T> SubscribeValues<T>(IBehavior<T> source, Action<T> callback)
-        {
-            return SubscribeValues(source, new SodiumCallback<T>((a, t) => callback(a)), Rank.Highest);
-        }
-
-        /// <summary>
-        /// Listen to the underlying event for updates
-        /// </summary>
-        /// <param name="callback"> action to invoke when the underlying event fires</param>
-        /// <param name="rank">A rank that will be added as a superior of the Rank of the current Event</param>
-        /// <returns>The event subscription</returns>
-        /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
-        /// current value of the behavior.</remarks>
-        public ISubscription<T> SubscribeValues<T>(IBehavior<T> source, ISodiumCallback<T> callback, Rank rank)
-        {
-            var evt = this.StartTransaction(t => new SubscribeFireLastValueEvent<T>(source, t));
-            var subscription = (Subscription<T>)evt.Subscribe(callback, rank);
-            subscription.Register(evt);
-            return subscription;
         }
 
         /// <summary>
@@ -211,6 +100,37 @@ namespace Sodium
         public IEvent<TB> Collect<T, TB, TS>(IEvent<T> source, TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             return new CollectEvent<T, TB, TS>(source, initState, snapshot);
+        }
+
+        /// <summary>
+        /// Transform a behavior with a generalized state loop (a mealy machine). The function
+        /// is passed the input and the old state and returns the new state and output value.
+        /// </summary>
+        /// <typeparam name="TB">The type of the returned Behavior</typeparam>
+        /// <typeparam name="TS">The snapshot function</typeparam>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="source"> </param>
+        /// <param name="initState">Value to pass to the snapshot function</param>
+        /// <param name="snapshot">Snapshot function</param>
+        /// <returns>A new Behavior that collects values of type TB</returns>
+        public IBehavior<TB> Collect<T, TB, TS>(IBehavior<T> source, TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
+        {
+            var coalesceEvent = source.Source.Coalesce((a, b) => b);
+            var currentValue = source.Value;
+            var tuple = snapshot(currentValue, initState);
+            var loop = new EventLoop<Tuple<TB, TS>>();
+            var loopBehavior = loop.Hold(tuple);
+            var snapshotBehavior = loopBehavior.Map(x => x.Item2);
+            var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
+            loop.Loop(coalesceSnapshotEvent);
+
+            var result = loopBehavior.Map(x => x.Item1);
+            result.Register(loop);
+            result.Register(loopBehavior);
+            result.Register(coalesceEvent);
+            result.Register(coalesceSnapshotEvent);
+            result.Register(snapshotBehavior);
+            return result;
         }
 
         /// <summary>
@@ -295,6 +215,71 @@ namespace Sodium
             var b = new Behavior<T>(s, initValue);
             b.Register(s);
             return b;
+        }
+
+        /// <summary>
+        /// Lift a binary function into behaviors.
+        /// </summary>
+        /// <typeparam name="TB">The type of the given Behavior</typeparam>
+        /// <typeparam name="TC">The return type of the lift function.</typeparam>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="source"> </param>
+        /// <param name="lift">The function to lift, taking a T and a TB, returning TC</param>
+        /// <param name="behavior">The behavior used to apply a partial function by mapping the given 
+        /// lift method to the current Behavior.</param>
+        /// <returns>A new Behavior who's value is computed using the current Behavior, the given
+        /// Behavior, and the lift function.</returns>
+        public IBehavior<TC> Lift<T, TB, TC>(IBehavior<T> source, Func<T, TB, TC> lift, IBehavior<TB> behavior)
+        {
+            Func<T, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
+            var bf = source.Map(ffa);
+            var result = behavior.Apply(bf);
+            result.Register(bf);
+            return result;
+        }
+
+        /// <summary>
+        /// Lift a ternary function into behaviors.
+        /// </summary>
+        /// <typeparam name="TB">Type of Behavior b</typeparam>
+        /// <typeparam name="TC">Type of Behavior c</typeparam>
+        /// <typeparam name="TD">Return type of the lift function</typeparam>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="source"> </param>
+        /// <param name="lift">The function to lift</param>
+        /// <param name="b">Behavior of type TB used to do the lift</param>
+        /// <param name="c">Behavior of type TC used to do the lift</param>
+        /// <returns>A new Behavior who's value is computed by applying the lift function to the current
+        /// behavior, and the given behaviors.</returns>
+        /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
+        public IBehavior<TD> Lift<T, TB, TC, TD>(IBehavior<T> source, Func<T, TB, TC, TD> lift, IBehavior<TB> b, IBehavior<TC> c)
+        {
+            Func<T, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
+            var bf = source.Map(map);
+            var l1 = b.Apply(bf);
+
+            var result = c.Apply(l1);
+            result.Register(bf);
+            result.Register(l1);
+            return result;
+        }
+
+        /// <summary>
+        /// Transform the behavior's value according to the supplied function.
+        /// </summary>
+        /// <typeparam name="TB">The return type of the mapping function</typeparam>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="source"> </param>
+        /// <param name="map">The mapping function that converts from T -> TB</param>
+        /// <returns>A new Behavior that updates whenever the current Behavior updates,
+        /// having a value computed by the map function, and starting with the value
+        /// of the current event mapped.</returns>
+        public IBehavior<TB> Map<T, TB>(IBehavior<T> source, Func<T, TB> map)
+        {
+            var mapEvent = source.Source.Map(map);
+            var behavior = mapEvent.Hold(map(source.Value));
+            behavior.Register(mapEvent);
+            return behavior;
         }
 
         /// <summary>
@@ -392,6 +377,38 @@ namespace Sodium
         public IEvent<TB> Snapshot<T, TB>(IObservable<T> source, IValue<TB> valueStream)
         {
             return this.Snapshot(source, valueStream, (a, b) => b);
+        }
+
+        /// <summary>
+        /// Listen to the underlying event for updates
+        /// </summary>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="source"> </param>
+        /// <param name="callback"> action to invoke when the underlying event fires</param>
+        /// <returns>The event subscription</returns>
+        /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
+        /// current value of the behavior.</remarks>
+        public ISubscription<T> SubscribeValues<T>(IBehavior<T> source, Action<T> callback)
+        {
+            return SubscribeValues(source, new SodiumCallback<T>((a, t) => callback(a)), Rank.Highest);
+        }
+
+        /// <summary>
+        /// Listen to the underlying event for updates
+        /// </summary>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="source"> </param>
+        /// <param name="callback"> action to invoke when the underlying event fires</param>
+        /// <param name="rank">A rank that will be added as a superior of the Rank of the current Event</param>
+        /// <returns>The event subscription</returns>
+        /// <remarks>Immediately after creating the subscription, the callback will be fired with the 
+        /// current value of the behavior.</remarks>
+        public ISubscription<T> SubscribeValues<T>(IBehavior<T> source, ISodiumCallback<T> callback, Rank rank)
+        {
+            var evt = this.StartTransaction(t => new SubscribeFireLastValueEvent<T>(source, t));
+            var subscription = (Subscription<T>)evt.Subscribe(callback, rank);
+            subscription.Register(evt);
+            return subscription;
         }
 
         /// <summary>
