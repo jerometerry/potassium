@@ -8,7 +8,7 @@ namespace Sodium
 
         public SwitchBehaviorEvent(Behavior<Behavior<T>> source)
         {
-            var evt = Transformer.Default.Values(source);
+            var evt = source.Values();
             var callback = new Publisher<Behavior<T>>(this.Invoke);
             this.subscription = evt.Subscribe(callback, this.Rank);
         }
