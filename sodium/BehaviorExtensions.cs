@@ -151,7 +151,7 @@
         /// <returns>The new, unwrapped Behavior</returns>
         /// <remarks>Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.</remarks>
-        public static Behavior<T> SwitchB<T>(this Behavior<Behavior<T>> source)
+        public static Behavior<T> Switch<T>(this Behavior<Behavior<T>> source)
         {
             var value = source.Value.Value;
             var sink = new SwitchBehaviorEvent<T>(source);
@@ -173,7 +173,7 @@
         /// Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.
         /// </remarks>
-        public static Event<T> SwitchE<T>(this Behavior<Event<T>> behavior)
+        public static Event<T> Switch<T>(this Behavior<Event<T>> behavior)
         {
             return new SwitchEvent<T>(behavior);
         }
