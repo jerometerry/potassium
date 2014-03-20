@@ -48,12 +48,16 @@
   <ItemGroup>
     <Compile Include="Behavior.cs" />
     <Compile Include="BehaviorApplyEvent.cs" />
+    <Compile Include="BehaviorExtensions.cs" />
     <Compile Include="BehaviorFeed.cs" />
     <Compile Include="BehaviorPublisher.cs" />
+    <Compile Include="BinaryBehavior.cs" />
     <Compile Include="ConstantBehavior.cs" />
     <Compile Include="EventPublisher.cs" />
+    <Compile Include="LocalTimeBehavior.cs" />
+    <Compile Include="MappedBehavior.cs" />
     <Compile Include="SubscriptionPublisher.cs" />
-    <Compile Include="BehaviorExtensions.cs" />
+    <Compile Include="DiscreteBehaviorExtensions.cs" />
     <Compile Include="ObservableExtensions.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="ObservedValue.cs" />
@@ -79,6 +83,8 @@
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BehaviorLastValueEvent.cs" />
+    <Compile Include="TernaryBehavior.cs" />
+    <Compile Include="UtcTimeBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DiscreteBehavior.cs" />
@@ -86,6 +92,7 @@
   <ItemGroup>
     <Compile Include="SnapshotEvent.cs" />
     <Compile Include="SwitchEvent.cs" />
+    <Compile Include="TimeBehavior.cs" />
     <Compile Include="Transaction.cs" />
   </ItemGroup>
   <ItemGroup>

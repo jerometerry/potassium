@@ -57,6 +57,11 @@ namespace Sodium
         }
 
         /// <summary>
+        /// The underlying Event of the current Behavior
+        /// </summary>
+        public Observable<T> Source { get; private set; }
+
+        /// <summary>
         /// New value of the Behavior that will be posted to Value when the Transaction completes
         /// </summary>
         internal T NewValue
@@ -67,35 +72,7 @@ namespace Sodium
             }
         }
 
-        /// <summary>
-        /// The underlying Event of the current Behavior
-        /// </summary>
-        internal Observable<T> Source { get; private set; }
-
         private ObservedValue<T> ObservedValue { get; set; }
-
-        /// <summary>
-        /// Listen to the underlying event for updates, publishing the current value of the Behavior immediately.
-        /// </summary>
-        /// <param name="callback"> action to invoke when the underlying event publishes</param>
-        /// <returns>The event subscription</returns>
-        public ISubscription<T> SubscribeValues(Action<T> callback)
-        {
-            var evt = this.Values();
-            var s = (Subscription<T>)evt.Subscribe(new SubscriptionPublisher<T>(callback), Priority.Max);
-            s.Register(evt);
-            return s;
-        }
-
-        /// <summary>
-        /// Subscribe to publications of the current Observable.
-        /// </summary>
-        /// <param name="callback">An Action to be invoked when the current Observable publishes values.</param>
-        /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
-        public ISubscription<T> Subscribe(Action<T> callback)
-        {
-            return this.Source.Subscribe(callback);
-        }
 
         /// <summary>
         /// Dispose of the current Behavior

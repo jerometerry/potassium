@@ -14,7 +14,7 @@ namespace Sodium.Tests
             var evt = new EventPublisher<int>();
             var behavior = evt.Hold(0);
             var results = new List<int>();
-            var listener = behavior.Subscribe(results.Add);
+            var listener = behavior.Source.Subscribe(results.Add);
             evt.Publish(2);
             evt.Publish(9);
             listener.Dispose();
@@ -48,11 +48,8 @@ namespace Sodium.Tests
         public void TestConstantBehavior()
         {
             var behavior = new ConstantBehavior<int>(12);
-            var results = new List<int>();
-            var listener = behavior.SubscribeValues(results.Add);
-            listener.Dispose();
             behavior.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(12), results);
+            Assert.AreEqual(12, behavior.Value);
         }
 
         [Test]
@@ -60,9 +57,13 @@ namespace Sodium.Tests
         {
             var behavior = new BehaviorPublisher<int>(6);
             var results = new List<string>();
-            var listener = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture)).SubscribeValues(results.Add);
+            var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
+            var values = map.Values();
+            var listener = values.Subscribe(results.Add);
             behavior.Publish(8);
             listener.Dispose();
+            values.Dispose();
+            map.Dispose();
             behavior.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("6", "8"), results);
         }
@@ -71,12 +72,10 @@ namespace Sodium.Tests
         public void TestMapB2()
         {
             var behavior = new ConstantBehavior<int>(1);
-            var behavior1 = behavior.Map(x => x * 3);
-            var results = new List<int>();
-            var listener = behavior1.SubscribeValues(results.Add);
-            listener.Dispose();
+            var behavior1 = new MappedBehavior<int, int>(behavior, x => x * 3);
+            Assert.AreEqual(3, behavior1.Value);
+            behavior1.Dispose();
             behavior.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(3), results);
         }
 
         [Test]
@@ -85,9 +84,11 @@ namespace Sodium.Tests
             var behavior = new BehaviorPublisher<int>(1);
             var behavior1 = behavior.Map(x => x * 3);
             var results = new List<int>();
-            var listener = behavior1.SubscribeValues(results.Add);
+            var values = behavior1.Values();
+            var listener = values.Subscribe(results.Add);
             behavior.Publish(2);
             listener.Dispose();
+            values.Dispose();
             behavior.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(3, 6), results);
         }
@@ -99,9 +100,11 @@ namespace Sodium.Tests
             var results = new List<string>();
             var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
             behavior.Publish(2);
-            var listener = map.SubscribeValues(results.Add);
+            var values = map.Values();
+            var listener = values.Subscribe(results.Add);
             behavior.Publish(8);
             listener.Dispose();
+            map.Dispose();
             behavior.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("2", "8"), results);
         }
@@ -112,10 +115,14 @@ namespace Sodium.Tests
             var bf = new BehaviorPublisher<Func<long, string>>(b => "1 " + b);
             var ba = new BehaviorPublisher<long>(5L);
             var results = new List<string>();
-            var listener = ba.Apply(bf).SubscribeValues(results.Add);
+            var apply = ba.Apply(bf);
+            var values = apply.Values();
+            var listener = values.Subscribe(results.Add);
             bf.Publish(b => "12 " + b);
             ba.Publish(6L);
             listener.Dispose();
+            values.Dispose();
+            apply.Dispose();
             bf.Dispose();
             ba.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("1 5", "12 5", "12 6"), results);
@@ -128,10 +135,12 @@ namespace Sodium.Tests
             var behavior2 = new BehaviorPublisher<long>(5L);
             var results = new List<string>();
             var combinedBehavior = behavior1.Lift((x, y) => x + " " + y, behavior2);
-            var listener = combinedBehavior.SubscribeValues(results.Add);
+            var values = combinedBehavior.Values();
+            var listener = values.Subscribe(results.Add);
             behavior1.Publish(12);
             behavior2.Publish(6L);
             listener.Dispose();
+            values.Dispose();
             behavior1.Dispose();
             behavior2.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("1 5", "12 5", "12 6"), results);
@@ -150,9 +159,11 @@ namespace Sodium.Tests
             var mappedBehavior2 = behavior.Map(x => x * 5);
             var results = new List<string>();
             var combinedBehavior = mappedBehavior1.Lift((x, y) => x + " " + y, mappedBehavior2);
-            var listener = combinedBehavior.SubscribeValues(results.Add);
+            var values = combinedBehavior.Values();
+            var listener = values.Subscribe(results.Add);
             behavior.Publish(2);
             listener.Dispose();
+            values.Dispose();
             behavior.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("3 5", "6 10"), results);
         }
@@ -186,7 +197,8 @@ namespace Sodium.Tests
             var bsw = sink.Map(s => s.Behavior).FilterNotNull().Hold(behaviorA);
             var behavior = bsw.Switch();
             var results = new List<char>();
-            var listener = behavior.SubscribeValues(c =>
+            var values = behavior.Values();
+            var listener = values.Subscribe(c =>
             {
                 Assert.IsNotNull(c, "c != null");
                 results.Add(c.Value);
@@ -202,6 +214,7 @@ namespace Sodium.Tests
             sink.Publish(new Sb('H', 'h', behaviorA));
             sink.Publish(new Sb('I', 'i', behaviorA));
             listener.Dispose();
+            values.Dispose();
             behaviorA.Dispose();
             behaviorB.Dispose();
             bsw.Dispose();
@@ -247,7 +260,8 @@ namespace Sodium.Tests
             var sumOut = ea.Snapshot(sum, (x, y) => x + y).Hold(0);
             sum.Feed(sumOut);
             var o = new List<int>();
-            var l = sumOut.SubscribeValues(o.Add);
+            var values = sumOut.Values();
+            var l = values.Subscribe(o.Add);
             ea.Publish(2);
             ea.Publish(3);
             ea.Publish(1);
@@ -266,7 +280,8 @@ namespace Sodium.Tests
             var ea = new EventPublisher<int>();
             var o = new List<int>();
             var sum = ea.Hold(100).Collect(0, (a, s) => new Tuple<int, int>(a + s, a + s));
-            var l = sum.SubscribeValues(o.Add);
+            var values = sum.Values();
+            var l = values.Subscribe(o.Add);
             ea.Publish(5);
             ea.Publish(7);
             ea.Publish(1);
@@ -284,13 +299,15 @@ namespace Sodium.Tests
             var ea = new EventPublisher<int>();
             var o = new List<int>();
             var sum = ea.Accum(100, (a, s) => a + s);
-            var l = sum.SubscribeValues(o.Add);
+            var values = sum.Values();
+            var l = values.Subscribe(o.Add);
             ea.Publish(5);
             ea.Publish(7);
             ea.Publish(1);
             ea.Publish(2);
             ea.Publish(3);
             l.Dispose();
+            values.Dispose();
             ea.Dispose();
             sum.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(100, 105, 112, 113, 115, 118), o);

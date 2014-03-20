@@ -16,6 +16,7 @@
         private Event<MouseEventArgs> mouseDragEvent;
         private EventPublisher<MouseStatus> mouseButtonEvent;
         private DiscreteBehavior<MouseStatus> mouseButtonBehavior;
+        private Event<MouseStatus> mouseButtonUpdates;
         private DiscreteBehavior<bool> mouseButtonDownBehavior;
         private static readonly CultureInfo ci = CultureInfo.InvariantCulture;
 
@@ -32,8 +33,8 @@
             this.mouseButtonBehavior = this.mouseButtonEvent.Hold(MouseStatus.Up);
             this.mouseButtonDownBehavior = this.mouseButtonBehavior.Map(s => s == MouseStatus.Down);
             this.mouseDragEvent = this.mouseMoveEvent.Gate(this.mouseButtonDownBehavior);
-
-            this.mouseButtonBehavior.SubscribeValues(a =>
+            this.mouseButtonUpdates = this.mouseButtonBehavior.Values();
+            this.mouseButtonUpdates.Subscribe(a =>
             {
                 this.status.Text = string.Format("{0} {1}", a, DateTime.Now);
             });

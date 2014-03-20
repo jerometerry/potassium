@@ -48,7 +48,8 @@ namespace Sodium.MemoryTests
             var tensTupleBehavior = tensTupleWrappedBehavior.Switch();
             finalizers.Add(tensTupleBehavior);
 
-            var listener = tensTupleBehavior.SubscribeValues(tu => { });
+            var values = tensTupleBehavior.Values();
+            var listener = values.Subscribe(tu => { });
             var i = 0;
 
             while (i < iterations)
@@ -58,6 +59,7 @@ namespace Sodium.MemoryTests
             }
 
             listener.Dispose();
+            values.Dispose();
 
             DisposeFinalizers(finalizers);
             DisposeFinalizers(behaviorMapFinalizers);

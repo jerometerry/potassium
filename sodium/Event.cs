@@ -1,7 +1,5 @@
 ﻿namespace Sodium
 {
-    using System;
-
     /// <summary>
     /// An Event is a discrete signal of values.
     /// </summary>

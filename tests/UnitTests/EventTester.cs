@@ -158,7 +158,7 @@ namespace Sodium.Tests
             var ea = new EventPublisher<int>();
             var o = new List<int>();
             var sum = ea.Accum(100, (a, s) => a + s);
-            var l = sum.Subscribe(o.Add);
+            var l = sum.Source.Subscribe(o.Add);
             ea.Publish(5);
             ea.Publish(7);
             ea.Publish(1);

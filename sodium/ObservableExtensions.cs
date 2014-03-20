@@ -150,7 +150,7 @@
         /// <param name="predicate">A behavior who's current value acts as a predicate</param>
         /// <returns>A new Event that publishes whenever the current Event publishes and the Behaviors value
         /// is true.</returns>
-        public static Event<T> Gate<T>(this Observable<T> source, DiscreteBehavior<bool> predicate)
+        public static Event<T> Gate<T>(this Observable<T> source, Behavior<bool> predicate)
         {
             Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
             var sn = source.Snapshot(predicate, snapshot);
@@ -272,7 +272,7 @@
         /// <param name="valueStream">The Behavior to sample when calculating the snapshot</param>
         /// <param name="snapshot">The snapshot generation function.</param>
         /// <returns>A new Event that will produce the snapshot when the current event publishes</returns>
-        public static Event<TC> Snapshot<TA, TB, TC>(this Observable<TA> source, DiscreteBehavior<TB> valueStream, Func<TA, TB, TC> snapshot)
+        public static Event<TC> Snapshot<TA, TB, TC>(this Observable<TA> source, Behavior<TB> valueStream, Func<TA, TB, TC> snapshot)
         {
             return new SnapshotEvent<TA, TB, TC>(source, snapshot, valueStream);
         }
@@ -285,7 +285,7 @@
         /// <param name="source">The source Event</param>
         /// <param name="valueStream">The Behavior to sample when taking the snapshot</param>
         /// <returns>An event that captures the Behaviors value when the current event publishes</returns>
-        public static Event<TB> Snapshot<TA, TB>(this Observable<TA> source, DiscreteBehavior<TB> valueStream)
+        public static Event<TB> Snapshot<TA, TB>(this Observable<TA> source, Behavior<TB> valueStream)
         {
             return source.Snapshot(valueStream, (a, b) => b);
         }

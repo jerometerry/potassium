@@ -10,7 +10,8 @@ namespace Sodium.MemoryTests
         {
             var sink = new EventPublisher<int>();
             var obserable = sink.Hold(0);
-            var listener = obserable.SubscribeValues(tt => { });
+            var values = obserable.Values();
+            var listener = values.Subscribe(tt => { });
             var i = 0;
             while (i < iterations)
             {
@@ -19,6 +20,7 @@ namespace Sodium.MemoryTests
             }
 
             listener.Dispose();
+            values.Dispose();
         }
     }
 }
