@@ -188,7 +188,7 @@
         public static EventBasedBehavior<T> Hold<T>(this Observable<T> source, T value, Transaction t)
         {
             var s = new LastFiringEvent<T>(source, t);
-            var b = new EventBasedBehavior<T>(s, value);
+            var b = new EventBasedBehavior<T>(value, s);
             b.Register(s);
             return b;
         }

@@ -13,7 +13,7 @@
         /// </summary>
         /// <param name="value">The initial value of the Behavior</param>
         public BehaviorFeed(T value)
-            : base(new EventFeed<T>(), value)
+            : base(value, new EventFeed<T>())
         {
             this.Register(this.Source);
         }

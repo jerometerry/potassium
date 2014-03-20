@@ -52,7 +52,6 @@
     <Compile Include="BehaviorFeed.cs" />
     <Compile Include="BehaviorOfBehaviors.cs" />
     <Compile Include="BehaviorOfEvents.cs" />
-    <Compile Include="BehaviorPublisher.cs" />
     <Compile Include="BinaryBehavior.cs" />
     <Compile Include="ConstantBehavior.cs" />
     <Compile Include="DiscreteBehavior.cs" />
@@ -60,6 +59,7 @@
     <Compile Include="EventPublisher.cs" />
     <Compile Include="LocalTimeBehavior.cs" />
     <Compile Include="MappedBehavior.cs" />
+    <Compile Include="ObservedValueBehavior.cs" />
     <Compile Include="PredicateBehavior.cs" />
     <Compile Include="QueryPredicateBehavior.cs" />
     <Compile Include="QueryBehavior.cs" />

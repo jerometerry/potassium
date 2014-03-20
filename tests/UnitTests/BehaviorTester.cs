@@ -26,17 +26,18 @@ namespace Sodium.Tests
         [Test]
         public void TestSnapshot()
         {
-            var behavior = new BehaviorPublisher<int>(0);
+            var publisher = new EventPublisher<int>();
+            var behavior = new EventBasedBehavior<int>(0, publisher);
             var evt = new EventPublisher<long>();
             var results = new List<string>();
             Func<long, int, string> snapshotFunction = (x, y) => string.Format("{0} {1}", x, y);
             var listener = evt.Snapshot(behavior, snapshotFunction).Subscribe(results.Add);
 
             evt.Publish(100L);
-            behavior.Publish(2);
+            publisher.Publish(2);
             evt.Publish(200L);
-            behavior.Publish(9);
-            behavior.Publish(1);
+            publisher.Publish(9);
+            publisher.Publish(1);
             evt.Publish(300L);
             listener.Dispose();
             behavior.Dispose();
@@ -55,12 +56,13 @@ namespace Sodium.Tests
         [Test]
         public void TestMapB()
         {
-            var behavior = new BehaviorPublisher<int>(6);
+            var publisher = new EventPublisher<int>();
+            var behavior = new EventBasedBehavior<int>(6, publisher);
             var results = new List<string>();
             var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
             var values = map.Values();
             var listener = values.Subscribe(results.Add);
-            behavior.Publish(8);
+            publisher.Publish(8);
             listener.Dispose();
             values.Dispose();
             map.Dispose();
@@ -81,12 +83,13 @@ namespace Sodium.Tests
         [Test]
         public void TestMapB3()
         {
-            var behavior = new BehaviorPublisher<int>(1);
+            var publisher = new EventPublisher<int>();
+            var behavior = new EventBasedBehavior<int>(1, publisher);
             var behavior1 = behavior.Map(x => x * 3);
             var results = new List<int>();
             var values = behavior1.Values();
             var listener = values.Subscribe(results.Add);
-            behavior.Publish(2);
+            publisher.Publish(2);
             listener.Dispose();
             values.Dispose();
             behavior.Dispose();
@@ -96,13 +99,14 @@ namespace Sodium.Tests
         [Test]
         public void TestMapBLateListen()
         {
-            var behavior = new BehaviorPublisher<int>(6);
+            var publisher = new EventPublisher<int>();
+            var behavior = new EventBasedBehavior<int>(6, publisher);
             var results = new List<string>();
             var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
-            behavior.Publish(2);
+            publisher.Publish(2);
             var values = map.Values();
             var listener = values.Subscribe(results.Add);
-            behavior.Publish(8);
+            publisher.Publish(8);
             listener.Dispose();
             map.Dispose();
             behavior.Dispose();
@@ -112,14 +116,16 @@ namespace Sodium.Tests
         [Test]
         public void TestApply()
         {
-            var bf = new BehaviorPublisher<Func<long, string>>(b => "1 " + b);
-            var ba = new BehaviorPublisher<long>(5L);
+            var pbf = new EventPublisher<Func<long, string>>();
+            var bf = new EventBasedBehavior<Func<long, string>>(b => "1 " + b, pbf);
+            var pba = new EventPublisher<long>();
+            var ba = new EventBasedBehavior<long>(5L, pba);
             var results = new List<string>();
             var apply = ba.Apply(bf);
             var values = apply.Values();
             var listener = values.Subscribe(results.Add);
-            bf.Publish(b => "12 " + b);
-            ba.Publish(6L);
+            pbf.Publish(b => "12 " + b);
+            pba.Publish(6L);
             listener.Dispose();
             values.Dispose();
             apply.Dispose();
@@ -131,14 +137,16 @@ namespace Sodium.Tests
         [Test]
         public void TestLift()
         {
-            var behavior1 = new BehaviorPublisher<int>(1);
-            var behavior2 = new BehaviorPublisher<long>(5L);
+            var pub1 = new EventPublisher<int>();
+            var behavior1 = new EventBasedBehavior<int>(1, pub1);
+            var pub2 = new EventPublisher<long>();
+            var behavior2 = new EventBasedBehavior<long>(5L, pub2);
             var results = new List<string>();
             var combinedBehavior = behavior1.Lift((x, y) => x + " " + y, behavior2);
             var values = combinedBehavior.Values();
             var listener = values.Subscribe(results.Add);
-            behavior1.Publish(12);
-            behavior2.Publish(6L);
+            pub1.Publish(12);
+            pub2.Publish(6L);
             listener.Dispose();
             values.Dispose();
             behavior1.Dispose();
@@ -154,14 +162,15 @@ namespace Sodium.Tests
         [Test]
         public void TestLiftGlitch()
         {
-            var behavior = new BehaviorPublisher<int>(1);
+            var publisher = new EventPublisher<int>();
+            var behavior = new EventBasedBehavior<int>(1, publisher);
             var mappedBehavior1 = behavior.Map(x => x * 3);
             var mappedBehavior2 = behavior.Map(x => x * 5);
             var results = new List<string>();
             var combinedBehavior = mappedBehavior1.Lift((x, y) => x + " " + y, mappedBehavior2);
             var values = combinedBehavior.Values();
             var listener = values.Subscribe(results.Add);
-            behavior.Publish(2);
+            publisher.Publish(2);
             listener.Dispose();
             values.Dispose();
             behavior.Dispose();
