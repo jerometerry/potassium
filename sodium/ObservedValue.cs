@@ -1,12 +1,17 @@
 namespace Sodium
 {
-    internal class ValueContainer<T> : DisposableObject
+    /// <summary>
+    /// ObservedValue stores the last published value of an Observable,
+    /// starting with an initial value.
+    /// </summary>
+    /// <typeparam name="T">The type of value published through the Observable</typeparam>
+    public sealed class ObservedValue<T> : DisposableObject
     {
         private Observable<T> source;
 
         /// <summary>
-        /// Holding tank for updates from the underlying Event, waiting to be 
-        /// moved into the current value of the Behavior.
+        /// Holding tank for updates from the underlying Observable, waiting to be 
+        /// moved into the current value.
         /// </summary>
         private Maybe<T> update = Maybe<T>.Null;
 
@@ -15,12 +20,22 @@ namespace Sodium
         /// </summary>
         private ISubscription<T> subscription;
 
-        public ValueContainer(T initValue)
+        /// <summary>
+        /// Constructs a constant ObservedValue, having the given value.
+        /// </summary>
+        /// <param name="initValue">The initial value of the ObservedValue</param>
+        public ObservedValue(T initValue)
         {
             this.Value = initValue;
         }
 
-        public ValueContainer(Observable<T> source, T initValue)
+        /// <summary>
+        /// Constructs a time varying ObservedValue, having an initial value that 
+        /// gets updated when the Observable publishes new values.
+        /// </summary>
+        /// <param name="source">The Observable to monitor for value updates</param>
+        /// <param name="initValue">The initial value of the ObservedValue</param>
+        public ObservedValue(Observable<T> source, T initValue)
         {
             this.source = source;
             this.Value = initValue;
@@ -76,6 +91,10 @@ namespace Sodium
             this.update = new Maybe<T>(newValue);
         }
 
+        /// <summary>
+        /// Cleanup the subscription to the underlying Observable
+        /// </summary>
+        /// <param name="disposing">Whether to cleanup managed resources</param>
         protected override void Dispose(bool disposing)
         {
             if (this.subscription != null)

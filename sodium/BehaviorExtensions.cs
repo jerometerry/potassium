@@ -58,18 +58,18 @@
         /// <param name="initState">Value to pass to the snapshot function</param>
         /// <param name="snapshot">Snapshot function</param>
         /// <returns>A new Behavior that collects values of type TB</returns>
-        public static Behavior<TB> Collect<TA, TB, TS>(this Behavior<TA> source, TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
+        public static Behavior<TB> CollectB<TA, TB, TS>(this Behavior<TA> source, TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
         {
             var coalesceEvent = source.Coalesce((a, b) => b);
             var currentValue = source.Value;
             var tuple = snapshot(currentValue, initState);
             var loop = new EventLoop<Tuple<TB, TS>>();
             var loopBehavior = loop.Hold(tuple);
-            var snapshotBehavior = loopBehavior.Map(x => x.Item2);
+            var snapshotBehavior = loopBehavior.MapB(x => x.Item2);
             var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
             loop.Loop(coalesceSnapshotEvent);
 
-            var result = loopBehavior.Map(x => x.Item1);
+            var result = loopBehavior.MapB(x => x.Item1);
             result.Register(loop);
             result.Register(loopBehavior);
             result.Register(coalesceEvent);
@@ -93,7 +93,7 @@
         public static Behavior<TC> Lift<TA, TB, TC>(this Behavior<TA> a, Func<TA, TB, TC> lift, Behavior<TB> b)
         {
             Func<TA, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
-            var bf = a.Map(ffa);
+            var bf = a.MapB(ffa);
             var result = b.Apply(bf);
             result.Register(bf);
             return result;
@@ -116,7 +116,7 @@
         public static Behavior<TD> Lift<TA, TB, TC, TD>(this Behavior<TA> a, Func<TA, TB, TC, TD> lift, Behavior<TB> b, Behavior<TC> c)
         {
             Func<TA, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
-            var bf = a.Map(map);
+            var bf = a.MapB(map);
             var l1 = b.Apply(bf);
 
             var result = c.Apply(l1);
@@ -135,7 +135,7 @@
         /// <returns>A new Behavior that updates whenever the current Behavior updates,
         /// having a value computed by the map function, and starting with the value
         /// of the current event mapped.</returns>
-        public static Behavior<TB> Map<TA, TB>(this Behavior<TA> source, Func<TA, TB> map)
+        public static Behavior<TB> MapB<TA, TB>(this Behavior<TA> source, Func<TA, TB> map)
         {
             var mapEvent = source.Source.Map(map);
             var behavior = mapEvent.Hold(map(source.Value));

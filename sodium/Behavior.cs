@@ -4,13 +4,18 @@ namespace Sodium
 
     /// <summary>
     /// A Behavior is a time varying value. It starts with an initial value which 
-    /// gets updated as the underlying Observable is published.
+    /// gets updated as the underlying Event is published.
     /// </summary>
     /// <typeparam name="T">The type of values that will be published through the Behavior.</typeparam>
+    /// <remarks>A Behavior contains an Event, maintains the last value published from the Event,
+    /// and has several transformation methods to constructs other Behaviors and Events.
+    /// 
+    /// A Behavior is composed of an Event (i.e. has-a). 
+    /// 
+    /// A Behavior is not an Event. Should it be?
+    /// </remarks>
     public class Behavior<T> : DisposableObject
     {
-        private ValueContainer<T> valueContainer;
-
         /// <summary>
         /// Create a behavior with a time varying value from an initial value
         /// </summary>
@@ -29,7 +34,7 @@ namespace Sodium
         public Behavior(Event<T> source, T value)
         {
             this.Source = source;
-            this.valueContainer = new ValueContainer<T>(source, value);
+            this.ObservedValue = new ObservedValue<T>(source, value);
         }
 
         /// <summary>
@@ -50,7 +55,7 @@ namespace Sodium
         {
             get
             {
-                return this.valueContainer.Value;
+                return this.ObservedValue.Value;
             }
         }
 
@@ -61,14 +66,16 @@ namespace Sodium
         {
             get
             {
-                return this.valueContainer.NewValue;
+                return this.ObservedValue.NewValue;
             }
         }
 
         /// <summary>
-        /// The underlying Observable of the current Behavior
+        /// The underlying Event of the current Behavior
         /// </summary>
-        internal Event<T> Source { get; private set; }
+        internal Observable<T> Source { get; private set; }
+
+        private ObservedValue<T> ObservedValue { get; set; }
 
         /// <summary>
         /// Listen to the underlying event for updates, publishing the current value of the Behavior immediately.
@@ -98,10 +105,10 @@ namespace Sodium
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            if (this.valueContainer != null)
+            if (this.ObservedValue != null)
             {
-                this.valueContainer.Dispose();
-                this.valueContainer = null;
+                this.ObservedValue.Dispose();
+                this.ObservedValue = null;
             }
 
             base.Dispose(disposing);
