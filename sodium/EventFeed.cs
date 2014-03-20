@@ -3,11 +3,12 @@
     using System;
 
     /// <summary>
-    /// An EventLoop listens for updates from another Event, and forwards them 
-    /// to subscriptions of the current event.
+    /// An EventFeed is an Event that can be fed values from another Event
     /// </summary>
     /// <typeparam name="T">The type of the value published through the event</typeparam>
-    public class EventLoop<T> : SubscribeRepublishEvent<T>
+    /// <remarks>An EventFeed can only be fed values from one Event. 
+    /// If Feed is Invoked multiple times, an exception will be raised.</remarks>
+    public class EventFeed<T> : SubscribeRepublishEvent<T>
     {
         private ISubscription<T> subscription;
 
@@ -15,22 +16,23 @@
         /// Firings on the given Event will be forwarded to the current Event
         /// </summary>
         /// <param name="source">Event who's publishings will be looped to the current Event</param>
-        /// <returns>The current EventLoop</returns>
+        /// <returns>The current EventFeed</returns>
         /// <remarks>Loop can only be called once on an Event. If Loop is called multiple times,
         /// an ApplicationException will be raised.</remarks>
-        public ISubscription<T> Loop(Observable<T> source)
+        public ISubscription<T> Feed(Observable<T> source)
         {
             if (subscription != null)
             {
-                throw new ApplicationException("EventLoop has already been looped.");
+                throw new ApplicationException("EventFeed is already been fed from another Event.");
             }
 
-            this.subscription = source.Subscribe(this.CreateSubscriptionPublisher(), Priority);
+            var target = this.CreateSubscriptionPublisher();
+            this.subscription = source.Subscribe(target, Priority);
             return subscription;
         }
 
         /// <summary>
-        /// Disposes the current EventLoop
+        /// Disposes the current EventFeed
         /// </summary>
         protected override void Dispose(bool disposing)
         {

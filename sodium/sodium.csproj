@@ -47,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BehaviorApplyEvent.cs" />
-    <Compile Include="BehaviorLoop.cs" />
+    <Compile Include="BehaviorFeed.cs" />
     <Compile Include="BehaviorPublisher.cs" />
     <Compile Include="ConstantBehavior.cs" />
     <Compile Include="EventPublisher.cs" />
@@ -56,7 +56,7 @@
     <Compile Include="ObservableExtensions.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="ObservedValue.cs" />
-    <Compile Include="EventLoop.cs" />
+    <Compile Include="EventFeed.cs" />
     <Compile Include="SubscribePublishEvent.cs" />
     <Compile Include="LastFiringEvent.cs" />
     <Compile Include="Event.cs" />

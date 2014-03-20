@@ -107,11 +107,11 @@ namespace Sodium.Tests
         public void TestLoopEvent()
         {
             var ea = new EventPublisher<int>();
-            var eb = new EventLoop<int>();
+            var eb = new EventFeed<int>();
             var evt = ea.Map(x => x % 10);
             var ec = evt.Merge(eb, (x, y) => x + y);
             var ebO = ea.Map(x => x / 10).Filter(x => x != 0);
-            eb.Loop(ebO);
+            eb.Feed(ebO);
             var o = new List<int>();
             var l = ec.Subscribe(o.Add);
             ea.Publish(2);

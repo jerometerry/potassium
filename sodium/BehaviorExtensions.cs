@@ -63,11 +63,11 @@
             var coalesceEvent = source.Coalesce((a, b) => b);
             var currentValue = source.Value;
             var tuple = snapshot(currentValue, initState);
-            var loop = new EventLoop<Tuple<TB, TS>>();
+            var loop = new EventFeed<Tuple<TB, TS>>();
             var loopBehavior = loop.Hold(tuple);
             var snapshotBehavior = loopBehavior.Map(x => x.Item2);
             var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
-            loop.Loop(coalesceSnapshotEvent);
+            loop.Feed(coalesceSnapshotEvent);
 
             var result = loopBehavior.Map(x => x.Item1);
             result.Register(loop);

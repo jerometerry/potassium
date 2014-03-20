@@ -45,6 +45,10 @@
                     <listItem>
                         <legacyBold>Coalesce</legacyBold> - Coalesce is the process of combining several simultaneous values into a single value.
                     </listItem>
+
+                  <listItem>
+                    <legacyBold>Collect</legacyBold> - Collect transforms an Event or Behavior with a generalized state loop (a mealy machine). The function is passed the input and the old state and returns the new state and output value.
+                  </listItem>
                     
                     <listItem>
                         <legacyBold>Filter</legacyBold> - Filtering is the process of throwing away any publishings from source Events that don't evaluate to true through a given filter predicate.

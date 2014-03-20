@@ -10,25 +10,32 @@
         /// <summary>
         /// Accumulate on input event, outputting the new state each time.
         /// </summary>
-        /// <typeparam name="T">The type of values published through the source</typeparam>
+        /// <typeparam name="TA">The type of values published through the source</typeparam>
         /// <typeparam name="TS">The return type of the snapshot function</typeparam>
         /// <param name="source">The source Event</param>
         /// <param name="value">The initial state of the behavior</param>
-        /// <param name="snapshot">The snapshot generation function</param>
+        /// <param name="accumulator">The snapshot generation function</param>
         /// <returns>A new Behavior starting with the given value, that updates 
         /// whenever the current event publishes, getting a value computed by the snapshot function.</returns>
-        public static Behavior<TS> Accum<T, TS>(this Observable<T> source, TS value, Func<T, TS, TS> snapshot)
+        public static Behavior<TS> Accum<TA, TS>(this Observable<TA> source, TS value, Func<TA, TS, TS> accumulator)
         {
-            var evt = new EventLoop<TS>();
-            var behavior = evt.Hold(value);
+            var eventFeed = new EventFeed<TS>();
+            
+            // Behavior holds the running snapshot value
+            var previousShapshotBehavior = eventFeed.Hold(value);
 
-            var snapshotEvent = Snapshot(source, behavior, snapshot);
-            evt.Loop(snapshotEvent);
+            // Event that fires the new accumulated values, using the accumulator and the previous values
+            var accumulationEvent = Snapshot(source, previousShapshotBehavior, accumulator);
+            
+            // Feed the new accumulated values into the Behavior, to store the new snapshot as the previous snapshot
+            eventFeed.Feed(accumulationEvent);
 
-            var result = snapshotEvent.Hold(value);
-            result.Register(evt);
-            result.Register(behavior);
-            result.Register(snapshotEvent);
+            // Behavior that holds the value of the new accumulated values
+            var result = accumulationEvent.Hold(value);
+
+            result.Register(eventFeed);
+            result.Register(previousShapshotBehavior);
+            result.Register(accumulationEvent);
 
             return result;
         }
@@ -62,23 +69,34 @@
         /// <typeparam name="TS">The snapshot type</typeparam>
         /// <param name="source">The source Event</param>
         /// <param name="initState">The initial state for the internal Behavior</param>
-        /// <param name="snapshot">The mealy machine</param>
+        /// <param name="collector">The mealy machine</param>
         /// <returns>An Event that collects new values</returns>
-        public static Event<TB> Collect<TA, TB, TS>(this Observable<TA> source, TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
+        public static Event<TB> Collect<TA, TB, TS>(this Observable<TA> source, TS initState, Func<TA, TS, Tuple<TB, TS>> collector)
         {
-            var es = new EventLoop<TS>();
-            var s = es.Hold(initState);
-            var ebs = source.Snapshot(s, snapshot);
-            var eb = ebs.Map(bs => bs.Item1);
-            var evt = ebs.Map(bs => bs.Item2);
-            es.Loop(evt);
+            // snapshotFeed is used to create the Behavior that holds the snapshot values
+            var snapshotFeed = new EventFeed<TS>();
 
-            eb.Register(es);
-            eb.Register(s);
-            eb.Register(ebs);
-            eb.Register(evt);
+            // Behavior that holds the previous collected value
+            var snapshotBehavior = snapshotFeed.Hold(initState);
+            
+            // Event that emits a Tuple<TB,TS> containing the mapped value and the snapshot
+            var mappedEventSnapshot = source.Snapshot(snapshotBehavior, collector);
+            
+            // Event that emits the snapshot values from the mappedEventSnapshot above
+            var snapshotEvent = mappedEventSnapshot.Map(bs => bs.Item2);
 
-            return eb;
+            // Feed the snapshots into the Behavior holding the snapshot values
+            snapshotFeed.Feed(snapshotEvent);
+
+            // Event that extracts the mapped value from the mappedEventSnapshot above
+            var mappedEvent = mappedEventSnapshot.Map(bs => bs.Item1);
+            
+            mappedEvent.Register(snapshotFeed);
+            mappedEvent.Register(snapshotBehavior);
+            mappedEvent.Register(mappedEventSnapshot);
+            mappedEvent.Register(snapshotEvent);
+            
+            return mappedEvent;
         }
 
         /// <summary>

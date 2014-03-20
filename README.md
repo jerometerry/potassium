@@ -16,7 +16,7 @@ Overview
 
 Sodium is made up of 2 primitives with 12 opeartions.
 
-The primitives are Event, and Behavior, both subclasses of Observable (the Observer Pattern).
+The primitives are Event, and Behavior.
 
 The operations are Accum, Apply, Coalesce, Collect, Filter, Gate, Hold, Lift, Map, Merge, Snapshot, Switch
 
@@ -89,19 +89,21 @@ Below is a basic example of using the BehaviorLoop. Firing happens on *b*, which
 Key Operations
 ==========
 
-**Hold** - A Hold is an operation on an Event given an initial value, that creates a Behavior with the initial value that updates whenever the Event publishes.
+**Accum** - Accum converts an Event, an initial value, and a snapshot function into a Behavior that accumulates a value as the Event fires. 
+                        
+An example would having a running sum total, starting with an initial value and using the addition operation as the snapshot.
 
-**Map** - A map is the process of converting an Event or Behavior from one type to another, by supplying a mapping function.
+**Apply** - Apply is the process of taking a Behavior and a Behavior of mapping functions, to produce of a new Behavior of the return type of the mapping function inside the Behavior. This is the primitive for Behavior lifting.
+
+**Coalesce** - Coalesce is the process of combining several simultaneous values into a single value. 
+
+**Collect** - 
 
 **Filter** - Filtering is the process of throwing away any publishings from source Events that don't evaluate to true through a given filter predicate.
 
 **Gate** - Gating is the process of now allowing Firing values that don't evaluate to true through a given gate predicate.
 
-**Merge** - Merging is the process of combining two Events of the same type into a single Event, using a coalesce (combining) function.
-
-**Snapshot** - Snapshot is the process of sampling a Behaviors value at the time of an Event publishing, and producing a value (a snapshot) by passing the value of the Behavior at the time of the publishing and the value published on the Event into a snapshot function.
-
-**Apply** - Apply is the process of taking a Behavior and a Behavior of mapping functions, to produce of a new Behavior of the return type of the mapping function inside the Behavior. This is the primitive for Behavior lifting.
+**Hold** - A Hold is an operation on an Event given an initial value, that creates a Behavior with the initial value that updates whenever the Event publishes.
 
 **Lift** - Lifting is the process of taking a multi-valued function (2 or 3 valued functions in Sodium), along with Behaviors for each value of the function, and creating a new Behavior that is computed by evaluating the function with the current values of each of the Behaviors values.
 
@@ -109,7 +111,11 @@ A lifted Behavior has the property that if any of the input Behaviors are modifi
 
 **Lift Glitch** - A lift glitch occurs if a lifted Behavior publishes multiple times in response to simultaneous updates of it's input Behaviors.
 
-**Coalesce** - Coalesce is the process of combining several simultaneous values into a single value. 
+**Map** - A map is the process of converting an Event or Behavior from one type to another, by supplying a mapping function.
+
+**Merge** - Merging is the process of combining two Events of the same type into a single Event, using a coalesce (combining) function.
+
+**Snapshot** - Snapshot is the process of sampling a Behaviors value at the time of an Event publishing, and producing a value (a snapshot) by passing the value of the Behavior at the time of the publishing and the value published on the Event into a snapshot function.
 
 **Switch** - Switch is the process of unwrapping a Behavior of Behaviors or a Behavior of Events into the inner Behavior or Event. Switch allows the reactive network to change dynamically, using reactive logic to modify reactive logic.
 
@@ -121,19 +127,19 @@ Firing and listening can cause a chain reaction of operations that may cause oth
 
 Once a Transaction has been opened, actions can be added to it, using the High, Medium and Low methods. 
 
-High registers the action on a Priority Queue using a Rank to order. Medium and Low are run in the order they are added.
+High registers the action on a Priority Queue using a Priority to order. Medium and Low are run in the order they are added.
 
 All High priority actions are run first (using Priority Queue), all Medium Priority actions second (by order added), and all Low priority actions third (by order added). 
 
 High, Medium and Low priority actions are run when the Transaction is closed when the operation that requested the Transaction completes.
 
-**Rank** - Rank is used to determine the order to execute High priority items in a Transaction. A lower priority value executes before a higher priority, as is typically with Priority Queues.
+**Priority** - Priority is used to determine the order to execute High priority items in a Transaction. A lower priority value executes before a higher priority, as is typically with Priority Queues.
 
-A Rank is assigned to an Event, with a default priority of zero. A Rank has an operation to add a superior, with a class invariant that all superiors must have a higher priority than their subordinates. 
+A Priority is assigned to an Event, with a default priority of zero. A Priority has an operation to add a superior, with a class invariant that all superiors must have a higher priority than their subordinates. 
 
-An Events Rank can be modified (increased) when it registers itself to listen to another Event. The subscribers rank should be higher than the source rank, so that the source rank High operations in a Transaction execute before those of their subscribers.
+An Events Priority can be modified (increased) when it registers itself to listen to another Event. The subscribers priority should be higher than the source rank, so that the source rank High operations in a Transaction execute before those of their subscribers.
 
-The Rank of an Event is used when registering High priority actions on a Transaction, as a means to ensure actions are run on a priority basis.
+The Priority of an Event is used when registering High priority actions on a Transaction, as a means to ensure actions are run on a priority basis.
 
 Memory Management
 ==========

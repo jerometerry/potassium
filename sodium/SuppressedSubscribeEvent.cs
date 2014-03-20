@@ -1,10 +1,10 @@
 ﻿namespace Sodium
 {
-    internal sealed class SuppressedSubscribeEvent<T> : EventLoop<T>
+    internal sealed class SuppressedSubscribeEvent<T> : EventFeed<T>
     {
         public SuppressedSubscribeEvent(Observable<T> source)
         {
-            this.Loop(source);
+            this.Feed(source);
         }
 
         protected override bool Republish(ISubscription<T> subscription, Transaction transaction)
