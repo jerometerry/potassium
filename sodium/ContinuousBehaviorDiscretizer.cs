@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading;
-
-namespace Sodium
+﻿namespace Sodium
 {
+    using System;
+    using System.Threading;
+
     public class ContinuousBehaviorDiscretizer<T> : EventPublisher<T>
     {
         private IBehavior<T> behavior;

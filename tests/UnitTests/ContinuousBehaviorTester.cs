@@ -9,13 +9,13 @@
     public class ContinuousBehaviorTester
     {
         [Test]
-        public void TestEvery()
+        public void TestDiscretize()
         {
             var timeB = new LocalTimeBehavior();
             var results = new List<DateTime>();
 
-            var p = new QueryPredicateBehavior(() => results.Count == 5);
-            var evt = timeB.Every(TimeSpan.FromMilliseconds(100), p);
+            var p = new QueryPredicateBehavior(() => results.Count >= 5);
+            var evt = timeB.Discretize(TimeSpan.FromMilliseconds(100), p);
             var s = evt.Subscribe(results.Add);
             evt.Start();
 
@@ -28,7 +28,7 @@
             evt.Dispose();
             Assert.AreEqual(5, results.Count);
 
-            foreach(var t in results)
+            foreach (var t in results)
             {
                 Console.WriteLine("{0:dd/MM/yy HH:mm:ss.fff}", t);
             }

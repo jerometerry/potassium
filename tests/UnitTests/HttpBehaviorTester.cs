@@ -1,6 +1,8 @@
 ﻿namespace Sodium.Tests
 {
     using System;
+    using System.Collections.Generic;
+    using System.Threading;
     using NUnit.Framework;
 
     [TestFixture]
@@ -14,6 +16,37 @@
             Console.WriteLine("Google.com Source: {0}", source);
             Assert.IsNotNullOrEmpty(source);
         }
+
+        [Test]
+        public void PollJsonTestIp()
+        {
+            var results = new List<string>();
+            var p = new QueryPredicateBehavior(() => results.Count >= 3);
+            var behavior = new HttpBehavior("http://ip.jsontest.com/");
+            var evt = behavior.Discretize(TimeSpan.FromMilliseconds(250), p);
+            var hold = evt.Hold("N/A");
+            var values = hold.Values();
+            var s = values.Subscribe(results.Add);
+            evt.Start();
+
+            while (!evt.Complete)
+            {
+                Thread.Sleep(0);
+            }
+
+            s.Dispose();
+            values.Dispose();
+            hold.Dispose();
+            evt.Dispose();
+            behavior.Dispose();
+            p.Dispose();
+
+            foreach (var src in results)
+            {
+                Console.WriteLine("{0}", src);
+            }
+        }
+
         [Test]
         public void LoadJsonTestIp()
         {
