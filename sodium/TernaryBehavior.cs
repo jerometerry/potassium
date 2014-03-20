@@ -2,14 +2,14 @@
 {
     using System;
 
-    public class TernaryBehavior<TA, TB, TC, TD> : ContinuousBehavior<TD>
+    public class TernaryBehavior<T, TB, TC, TD> : ContinuousBehavior<TD>
     {
-        private Func<TA, TB, TC, TD> lift;
-        private IBehavior<TA> a;
+        private Func<T, TB, TC, TD> lift;
+        private IBehavior<T> a;
         private IBehavior<TB> b;
         private IBehavior<TC> c;
 
-        public TernaryBehavior(Func<TA, TB, TC, TD> lift, IBehavior<TA> a, IBehavior<TB> b, IBehavior<TC> c)
+        public TernaryBehavior(Func<T, TB, TC, TD> lift, IBehavior<T> a, IBehavior<TB> b, IBehavior<TC> c)
         {
             this.lift = lift;
             this.a = a;

@@ -5,13 +5,13 @@
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TA"></typeparam>
+    /// <typeparam name="T"></typeparam>
     /// <typeparam name="TB"></typeparam>
     /// <typeparam name="TC"></typeparam>
-    public class BinaryBehavior<TA, TB, TC> : ContinuousBehavior<TC>
+    public class BinaryBehavior<T, TB, TC> : ContinuousBehavior<TC>
     {
-        private Func<TA, TB, TC> lift;
-        private IBehavior<TA> a;
+        private Func<T, TB, TC> lift;
+        private IBehavior<T> a;
         private IBehavior<TB> b;
 
         /// <summary>
@@ -20,7 +20,7 @@
         /// <param name="lift"></param>
         /// <param name="a"></param>
         /// <param name="b"></param>
-        public BinaryBehavior(Func<TA, TB, TC> lift, IBehavior<TA> a, IBehavior<TB> b)
+        public BinaryBehavior(Func<T, TB, TC> lift, IBehavior<T> a, IBehavior<TB> b)
         {
             this.lift = lift;
             this.a = a;

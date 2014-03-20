@@ -2,12 +2,12 @@
 {
     using System;
 
-    public class MappedBehavior<TA, TB> : ContinuousBehavior<TB>
+    public class MappedBehavior<T, TB> : ContinuousBehavior<TB>
     {
-        private IBehavior<TA> source;
-        private Func<TA, TB> map;
+        private IBehavior<T> source;
+        private Func<T, TB> map;
 
-        public MappedBehavior(IBehavior<TA> source, Func<TA, TB> map)
+        public MappedBehavior(IBehavior<T> source, Func<T, TB> map)
         {
             this.source = source;
             this.map = map;

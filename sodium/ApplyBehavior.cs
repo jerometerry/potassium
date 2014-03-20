@@ -2,12 +2,12 @@
 {
     using System;
 
-    public class ApplyBehavior<TA, TB> : ContinuousBehavior<TB>
+    public class ApplyBehavior<T, TB> : ContinuousBehavior<TB>
     {
-        private IBehavior<TA> source;
-        private IBehavior<Func<TA, TB>> bf;
+        private IBehavior<T> source;
+        private IBehavior<Func<T, TB>> bf;
 
-        public ApplyBehavior(IBehavior<TA> source, IBehavior<Func<TA, TB>> bf)
+        public ApplyBehavior(IBehavior<T> source, IBehavior<Func<T, TB>> bf)
         {
             this.source = source;
             this.bf = bf;
