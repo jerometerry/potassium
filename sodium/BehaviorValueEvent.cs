@@ -7,24 +7,24 @@ namespace Sodium
     /// <typeparam name="T">The type of values published through the Behavior</typeparam>
     internal sealed class BehaviorValueEvent<T> : SubscribePublishEvent<T>
     {
-        private Behavior<T> source;
+        private Behavior<T> behavior;
         private ISubscription<T> subscription;
 
         /// <summary>
         /// Constructs a new BehaviorEventSink
         /// </summary>
-        /// <param name="source">The Behavior to monitor</param>
+        /// <param name="behavior">The Behavior to monitor</param>
         /// <param name="transaction">The Transaction to use to create a subscription on the given Behavior</param>
-        public BehaviorValueEvent(Behavior<T> source, Transaction transaction)
+        public BehaviorValueEvent(Behavior<T> behavior, Transaction transaction)
         {
-            this.source = source;
+            this.behavior = behavior;
             this.CreateLoop(transaction);
         }
 
         public override T[] SubscriptionFirings()
         {
             // When the ValueEventSink is subscribed to, publish off the current value of the Behavior
-            return new[] { this.source.Value };
+            return new[] { this.behavior.Value };
         }
 
         protected override void Dispose(bool disposing)
@@ -35,7 +35,7 @@ namespace Sodium
                 this.subscription = null;
             }
 
-            this.source = null;
+            this.behavior = null;
 
             base.Dispose(disposing);
         }
@@ -46,8 +46,9 @@ namespace Sodium
         /// <param name="transaction"></param>
         private void CreateLoop(Transaction transaction)
         {
-            var forward = this.CreateSubscriptionPublisher();
-            this.subscription = this.source.Source.CreateSubscription(forward, this.Priority, transaction);
+            var source = this.behavior.Source;
+            var target = this.CreateSubscriptionPublisher();
+            this.subscription = source.CreateSubscription(target, this.Priority, transaction);
         }
     }
 }

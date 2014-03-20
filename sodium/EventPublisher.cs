@@ -17,9 +17,12 @@
         }
 
         /// <summary>
-        /// Creates a callback that calls the Publish method on the current Event when invoked
+        /// Creates a SubscriptionPublisher that can notify subscribers to the current Event of new values.
         /// </summary>
         /// <returns>In Publisher that calls Publish, when invoked.</returns>
+        /// <remarks>The returned SubscriptionPublisher can be used by the current Event to notify subscribers
+        /// on the Event they were subscribed on, or by another event to forward values to subscribers from an
+        /// alternate Event.</remarks>
         internal SubscriptionPublisher<T> CreateSubscriptionPublisher()
         {
             return new SubscriptionPublisher<T>((t, v) => this.Publish(t, v));
