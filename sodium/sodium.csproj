@@ -49,7 +49,6 @@
     <Compile Include="Behavior.cs" />
     <Compile Include="BehaviorApplyEvent.cs" />
     <Compile Include="BehaviorExtensions.cs" />
-    <Compile Include="BehaviorFeed.cs" />
     <Compile Include="BehaviorOfBehaviors.cs" />
     <Compile Include="BehaviorOfEvents.cs" />
     <Compile Include="BinaryBehavior.cs" />

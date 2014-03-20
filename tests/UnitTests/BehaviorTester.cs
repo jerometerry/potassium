@@ -264,10 +264,11 @@ namespace Sodium.Tests
         [Test]
         public void TestLoopBehavior()
         {
+            var feed = new EventFeed<int>();
             var ea = new EventPublisher<int>();
-            var sum = new BehaviorFeed<int>(0);
+            var sum = new EventBasedBehavior<int>(0, feed);
             var sumOut = ea.Snapshot(sum, (x, y) => x + y).Hold(0);
-            sum.Feed(sumOut);
+            feed.Feed(sumOut.Source);
             var o = new List<int>();
             var values = sumOut.Values();
             var l = values.Subscribe(o.Add);
