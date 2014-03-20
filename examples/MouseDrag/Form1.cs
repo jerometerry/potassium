@@ -30,7 +30,7 @@
             this.mouseButtonEvent = new EventPublisher<MouseStatus>();
             this.mouseMoveEvent = new EventPublisher<MouseEventArgs>();
             this.mouseButtonBehavior = this.mouseButtonEvent.Hold(MouseStatus.Up);
-            this.mouseButtonDownBehavior = this.mouseButtonBehavior.MapB(s => s == MouseStatus.Down);
+            this.mouseButtonDownBehavior = this.mouseButtonBehavior.Map(s => s == MouseStatus.Down);
             this.mouseDragEvent = this.mouseMoveEvent.Gate(this.mouseButtonDownBehavior);
 
             this.mouseButtonBehavior.SubscribeValues(a =>
