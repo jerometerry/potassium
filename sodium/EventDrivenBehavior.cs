@@ -53,24 +53,6 @@ namespace Sodium
         }
 
         /// <summary>
-        /// If there's more than one publishing in a single transaction, combine them into
-        /// one using the specified combining function.
-        /// </summary>
-        /// <param name="coalesce">A function that takes two publishings of the same type, and returns
-        /// produces a new publishing of the same type.</param>
-        /// <returns>A new Event that publishes the coalesced values</returns>
-        /// <remarks>
-        /// If the event publishings are ordered, then the first will appear at the left
-        /// input of the combining function. In most common cases it's best not to
-        /// make any assumptions about the ordering, and the combining function would
-        /// ideally be commutative.
-        /// </remarks>
-        public Event<T> Coalesce(Func<T, T, T> coalesce)
-        {
-            return this.Source.Coalesce(coalesce);
-        }
-
-        /// <summary>
         /// Transform a behavior with a generalized state loop (a mealy machine). The function
         /// is passed the input and the old state and returns the new state and output value.
         /// </summary>
@@ -81,7 +63,7 @@ namespace Sodium
         /// <returns>A new Behavior that collects values of type TB</returns>
         public EventDrivenBehavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
-            var coalesceEvent = this.Coalesce((a, b) => b);
+            var coalesceEvent = this.Source.Coalesce((a, b) => b);
             var currentValue = this.Value;
             var tuple = snapshot(currentValue, initState);
             var loop = new EventFeed<Tuple<TB, TS>>();
@@ -161,7 +143,6 @@ namespace Sodium
         /// Get an Event that publishes the initial Behaviors value, and whenever the Behaviors value changes.
         /// </summary>
         /// <typeparam name="T">The type of values published through the source</typeparam>
-        /// <param name="source">The source Behavior</param>
         /// <returns>The event streams</returns>
         public Event<T> Values()
         {

@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="ApplyBehavior.cs" />
     <Compile Include="ContinuousBehavior.cs" />
+    <Compile Include="ContinuousBehaviorDiscretizer.cs" />
     <Compile Include="DiscreteBehavior.cs" />
     <Compile Include="IBehavior.cs" />
     <Compile Include="BehaviorApplyEvent.cs" />

@@ -25,5 +25,15 @@
         {
             return new TernaryBehavior<T, TB, TC, TD>(lift, this, b, c);
         }
+
+        public ContinuousBehaviorDiscretizer<T> Every(TimeSpan interval, Func<bool> until)
+        {
+            return new ContinuousBehaviorDiscretizer<T>(this, interval, until);
+        }
+
+        public ContinuousBehaviorDiscretizer<T> Every(TimeSpan interval, PredicateBehavior until)
+        {
+            return new ContinuousBehaviorDiscretizer<T>(this, interval, until);
+        }
     }
 }
