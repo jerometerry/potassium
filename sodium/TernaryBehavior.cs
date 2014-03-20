@@ -2,14 +2,14 @@
 {
     using System;
 
-    public class TernaryBehavior<TA, TB, TC, TD> : Behavior<TD>
+    public class TernaryBehavior<TA, TB, TC, TD> : DisposableObject, IBehavior<TD>
     {
         private Func<TA, TB, TC, TD> lift;
-        private Behavior<TA> a;
-        private Behavior<TB> b;
-        private Behavior<TC> c;
+        private IBehavior<TA> a;
+        private IBehavior<TB> b;
+        private IBehavior<TC> c;
 
-        public TernaryBehavior(Func<TA, TB, TC, TD> lift, Behavior<TA> a, Behavior<TB> b, Behavior<TC> c)
+        public TernaryBehavior(Func<TA, TB, TC, TD> lift, IBehavior<TA> a, IBehavior<TB> b, IBehavior<TC> c)
         {
             this.lift = lift;
             this.a = a;
@@ -17,7 +17,7 @@
             this.c = c;
         }
 
-        public override TD Value
+        public TD Value
         {
             get
             {

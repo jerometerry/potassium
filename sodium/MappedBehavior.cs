@@ -2,18 +2,18 @@
 {
     using System;
 
-    public class MappedBehavior<TA, TB> : Behavior<TB>
+    public class MappedBehavior<TA, TB> : DisposableObject, IBehavior<TB>
     {
-        private Behavior<TA> source;
+        private IBehavior<TA> source;
         private Func<TA, TB> map;
 
-        public MappedBehavior(Behavior<TA> source, Func<TA, TB> map)
+        public MappedBehavior(IBehavior<TA> source, Func<TA, TB> map)
         {
             this.source = source;
             this.map = map;
         }
 
-        public override TB Value
+        public TB Value
         {
             get
             {

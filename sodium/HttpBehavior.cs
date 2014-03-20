@@ -5,9 +5,9 @@
     /// <summary>
     /// WebRequestBehavior is a Behavior that downloads a URL as a string
     /// </summary>
-    public class HttpBehavior : Behavior<string>
+    public class HttpBehavior : DisposableObject, IBehavior<string>
     {
-        private Behavior<string> urlBehavior;
+        private IBehavior<string> urlBehavior;
         
         /// <summary>
         /// Constructs a new WebRequestBehavior to fetch from a constant URL
@@ -15,20 +15,21 @@
         /// <param name="url">The URL to load the content from</param>
         public HttpBehavior(string url)
         {
-            this.urlBehavior = new ConstantBehavior<string>(url);
-            this.Register(this.urlBehavior);
+            var cb = new ConstantBehavior<string>(url);
+            this.urlBehavior = cb;
+            this.Register(cb);
         }
 
         /// <summary>
         /// Constructs a new WebRequestBehavior to fetch from a dynamic URL
         /// </summary>
         /// <param name="urlBehavior">Behavior containing the URL to load</param>
-        public HttpBehavior(Behavior<string> urlBehavior)
+        public HttpBehavior(IBehavior<string> urlBehavior)
         {
             this.urlBehavior = urlBehavior;
         }
 
-        public override string Value
+        public string Value
         {
             get
             {

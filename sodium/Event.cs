@@ -247,7 +247,7 @@
         /// <param name="valueStream">The Behavior to sample when calculating the snapshot</param>
         /// <param name="snapshot">The snapshot generation function.</param>
         /// <returns>A new Event that will produce the snapshot when the current event publishes</returns>
-        public Event<TC> Snapshot<TB, TC>(Behavior<TB> valueStream, Func<T, TB, TC> snapshot)
+        public Event<TC> Snapshot<TB, TC>(IBehavior<TB> valueStream, Func<T, TB, TC> snapshot)
         {
             return new SnapshotEvent<T, TB, TC>(this, snapshot, valueStream);
         }
@@ -258,7 +258,7 @@
         /// <typeparam name="TB">The type of the Behavior</typeparam>
         /// <param name="valueStream">The Behavior to sample when taking the snapshot</param>
         /// <returns>An event that captures the Behaviors value when the current event publishes</returns>
-        public Event<TB> Snapshot<TB>(Behavior<TB> valueStream)
+        public Event<TB> Snapshot<TB>(IBehavior<TB> valueStream)
         {
             return this.Snapshot(valueStream, (a, b) => b);
         }

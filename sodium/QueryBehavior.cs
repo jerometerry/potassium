@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class QueryBehavior<T> : Behavior<T>
+    public class QueryBehavior<T> : DisposableObject, IBehavior<T>
     {
         private Func<T> query;
 
@@ -11,7 +11,7 @@
             this.query = query;
         }
 
-        public override T Value
+        public T Value
         {
             get
             {

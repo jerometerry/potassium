@@ -2,18 +2,18 @@
 {
     using System;
 
-    public class ApplyBehavior<TA, TB> : Behavior<TB>
+    public class ApplyBehavior<TA, TB> : DisposableObject, IBehavior<TB>
     {
-        private Behavior<TA> source;
-        private Behavior<Func<TA, TB>> bf;
+        private IBehavior<TA> source;
+        private IBehavior<Func<TA, TB>> bf;
 
-        public ApplyBehavior(Behavior<TA> source, Behavior<Func<TA, TB>> bf)
+        public ApplyBehavior(IBehavior<TA> source, IBehavior<Func<TA, TB>> bf)
         {
             this.source = source;
             this.bf = bf;
         }
 
-        public override TB Value
+        public TB Value
         {
             get
             {

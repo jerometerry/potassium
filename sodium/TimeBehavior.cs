@@ -5,7 +5,8 @@
     /// <summary>
     /// 
     /// </summary>
-    public abstract class TimeBehavior : Behavior<DateTime>
+    public abstract class TimeBehavior : DisposableObject, IBehavior<DateTime>
     {
+        public abstract DateTime Value { get; }
     }
 }

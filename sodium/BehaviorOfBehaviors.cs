@@ -1,6 +1,7 @@
 ﻿namespace Sodium
 {
-    public abstract class BehaviorOfBehaviors<T> : Behavior<Behavior<T>>
+    public abstract class BehaviorOfBehaviors<T> : DisposableObject, IBehavior<IBehavior<T>>
     {
+        public abstract IBehavior<T> Value { get; }
     }
 }

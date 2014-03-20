@@ -1,6 +1,6 @@
 ﻿namespace Sodium
 {
-    public class DiscreteBehavior<T> : Behavior<T>
+    public class DiscreteBehavior<T> : DisposableObject, IBehavior<T>
     {
         private T value;
 
@@ -9,7 +9,7 @@
             this.value = value;
         }
 
-        public override T Value
+        public T Value
         {
             get
             {

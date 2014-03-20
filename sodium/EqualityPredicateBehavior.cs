@@ -2,10 +2,10 @@
 {
     public class EqualityPredicateBehavior<T> : PredicateBehavior
     {
-        private Behavior<T> behavior;
+        private IBehavior<T> behavior;
         private T value;
 
-        public EqualityPredicateBehavior(Behavior<T> behavior, T value)
+        public EqualityPredicateBehavior(IBehavior<T> behavior, T value)
         {
             this.behavior = behavior;
             this.value = value;
