@@ -13,10 +13,10 @@
         /// Set to true when waiting for the Publish Priority Action to run.
         /// </summary>
         private bool published;
-        private Behavior<T> source;
-        private Behavior<Func<T, TB>> behaviorMap;
+        private DiscreteBehavior<T> source;
+        private DiscreteBehavior<Func<T, TB>> behaviorMap;
         
-        public BehaviorApplyEvent(Behavior<T> source, Behavior<Func<T, TB>> behaviorMap)
+        public BehaviorApplyEvent(DiscreteBehavior<T> source, DiscreteBehavior<Func<T, TB>> behaviorMap)
         {
             this.source = source;
             this.behaviorMap = behaviorMap;

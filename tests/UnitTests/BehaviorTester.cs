@@ -314,9 +314,9 @@ namespace Sodium.Tests
         {
             public readonly char? C1;
             public readonly char? C2;
-            public readonly Behavior<char?> Behavior;
+            public readonly DiscreteBehavior<char?> Behavior;
 
-            public Sb(char? c1, char? c2, Behavior<char?> behavior)
+            public Sb(char? c1, char? c2, DiscreteBehavior<char?> behavior)
             {
                 C1 = c1;
                 C2 = c2;

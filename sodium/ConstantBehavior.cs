@@ -4,7 +4,7 @@
     /// A Behavior who's value never changes, even if published new values.
     /// </summary>
     /// <typeparam name="T">The type of values published through the Behavior</typeparam>
-    public class ConstantBehavior<T> : Behavior<T>
+    public class ConstantBehavior<T> : DiscreteBehavior<T>
     {
         /// <summary>
         /// Constructs a new ConstantBehavior

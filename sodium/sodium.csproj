@@ -80,7 +80,7 @@
     <Compile Include="BehaviorLastValueEvent.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Behavior.cs" />
+    <Compile Include="DiscreteBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SnapshotEvent.cs" />

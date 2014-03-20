@@ -16,7 +16,7 @@
         /// <param name="source">The source behavior</param>
         /// <param name="bf">Behavior of functions that maps from T -> TB</param>
         /// <returns>The new applied Behavior</returns>
-        public static Behavior<TB> Apply<TA, TB>(this Behavior<TA> source, Behavior<Func<TA, TB>> bf)
+        public static DiscreteBehavior<TB> Apply<TA, TB>(this DiscreteBehavior<TA> source, DiscreteBehavior<Func<TA, TB>> bf)
         {
             var evt = new BehaviorApplyEvent<TA, TB>(source, bf);
             var map = bf.Value;
@@ -42,7 +42,7 @@
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
         /// </remarks>
-        public static Event<T> Coalesce<T>(this Behavior<T> source, Func<T, T, T> coalesce)
+        public static Event<T> Coalesce<T>(this DiscreteBehavior<T> source, Func<T, T, T> coalesce)
         {
             return source.Source.Coalesce(coalesce);
         }
@@ -58,7 +58,7 @@
         /// <param name="initState">Value to pass to the snapshot function</param>
         /// <param name="snapshot">Snapshot function</param>
         /// <returns>A new Behavior that collects values of type TB</returns>
-        public static Behavior<TB> Collect<TA, TB, TS>(this Behavior<TA> source, TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
+        public static DiscreteBehavior<TB> Collect<TA, TB, TS>(this DiscreteBehavior<TA> source, TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
         {
             var coalesceEvent = source.Coalesce((a, b) => b);
             var currentValue = source.Value;
@@ -90,7 +90,7 @@
         /// lift method to the current Behavior.</param>
         /// <returns>A new Behavior who's value is computed using the current Behavior, the given
         /// Behavior, and the lift function.</returns>
-        public static Behavior<TC> Lift<TA, TB, TC>(this Behavior<TA> a, Func<TA, TB, TC> lift, Behavior<TB> b)
+        public static DiscreteBehavior<TC> Lift<TA, TB, TC>(this DiscreteBehavior<TA> a, Func<TA, TB, TC> lift, DiscreteBehavior<TB> b)
         {
             Func<TA, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
             var bf = a.Map(ffa);
@@ -113,7 +113,7 @@
         /// <returns>A new Behavior who's value is computed by applying the lift function to the current
         /// behavior, and the given behaviors.</returns>
         /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
-        public static Behavior<TD> Lift<TA, TB, TC, TD>(this Behavior<TA> a, Func<TA, TB, TC, TD> lift, Behavior<TB> b, Behavior<TC> c)
+        public static DiscreteBehavior<TD> Lift<TA, TB, TC, TD>(this DiscreteBehavior<TA> a, Func<TA, TB, TC, TD> lift, DiscreteBehavior<TB> b, DiscreteBehavior<TC> c)
         {
             Func<TA, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
             var bf = a.Map(map);
@@ -135,7 +135,7 @@
         /// <returns>A new Behavior that updates whenever the current Behavior updates,
         /// having a value computed by the map function, and starting with the value
         /// of the current event mapped.</returns>
-        public static Behavior<TB> Map<TA, TB>(this Behavior<TA> source, Func<TA, TB> map)
+        public static DiscreteBehavior<TB> Map<TA, TB>(this DiscreteBehavior<TA> source, Func<TA, TB> map)
         {
             var mapEvent = source.Source.Map(map);
             var behavior = mapEvent.Hold(map(source.Value));
@@ -151,7 +151,7 @@
         /// <returns>The new, unwrapped Behavior</returns>
         /// <remarks>Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.</remarks>
-        public static Behavior<T> Switch<T>(this Behavior<Behavior<T>> source)
+        public static DiscreteBehavior<T> Switch<T>(this DiscreteBehavior<DiscreteBehavior<T>> source)
         {
             var value = source.Value.Value;
             var sink = new SwitchBehaviorEvent<T>(source);
@@ -173,7 +173,7 @@
         /// Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.
         /// </remarks>
-        public static Event<T> Switch<T>(this Behavior<Event<T>> behavior)
+        public static Event<T> Switch<T>(this DiscreteBehavior<Event<T>> behavior)
         {
             return new SwitchEvent<T>(behavior);
         }
@@ -184,7 +184,7 @@
         /// <typeparam name="T">The type of values published through the source</typeparam>
         /// <param name="source">The source Behavior</param>
         /// <returns>The event streams</returns>
-        public static Event<T> Values<T>(this Behavior<T> source)
+        public static Event<T> Values<T>(this DiscreteBehavior<T> source)
         {
             return Transaction.Start(t => new BehaviorLastValueEvent<T>(source, t));
         }

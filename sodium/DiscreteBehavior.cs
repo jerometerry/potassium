@@ -11,13 +11,13 @@ namespace Sodium
     /// In Sodium.net, a Behavior is implemented by observing the discrete values of an Event, so a Behavior
     /// technically isn't continuous.
     /// </remarks>
-    public class Behavior<T> : DisposableObject
+    public class DiscreteBehavior<T> : DisposableObject
     {
         /// <summary>
         /// Create a behavior with a time varying value from an initial value
         /// </summary>
         /// <param name="value">The initial value of the Behavior</param>
-        public Behavior(T value)
+        public DiscreteBehavior(T value)
             : this(new Event<T>(), value)
         {
             this.Register(this.Source);
@@ -28,7 +28,7 @@ namespace Sodium
         /// </summary>
         /// <param name="source">The Observable to listen for updates from</param>
         /// <param name="value">The initial value of the Behavior</param>
-        public Behavior(Observable<T> source, T value)
+        public DiscreteBehavior(Observable<T> source, T value)
         {
             this.Source = source;
             this.ObservedValue = new ObservedValue<T>(source, value);

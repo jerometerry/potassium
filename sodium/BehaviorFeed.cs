@@ -6,7 +6,7 @@
     /// <typeparam name="T">The type of values published through the Behavior</typeparam>
     /// <remarks>A BehaviorFeed can only be fed values from single Behavior. 
     /// If Feed is Invoked multiple times, an exception will be raised.</remarks>
-    public class BehaviorFeed<T> : Behavior<T>
+    public class BehaviorFeed<T> : DiscreteBehavior<T>
     {
         /// <summary>
         /// Constructs a new BehaviorFeed
@@ -22,7 +22,7 @@
         ///  Firings on the given Event will be fed to the current Event
         /// </summary>
         /// <param name="source">Event who's publishings will be looped to the current Event</param>
-        public void Feed(Behavior<T> source)
+        public void Feed(DiscreteBehavior<T> source)
         {
             var eventFeed = (EventFeed<T>)this.Source;
             eventFeed.Feed(source.Source);

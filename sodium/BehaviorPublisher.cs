@@ -4,7 +4,7 @@
     /// An BehaviorPublisher is an Behavior that allows callers to publish values to subscribers.
     /// </summary>
     /// <typeparam name="T">The type of values published through the Behavior</typeparam>
-    public class BehaviorPublisher<T> : Behavior<T>
+    public class BehaviorPublisher<T> : DiscreteBehavior<T>
     {
         /// <summary>
         /// Constructs a new BehaviorPublisher

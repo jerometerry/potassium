@@ -7,10 +7,10 @@ namespace Sodium
     {
         private Observable<T> source;
         private Func<T, TB, TC> snapshot;
-        private Behavior<TB> behavior;
+        private DiscreteBehavior<TB> behavior;
         private ISubscription<T> subscription;
 
-        public SnapshotEvent(Observable<T> source, Func<T, TB, TC> snapshot, Behavior<TB> behavior)
+        public SnapshotEvent(Observable<T> source, Func<T, TB, TC> snapshot, DiscreteBehavior<TB> behavior)
         {
             this.source = source;
             this.snapshot = snapshot;
