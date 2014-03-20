@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behavior.cs" />
     <Compile Include="BehaviorApplyEvent.cs" />
     <Compile Include="BehaviorFeed.cs" />
     <Compile Include="BehaviorPublisher.cs" />
