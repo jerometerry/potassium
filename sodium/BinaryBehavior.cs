@@ -8,7 +8,7 @@
     /// <typeparam name="TA"></typeparam>
     /// <typeparam name="TB"></typeparam>
     /// <typeparam name="TC"></typeparam>
-    public class BinaryBehavior<TA, TB, TC> : DisposableObject, IBehavior<TC>
+    public class BinaryBehavior<TA, TB, TC> : ContinuousBehavior<TC>
     {
         private Func<TA, TB, TC> lift;
         private IBehavior<TA> a;
@@ -27,7 +27,7 @@
             this.b = b;
         }
 
-        public TC Value
+        public override TC Value
         {
             get
             {

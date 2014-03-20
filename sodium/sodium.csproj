@@ -48,13 +48,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplyBehavior.cs" />
+    <Compile Include="ContinuousBehavior.cs" />
+    <Compile Include="DiscreteBehavior.cs" />
     <Compile Include="IBehavior.cs" />
     <Compile Include="BehaviorApplyEvent.cs" />
     <Compile Include="BehaviorOfBehaviors.cs" />
     <Compile Include="BehaviorOfEvents.cs" />
     <Compile Include="BinaryBehavior.cs" />
     <Compile Include="ConstantBehavior.cs" />
-    <Compile Include="DiscreteBehavior.cs" />
+    <Compile Include="DiscreteBehaviorPublisher.cs" />
     <Compile Include="DiscretePredicateBehavior.cs" />
     <Compile Include="EventPublisher.cs" />
     <Compile Include="LocalTimeBehavior.cs" />

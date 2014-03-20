@@ -4,7 +4,7 @@
     /// A Behavior who's value never changes, even if published new values.
     /// </summary>
     /// <typeparam name="T">The type of values published through the Behavior</typeparam>
-    public class ConstantBehavior<T> : DisposableObject, IBehavior<T>
+    public class ConstantBehavior<T> : ContinuousBehavior<T>
     {
         private T value;
 
@@ -17,7 +17,7 @@
             this.value = value;
         }
 
-        public T Value
+        public override T Value
         {
             get
             {

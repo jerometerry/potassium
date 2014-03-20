@@ -4,7 +4,7 @@
     /// ObservableDrivenBehavior is a Behavior who's value is updated when the underlying Observable updates.
     /// </summary>
     /// <typeparam name="T">The type of values published through the Observable</typeparam>
-    public class ObservableDrivenBehavior<T> : DisposableObject, IBehavior<T>
+    public class ObservableDrivenBehavior<T> : DiscreteBehavior<T>
     {
         private ObservedValue<T> observedValue;
 
@@ -18,7 +18,7 @@
             this.observedValue = new ObservedValue<T>(observable, value);
         }
 
-        public T Value
+        public override T Value
         {
             get
             {

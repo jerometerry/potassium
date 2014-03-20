@@ -1,7 +1,6 @@
 ﻿namespace Sodium
 {
-    public abstract class BehaviorOfEvents<T> : DisposableObject, IBehavior<Event<T>>
+    public abstract class BehaviorOfEvents<T> : ContinuousBehavior<Event<T>>
     {
-        public abstract Event<T> Value { get; }
     }
 }

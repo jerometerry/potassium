@@ -5,8 +5,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public abstract class TimeBehavior : DisposableObject, IBehavior<DateTime>
+    public abstract class TimeBehavior : ContinuousBehavior<DateTime>
     {
-        public abstract DateTime Value { get; }
     }
 }

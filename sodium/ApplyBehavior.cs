@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class ApplyBehavior<TA, TB> : DisposableObject, IBehavior<TB>
+    public class ApplyBehavior<TA, TB> : ContinuousBehavior<TB>
     {
         private IBehavior<TA> source;
         private IBehavior<Func<TA, TB>> bf;
@@ -13,7 +13,7 @@
             this.bf = bf;
         }
 
-        public TB Value
+        public override TB Value
         {
             get
             {

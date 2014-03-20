@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class TernaryBehavior<TA, TB, TC, TD> : DisposableObject, IBehavior<TD>
+    public class TernaryBehavior<TA, TB, TC, TD> : ContinuousBehavior<TD>
     {
         private Func<TA, TB, TC, TD> lift;
         private IBehavior<TA> a;
@@ -17,7 +17,7 @@
             this.c = c;
         }
 
-        public TD Value
+        public override TD Value
         {
             get
             {

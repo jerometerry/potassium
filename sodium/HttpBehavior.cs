@@ -5,7 +5,7 @@
     /// <summary>
     /// WebRequestBehavior is a Behavior that downloads a URL as a string
     /// </summary>
-    public class HttpBehavior : DisposableObject, IBehavior<string>
+    public class HttpBehavior : ContinuousBehavior<string>
     {
         private IBehavior<string> urlBehavior;
         
@@ -29,7 +29,7 @@
             this.urlBehavior = urlBehavior;
         }
 
-        public string Value
+        public override string Value
         {
             get
             {

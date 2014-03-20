@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class MappedBehavior<TA, TB> : DisposableObject, IBehavior<TB>
+    public class MappedBehavior<TA, TB> : ContinuousBehavior<TB>
     {
         private IBehavior<TA> source;
         private Func<TA, TB> map;
@@ -13,7 +13,7 @@
             this.map = map;
         }
 
-        public TB Value
+        public override TB Value
         {
             get
             {
