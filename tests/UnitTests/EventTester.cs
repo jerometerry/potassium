@@ -39,7 +39,7 @@ namespace Sodium.Tests
             var e1 = new EventPublisher<int>();
             var e2 = new EventPublisher<int>();
             var o = new List<int>();
-            var l = e1.Merge(e2).Subscribe(o.Add);
+            var l = (e1 + e2).Subscribe(o.Add);
             e1.Publish(7);
             e2.Publish(9);
             e1.Publish(8);
@@ -52,7 +52,7 @@ namespace Sodium.Tests
         {
             var e = new EventPublisher<int>();
             var o = new List<int>();
-            var l = e.Merge(e).Subscribe(o.Add);
+            var l = (e + e).Subscribe(o.Add);
             e.Publish(7);
             e.Publish(9);
             l.Dispose();
@@ -66,8 +66,8 @@ namespace Sodium.Tests
             var e2 = new EventPublisher<int>();
             var o = new List<int>();
             var evt2 = e1.Map(x => x * 100);
-            var evt = evt2.Merge(e2);
-            var l = e1.Merge(evt)
+            var evt = evt2 + e2;
+            var l = (e1 + evt)
                       .Coalesce((a, b) => a + b)
                       .Subscribe(o.Add);
             e1.Publish(2);

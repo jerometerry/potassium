@@ -21,7 +21,7 @@ namespace Sodium.MemoryTests
             finalizers.Add(behavior);
 
             // TODO - etens isn't being used. Seems like it should be
-            var etens = evt.Map(x => x / 10);
+            var etens = evt / 10;
             finalizers.Add(etens);
 
             var snapshotEvent = evt.Snapshot(behavior, (neu, old) => neu.Equals(old) ? null : neu);

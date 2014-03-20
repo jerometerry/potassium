@@ -190,6 +190,46 @@
             return new MapEvent<T, TB>(this, map);
         }
 
+        public static Event<T> operator +(Event<T> e, T value)
+        {
+            return e.Map<T>((t) =>
+            {
+                dynamic a = t;
+                dynamic b = value;
+                return a + b;
+            });
+        }
+
+        public static Event<T> operator -(Event<T> e, T value)
+        {
+            return e.Map<T>((t) =>
+            {
+                dynamic a = t;
+                dynamic b = value;
+                return a - b;
+            });
+        }
+
+        public static Event<T> operator *(Event<T> e, T value)
+        {
+            return e.Map<T>((t) =>
+            {
+                dynamic a = t;
+                dynamic b = value;
+                return a * b;
+            });
+        }
+        
+        public static Event<T> operator /(Event<T> e, T value)
+        {
+            return e.Map<T>((t) =>
+            {
+                dynamic a = t;
+                dynamic b = value;
+                return a / b;
+            });
+        }
+
         /// <summary>
         /// Merge two streams of events of the same type.
         /// </summary>
@@ -222,10 +262,21 @@
         /// </remarks>
         public Event<T> Merge(Observable<T> observable, Func<T, T, T> coalesce)
         {
-            var merge = this.Merge(observable);
+            var merge = this + observable;
             var c = merge.Coalesce(coalesce);
             c.Register(merge);
             return c;
+        }
+
+        /// <summary>
+        /// The addition operation merges two Observables together to form a new Event
+        /// </summary>
+        /// <param name="c1">The first Observable</param>
+        /// <param name="c2">The second Observable</param>
+        /// <returns>A new Event combining the publishings of the two Observable</returns>
+        public static Event<T> operator +(Event<T> e, Observable<T> o)
+        {
+            return e.Merge(o);
         }
 
         /// <summary>
