@@ -15,7 +15,7 @@
             var results = new List<DateTime>();
 
             var p = new QueryPredicateBehavior(() => results.Count >= 5);
-            var evt = timeB.Discretize(TimeSpan.FromMilliseconds(100), p);
+            var evt = timeB.ToEvent(TimeSpan.FromMilliseconds(100), p);
             var s = evt.Subscribe(results.Add);
             evt.Start();
 

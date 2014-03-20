@@ -23,7 +23,7 @@
             var results = new List<string>();
             var p = new QueryPredicateBehavior(() => results.Count >= 3);
             var behavior = new HttpBehavior("http://ip.jsontest.com/");
-            var evt = behavior.Discretize(TimeSpan.FromMilliseconds(250), p);
+            var evt = behavior.ToEvent(TimeSpan.FromMilliseconds(250), p);
             var hold = evt.Hold("N/A");
             var values = hold.Values();
             var s = values.Subscribe(results.Add);

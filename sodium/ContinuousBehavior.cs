@@ -26,14 +26,27 @@
             return new TernaryBehavior<T, TB, TC, TD>(lift, this, b, c);
         }
 
-        public ContinuousBehaviorDiscretizer<T> Discretize(TimeSpan interval, Func<bool> until)
+        public ContinuousBehaviorDiscretizer<T> ToEvent(TimeSpan interval, Func<bool> until)
         {
             return new ContinuousBehaviorDiscretizer<T>(this, interval, until);
         }
 
-        public ContinuousBehaviorDiscretizer<T> Discretize(TimeSpan interval, PredicateBehavior until)
+        public ContinuousBehaviorDiscretizer<T> ToEvent(TimeSpan interval, PredicateBehavior until)
         {
             return new ContinuousBehaviorDiscretizer<T>(this, interval, until);
+        }
+
+        public EventDrivenBehavior<T> ToDiscreteBehavior(TimeSpan interval, Func<bool> until)
+        {
+            return ToDiscreteBehavior(interval, new QueryPredicateBehavior(until));
+        }
+
+        public EventDrivenBehavior<T> ToDiscreteBehavior(TimeSpan interval, PredicateBehavior until)
+        {
+            var evt = this.ToEvent(interval, until);
+            var beh = evt.Hold(this.Value);
+            beh.Register(evt);
+            return beh;
         }
     }
 }
