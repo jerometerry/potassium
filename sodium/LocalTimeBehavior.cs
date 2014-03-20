@@ -3,7 +3,7 @@ namespace Sodium
     using System;
 
     /// <summary>
-    /// 
+    /// LocalTimeBehavior is a continuous Behavior that contains the current Local System Time
     /// </summary>
     public class LocalTimeBehavior : TimeBehavior
     {

@@ -1,5 +1,9 @@
 ﻿namespace Sodium
 {
+    /// <summary>
+    /// DiscretePredicateBehavior is a discrete Behavior containing a boolean value, 
+    /// that can be used as a predicate.
+    /// </summary>
     public class DiscretePredicateBehavior : PredicateBehavior
     {
         private bool predicate;

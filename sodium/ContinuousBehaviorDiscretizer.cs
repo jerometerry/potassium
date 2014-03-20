@@ -3,6 +3,11 @@
     using System;
     using System.Threading;
 
+    /// <summary>
+    /// ContinuousBehaviorDiscretizer converts a ContinuousBehavior into a discrete stream of Events,
+    /// by polling the Behavior.
+    /// </summary>
+    /// <typeparam name="T">The type of value contained in the Behavior</typeparam>
     public class ContinuousBehaviorDiscretizer<T> : EventPublisher<T>
     {
         private IBehavior<T> behavior;

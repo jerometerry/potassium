@@ -2,6 +2,14 @@
 {
     using System;
 
+    /// <summary>
+    /// ApplyBehavior is a continuous Behavior who's value is computed
+    /// by applying the current mapping function in a behavior of mappings functions
+    /// to the current value of a behavior, producing a new Behavior that maps the 
+    /// Behaviors value to the return type of the mapping function.
+    /// </summary>
+    /// <typeparam name="T">Type of value stored in the source Behavior</typeparam>
+    /// <typeparam name="TB">The return type of the mapping functions</typeparam>
     public class ApplyBehavior<T, TB> : ContinuousBehavior<TB>
     {
         private IBehavior<T> source;

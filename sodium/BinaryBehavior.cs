@@ -3,11 +3,11 @@
     using System;
 
     /// <summary>
-    /// 
+    /// A BinaryBehavior is a continuous Behavior that lifts a binary function
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="TB"></typeparam>
-    /// <typeparam name="TC"></typeparam>
+    /// <typeparam name="T">The type of first parameter to the lift function</typeparam>
+    /// <typeparam name="TB">The type of the second parameter of the lift function</typeparam>
+    /// <typeparam name="TC">The return type of the lift function</typeparam>
     public class BinaryBehavior<T, TB, TC> : ContinuousBehavior<TC>
     {
         private Func<T, TB, TC> lift;
