@@ -230,6 +230,46 @@
             });
         }
 
+        public static Event<T> operator +(Event<T> e, IBehavior<T> b)
+        {
+            return e.Map<T>((t) =>
+            {
+                dynamic v1 = t;
+                dynamic v2 = b.Value;
+                return v1 + v2;
+            });
+        }
+
+        public static Event<T> operator -(Event<T> e, IBehavior<T> b)
+        {
+            return e.Map<T>((t) =>
+            {
+                dynamic v1 = t;
+                dynamic v2 = b.Value;
+                return v1 - v2;
+            });
+        }
+
+        public static Event<T> operator *(Event<T> e, IBehavior<T> b)
+        {
+            return e.Map<T>((t) =>
+            {
+                dynamic v1 = t;
+                dynamic v2 = b.Value;
+                return v1 * v2;
+            });
+        }
+
+        public static Event<T> operator /(Event<T> e, IBehavior<T> b)
+        {
+            return e.Map<T>((t) =>
+            {
+                dynamic v1 = t;
+                dynamic v2 = b.Value;
+                return v1 / v2;
+            });
+        }
+
         /// <summary>
         /// Merge two streams of events of the same type.
         /// </summary>

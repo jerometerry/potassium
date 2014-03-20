@@ -48,6 +48,21 @@ namespace Sodium.Tests
         }
 
         [Test]
+        public void TestAddBehavior()
+        {
+            var b = new ConstantBehavior<int>(100);
+            var e = new EventPublisher<int>();
+            var m = e + b;
+            var o = new List<int>();
+            var l = m.Subscribe(o.Add);
+            e.Publish(5);
+            e.Publish(6);
+            e.Publish(7);
+            l.Dispose();
+            AssertArraysEqual(Arrays<int>.AsList(105, 106, 107), o);
+        }
+
+        [Test]
         public void TestAddStrings()
         {
             var e = new EventPublisher<string>();
