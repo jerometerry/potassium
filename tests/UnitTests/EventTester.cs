@@ -34,6 +34,48 @@ namespace Sodium.Tests
         }
 
         [Test]
+        public void TestAdd()
+        {
+            var e = new EventPublisher<int>();
+            var m = e + 100;
+            var o = new List<int>();
+            var l = m.Subscribe(o.Add);
+            e.Publish(5);
+            e.Publish(6);
+            e.Publish(7);
+            l.Dispose();
+            AssertArraysEqual(Arrays<int>.AsList(105, 106, 107), o);
+        }
+
+        [Test]
+        public void TestAddStrings()
+        {
+            var e = new EventPublisher<string>();
+            var m = e + "@";
+            var o = new List<string>();
+            var l = m.Subscribe(o.Add);
+            e.Publish("5");
+            e.Publish("6");
+            e.Publish("7");
+            l.Dispose();
+            AssertArraysEqual(Arrays<string>.AsList("5@", "6@", "7@"), o);
+        }
+
+        [Test]
+        public void TestMultiply()
+        {
+            var e = new EventPublisher<int>();
+            var m = e * 2;
+            var o = new List<int>();
+            var l = m.Subscribe(o.Add);
+            e.Publish(5);
+            e.Publish(6);
+            e.Publish(7);
+            l.Dispose();
+            AssertArraysEqual(Arrays<int>.AsList(10, 12, 14), o);
+        }
+
+        [Test]
         public void TestMergeNonSimultaneous()
         {
             var e1 = new EventPublisher<int>();
