@@ -38,15 +38,15 @@
 
         private void SubscribeSource()
         {
-            var valueChanged = new Publisher<T>((a, t) => this.SchedulePublish(t));
-            var subscription = source.Source.Subscribe(valueChanged, this.Rank);
+            var valueChanged = new SubscriptionPublisher<T>((a, t) => this.SchedulePublish(t));
+            var subscription = source.Source.Subscribe(valueChanged, this.Priority);
             this.Register(subscription);
         }
 
         private void SubscribeMap()
         {
-            var functionChanged = new Publisher<Func<T, TB>>((f, t) => this.SchedulePublish(t));
-            var subscription = behaviorMap.Source.Subscribe(functionChanged, this.Rank);
+            var functionChanged = new SubscriptionPublisher<Func<T, TB>>((f, t) => this.SchedulePublish(t));
+            var subscription = behaviorMap.Source.Subscribe(functionChanged, this.Priority);
             this.Register(subscription);
         }
 
@@ -65,7 +65,7 @@
             }
 
             published = true;
-            transaction.High(Publish, this.Rank);
+            transaction.High(Publish, this.Priority);
             return true;
         }
 

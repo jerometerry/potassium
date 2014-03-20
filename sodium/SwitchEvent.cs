@@ -3,7 +3,7 @@
     internal sealed class SwitchEvent<T> : EventPublisher<T>
     {
         private ISubscription<Event<T>> behaviorSubscription;
-        private Publisher<T> wrappedEventSubscriptionCallback;
+        private SubscriptionPublisher<T> wrappedEventSubscriptionCallback;
         private ISubscription<T> wrappedSubscription;
         private Behavior<Event<T>> source;
 
@@ -35,11 +35,11 @@
 
         private Unit Initialize(Transaction transaction)
         {
-            this.wrappedEventSubscriptionCallback = this.CreatePublisher();
-            this.wrappedSubscription = source.Value.CreateSubscription(this.wrappedEventSubscriptionCallback, this.Rank, transaction);
+            this.wrappedEventSubscriptionCallback = this.CreateSubscriptionPublisher();
+            this.wrappedSubscription = source.Value.CreateSubscription(this.wrappedEventSubscriptionCallback, this.Priority, transaction);
 
-            var behaviorEventChanged = new Publisher<Event<T>>(this.UpdateWrappedEventSubscription);
-            this.behaviorSubscription = source.Source.CreateSubscription(behaviorEventChanged, this.Rank, transaction);
+            var behaviorEventChanged = new SubscriptionPublisher<Event<T>>(this.UpdateWrappedEventSubscription);
+            this.behaviorSubscription = source.Source.CreateSubscription(behaviorEventChanged, this.Priority, transaction);
 
             return Unit.Nothing;
         }
@@ -55,7 +55,7 @@
                 }
 
                 var suppressed = new SuppressedSubscribeEvent<T>(newEvent);
-                this.wrappedSubscription = suppressed.CreateSubscription(this.wrappedEventSubscriptionCallback, this.Rank, transaction);
+                this.wrappedSubscription = suppressed.CreateSubscription(this.wrappedEventSubscriptionCallback, this.Priority, transaction);
                 ((DisposableObject)this.wrappedSubscription).Register(suppressed);
             });
         }

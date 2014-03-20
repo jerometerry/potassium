@@ -55,7 +55,7 @@ namespace Sodium
         /// </summary> 
         /// <param name="action">The action to schedule high</param>
         /// <param name="rank">The rank of the action</param>
-        public void High(Action<Transaction> action, Rank rank)
+        public void High(Action<Transaction> action, Priority rank)
         {
             this.high.Add(new PrioritizedAction(action, rank));
         }

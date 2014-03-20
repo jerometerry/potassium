@@ -20,9 +20,9 @@
         /// Creates a callback that calls the Publish method on the current Event when invoked
         /// </summary>
         /// <returns>In Publisher that calls Publish, when invoked.</returns>
-        internal Publisher<T> CreatePublisher()
+        internal SubscriptionPublisher<T> CreateSubscriptionPublisher()
         {
-            return new Publisher<T>((t, v) => this.Publish(t, v));
+            return new SubscriptionPublisher<T>((t, v) => this.Publish(t, v));
         }
 
         /// <summary>
@@ -33,7 +33,7 @@
         protected virtual bool Publish(T value, Transaction transaction)
         {
             var clone = this.Subscriptions.ToArray();
-            Publisher<T>.PublishToSubscribers(value, clone, transaction);
+            SubscriptionPublisher<T>.PublishToSubscribers(value, clone, transaction);
             return true;
         }
     }

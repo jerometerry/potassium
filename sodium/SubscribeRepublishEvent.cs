@@ -40,7 +40,7 @@ namespace Sodium
         protected virtual bool Republish(ISubscription<T> subscription, Transaction transaction)
         {
             var values = this.publishings;
-            Publisher<T>.PublishToSubscriber(subscription, values, transaction);
+            SubscriptionPublisher<T>.PublishToSubscriber(subscription, values, transaction);
             return true;
         }
 

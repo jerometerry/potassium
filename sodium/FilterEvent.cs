@@ -14,8 +14,8 @@ namespace Sodium
             this.source = source;
             this.f = f;
 
-            var callback = this.CreatePublisher();
-            this.subscription = source.Subscribe(callback, this.Rank);
+            var callback = this.CreateSubscriptionPublisher();
+            this.subscription = source.Subscribe(callback, this.Priority);
         }
 
         public override T[] SubscriptionFirings()

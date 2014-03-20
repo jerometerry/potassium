@@ -12,7 +12,7 @@
         /// <summary>
         /// The rank of the current Observable. Default to rank zero
         /// </summary>
-        private readonly Rank rank = new Rank();
+        private readonly Priority priority = new Priority();
 
         /// <summary>
         /// List of ISubscriptions that are currently listening for publishings 
@@ -23,11 +23,11 @@
         /// <summary>
         /// The current Rank of the Observable, used to prioritize publishings on the current transaction.
         /// </summary>
-        public Rank Rank
+        public Priority Priority
         {
             get
             {
-                return this.rank;
+                return this.priority;
             }
         }
 
@@ -50,7 +50,7 @@
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
         public ISubscription<T> Subscribe(Action<T> callback)
         {
-            return Transaction.Start(t => this.CreateSubscription(new Publisher<T>(callback), Rank.Highest, t));
+            return Transaction.Start(t => this.CreateSubscription(new SubscriptionPublisher<T>(callback), Priority.Max, t));
         }
 
         /// <summary>
@@ -61,12 +61,12 @@
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Observable</param>
         /// <returns>An ISubscription to be used to stop listening for Observables.</returns>
         /// <remarks>Any publishings that have occurred on the current transaction will be re-published immediate after subscribing.</remarks>
-        internal virtual ISubscription<T> CreateSubscription(Publisher<T> publisher, Rank superior, Transaction transaction)
+        internal virtual ISubscription<T> CreateSubscription(SubscriptionPublisher<T> publisher, Priority superior, Transaction transaction)
         {
             Subscription<T> subscription;
             lock (Constants.SubscriptionLock)
             {
-                if (this.rank.AddSuperior(superior))
+                if (this.priority.AddSuperior(superior))
                 {
                     transaction.Reprioritize = true;
                 }
@@ -84,9 +84,9 @@
         /// </summary>
         /// <param name="publisher">An Action to be invoked when the current Observable publishes new values.</param>
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
-        internal ISubscription<T> Subscribe(Publisher<T> publisher)
+        internal ISubscription<T> Subscribe(SubscriptionPublisher<T> publisher)
         {
-            return Transaction.Start(t => this.CreateSubscription(publisher, Rank.Highest, t));
+            return Transaction.Start(t => this.CreateSubscription(publisher, Priority.Max, t));
         }
 
         /// <summary>
@@ -98,7 +98,7 @@
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
         /// Subscribe operation that takes a thread. This ensures that any other
         /// actions triggered during Subscribe requiring a transaction all get the same instance.</remarks>
-        internal ISubscription<T> Subscribe(Publisher<T> publisher, Rank subscriptionRank)
+        internal ISubscription<T> Subscribe(SubscriptionPublisher<T> publisher, Priority subscriptionRank)
         {
             return Transaction.Start(t => this.CreateSubscription(publisher, subscriptionRank, t));
         }
@@ -115,12 +115,12 @@
                 return false;
             }
 
-            var l = (Subscription<T>)subscription;
+            var s = (Subscription<T>)subscription;
 
             lock (Constants.SubscriptionLock)
             {
-                Rank.RemoveSuperior(l.Rank);
-                return this.Subscriptions.Remove(l);
+                Priority.RemoveSuperior(s.Priority);
+                return this.Subscriptions.Remove(s);
             }
         }
 

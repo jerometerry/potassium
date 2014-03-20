@@ -25,7 +25,7 @@
                 throw new ApplicationException("EventLoop has already been looped.");
             }
 
-            this.subscription = source.Subscribe(this.CreatePublisher(), Rank);
+            this.subscription = source.Subscribe(this.CreateSubscriptionPublisher(), Priority);
             return subscription;
         }
 

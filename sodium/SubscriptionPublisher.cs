@@ -7,7 +7,7 @@ namespace Sodium
     /// Notification wraps an System.Action used to subscribe to Observables.
     /// </summary>
     /// <typeparam name="T">The type of value that will be published</typeparam>
-    internal sealed class Publisher<T>
+    internal sealed class SubscriptionPublisher<T>
     {
         private readonly Action<T, Transaction> action;
 
@@ -15,7 +15,7 @@ namespace Sodium
         /// Constructs a new Notification from the given Action
         /// </summary>
         /// <param name="action">The Action to invoke when the Observable publishes</param>
-        public Publisher(Action<T> action)
+        public SubscriptionPublisher(Action<T> action)
             : this((a, t) => action(a))
         {
         }
@@ -24,7 +24,7 @@ namespace Sodium
         /// Constructs a new Notification from the given Action
         /// </summary>
         /// <param name="action">The Action to invoke when the Observable publishes</param>
-        public Publisher(Action<T, Transaction> action)
+        public SubscriptionPublisher(Action<T, Transaction> action)
         {
             this.action = action;
         }

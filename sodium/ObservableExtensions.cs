@@ -90,8 +90,8 @@
         public static Event<T> Delay<T>(this Observable<T> source)
         {
             var evt = new EventPublisher<T>();
-            var callback = new Publisher<T>((a, t) => t.Low(() => evt.Publish(a)));
-            var subscription = source.Subscribe(callback, evt.Rank);
+            var callback = new SubscriptionPublisher<T>((a, t) => t.Low(() => evt.Publish(a)));
+            var subscription = source.Subscribe(callback, evt.Priority);
             evt.Register(subscription);
             return evt;
         }

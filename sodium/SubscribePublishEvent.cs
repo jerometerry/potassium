@@ -33,7 +33,7 @@ namespace Sodium
         protected override void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
         {
             var values = this.SubscriptionFirings();
-            Publisher<T>.PublishToSubscriber(subscription, values, transaction);
+            SubscriptionPublisher<T>.PublishToSubscriber(subscription, values, transaction);
             base.OnSubscribe(subscription, transaction);
         }
     }

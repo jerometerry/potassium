@@ -9,8 +9,8 @@ namespace Sodium
         public SwitchBehaviorEvent(Behavior<Behavior<T>> source)
         {
             var evt = source.Values();
-            var callback = new Publisher<Behavior<T>>(this.Invoke);
-            this.subscription = evt.Subscribe(callback, this.Rank);
+            var callback = new SubscriptionPublisher<Behavior<T>>(this.Invoke);
+            this.subscription = evt.Subscribe(callback, this.Priority);
         }
 
         protected override void Dispose(bool disposing)
@@ -57,7 +57,7 @@ namespace Sodium
             }
 
             this.wrappedEvent = new BehaviorLastValueEvent<T>(behavior, transaction);
-            this.wrappedSubscription = this.wrappedEvent.CreateSubscription(this.CreatePublisher(), this.Rank, transaction);
+            this.wrappedSubscription = this.wrappedEvent.CreateSubscription(this.CreateSubscriptionPublisher(), this.Priority, transaction);
         }
     }
 }

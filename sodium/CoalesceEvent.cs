@@ -19,8 +19,8 @@ namespace Sodium
             this.Source = source;
             this.coalesce = coalesce;
 
-            var callback = new Publisher<T>(Accumulate);
-            subscription = source.CreateSubscription(callback, Rank, transaction);
+            var callback = new SubscriptionPublisher<T>(Accumulate);
+            subscription = source.CreateSubscription(callback, Priority, transaction);
         }
 
         protected Observable<T> Source { get; private set; }
@@ -91,7 +91,7 @@ namespace Sodium
         private void ScheduleFiring(T initialValue, Transaction transaction)
         {
             accumulatedValue = new Maybe<T>(initialValue);
-            transaction.High(Publish, Rank);
+            transaction.High(Publish, Priority);
         }
 
         /// <summary>

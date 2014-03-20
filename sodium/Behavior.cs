@@ -3,16 +3,13 @@ namespace Sodium
     using System;
 
     /// <summary>
-    /// A Behavior is a time varying value. It starts with an initial value which 
+    /// A Behavior is a continuous, time varying value. It starts with an initial value which 
     /// gets updated as the underlying Event is published.
     /// </summary>
     /// <typeparam name="T">The type of values that will be published through the Behavior.</typeparam>
-    /// <remarks>A Behavior contains an Event, maintains the last value published from the Event,
-    /// and has several transformation methods to constructs other Behaviors and Events.
-    /// 
-    /// A Behavior is composed of an Event (i.e. has-a). 
-    /// 
-    /// A Behavior is not an Event. Should it be?
+    /// <remarks> In theory, a Behavior is a continuous value, whereas an Event is a discrete sequence of values.
+    /// In Sodium.net, a Behavior is implemented by observing the discrete values of an Event, so a Behavior
+    /// technically isn't continuous.
     /// </remarks>
     public class Behavior<T> : DisposableObject
     {
@@ -31,7 +28,7 @@ namespace Sodium
         /// </summary>
         /// <param name="source">The Observable to listen for updates from</param>
         /// <param name="value">The initial value of the Behavior</param>
-        public Behavior(Event<T> source, T value)
+        public Behavior(Observable<T> source, T value)
         {
             this.Source = source;
             this.ObservedValue = new ObservedValue<T>(source, value);
@@ -85,7 +82,7 @@ namespace Sodium
         public ISubscription<T> SubscribeValues(Action<T> callback)
         {
             var evt = this.Values();
-            var s = (Subscription<T>)evt.Subscribe(new Publisher<T>(callback), Rank.Highest);
+            var s = (Subscription<T>)evt.Subscribe(new SubscriptionPublisher<T>(callback), Priority.Max);
             s.Register(evt);
             return s;
         }

@@ -16,8 +16,8 @@ namespace Sodium
             this.snapshot = snapshot;
             this.behavior = behavior;
 
-            var callback = new Publisher<T>(this.Publish);
-            this.subscription = source.Subscribe(callback, this.Rank);
+            var callback = new SubscriptionPublisher<T>(this.Publish);
+            this.subscription = source.Subscribe(callback, this.Priority);
         }
 
         public void Publish(T publishing, Transaction transaction)

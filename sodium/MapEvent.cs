@@ -13,7 +13,7 @@
         {
             this.source = source;
             this.map = map;
-            this.subscription = source.Subscribe(new Publisher<T>(this.Publish), this.Rank);
+            this.subscription = source.Subscribe(new SubscriptionPublisher<T>(this.Publish), this.Priority);
         }
 
         public void Publish(T publishing, Transaction trans)
