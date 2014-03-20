@@ -50,12 +50,18 @@
     <Compile Include="BehaviorApplyEvent.cs" />
     <Compile Include="BehaviorExtensions.cs" />
     <Compile Include="BehaviorFeed.cs" />
+    <Compile Include="BehaviorOfBehaviors.cs" />
+    <Compile Include="BehaviorOfEvents.cs" />
     <Compile Include="BehaviorPublisher.cs" />
     <Compile Include="BinaryBehavior.cs" />
     <Compile Include="ConstantBehavior.cs" />
+    <Compile Include="ConstantPredicateBehavior.cs" />
     <Compile Include="EventPublisher.cs" />
     <Compile Include="LocalTimeBehavior.cs" />
     <Compile Include="MappedBehavior.cs" />
+    <Compile Include="PredicateBehavior.cs" />
+    <Compile Include="QueryPredicateBehavior.cs" />
+    <Compile Include="QueryBehavior.cs" />
     <Compile Include="SubscriptionPublisher.cs" />
     <Compile Include="DiscreteBehaviorExtensions.cs" />
     <Compile Include="ObservableExtensions.cs" />
@@ -85,6 +91,7 @@
     <Compile Include="BehaviorLastValueEvent.cs" />
     <Compile Include="TernaryBehavior.cs" />
     <Compile Include="UtcTimeBehavior.cs" />
+    <Compile Include="EqualityPredicateBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DiscreteBehavior.cs" />

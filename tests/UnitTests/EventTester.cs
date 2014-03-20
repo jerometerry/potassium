@@ -124,13 +124,13 @@ namespace Sodium.Tests
         public void TestGate()
         {
             var ec = new EventPublisher<char>();
-            var epred = new BehaviorPublisher<bool>(true);
+            var epred = new ConstantPredicateBehavior(true);
             var o = new List<char>();
             var l = ec.Gate(epred).Subscribe(o.Add);
             ec.Publish('H');
-            epred.Publish(false);
+            epred.SetValue(false);
             ec.Publish('O');
-            epred.Publish(true);
+            epred.SetValue(true);
             ec.Publish('I');
             l.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('H', 'I'), o);
