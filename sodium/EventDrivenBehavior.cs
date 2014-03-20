@@ -1,23 +1,16 @@
 namespace Sodium
 {
-    using System;
-
     /// <summary>
-    /// A Behavior is a continuous, time varying value. It starts with an initial value which 
-    /// gets updated as the underlying Event is published.
+    /// EventBasedBehavior is a Behavior who's value is updated when the underlying Event is updated.
     /// </summary>
     /// <typeparam name="T">The type of values that will be published through the Behavior.</typeparam>
-    /// <remarks> In theory, a Behavior is a continuous value, whereas an Event is a discrete sequence of values.
-    /// In Sodium.net, a Behavior is implemented by observing the discrete values of an Event, so a Behavior
-    /// technically isn't continuous.
-    /// </remarks>
-    public class EventBasedBehavior<T> : ObservedValueBehavior<T>
+    public class EventDrivenBehavior<T> : ObservableDrivenBehavior<T>
     {
         /// <summary>
         /// Create a behavior with a time varying value from an initial value
         /// </summary>
         /// <param name="value">The initial value of the Behavior</param>
-        public EventBasedBehavior(T value)
+        public EventDrivenBehavior(T value)
             : this(value, new Event<T>())
         {
             this.Register(this.Source);
@@ -28,7 +21,7 @@ namespace Sodium
         /// </summary>
         /// <param name="source">The Observable to listen for updates from</param>
         /// <param name="value">The initial value of the Behavior</param>
-        public EventBasedBehavior(T value, Event<T> source)
+        public EventDrivenBehavior(T value, Event<T> source)
             : base(source, value)
         {
             this.Source = source;

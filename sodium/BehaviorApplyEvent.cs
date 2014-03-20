@@ -13,10 +13,10 @@
         /// Set to true when waiting for the Publish Priority Action to run.
         /// </summary>
         private bool published;
-        private EventBasedBehavior<T> source;
-        private EventBasedBehavior<Func<T, TB>> behaviorMap;
+        private EventDrivenBehavior<T> source;
+        private EventDrivenBehavior<Func<T, TB>> behaviorMap;
         
-        public BehaviorApplyEvent(EventBasedBehavior<T> source, EventBasedBehavior<Func<T, TB>> behaviorMap)
+        public BehaviorApplyEvent(EventDrivenBehavior<T> source, EventDrivenBehavior<Func<T, TB>> behaviorMap)
         {
             this.source = source;
             this.behaviorMap = behaviorMap;

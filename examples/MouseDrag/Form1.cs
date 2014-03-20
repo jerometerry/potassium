@@ -8,7 +8,7 @@
         private EventPublisher<MouseEventArgs> mouseMoveEvent;
         private Event<MouseEventArgs> mouseDragEvent;
         private EventPublisher<MouseStatus> mouseButtonEvent;
-        private EventBasedBehavior<MouseStatus> mouseButtonBehavior;
+        private EventDrivenBehavior<MouseStatus> mouseButtonBehavior;
         private Event<MouseStatus> mouseButtonUpdates;
         private PredicateBehavior mouseButtonDownBehavior;
 

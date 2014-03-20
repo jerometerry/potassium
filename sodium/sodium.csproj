@@ -58,12 +58,12 @@
     <Compile Include="EventPublisher.cs" />
     <Compile Include="LocalTimeBehavior.cs" />
     <Compile Include="MappedBehavior.cs" />
-    <Compile Include="ObservedValueBehavior.cs" />
+    <Compile Include="ObservableDrivenBehavior.cs" />
     <Compile Include="PredicateBehavior.cs" />
     <Compile Include="QueryPredicateBehavior.cs" />
     <Compile Include="QueryBehavior.cs" />
     <Compile Include="SubscriptionPublisher.cs" />
-    <Compile Include="EventBasedBehaviorExtensions.cs" />
+    <Compile Include="EventDriveBehaviorExtensions.cs" />
     <Compile Include="ObservableExtensions.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="ObservedValue.cs" />
@@ -94,7 +94,7 @@
     <Compile Include="EqualityPredicateBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EventBasedBehavior.cs" />
+    <Compile Include="EventDrivenBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SnapshotEvent.cs" />

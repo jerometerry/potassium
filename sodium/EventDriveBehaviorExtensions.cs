@@ -5,7 +5,7 @@
     /// <summary>
     /// Reactive extensions for Behaviors
     /// </summary>
-    public static class EventBasedBehaviorExtensions
+    public static class EventDriveBehaviorExtensions
     {
         /// <summary>
         /// Apply a value inside a behavior to a function inside a behavior. This is the
@@ -16,7 +16,7 @@
         /// <param name="source">The source behavior</param>
         /// <param name="bf">Behavior of functions that maps from T -> TB</param>
         /// <returns>The new applied Behavior</returns>
-        public static EventBasedBehavior<TB> Apply<TA, TB>(this EventBasedBehavior<TA> source, EventBasedBehavior<Func<TA, TB>> bf)
+        public static EventDrivenBehavior<TB> Apply<TA, TB>(this EventDrivenBehavior<TA> source, EventDrivenBehavior<Func<TA, TB>> bf)
         {
             var evt = new BehaviorApplyEvent<TA, TB>(source, bf);
             var map = bf.Value;
@@ -42,7 +42,7 @@
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
         /// </remarks>
-        public static Event<T> Coalesce<T>(this EventBasedBehavior<T> source, Func<T, T, T> coalesce)
+        public static Event<T> Coalesce<T>(this EventDrivenBehavior<T> source, Func<T, T, T> coalesce)
         {
             return source.Source.Coalesce(coalesce);
         }
@@ -58,7 +58,7 @@
         /// <param name="initState">Value to pass to the snapshot function</param>
         /// <param name="snapshot">Snapshot function</param>
         /// <returns>A new Behavior that collects values of type TB</returns>
-        public static EventBasedBehavior<TB> Collect<TA, TB, TS>(this EventBasedBehavior<TA> source, TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
+        public static EventDrivenBehavior<TB> Collect<TA, TB, TS>(this EventDrivenBehavior<TA> source, TS initState, Func<TA, TS, Tuple<TB, TS>> snapshot)
         {
             var coalesceEvent = source.Coalesce((a, b) => b);
             var currentValue = source.Value;
@@ -90,7 +90,7 @@
         /// lift method to the current Behavior.</param>
         /// <returns>A new Behavior who's value is computed using the current Behavior, the given
         /// Behavior, and the lift function.</returns>
-        public static EventBasedBehavior<TC> Lift<TA, TB, TC>(this EventBasedBehavior<TA> a, Func<TA, TB, TC> lift, EventBasedBehavior<TB> b)
+        public static EventDrivenBehavior<TC> Lift<TA, TB, TC>(this EventDrivenBehavior<TA> a, Func<TA, TB, TC> lift, EventDrivenBehavior<TB> b)
         {
             Func<TA, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
             var bf = a.Map(ffa);
@@ -113,7 +113,7 @@
         /// <returns>A new Behavior who's value is computed by applying the lift function to the current
         /// behavior, and the given behaviors.</returns>
         /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
-        public static EventBasedBehavior<TD> Lift<TA, TB, TC, TD>(this EventBasedBehavior<TA> a, Func<TA, TB, TC, TD> lift, EventBasedBehavior<TB> b, EventBasedBehavior<TC> c)
+        public static EventDrivenBehavior<TD> Lift<TA, TB, TC, TD>(this EventDrivenBehavior<TA> a, Func<TA, TB, TC, TD> lift, EventDrivenBehavior<TB> b, EventDrivenBehavior<TC> c)
         {
             Func<TA, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
             var bf = a.Map(map);
@@ -134,7 +134,7 @@
         /// <returns>A new Behavior that updates whenever the current Behavior updates,
         /// having a value computed by the map function, and starting with the value
         /// of the current event mapped.</returns>
-        public static EventBasedBehavior<TB> Map<TA, TB>(this EventBasedBehavior<TA> source, Func<TA, TB> map)
+        public static EventDrivenBehavior<TB> Map<TA, TB>(this EventDrivenBehavior<TA> source, Func<TA, TB> map)
         {
             var mapEvent = source.Source.Map(map);
             var behavior = mapEvent.Hold(map(source.Value));
@@ -150,7 +150,7 @@
         /// <returns>The new, unwrapped Behavior</returns>
         /// <remarks>Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.</remarks>
-        public static EventBasedBehavior<T> Switch<T>(this EventBasedBehavior<EventBasedBehavior<T>> source)
+        public static EventDrivenBehavior<T> Switch<T>(this EventDrivenBehavior<EventDrivenBehavior<T>> source)
         {
             var value = source.Value.Value;
             var sink = new SwitchBehaviorEvent<T>(source);
@@ -172,7 +172,7 @@
         /// Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.
         /// </remarks>
-        public static Event<T> Switch<T>(this EventBasedBehavior<Event<T>> behavior)
+        public static Event<T> Switch<T>(this EventDrivenBehavior<Event<T>> behavior)
         {
             return new SwitchEvent<T>(behavior);
         }
@@ -183,7 +183,7 @@
         /// <typeparam name="T">The type of values published through the source</typeparam>
         /// <param name="source">The source Behavior</param>
         /// <returns>The event streams</returns>
-        public static Event<T> Values<T>(this EventBasedBehavior<T> source)
+        public static Event<T> Values<T>(this EventDrivenBehavior<T> source)
         {
             return Transaction.Start(t => new BehaviorLastValueEvent<T>(source, t));
         }

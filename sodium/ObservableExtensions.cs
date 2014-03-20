@@ -17,7 +17,7 @@
         /// <param name="accumulator">The snapshot generation function</param>
         /// <returns>A new Behavior starting with the given value, that updates 
         /// whenever the current event publishes, getting a value computed by the snapshot function.</returns>
-        public static EventBasedBehavior<TS> Accum<TA, TS>(this Observable<TA> source, TS value, Func<TA, TS, TS> accumulator)
+        public static EventDrivenBehavior<TS> Accum<TA, TS>(this Observable<TA> source, TS value, Func<TA, TS, TS> accumulator)
         {
             var eventFeed = new EventFeed<TS>();
             
@@ -173,7 +173,7 @@
         /// <param name="value">The initial value for the Behavior</param>
         /// <returns>A Behavior that updates when the current event is published,
         /// having the specified initial value.</returns>
-        public static EventBasedBehavior<T> Hold<T>(this Observable<T> source, T value)
+        public static EventDrivenBehavior<T> Hold<T>(this Observable<T> source, T value)
         {
             return Transaction.Start(t => Hold(source, value, t));
         }
@@ -185,10 +185,10 @@
         /// <param name="value">The initial value of the Behavior</param>
         /// <param name="t">The Transaction to perform the Hold</param>
         /// <returns>The Behavior with the given value</returns>
-        public static EventBasedBehavior<T> Hold<T>(this Observable<T> source, T value, Transaction t)
+        public static EventDrivenBehavior<T> Hold<T>(this Observable<T> source, T value, Transaction t)
         {
             var s = new LastFiringEvent<T>(source, t);
-            var b = new EventBasedBehavior<T>(value, s);
+            var b = new EventDrivenBehavior<T>(value, s);
             b.Register(s);
             return b;
         }

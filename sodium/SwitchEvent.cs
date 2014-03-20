@@ -5,9 +5,9 @@
         private ISubscription<Event<T>> behaviorSubscription;
         private SubscriptionPublisher<T> wrappedEventSubscriptionCallback;
         private ISubscription<T> wrappedSubscription;
-        private EventBasedBehavior<Event<T>> source;
+        private EventDrivenBehavior<Event<T>> source;
 
-        public SwitchEvent(EventBasedBehavior<Event<T>> source)
+        public SwitchEvent(EventDrivenBehavior<Event<T>> source)
         {
             this.source = source;
             Transaction.Start(this.Initialize);
