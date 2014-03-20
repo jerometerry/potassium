@@ -124,7 +124,7 @@ namespace Sodium.Tests
         public void TestGate()
         {
             var ec = new EventPublisher<char>();
-            var epred = new ConstantPredicateBehavior(true);
+            var epred = new DiscretePredicateBehavior(true);
             var o = new List<char>();
             var l = ec.Gate(epred).Subscribe(o.Add);
             ec.Publish('H');

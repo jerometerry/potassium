@@ -48,8 +48,8 @@ namespace Sodium.Tests
         public void TestConstantBehavior()
         {
             var behavior = new ConstantBehavior<int>(12);
-            behavior.Dispose();
             Assert.AreEqual(12, behavior.Value);
+            behavior.Dispose();
         }
 
         [Test]
@@ -331,9 +331,9 @@ namespace Sodium.Tests
         {
             public readonly char? C1;
             public readonly char? C2;
-            public readonly DiscreteBehavior<char?> Behavior;
+            public readonly EventBasedBehavior<char?> Behavior;
 
-            public Sb(char? c1, char? c2, DiscreteBehavior<char?> behavior)
+            public Sb(char? c1, char? c2, EventBasedBehavior<char?> behavior)
             {
                 C1 = c1;
                 C2 = c2;

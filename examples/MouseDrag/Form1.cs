@@ -15,7 +15,7 @@
         private EventPublisher<MouseEventArgs> mouseMoveEvent;
         private Event<MouseEventArgs> mouseDragEvent;
         private EventPublisher<MouseStatus> mouseButtonEvent;
-        private DiscreteBehavior<MouseStatus> mouseButtonBehavior;
+        private EventBasedBehavior<MouseStatus> mouseButtonBehavior;
         private Event<MouseStatus> mouseButtonUpdates;
         private PredicateBehavior mouseButtonDownBehavior;
         private static readonly CultureInfo ci = CultureInfo.InvariantCulture;

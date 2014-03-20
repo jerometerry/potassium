@@ -24,5 +24,15 @@
                 return value;
             }
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                value = default(T);
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }

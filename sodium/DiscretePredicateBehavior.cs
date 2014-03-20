@@ -1,10 +1,10 @@
 ﻿namespace Sodium
 {
-    public class ConstantPredicateBehavior : PredicateBehavior
+    public class DiscretePredicateBehavior : PredicateBehavior
     {
         private bool predicate;
 
-        public ConstantPredicateBehavior(bool predicate)
+        public DiscretePredicateBehavior(bool predicate)
         {
             this.predicate = predicate;
         }

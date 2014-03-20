@@ -55,7 +55,8 @@
     <Compile Include="BehaviorPublisher.cs" />
     <Compile Include="BinaryBehavior.cs" />
     <Compile Include="ConstantBehavior.cs" />
-    <Compile Include="ConstantPredicateBehavior.cs" />
+    <Compile Include="DiscreteBehavior.cs" />
+    <Compile Include="DiscretePredicateBehavior.cs" />
     <Compile Include="EventPublisher.cs" />
     <Compile Include="LocalTimeBehavior.cs" />
     <Compile Include="MappedBehavior.cs" />
@@ -63,7 +64,7 @@
     <Compile Include="QueryPredicateBehavior.cs" />
     <Compile Include="QueryBehavior.cs" />
     <Compile Include="SubscriptionPublisher.cs" />
-    <Compile Include="DiscreteBehaviorExtensions.cs" />
+    <Compile Include="EventBasedBehaviorExtensions.cs" />
     <Compile Include="ObservableExtensions.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="ObservedValue.cs" />
@@ -94,7 +95,7 @@
     <Compile Include="EqualityPredicateBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DiscreteBehavior.cs" />
+    <Compile Include="EventBasedBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SnapshotEvent.cs" />
