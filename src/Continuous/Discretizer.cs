@@ -1,30 +1,30 @@
 ﻿namespace JT.Rx.Net.Continuous
 {
-    using JT.Rx.Net.Core;
-    using JT.Rx.Net.Discrete;
     using System;
     using System.Threading;
+    using JT.Rx.Net.Core;
+    using JT.Rx.Net.Discrete;
 
     /// <summary>
-    /// ContinuousBehaviorDiscretizer converts a ContinuousBehavior into a discrete stream of Events,
+    /// Discretizer converts a ContinuousBehavior into a discrete stream of Events,
     /// by polling the Behavior.
     /// </summary>
     /// <typeparam name="T">The type of value contained in the Behavior</typeparam>
-    public class ContinuousBehaviorDiscretizer<T> : EventPublisher<T>
+    public class Discretizer<T> : EventPublisher<T>
     {
         private IBehavior<T> behavior;
         private TimeSpan interval;
         private Timer timer;
-        private PredicateBehavior until;
+        private Predicate until;
         private bool complete;
         private bool running;
 
-        public ContinuousBehaviorDiscretizer(IBehavior<T> behavior, TimeSpan interval, Func<bool> predicate)
-            : this(behavior, interval, new QueryPredicateBehavior(predicate))
+        public Discretizer(IBehavior<T> behavior, TimeSpan interval, Func<bool> predicate)
+            : this(behavior, interval, new QueryPredicate(predicate))
         {
         }
 
-        public ContinuousBehaviorDiscretizer(IBehavior<T> behavior, TimeSpan interval, PredicateBehavior until)
+        public Discretizer(IBehavior<T> behavior, TimeSpan interval, Predicate until)
         {
             this.behavior = behavior;
             this.interval = interval;

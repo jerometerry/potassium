@@ -15,10 +15,10 @@
         [Test]
         public void TestDiscretize()
         {
-            var timeB = new LocalTimeBehavior();
+            var timeB = new LocalTime();
             var results = new List<DateTime>();
 
-            var p = new QueryPredicateBehavior(() => results.Count >= 5);
+            var p = new QueryPredicate(() => results.Count >= 5);
             var evt = timeB.ToEvent(TimeSpan.FromMilliseconds(100), p);
             var s = evt.Subscribe(results.Add);
             evt.Start();
@@ -41,7 +41,7 @@
         [Test]
         public void TestRandomSin()
         {
-            var rd = new RandomDoubleBehavior(TwoPi);
+            var rd = new RandomDouble(TwoPi);
             var sb = new Map<double, double>(Math.Sin);
             var s = rd.Bind(sb);
             for (int i = 0; i < 5; i++) 

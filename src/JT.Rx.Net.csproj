@@ -52,22 +52,22 @@
     <Compile Include="Continuous\Extensions.cs" />
     <Compile Include="Core\Identity.cs" />
     <Compile Include="Core\Monad.cs" />
-    <Compile Include="Continuous\ContinuousBehaviorDiscretizer.cs" />
+    <Compile Include="Continuous\Discretizer.cs" />
     <Compile Include="Discrete\DiscreteBehavior.cs" />
     <Compile Include="Core\IBehavior.cs" />
     <Compile Include="Discrete\BehaviorApplyEvent.cs" />
     <Compile Include="Core\BinaryMonad.cs" />
     <Compile Include="Core\Constant.cs" />
-    <Compile Include="Continuous\DiscretePredicateBehavior.cs" />
+    <Compile Include="Continuous\IdentityPredicate.cs" />
     <Compile Include="Discrete\EventPublisher.cs" />
-    <Compile Include="Continuous\LocalTimeBehavior.cs" />
+    <Compile Include="Continuous\LocalTime.cs" />
     <Compile Include="Core\Map.cs" />
     <Compile Include="Discrete\ObservableDrivenBehavior.cs" />
-    <Compile Include="Continuous\PredicateBehavior.cs" />
-    <Compile Include="Continuous\QueryPredicateBehavior.cs" />
+    <Compile Include="Core\Predicate.cs" />
+    <Compile Include="Continuous\QueryPredicate.cs" />
     <Compile Include="Core\Query.cs" />
-    <Compile Include="Continuous\RandomDoubleBehavior.cs" />
-    <Compile Include="Continuous\RandomIntBehavior.cs" />
+    <Compile Include="Continuous\RandomDouble.cs" />
+    <Compile Include="Continuous\RandomInt.cs" />
     <Compile Include="Core\SubscriptionPublisher.cs" />
     <Compile Include="Discrete\EventDrivenBehaviorExtensions.cs" />
     <Compile Include="Core\Observable.cs" />
@@ -95,9 +95,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Discrete\BehaviorLastValueEvent.cs" />
     <Compile Include="Core\TernaryMonad.cs" />
-    <Compile Include="Continuous\UtcTimeBehavior.cs" />
-    <Compile Include="Continuous\EqualityPredicateBehavior.cs" />
-    <Compile Include="Continuous\HttpBehavior.cs" />
+    <Compile Include="Continuous\UtcTime.cs" />
+    <Compile Include="Continuous\EqualityPredicate.cs" />
+    <Compile Include="Continuous\WebResource.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Discrete\EventDrivenBehavior.cs" />
@@ -105,7 +105,7 @@
   <ItemGroup>
     <Compile Include="Discrete\SnapshotEvent.cs" />
     <Compile Include="Discrete\SwitchEvent.cs" />
-    <Compile Include="Continuous\TimeBehavior.cs" />
+    <Compile Include="Continuous\Time.cs" />
     <Compile Include="Core\Transaction.cs" />
   </ItemGroup>
   <ItemGroup>

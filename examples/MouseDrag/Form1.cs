@@ -14,7 +14,7 @@
         private EventPublisher<MouseStatus> mouseButtonEvent;
         private EventDrivenBehavior<MouseStatus> mouseButtonBehavior;
         private Event<MouseStatus> mouseButtonUpdates;
-        private PredicateBehavior mouseButtonDownBehavior;
+        private Predicate mouseButtonDown;
 
         public Form1()
         {
@@ -27,8 +27,8 @@
             mouseButtonEvent = new EventPublisher<MouseStatus>();
             mouseMoveEvent = new EventPublisher<MouseEventArgs>();
             mouseButtonBehavior = mouseButtonEvent.Hold(MouseStatus.Up);
-            mouseButtonDownBehavior = new EqualityPredicateBehavior<MouseStatus>(mouseButtonBehavior,  MouseStatus.Down);
-            mouseDragEvent = mouseMoveEvent.Gate(mouseButtonDownBehavior);
+            this.mouseButtonDown = new EqualityPredicate<MouseStatus>(mouseButtonBehavior,  MouseStatus.Down);
+            mouseDragEvent = mouseMoveEvent.Gate(this.mouseButtonDown);
             mouseButtonUpdates = mouseButtonBehavior.Values();
             mouseButtonUpdates.Subscribe(a =>
             {

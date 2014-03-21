@@ -1,8 +1,8 @@
 ﻿namespace JT.Rx.Net.Core
 {
+    using System;
     using JT.Rx.Net.Continuous;
     using JT.Rx.Net.Discrete;
-    using System;
 
     /// <summary>
     /// ContinuousBehavior is the base class for Behaviors based on a continuous stream of values,
@@ -17,22 +17,22 @@
         /// </summary>
         public abstract T Value { get; }
 
-        public ContinuousBehaviorDiscretizer<T> ToEvent(TimeSpan interval, Func<bool> until)
+        public Discretizer<T> ToEvent(TimeSpan interval, Func<bool> until)
         {
-            return new ContinuousBehaviorDiscretizer<T>(this, interval, until);
+            return new Discretizer<T>(this, interval, until);
         }
 
-        public ContinuousBehaviorDiscretizer<T> ToEvent(TimeSpan interval, PredicateBehavior until)
+        public Discretizer<T> ToEvent(TimeSpan interval, Predicate until)
         {
-            return new ContinuousBehaviorDiscretizer<T>(this, interval, until);
+            return new Discretizer<T>(this, interval, until);
         }
 
         public EventDrivenBehavior<T> ToDiscreteBehavior(TimeSpan interval, Func<bool> until)
         {
-            return ToDiscreteBehavior(interval, new QueryPredicateBehavior(until));
+            return ToDiscreteBehavior(interval, new QueryPredicate(until));
         }
 
-        public EventDrivenBehavior<T> ToDiscreteBehavior(TimeSpan interval, PredicateBehavior until)
+        public EventDrivenBehavior<T> ToDiscreteBehavior(TimeSpan interval, Predicate until)
         {
             var evt = this.ToEvent(interval, until);
             var beh = evt.Hold(this.Value);

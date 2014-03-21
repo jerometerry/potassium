@@ -1,7 +1,7 @@
 namespace JT.Rx.Net.Discrete
 {
-    using JT.Rx.Net.Core;
     using System;
+    using JT.Rx.Net.Core;
 
     /// <summary>
     /// EventBasedBehavior is a Behavior who's value is updated when the underlying Event is updated.

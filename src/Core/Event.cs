@@ -140,7 +140,7 @@
         /// <param name="predicate">A behavior who's current value acts as a predicate</param>
         /// <returns>A new Event that publishes whenever the current Event publishes and the Behaviors value
         /// is true.</returns>
-        public Event<T> Gate(PredicateBehavior predicate)
+        public Event<T> Gate(Predicate predicate)
         {
             Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
             var sn = this.Snapshot(predicate, snapshot);

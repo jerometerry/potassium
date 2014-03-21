@@ -1,7 +1,7 @@
 ﻿namespace JT.Rx.Net.Continuous
 {
-    using JT.Rx.Net.Core;
     using System;
+    using JT.Rx.Net.Core;
 
     public static class Extensions
     {

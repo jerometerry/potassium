@@ -1,20 +1,17 @@
 ﻿namespace JT.Rx.Net.Continuous
 {
-    using JT.Rx.Net.Core;
     using System.Net;
-
-    /// <summary>
-    /// WebRequestBehavior is a Behavior that downloads a URL as a string
-    /// </summary>
-    public class HttpBehavior : Monad<string>
+    using JT.Rx.Net.Core;
+    
+    public class WebResource : Monad<string>
     {
         private IBehavior<string> urlBehavior;
         
         /// <summary>
-        /// Constructs a new WebRequestBehavior to fetch from a constant URL
+        /// Constructs a new WebResource to fetch from a constant URL
         /// </summary>
         /// <param name="url">The URL to load the content from</param>
-        public HttpBehavior(string url)
+        public WebResource(string url)
         {
             var cb = new Constant<string>(url);
             this.urlBehavior = cb;
@@ -22,10 +19,10 @@
         }
 
         /// <summary>
-        /// Constructs a new WebRequestBehavior to fetch from a dynamic URL
+        /// Constructs a new WebResource to fetch from a dynamic URL
         /// </summary>
         /// <param name="urlBehavior">Behavior containing the URL to load</param>
-        public HttpBehavior(IBehavior<string> urlBehavior)
+        public WebResource(IBehavior<string> urlBehavior)
         {
             this.urlBehavior = urlBehavior;
         }

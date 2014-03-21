@@ -1,11 +1,11 @@
 namespace JT.Rx.Net.Tests
 {
-    using JT.Rx.Net.Core;
-    using JT.Rx.Net.Continuous;
-    using JT.Rx.Net.Discrete;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using JT.Rx.Net.Continuous;
+    using JT.Rx.Net.Core;
+    using JT.Rx.Net.Discrete;
     using NUnit.Framework;
 
     [TestFixture]
@@ -184,7 +184,7 @@ namespace JT.Rx.Net.Tests
         public void TestGate()
         {
             var ec = new EventPublisher<char>();
-            var epred = new DiscretePredicateBehavior(true);
+            var epred = new IdentityPredicate(true);
             var o = new List<char>();
             var l = ec.Gate(epred).Subscribe(o.Add);
             ec.Publish('H');

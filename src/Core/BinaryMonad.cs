@@ -1,6 +1,5 @@
 ﻿namespace JT.Rx.Net.Core
 {
-    using JT.Rx.Net.Continuous;
     using System;
 
     /// <summary>

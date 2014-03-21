@@ -1,14 +1,14 @@
 ﻿namespace JT.Rx.Net.Continuous
 {
-    using JT.Rx.Net.Core;
     using System;
+    using JT.Rx.Net.Core;
 
-    public class RandomDoubleBehavior : Monad<double>
+    public class RandomDouble : Monad<double>
     {
         private Random rnd = new Random();
         private double max;
 
-        public RandomDoubleBehavior(double max)
+        public RandomDouble(double max)
         {
             this.max = max;
         }

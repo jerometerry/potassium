@@ -1,11 +1,8 @@
 namespace JT.Rx.Net.Continuous
 {
     using System;
-
-    /// <summary>
-    /// UtcTimeBehavior is a continuous Behavior that contains the current UTC Time
-    /// </summary>
-    public class UtcTimeBehavior : TimeBehavior
+    
+    public class UtcTime : Time
     {
         public override DateTime Value
         {

@@ -1,14 +1,10 @@
 ﻿namespace JT.Rx.Net.Continuous
 {
-    /// <summary>
-    /// DiscretePredicateBehavior is a discrete Behavior containing a boolean value, 
-    /// that can be used as a predicate.
-    /// </summary>
-    public class DiscretePredicateBehavior : PredicateBehavior
+    public class IdentityPredicate : Core.Predicate
     {
         private bool predicate;
 
-        public DiscretePredicateBehavior(bool predicate)
+        public IdentityPredicate(bool predicate)
         {
             this.predicate = predicate;
         }

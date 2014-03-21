@@ -2,15 +2,11 @@
 {
     using System;
 
-    /// <summary>
-    /// QueryPredicateBehavior is a continuous Behavior of boolean values (i.e. a predicate)
-    /// who's value is computed by evaluating the supplied predicate function.
-    /// </summary>
-    public class QueryPredicateBehavior : PredicateBehavior
+    public class QueryPredicate : Core.Predicate
     {
         private Func<bool> predicate;
 
-        public QueryPredicateBehavior(Func<bool> predicate)
+        public QueryPredicate(Func<bool> predicate)
         {
             this.predicate = predicate;
         }
