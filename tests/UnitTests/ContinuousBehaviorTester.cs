@@ -38,9 +38,9 @@
         public void TestRandomSin()
         {
             var rd = new RandomDoubleBehavior(2 * Math.PI);
-            var sb = new SinBehavior();
+            var sb = new Map<double, double>(Math.Sin);
             var s = rd.Apply(sb);
-            for (int i = 0; i < 5; i++ ) 
+            for (int i = 0; i < 5; i++) 
             {
                 Console.WriteLine(s.Value);
             }
@@ -49,11 +49,14 @@
         [Test]
         public void TestSin()
         {
-            var rd = new ConstantBehavior<double>(2 * Math.PI);
-            var sb = new SinBehavior();
-            var s = rd.Apply(sb);
+            var b = new Behavior<double>(2 * Math.PI);
+            var sb = new Map<double, double>(Math.Sin);
+            var s = b.Apply(sb);
             Console.WriteLine(s.Value);
             Assert.AreEqual(0.0, s.Value, 1e-5);
+
+            b.SetValue(Math.PI / 2.0);
+            Assert.AreEqual(1.0, s.Value, 1e-5);
         }
     }
 }
