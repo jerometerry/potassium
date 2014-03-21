@@ -15,6 +15,11 @@
         private IBehavior<T> source;
         private IBehavior<Func<T, TB>> bf;
 
+        public ApplyBehavior(IBehavior<T> source, Func<T, TB> bf)
+            : this(source, new Map<T, TB>(bf))
+        {
+        }
+
         public ApplyBehavior(IBehavior<T> source, IBehavior<Func<T, TB>> bf)
         {
             this.source = source;

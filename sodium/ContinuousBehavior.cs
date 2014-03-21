@@ -17,7 +17,7 @@
 
         public ContinuousBehavior<TB> Map<TB>(Func<T, TB> map)
         {
-            return new MappedBehavior<T, TB>(this, map);
+            return new ApplyBehavior<T, TB>(this, map);
         }
 
         public ContinuousBehavior<TB> Apply<TB>(IBehavior<Func<T, TB>> bf)

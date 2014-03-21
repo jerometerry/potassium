@@ -60,7 +60,6 @@
     <Compile Include="EventPublisher.cs" />
     <Compile Include="LocalTimeBehavior.cs" />
     <Compile Include="Map.cs" />
-    <Compile Include="MappedBehavior.cs" />
     <Compile Include="ObservableDrivenBehavior.cs" />
     <Compile Include="PredicateBehavior.cs" />
     <Compile Include="QueryPredicateBehavior.cs" />
