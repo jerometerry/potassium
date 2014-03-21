@@ -58,7 +58,7 @@
 
                 var suppressed = new SuppressedSubscribeEvent<T>(newEvent);
                 this.wrappedSubscription = suppressed.CreateSubscription(this.wrappedEventSubscriptionCallback, this.Priority, transaction);
-                ((DisposableObject)this.wrappedSubscription).Register(suppressed);
+                ((Disposable)this.wrappedSubscription).Register(suppressed);
             });
         }
     }

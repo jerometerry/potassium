@@ -7,7 +7,7 @@ namespace JT.Rx.Net.Discrete
     /// starting with an initial value.
     /// </summary>
     /// <typeparam name="T">The type of value published through the Observable</typeparam>
-    public sealed class ObservedValue<T> : DisposableObject
+    public sealed class ObservedValue<T> : Disposable
     {
         private Observable<T> source;
 

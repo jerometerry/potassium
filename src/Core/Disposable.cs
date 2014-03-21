@@ -6,14 +6,14 @@
     /// <summary>
     /// Base class for all disposable objects in the Sodium library.
     /// </summary>
-    public class DisposableObject : IDisposable
+    public class Disposable : IDisposable
     {
         private List<IDisposable> finalizers;
 
         /// <summary>
         /// Constructs a new SodiumObject
         /// </summary>
-        protected DisposableObject()
+        protected Disposable()
         {
         }
 

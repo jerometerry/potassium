@@ -74,7 +74,7 @@
     <Compile Include="Discrete\SubscribePublishEvent.cs" />
     <Compile Include="Discrete\LastFiringEvent.cs" />
     <Compile Include="Core\Event.cs" />
-    <Compile Include="Core\DisposableObject.cs" />
+    <Compile Include="Core\Disposable.cs" />
     <Compile Include="Discrete\BehaviorValueEvent.cs" />
     <Compile Include="Discrete\CoalesceEvent.cs" />
     <Compile Include="Core\Constants.cs" />

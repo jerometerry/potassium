@@ -7,7 +7,7 @@ namespace JT.Rx.Net.Discrete
     /// EventBasedBehavior is a Behavior who's value is updated when the underlying Event is updated.
     /// </summary>
     /// <typeparam name="T">The type of values that will be published through the Behavior.</typeparam>
-    public class Behavior<T> : DisposableObject, IBehavior<T>
+    public class Behavior<T> : Disposable, IBehavior<T>
     {
         private ObservedValue<T> observedValue;
 

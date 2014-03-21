@@ -10,7 +10,7 @@
     /// from external sources such as web services.
     /// </summary>
     /// <typeparam name="T">The type of value of the current Behavior</typeparam>
-    public abstract class Monad<T> : DisposableObject, IBehavior<T>
+    public abstract class Monad<T> : Disposable, IBehavior<T>
     {
         /// <summary>
         /// Sample the Behaviors current value

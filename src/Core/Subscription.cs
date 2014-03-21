@@ -1,6 +1,6 @@
 namespace JT.Rx.Net.Core
 {
-    internal sealed class Subscription<T> : DisposableObject, ISubscription<T>
+    internal sealed class Subscription<T> : Disposable, ISubscription<T>
     {
         /// <summary>
         /// Constructs a new Subscription
