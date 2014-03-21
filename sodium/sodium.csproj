@@ -50,6 +50,7 @@
     <Compile Include="ApplyBehavior.cs" />
     <Compile Include="ContinuousBehavior.cs" />
     <Compile Include="ContinuousBehaviorDiscretizer.cs" />
+    <Compile Include="CosBehavior.cs" />
     <Compile Include="DiscreteBehavior.cs" />
     <Compile Include="IBehavior.cs" />
     <Compile Include="BehaviorApplyEvent.cs" />
@@ -63,6 +64,9 @@
     <Compile Include="PredicateBehavior.cs" />
     <Compile Include="QueryPredicateBehavior.cs" />
     <Compile Include="QueryBehavior.cs" />
+    <Compile Include="RandomDoubleBehavior.cs" />
+    <Compile Include="RandomIntBehavior.cs" />
+    <Compile Include="SinBehavior.cs" />
     <Compile Include="SubscriptionPublisher.cs" />
     <Compile Include="EventDrivenBehaviorExtensions.cs" />
     <Compile Include="Observable.cs" />
