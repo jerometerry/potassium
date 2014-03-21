@@ -75,12 +75,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\jt.rx.net\JT.Rx.Net.csproj">
-      <Project>{cc18d685-53d9-4a66-8cca-3e8ed4ec8f13}</Project>
-      <Name>JT.Rx.Net</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
@@ -96,6 +90,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\JT.Rx.Net.csproj">
+      <Project>{cc18d685-53d9-4a66-8cca-3e8ed4ec8f13}</Project>
+      <Name>JT.Rx.Net</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

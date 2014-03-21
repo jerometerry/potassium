@@ -1,16 +1,16 @@
 ﻿namespace JT.Rx.Net.Tests
 {
-    using JT.Rx.Net.Core;
-    using JT.Rx.Net.Continuous;
-    using JT.Rx.Net.Discrete;
     using System;
     using System.Collections.Generic;
     using System.Threading;
+    using JT.Rx.Net.Continuous;
     using NUnit.Framework;
 
     [TestFixture]
     public class ContinuousBehaviorTester
     {
+        private const double TwoPi = 2 * Math.PI;
+
         [Test]
         public void TestDiscretize()
         {
@@ -40,9 +40,9 @@
         [Test]
         public void TestRandomSin()
         {
-            var rd = new RandomDoubleBehavior(2 * Math.PI);
+            var rd = new RandomDoubleBehavior(TwoPi);
             var sb = new Map<double, double>(Math.Sin);
-            var s = rd.Apply(sb);
+            var s = rd.Bind(sb);
             for (int i = 0; i < 5; i++) 
             {
                 Console.WriteLine(s.Value);
@@ -52,9 +52,9 @@
         [Test]
         public void TestSin()
         {
-            var b = new Behavior<double>(2 * Math.PI);
+            var b = TwoPi.ToIdentity();
             var sb = new Map<double, double>(Math.Sin);
-            var s = b.Apply(sb);
+            var s = b.Bind(sb);
             Console.WriteLine(s.Value);
             Assert.AreEqual(0.0, s.Value, 1e-5);
 

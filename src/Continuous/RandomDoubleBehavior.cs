@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class RandomDoubleBehavior : ContinuousBehavior<double>
+    public class RandomDoubleBehavior : Monad<double>
     {
         private Random rnd = new Random();
         private double max;

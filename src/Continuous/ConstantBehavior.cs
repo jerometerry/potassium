@@ -4,7 +4,7 @@
     /// A Behavior who's value never changes, even if published new values.
     /// </summary>
     /// <typeparam name="T">The type of values published through the Behavior</typeparam>
-    public class ConstantBehavior<T> : ContinuousBehavior<T>
+    public class ConstantBehavior<T> : Monad<T>
     {
         private T value;
 

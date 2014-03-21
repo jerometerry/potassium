@@ -2,7 +2,7 @@ namespace JT.Rx.Net.Continuous
 {
     using System;
 
-    public class RandomIntBehavior : ContinuousBehavior<int>
+    public class RandomIntBehavior : Monad<int>
     {
         private Random rnd = new Random();
         private int max;

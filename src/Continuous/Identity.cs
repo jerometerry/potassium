@@ -1,14 +1,14 @@
 namespace JT.Rx.Net.Continuous
 {
-    public class Behavior<T> : ContinuousBehavior<T>
+    public class Identity<T> : Monad<T>
     {
         private T value;
 
         /// <summary>
-        /// Constructs a new ConstantBehavior
+        /// Constructs a new Identity
         /// </summary>
-        /// <param name="value">The constant initial value of the Behavior</param>
-        public Behavior(T value)
+        /// <param name="value">The value of the Identity</param>
+        public Identity(T value)
         {
             this.value = value;
         }

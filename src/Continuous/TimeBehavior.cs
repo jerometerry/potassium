@@ -5,7 +5,7 @@
     /// <summary>
     /// TimeBehavior is the base class for continuous Behaviors of DateTimes.
     /// </summary>
-    public abstract class TimeBehavior : ContinuousBehavior<DateTime>
+    public abstract class TimeBehavior : Monad<DateTime>
     {
     }
 }

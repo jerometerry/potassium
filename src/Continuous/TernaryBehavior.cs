@@ -12,7 +12,7 @@
     /// <typeparam name="TB">The type of the second parameter to the ternary function</typeparam>
     /// <typeparam name="TC">They type of the third parameter to the ternary function</typeparam>
     /// <typeparam name="TD">The return type of the ternary function</typeparam>
-    public class TernaryBehavior<T, TB, TC, TD> : ContinuousBehavior<TD>
+    public class TernaryBehavior<T, TB, TC, TD> : Monad<TD>
     {
         private Func<T, TB, TC, TD> lift;
         private IBehavior<T> a;

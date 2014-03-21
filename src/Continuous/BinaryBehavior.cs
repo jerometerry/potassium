@@ -9,7 +9,7 @@
     /// <typeparam name="T">The type of first parameter to the lift function</typeparam>
     /// <typeparam name="TB">The type of the second parameter of the lift function</typeparam>
     /// <typeparam name="TC">The return type of the lift function</typeparam>
-    public class BinaryBehavior<T, TB, TC> : ContinuousBehavior<TC>
+    public class BinaryBehavior<T, TB, TC> : Monad<TC>
     {
         private Func<T, TB, TC> lift;
         private IBehavior<T> a;

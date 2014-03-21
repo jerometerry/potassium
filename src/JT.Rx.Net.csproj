@@ -47,9 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Continuous\ApplyBehavior.cs" />
-    <Compile Include="Continuous\Behavior.cs" />
-    <Compile Include="Continuous\ContinuousBehavior.cs" />
+    <Compile Include="Continuous\MonadBinder.cs" />
+    <Compile Include="Continuous\Extensions.cs" />
+    <Compile Include="Continuous\Identity.cs" />
+    <Compile Include="Continuous\Monad.cs" />
     <Compile Include="Continuous\ContinuousBehaviorDiscretizer.cs" />
     <Compile Include="Discrete\DiscreteBehavior.cs" />
     <Compile Include="Core\IBehavior.cs" />

@@ -27,8 +27,8 @@
       <Argument Key="maxVersionParts" Value="" xmlns="" />
     </TransformComponentArguments>
     <DocumentationSources>
-      <DocumentationSource sourceFile="..\JT.Rx.Net\bin\Debug\JT.Rx.Net.dll" />
-      <DocumentationSource sourceFile="..\JT.Rx.Net\bin\Debug\JT.Rx.Net.xml" />
+      <DocumentationSource sourceFile="..\src\bin\Debug\JT.Rx.Net.dll" />
+      <DocumentationSource sourceFile="..\src\bin\Debug\JT.Rx.Net.xml" />
     </DocumentationSources>
     <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
     <HelpFileFormat>Website</HelpFileFormat>
