@@ -1,5 +1,6 @@
 namespace JT.Rx.Net.Continuous
 {
+    using JT.Rx.Net.Core;
     using System;
 
     public class RandomIntBehavior : Monad<int>

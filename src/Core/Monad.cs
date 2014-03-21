@@ -1,6 +1,6 @@
-﻿namespace JT.Rx.Net.Continuous
+﻿namespace JT.Rx.Net.Core
 {
-    using JT.Rx.Net.Core;
+    using JT.Rx.Net.Continuous;
     using JT.Rx.Net.Discrete;
     using System;
 

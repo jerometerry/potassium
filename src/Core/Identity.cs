@@ -1,5 +1,7 @@
-namespace JT.Rx.Net.Continuous
+namespace JT.Rx.Net.Core
 {
+    using JT.Rx.Net.Continuous;
+
     public class Identity<T> : Monad<T>
     {
         private T value;

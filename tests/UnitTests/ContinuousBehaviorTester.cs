@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Threading;
+    using JT.Rx.Net.Core;
     using JT.Rx.Net.Continuous;
     using NUnit.Framework;
 

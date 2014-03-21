@@ -6,7 +6,7 @@
     /// Maybe is a class that might contain a value
     /// </summary>
     /// <typeparam name="T">The type of the value</typeparam>
-    public sealed class Maybe<T>
+    public sealed class Maybe<T> : Monad<T>
     {
         private readonly T value;
         private readonly bool hasValue;
@@ -59,7 +59,7 @@
         /// <remarks>An exception will be raised if the Maybe has no value</remarks>
         public static implicit operator T(Maybe<T> m)
         {
-            return m.Value();
+            return m.Value;
         }
 
         /// <summary>
@@ -77,14 +77,17 @@
         /// </summary>
         /// <returns>The value of the current Maybe. If the Maybe has no value,
         /// an Exception will be raised.</returns>
-        public T Value()
+        public override T Value
         {
-            if (!HasValue)
+            get
             {
-                throw new ArgumentException("Maybe doesn't contain a value!");
-            }
+                if (!HasValue)
+                {
+                    throw new ArgumentException("Maybe doesn't contain a value!");
+                }
 
-            return value;
+                return value;
+            }
         }
 
         /// <summary>
@@ -119,7 +122,7 @@
                 return false;
             }
 
-            return Value().Equals(m.Value());
+            return Value.Equals(m.Value);
         }
 
         /// <summary>
@@ -128,7 +131,7 @@
         /// <returns>The hashcode of the underlying value if there is one, zero otherwise.</returns>
         public override int GetHashCode()
         {
-            return !HasValue ? 0 : Value().GetHashCode();
+            return !HasValue ? 0 : Value.GetHashCode();
         }
     }
 }

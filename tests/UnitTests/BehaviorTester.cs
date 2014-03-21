@@ -51,7 +51,7 @@ namespace JT.Rx.Net.Tests
         [Test]
         public void TestConstantBehavior()
         {
-            var behavior = new ConstantBehavior<int>(12);
+            var behavior = new Constant<int>(12);
             Assert.AreEqual(12, behavior.Value);
             behavior.Dispose();
         }
@@ -76,7 +76,7 @@ namespace JT.Rx.Net.Tests
         [Test]
         public void TestMapB2()
         {
-            var behavior = new ConstantBehavior<int>(1);
+            var behavior = new Constant<int>(1);
             var behavior1 = new MonadBinder<int, int>(behavior, x => x * 3);
             Assert.AreEqual(3, behavior1.Value);
             behavior1.Dispose();

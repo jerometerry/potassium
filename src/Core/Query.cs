@@ -1,4 +1,4 @@
-﻿namespace JT.Rx.Net.Continuous
+﻿namespace JT.Rx.Net.Core
 {
     using System;
 
@@ -6,11 +6,11 @@
     /// QueryBehavior is a continuous Behavior who's value is computed using a query method.
     /// </summary>
     /// <typeparam name="T">The type of the return value of the query function</typeparam>
-    public class QueryBehavior<T> : Monad<T>
+    public class Query<T> : Monad<T>
     {
         private Func<T> query;
 
-        public QueryBehavior(Func<T> query)
+        public Query(Func<T> query)
         {
             this.query = query;
         }

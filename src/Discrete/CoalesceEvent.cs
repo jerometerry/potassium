@@ -79,7 +79,7 @@ namespace JT.Rx.Net.Discrete
         /// <param name="newFiring">The newly published value</param>
         private void Combine(T newFiring)
         {
-            var newValue = coalesce(accumulatedValue.Value(), newFiring);
+            var newValue = coalesce(accumulatedValue.Value, newFiring);
             accumulatedValue = new Maybe<T>(newValue);
         }
 
@@ -103,7 +103,7 @@ namespace JT.Rx.Net.Discrete
         /// <remarks>The accumulated value is cleared after the publishing.</remarks>
         private void Publish(Transaction transaction)
         {
-            var v = accumulatedValue.Value();
+            var v = accumulatedValue.Value;
             this.Publish(v, transaction);
             accumulatedValue = Maybe<T>.Null;
         }

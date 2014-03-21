@@ -1,9 +1,8 @@
-namespace JT.Rx.Net.Continuous
+namespace JT.Rx.Net.Core
 {
-    using JT.Rx.Net.Core;
     using System;
 
-    public class Map<TA,TB> : IBehavior<Func<TA, TB>>
+    public class Map<TA,TB> : Monad<Func<TA, TB>>
     {
         private Func<TA, TB> map;
 
@@ -12,7 +11,7 @@ namespace JT.Rx.Net.Continuous
             this.map = map;
         }
 
-        public Func<TA, TB> Value
+        public override Func<TA, TB> Value
         {
             get
             {

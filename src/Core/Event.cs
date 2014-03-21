@@ -145,7 +145,7 @@
             Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
             var sn = this.Snapshot(predicate, snapshot);
             var filter = sn.FilterNotNull();
-            var map = filter.Map(a => a.Value());
+            var map = filter.Map(a => a.Value);
             map.Register(filter);
             map.Register(sn);
             return map;

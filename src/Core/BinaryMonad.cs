@@ -1,6 +1,6 @@
-﻿namespace JT.Rx.Net.Continuous
+﻿namespace JT.Rx.Net.Core
 {
-    using JT.Rx.Net.Core;
+    using JT.Rx.Net.Continuous;
     using System;
 
     /// <summary>
@@ -9,7 +9,7 @@
     /// <typeparam name="T">The type of first parameter to the lift function</typeparam>
     /// <typeparam name="TB">The type of the second parameter of the lift function</typeparam>
     /// <typeparam name="TC">The return type of the lift function</typeparam>
-    public class BinaryBehavior<T, TB, TC> : Monad<TC>
+    public class BinaryMonad<T, TB, TC> : Monad<TC>
     {
         private Func<T, TB, TC> lift;
         private IBehavior<T> a;
@@ -21,7 +21,7 @@
         /// <param name="lift"></param>
         /// <param name="a"></param>
         /// <param name="b"></param>
-        public BinaryBehavior(Func<T, TB, TC> lift, IBehavior<T> a, IBehavior<TB> b)
+        public BinaryMonad(Func<T, TB, TC> lift, IBehavior<T> a, IBehavior<TB> b)
         {
             this.lift = lift;
             this.a = a;

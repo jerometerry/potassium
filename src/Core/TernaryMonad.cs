@@ -1,6 +1,6 @@
-﻿namespace JT.Rx.Net.Continuous
+﻿namespace JT.Rx.Net.Core
 {
-    using JT.Rx.Net.Core;
+    using JT.Rx.Net.Continuous;
     using System;
 
     /// <summary>
@@ -12,14 +12,14 @@
     /// <typeparam name="TB">The type of the second parameter to the ternary function</typeparam>
     /// <typeparam name="TC">They type of the third parameter to the ternary function</typeparam>
     /// <typeparam name="TD">The return type of the ternary function</typeparam>
-    public class TernaryBehavior<T, TB, TC, TD> : Monad<TD>
+    public class TernaryMonad<T, TB, TC, TD> : Monad<TD>
     {
         private Func<T, TB, TC, TD> lift;
         private IBehavior<T> a;
         private IBehavior<TB> b;
         private IBehavior<TC> c;
 
-        public TernaryBehavior(Func<T, TB, TC, TD> lift, IBehavior<T> a, IBehavior<TB> b, IBehavior<TC> c)
+        public TernaryMonad(Func<T, TB, TC, TD> lift, IBehavior<T> a, IBehavior<TB> b, IBehavior<TC> c)
         {
             this.lift = lift;
             this.a = a;

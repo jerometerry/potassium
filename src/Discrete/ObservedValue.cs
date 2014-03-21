@@ -73,7 +73,7 @@ namespace JT.Rx.Net.Discrete
         {
             get
             {
-                return this.update.HasValue ? this.update.Value() : this.Value;
+                return this.update.HasValue ? this.update.Value : this.Value;
             }
         }
 
@@ -114,7 +114,7 @@ namespace JT.Rx.Net.Discrete
         /// </summary>
         private void ApplyValueUpdate()
         {
-            this.Value = this.update.Value();
+            this.Value = this.update.Value;
             this.update = Maybe<T>.Null;
         }
 

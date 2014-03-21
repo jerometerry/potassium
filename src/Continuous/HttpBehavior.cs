@@ -16,7 +16,7 @@
         /// <param name="url">The URL to load the content from</param>
         public HttpBehavior(string url)
         {
-            var cb = new ConstantBehavior<string>(url);
+            var cb = new Constant<string>(url);
             this.urlBehavior = cb;
             this.Register(cb);
         }

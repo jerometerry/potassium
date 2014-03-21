@@ -53,7 +53,7 @@ namespace JT.Rx.Net.Tests
         [Test]
         public void TestAddBehavior()
         {
-            var b = new ConstantBehavior<int>(100);
+            var b = new Constant<int>(100);
             var e = new EventPublisher<int>();
             var m = e + b;
             var o = new List<int>();
