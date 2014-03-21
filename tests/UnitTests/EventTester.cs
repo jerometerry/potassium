@@ -1,5 +1,8 @@
 namespace Sodium.Tests
 {
+    using Sodium.Core;
+    using Sodium.Continuous;
+    using Sodium.Discrete;
     using System;
     using System.Collections.Generic;
     using System.Globalization;

@@ -1,5 +1,8 @@
 namespace Sodium.Tests
 {
+    using Sodium.Core;
+    using Sodium.Continuous;
+    using Sodium.Discrete;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
@@ -327,9 +330,9 @@ namespace Sodium.Tests
         {
             public readonly char C1;
             public readonly char C2;
-            public readonly Sodium.Event<char> Event;
+            public readonly Event<char> Event;
 
-            public Se(char c1, char c2, Sodium.Event<char> evt)
+            public Se(char c1, char c2, Event<char> evt)
             {
                 C1 = c1;
                 C2 = c2;

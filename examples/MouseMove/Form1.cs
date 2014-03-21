@@ -1,5 +1,7 @@
 ﻿namespace Sodium.Examples.MouseMove
 {
+    using Sodium.Core;
+    using Sodium.Discrete;
     using System;
     using System.Windows.Forms;
 

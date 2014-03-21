@@ -1,5 +1,9 @@
 ﻿namespace Sodium.Examples.MouseDrag
 {
+    using Sodium.Core;
+    using Sodium.Continuous;
+    using Sodium.Discrete;
+
     using System;
     using System.Windows.Forms;
 

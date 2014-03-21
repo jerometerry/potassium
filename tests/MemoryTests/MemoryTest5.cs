@@ -1,5 +1,8 @@
 namespace Sodium.MemoryTests
 {
+    using Sodium.Core;
+    using Sodium.Continuous;
+    using Sodium.Discrete;
     using NUnit.Framework;
 
     [TestFixture]
