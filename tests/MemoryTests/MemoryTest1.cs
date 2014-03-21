@@ -1,8 +1,8 @@
-namespace Sodium.MemoryTests
+namespace JT.Rx.Net.MemoryTests
 {
-    using Sodium.Core;
-    using Sodium.Continuous;
-    using Sodium.Discrete;
+    using JT.Rx.Net.Core;
+    using JT.Rx.Net.Continuous;
+    using JT.Rx.Net.Discrete;
     using System;
     using System.Collections.Generic;
     using NUnit.Framework;

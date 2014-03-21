@@ -1,4 +1,4 @@
-namespace Sodium.Examples.MouseDrag
+namespace JT.Rx.Net.Examples.MouseDrag
 {
     public enum MouseStatus
     {

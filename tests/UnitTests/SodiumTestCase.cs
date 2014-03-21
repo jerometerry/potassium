@@ -1,4 +1,4 @@
-﻿namespace Sodium.Tests
+﻿namespace JT.Rx.Net.Tests
 {
     using System;
     using System.Collections.Generic;

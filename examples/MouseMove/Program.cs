@@ -1,4 +1,4 @@
-﻿namespace Sodium.Examples.MouseMove
+﻿namespace JT.Rx.Net.Examples.MouseMove
 {
     using System;
     using System.Windows.Forms;

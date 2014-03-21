@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Sodium.Examples.MouseMove.Properties
+namespace JT.Rx.Net.Examples.MouseMove.Properties
 {
 
 

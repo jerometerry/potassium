@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Topics>
-  <Topic id="89e8c167-b620-4a41-9657-af64fb0101ce" visible="True" isDefault="true" isSelected="true" title="Sodium.net Functional Reactive Programming Library">
+  <Topic id="89e8c167-b620-4a41-9657-af64fb0101ce" visible="True" isDefault="true" isSelected="true" title="JT.Rx.Net Functional Reactive Programming Library">
     <HelpKeywords>
       <HelpKeyword index="K" term="Welcome" />
     </HelpKeywords>

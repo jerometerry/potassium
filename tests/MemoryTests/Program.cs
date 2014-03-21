@@ -1,4 +1,4 @@
-﻿namespace Sodium.MemoryTests
+﻿namespace JT.Rx.Net.MemoryTests
 {
     internal static class Program
     {

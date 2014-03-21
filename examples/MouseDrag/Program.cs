@@ -1,4 +1,4 @@
-﻿namespace Sodium.Examples.MouseDrag
+﻿namespace JT.Rx.Net.Examples.MouseDrag
 {
     using System;
     using System.Windows.Forms;

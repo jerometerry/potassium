@@ -2,19 +2,19 @@
 <topic id="89e8c167-b620-4a41-9657-af64fb0101ce" revisionNumber="1">
 	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
 		<introduction>
-			<para>Sodium.net is a Functional Reactive Programming Library for .NET, based on <externalLink><linkText>Sodium</linkText><linkUri>https://github.com/kentuckyfriedtakahe/sodium</linkUri></externalLink>. </para>
+			<para>JT.Rx.Net is a Functional Reactive Programming Library for .NET, based on <externalLink><linkText>Sodium</linkText><linkUri>https://github.com/kentuckyfriedtakahe/sodium</linkUri></externalLink>. </para>
 		</introduction>
 
 		<section>
 			<title>Overview</title>
 			<content>
-                <para>Sodium is made up of 2 primitives with 12 operations.</para>
+                <para>JT.Rx.Net is made up of 2 primitives with 12 operations.</para>
 
-                <para>The primitives are <legacyBold>Event</legacyBold>, and <legacyBold>Behavior</legacyBold>, both subclasses of <legacyBold>Observable</legacyBold> (the Observer Pattern).</para>
+                <para>The primitives are <legacyBold>Event</legacyBold>, and <legacyBold>Behavior</legacyBold>.</para>
 
                 <para>The operations are Accum, Apply, Coalesce, Collect, Filter, Gate, Hold, Lift, Map, Merge, Snapshot, Switch</para>
 
-                <para>Sodium.net uses the Publish / Subscribe Pattern</para>
+                <para>JT.Rx.Net uses the Publish / Subscribe Pattern</para>
 
                 <list class="bullet">
                     <listItem>
@@ -64,7 +64,7 @@
 
                     <listItem>
                         <para>
-                            <legacyBold>Lift</legacyBold> - Lifting is the process of taking a multi-valued function (2 or 3 valued functions in Sodium), along with Behaviors for each value of the function, and creating a new Behavior that is computed by evaluating the function with the current values of each of the Behaviors values.
+                            <legacyBold>Lift</legacyBold> - Lifting is the process of taking a multi-valued function (2 or 3 valued functions in JT.Rx.Net), along with Behaviors for each value of the function, and creating a new Behavior that is computed by evaluating the function with the current values of each of the Behaviors values.
                         </para>
                         
                         <para>A lifted Behavior has the property that if any of the input Behaviors are modified simultaneously, the lifted Behavior should publish only once.</para>
@@ -96,13 +96,13 @@
         <section>
             <title>Related Concepts</title>
             <content>
-                <para>Below are some additional concepts to be aware of inside of the Sodium.net library.</para>
+                <para>Below are some additional concepts to be aware of inside of the JT.Rx.Net library.</para>
                 
                 <list class="bullet">
                     <listItem>
                         <legacyBold>Transaction</legacyBold> - A Transaction is used to provide the concept of simultaneous Events.
 
-                        <para>In Sodium, only one Transaction can be open at a time. A Transaction is requested when registering a listener, or when publishing a value. A Transaction is closed when the initial request that created the Transaction completes.</para>
+                        <para>In JT.Rx.Net, only one Transaction can be open at a time. A Transaction is requested when registering a listener, or when publishing a value. A Transaction is closed when the initial request that created the Transaction completes.</para>
 
                         <para>Firing and listening can cause a chain reaction of operations that may cause other publishing and listening operations. This chain of operations will all execute inside the same Transaction.</para>
 

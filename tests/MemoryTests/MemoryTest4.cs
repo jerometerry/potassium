@@ -1,7 +1,7 @@
-namespace Sodium.MemoryTests
+namespace JT.Rx.Net.MemoryTests
 {
-    using Sodium.Core;
-    using Sodium.Discrete;
+    using JT.Rx.Net.Core;
+    using JT.Rx.Net.Discrete;
     using NUnit.Framework;
 
     [TestFixture]
