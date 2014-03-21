@@ -45,7 +45,7 @@
   <ItemGroup>
     <Compile Include="Arrays.cs" />
     <Compile Include="BehaviorTester.cs" />
-    <Compile Include="ContinuousBehaviorTester.cs" />
+    <Compile Include="MonadTester.cs" />
     <Compile Include="EventTester.cs" />
     <Compile Include="PriorityQueueTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

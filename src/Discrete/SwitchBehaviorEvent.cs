@@ -4,14 +4,14 @@ namespace JT.Rx.Net.Discrete
 
     internal sealed class SwitchBehaviorEvent<T> : EventPublisher<T>
     {
-        private ISubscription<EventDrivenBehavior<T>> subscription;
+        private ISubscription<Behavior<T>> subscription;
         private ISubscription<T> wrappedSubscription;
         private Event<T> wrappedEvent;
 
-        public SwitchBehaviorEvent(EventDrivenBehavior<EventDrivenBehavior<T>> source)
+        public SwitchBehaviorEvent(Behavior<Behavior<T>> source)
         {
             var evt = source.Values();
-            var callback = new SubscriptionPublisher<EventDrivenBehavior<T>>(this.Invoke);
+            var callback = new SubscriptionPublisher<Behavior<T>>(this.Invoke);
             this.subscription = evt.Subscribe(callback, this.Priority);
         }
 
@@ -38,7 +38,7 @@ namespace JT.Rx.Net.Discrete
             base.Dispose(disposing);
         }
 
-        private void Invoke(EventDrivenBehavior<T> behavior, Transaction transaction)
+        private void Invoke(Behavior<T> behavior, Transaction transaction)
         {
             // Note: If any switch takes place during a transaction, then the
             // GetValueStream().Subscribe will always cause a sample to be fetched from the

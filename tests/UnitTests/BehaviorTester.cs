@@ -30,7 +30,7 @@ namespace JT.Rx.Net.Tests
         public void TestSnapshot()
         {
             var publisher = new EventPublisher<int>();
-            var behavior = new EventDrivenBehavior<int>(0, publisher);
+            var behavior = new Behavior<int>(0, publisher);
             var evt = new EventPublisher<long>();
             var results = new List<string>();
             Func<long, int, string> snapshotFunction = (x, y) => string.Format("{0} {1}", x, y);
@@ -60,7 +60,7 @@ namespace JT.Rx.Net.Tests
         public void TestMapB()
         {
             var publisher = new EventPublisher<int>();
-            var behavior = new EventDrivenBehavior<int>(6, publisher);
+            var behavior = new Behavior<int>(6, publisher);
             var results = new List<string>();
             var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
             var values = map.Values();
@@ -87,7 +87,7 @@ namespace JT.Rx.Net.Tests
         public void TestMapB3()
         {
             var publisher = new EventPublisher<int>();
-            var behavior = new EventDrivenBehavior<int>(1, publisher);
+            var behavior = new Behavior<int>(1, publisher);
             var behavior1 = behavior.Map(x => x * 3);
             var results = new List<int>();
             var values = behavior1.Values();
@@ -103,7 +103,7 @@ namespace JT.Rx.Net.Tests
         public void TestMapBLateListen()
         {
             var publisher = new EventPublisher<int>();
-            var behavior = new EventDrivenBehavior<int>(6, publisher);
+            var behavior = new Behavior<int>(6, publisher);
             var results = new List<string>();
             var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
             publisher.Publish(2);
@@ -120,9 +120,9 @@ namespace JT.Rx.Net.Tests
         public void TestApply()
         {
             var pbf = new EventPublisher<Func<long, string>>();
-            var bf = new EventDrivenBehavior<Func<long, string>>(b => "1 " + b, pbf);
+            var bf = new Behavior<Func<long, string>>(b => "1 " + b, pbf);
             var pba = new EventPublisher<long>();
-            var ba = new EventDrivenBehavior<long>(5L, pba);
+            var ba = new Behavior<long>(5L, pba);
             var results = new List<string>();
             var apply = ba.Apply(bf);
             var values = apply.Values();
@@ -141,9 +141,9 @@ namespace JT.Rx.Net.Tests
         public void TestLift()
         {
             var pub1 = new EventPublisher<int>();
-            var behavior1 = new EventDrivenBehavior<int>(1, pub1);
+            var behavior1 = new Behavior<int>(1, pub1);
             var pub2 = new EventPublisher<long>();
-            var behavior2 = new EventDrivenBehavior<long>(5L, pub2);
+            var behavior2 = new Behavior<long>(5L, pub2);
             var results = new List<string>();
             var combinedBehavior = behavior1.Lift((x, y) => x + " " + y, behavior2);
             var values = combinedBehavior.Values();
@@ -166,7 +166,7 @@ namespace JT.Rx.Net.Tests
         public void TestLiftGlitch()
         {
             var publisher = new EventPublisher<int>();
-            var behavior = new EventDrivenBehavior<int>(1, publisher);
+            var behavior = new Behavior<int>(1, publisher);
             var mappedBehavior1 = behavior.Map(x => x * 3);
             var mappedBehavior2 = behavior.Map(x => x * 5);
             var results = new List<string>();
@@ -269,7 +269,7 @@ namespace JT.Rx.Net.Tests
         {
             var feed = new EventFeed<int>();
             var ea = new EventPublisher<int>();
-            var sum = new EventDrivenBehavior<int>(0, feed);
+            var sum = new Behavior<int>(0, feed);
             var sumOut = ea.Snapshot(sum, (x, y) => x + y).Hold(0);
             feed.Feed(sumOut.Source);
             var o = new List<int>();
@@ -344,9 +344,9 @@ namespace JT.Rx.Net.Tests
         {
             public readonly char? C1;
             public readonly char? C2;
-            public readonly EventDrivenBehavior<char?> Behavior;
+            public readonly Behavior<char?> Behavior;
 
-            public Sb(char? c1, char? c2, EventDrivenBehavior<char?> behavior)
+            public Sb(char? c1, char? c2, Behavior<char?> behavior)
             {
                 C1 = c1;
                 C2 = c2;

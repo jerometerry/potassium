@@ -53,7 +53,6 @@
     <Compile Include="Core\Identity.cs" />
     <Compile Include="Core\Monad.cs" />
     <Compile Include="Continuous\Discretizer.cs" />
-    <Compile Include="Discrete\DiscreteBehavior.cs" />
     <Compile Include="Core\IBehavior.cs" />
     <Compile Include="Discrete\BehaviorApplyEvent.cs" />
     <Compile Include="Core\BinaryMonad.cs" />
@@ -62,14 +61,13 @@
     <Compile Include="Discrete\EventPublisher.cs" />
     <Compile Include="Continuous\LocalTime.cs" />
     <Compile Include="Core\Map.cs" />
-    <Compile Include="Discrete\ObservableDrivenBehavior.cs" />
     <Compile Include="Core\Predicate.cs" />
     <Compile Include="Continuous\QueryPredicate.cs" />
     <Compile Include="Core\Query.cs" />
     <Compile Include="Continuous\RandomDouble.cs" />
     <Compile Include="Continuous\RandomInt.cs" />
     <Compile Include="Core\SubscriptionPublisher.cs" />
-    <Compile Include="Discrete\EventDrivenBehaviorExtensions.cs" />
+    <Compile Include="Discrete\BehaviorExtensions.cs" />
     <Compile Include="Core\Observable.cs" />
     <Compile Include="Discrete\ObservedValue.cs" />
     <Compile Include="Discrete\EventFeed.cs" />
@@ -100,7 +98,7 @@
     <Compile Include="Continuous\WebResource.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Discrete\EventDrivenBehavior.cs" />
+    <Compile Include="Discrete\Behavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Discrete\SnapshotEvent.cs" />

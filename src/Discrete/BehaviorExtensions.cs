@@ -5,7 +5,7 @@
     /// <summary>
     /// Reactive extensions for Behaviors
     /// </summary>
-    public static class EventDrivenBehaviorExtensions
+    public static class BehaviorExtensions
     {
         /// <summary>
         /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
@@ -15,7 +15,7 @@
         /// <returns>The new, unwrapped Behavior</returns>
         /// <remarks>Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.</remarks>
-        public static EventDrivenBehavior<T> Switch<T>(this EventDrivenBehavior<EventDrivenBehavior<T>> source)
+        public static Behavior<T> Switch<T>(this Behavior<Behavior<T>> source)
         {
             var value = source.Value.Value;
             var sink = new SwitchBehaviorEvent<T>(source);
@@ -37,7 +37,7 @@
         /// Switch allows the reactive network to change dynamically, using 
         /// reactive logic to modify reactive logic.
         /// </remarks>
-        public static Event<T> Switch<T>(this EventDrivenBehavior<Event<T>> behavior)
+        public static Event<T> Switch<T>(this Behavior<Event<T>> behavior)
         {
             return new SwitchEvent<T>(behavior);
         }

@@ -3,12 +3,12 @@
     using System;
     using System.Collections.Generic;
     using System.Threading;
-    using JT.Rx.Net.Core;
     using JT.Rx.Net.Continuous;
+    using JT.Rx.Net.Core;
     using NUnit.Framework;
 
     [TestFixture]
-    public class ContinuousBehaviorTester
+    public class MonadTester
     {
         private const double TwoPi = 2 * Math.PI;
 

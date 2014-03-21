@@ -27,12 +27,12 @@
             return new Discretizer<T>(this, interval, until);
         }
 
-        public EventDrivenBehavior<T> ToDiscreteBehavior(TimeSpan interval, Func<bool> until)
+        public Behavior<T> ToDiscreteBehavior(TimeSpan interval, Func<bool> until)
         {
             return ToDiscreteBehavior(interval, new QueryPredicate(until));
         }
 
-        public EventDrivenBehavior<T> ToDiscreteBehavior(TimeSpan interval, Predicate until)
+        public Behavior<T> ToDiscreteBehavior(TimeSpan interval, Predicate until)
         {
             var evt = this.ToEvent(interval, until);
             var beh = evt.Hold(this.Value);

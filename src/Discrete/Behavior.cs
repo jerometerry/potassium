@@ -7,13 +7,15 @@ namespace JT.Rx.Net.Discrete
     /// EventBasedBehavior is a Behavior who's value is updated when the underlying Event is updated.
     /// </summary>
     /// <typeparam name="T">The type of values that will be published through the Behavior.</typeparam>
-    public class EventDrivenBehavior<T> : ObservableDrivenBehavior<T>
+    public class Behavior<T> : DisposableObject, IBehavior<T>
     {
+        private ObservedValue<T> observedValue;
+
         /// <summary>
         /// Create a behavior with a time varying value from an initial value
         /// </summary>
         /// <param name="value">The initial value of the Behavior</param>
-        public EventDrivenBehavior(T value)
+        public Behavior(T value)
             : this(value, new Event<T>())
         {
             this.Register(this.Source);
@@ -24,16 +26,45 @@ namespace JT.Rx.Net.Discrete
         /// </summary>
         /// <param name="source">The Observable to listen for updates from</param>
         /// <param name="value">The initial value of the Behavior</param>
-        public EventDrivenBehavior(T value, Event<T> source)
-            : base(source, value)
+        public Behavior(T value, Event<T> source)
+            : this(source, value)
         {
             this.Source = source;
+        }
+
+        /// <summary>
+        /// Constructs a new ObservableDrivenBehavior from an observable and a starting value
+        /// </summary>
+        /// <param name="observable">The Observable to monitor for updates</param>
+        /// <param name="value">The initial value of the Behavior</param>
+        private Behavior(Observable<T> observable, T value)
+        {
+            this.observedValue = new ObservedValue<T>(observable, value);
         }
 
         /// <summary>
         /// The underlying Event of the current Behavior
         /// </summary>
         public Event<T> Source { get; private set; }
+
+        public T Value
+        {
+            get
+            {
+                return observedValue.Value;
+            }
+        }
+
+        /// <summary>
+        /// New value of the Behavior that will be posted to Value when the Transaction completes
+        /// </summary>
+        internal T NewValue
+        {
+            get
+            {
+                return this.observedValue.NewValue;
+            }
+        }
 
         /// <summary>
         /// Apply a value inside a behavior to a function inside a behavior. This is the
@@ -42,7 +73,7 @@ namespace JT.Rx.Net.Discrete
         /// <typeparam name="TB">The return type of the inner function of the given Behavior</typeparam>
         /// <param name="bf">Behavior of functions that maps from T -> TB</param>
         /// <returns>The new applied Behavior</returns>
-        public EventDrivenBehavior<TB> Apply<TB>(EventDrivenBehavior<Func<T, TB>> bf)
+        public Behavior<TB> Apply<TB>(Behavior<Func<T, TB>> bf)
         {
             var evt = new BehaviorApplyEvent<T, TB>(this, bf);
             var map = bf.Value;
@@ -62,7 +93,7 @@ namespace JT.Rx.Net.Discrete
         /// <param name="initState">Value to pass to the snapshot function</param>
         /// <param name="snapshot">Snapshot function</param>
         /// <returns>A new Behavior that collects values of type TB</returns>
-        public EventDrivenBehavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
+        public Behavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
         {
             var coalesceEvent = this.Source.Coalesce((a, b) => b);
             var currentValue = this.Value;
@@ -92,7 +123,7 @@ namespace JT.Rx.Net.Discrete
         /// lift method to the current Behavior.</param>
         /// <returns>A new Behavior who's value is computed using the current Behavior, the given
         /// Behavior, and the lift function.</returns>
-        public EventDrivenBehavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, EventDrivenBehavior<TB> b)
+        public Behavior<TC> Lift<TB, TC>(Func<T, TB, TC> lift, Behavior<TB> b)
         {
             Func<T, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
             var bf = this.Map(ffa);
@@ -113,7 +144,7 @@ namespace JT.Rx.Net.Discrete
         /// <returns>A new Behavior who's value is computed by applying the lift function to the current
         /// behavior, and the given behaviors.</returns>
         /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
-        public EventDrivenBehavior<TD> Lift<TB, TC, TD>(Func<T, TB, TC, TD> lift, EventDrivenBehavior<TB> b, EventDrivenBehavior<TC> c)
+        public Behavior<TD> Lift<TB, TC, TD>(Func<T, TB, TC, TD> lift, Behavior<TB> b, Behavior<TC> c)
         {
             Func<T, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
             var bf = this.Map(map);
@@ -132,7 +163,7 @@ namespace JT.Rx.Net.Discrete
         /// <returns>A new Behavior that updates whenever the current Behavior updates,
         /// having a value computed by the map function, and starting with the value
         /// of the current event mapped.</returns>
-        public EventDrivenBehavior<TB> Map<TB>(Func<T, TB> map)
+        public Behavior<TB> Map<TB>(Func<T, TB> map)
         {
             var mapEvent = this.Source.Map(map);
             var behavior = mapEvent.Hold(map(this.Value));
@@ -148,6 +179,17 @@ namespace JT.Rx.Net.Discrete
         public Event<T> Values()
         {
             return Transaction.Start(t => new BehaviorLastValueEvent<T>(this, t));
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                observedValue.Dispose();
+                observedValue = null;
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

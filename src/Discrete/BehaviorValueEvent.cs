@@ -9,7 +9,7 @@ namespace JT.Rx.Net.Discrete
     /// <typeparam name="T">The type of values published through the Behavior</typeparam>
     internal sealed class BehaviorValueEvent<T> : SubscribePublishEvent<T>
     {
-        private EventDrivenBehavior<T> behavior;
+        private Behavior<T> behavior;
         private ISubscription<T> subscription;
 
         /// <summary>
@@ -17,7 +17,7 @@ namespace JT.Rx.Net.Discrete
         /// </summary>
         /// <param name="behavior">The Behavior to monitor</param>
         /// <param name="transaction">The Transaction to use to create a subscription on the given Behavior</param>
-        public BehaviorValueEvent(EventDrivenBehavior<T> behavior, Transaction transaction)
+        public BehaviorValueEvent(Behavior<T> behavior, Transaction transaction)
         {
             this.behavior = behavior;
             this.CreateLoop(transaction);
