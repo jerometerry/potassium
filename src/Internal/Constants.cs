@@ -1,4 +1,4 @@
-﻿namespace JT.Rx.Net.Internal
+﻿namespace Potassium.Internal
 {
     internal static class Constants
     {

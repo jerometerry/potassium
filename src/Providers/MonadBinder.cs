@@ -1,7 +1,7 @@
-﻿namespace JT.Rx.Net.Monads
+﻿namespace Potassium.Providers
 {
     using System;
-    using JT.Rx.Net.Core;
+    using Potassium.Core;
 
     /// <summary>
     /// MonadBinder is a Monad who's value is computed by passing the current value of an IProvider
@@ -9,7 +9,7 @@
     /// </summary>
     /// <typeparam name="T">Type of value stored in the source Behavior</typeparam>
     /// <typeparam name="TB">The return type of the mapping functions</typeparam>
-    public class MonadBinder<T, TB> : Monad<TB>
+    public class MonadBinder<T, TB> : Provider<TB>
     {
         private IProvider<T> source;
         private IProvider<Func<T, TB>> bf;

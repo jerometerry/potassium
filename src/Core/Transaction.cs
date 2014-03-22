@@ -1,9 +1,9 @@
-namespace JT.Rx.Net.Core
+namespace Potassium.Core
 {
     using System;
     using System.Collections.Generic;
-    using JT.Rx.Net.Internal;
-    using JT.Rx.Net.Utilities;
+    using Potassium.Internal;
+    using Potassium.Utilities;
 
     /// <summary>
     /// A Transaction is used to order a stream of actions. Events that occur in the same Transaction

@@ -1,7 +1,7 @@
-﻿namespace JT.Rx.Net.Internal
+﻿namespace Potassium.Internal
 {
     using System;
-    using JT.Rx.Net.Core;
+    using Potassium.Core;
 
     /// <summary>
     /// A TransactionContext is responsible for obtaining a Transaction

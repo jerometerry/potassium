@@ -1,8 +1,8 @@
-namespace JT.Rx.Net.Internal
+namespace Potassium.Internal
 {
     using System;
     using System.Collections.Generic;
-    using JT.Rx.Net.Core;
+    using Potassium.Core;
 
     /// <summary>
     /// Notification wraps an System.Action used to subscribe to Observables.

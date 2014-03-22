@@ -1,7 +1,7 @@
-﻿namespace JT.Rx.Net.Monads
+﻿namespace Potassium.Providers
 {
     using System;
-    using JT.Rx.Net.Core;
+    using Potassium.Core;
 
     /// <summary>
     /// A BinaryBehavior lifts a binary function into a Monad
@@ -9,7 +9,7 @@
     /// <typeparam name="T">The type of first parameter to the lift function</typeparam>
     /// <typeparam name="TB">The type of the second parameter of the lift function</typeparam>
     /// <typeparam name="TC">The return type of the lift function</typeparam>
-    public class BinaryMonad<T, TB, TC> : Monad<TC>
+    public class BinaryMonad<T, TB, TC> : Provider<TC>
     {
         private Func<T, TB, TC> lift;
         private IProvider<T> a;

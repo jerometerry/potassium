@@ -1,4 +1,4 @@
-﻿namespace JT.Rx.Net.Core
+﻿namespace Potassium.Core
 {
     /// <summary>
     /// IProvider is an interface that exposes a Property Value that provides values upon request.

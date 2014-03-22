@@ -7,8 +7,8 @@
     <ProjectGuid>{EA5D9EBC-4B79-4971-9E96-755B688B1825}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JT.Rx.Net.Examples.MouseMove</RootNamespace>
-    <AssemblyName>JT.Rx.Net.Examples.MouseMove</AssemblyName>
+    <RootNamespace>Potassium.Examples.MouseMove</RootNamespace>
+    <AssemblyName>Potassium.Examples.MouseMove</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -79,9 +79,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\JT.Rx.Net.csproj">
+    <ProjectReference Include="..\..\src\Potassium.csproj">
       <Project>{cc18d685-53d9-4a66-8cca-3e8ed4ec8f13}</Project>
-      <Name>JT.Rx.Net</Name>
+      <Name>Potassium</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,4 +1,4 @@
-﻿namespace JT.Rx.Net.Core
+﻿namespace Potassium.Core
 {
     using System;
     using System.Collections.Generic;

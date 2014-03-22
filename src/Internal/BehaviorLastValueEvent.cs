@@ -1,6 +1,6 @@
-namespace JT.Rx.Net.Internal
+namespace Potassium.Internal
 {
-    using JT.Rx.Net.Core;
+    using Potassium.Core;
 
     internal class BehaviorLastValueEvent<T> : LastFiringEvent<T>
     {

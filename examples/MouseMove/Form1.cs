@@ -1,8 +1,8 @@
-﻿namespace JT.Rx.Net.Examples.MouseMove
+﻿namespace Potassium.Examples.MouseMove
 {
     using System;
     using System.Windows.Forms;
-    using JT.Rx.Net.Core;
+    using Potassium.Core;
 
     public partial class Form1 : Form
     {

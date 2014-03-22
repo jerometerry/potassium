@@ -1,4 +1,4 @@
-namespace JT.Rx.Net.Core
+namespace Potassium.Core
 {
     /// <summary>
     /// Unit is an empty class to represent no value

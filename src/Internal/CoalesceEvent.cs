@@ -1,9 +1,9 @@
-namespace JT.Rx.Net.Internal
+namespace Potassium.Internal
 {
     using System;
     using System.Collections.Generic;
-    using JT.Rx.Net.Core;
-    using JT.Rx.Net.Monads;
+    using Potassium.Core;
+    using Potassium.Providers;
 
     /// <summary>
     /// CoalesceEvent combines multiple publishings from a source into a single publishing, using a 

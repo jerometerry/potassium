@@ -1,15 +1,15 @@
-﻿namespace JT.Rx.Net.Monads
+﻿namespace Potassium.Providers
 {
     using System;
-    using JT.Rx.Net.Core;
-    using JT.Rx.Net.Monads;
+    using Potassium.Core;
+    using Potassium.Providers;
 
     /// <summary>
     /// A UnaryMonad lifts a unary function into a Monad
     /// </summary>
     /// <typeparam name="T">The type of first parameter to the lift function</typeparam>
     /// <typeparam name="TB">The return type of the lift function</typeparam>
-    public class UnaryMonad<T, TB> : Monad<TB>
+    public class UnaryMonad<T, TB> : Provider<TB>
     {
         private Func<T, TB> lift;
         private IProvider<T> source;

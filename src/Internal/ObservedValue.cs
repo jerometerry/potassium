@@ -1,8 +1,8 @@
-namespace JT.Rx.Net.Internal
+namespace Potassium.Internal
 {
-    using JT.Rx.Net.Core;
-    using JT.Rx.Net.Monads;
-    using JT.Rx.Net.Utilities;
+    using Potassium.Core;
+    using Potassium.Providers;
+    using Potassium.Utilities;
 
     /// <summary>
     /// ObservedValue stores the last published value of an Observable,

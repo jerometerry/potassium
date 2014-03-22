@@ -1,4 +1,4 @@
-﻿namespace JT.Rx.Net.Monads
+﻿namespace Potassium.Providers
 {
     using System;
 
@@ -6,7 +6,7 @@
     /// Maybe is a class that might contain a value
     /// </summary>
     /// <typeparam name="T">The type of the value</typeparam>
-    public sealed class Maybe<T> : Monad<T>
+    public sealed class Maybe<T> : Provider<T>
     {
         private readonly T value;
         private readonly bool hasValue;

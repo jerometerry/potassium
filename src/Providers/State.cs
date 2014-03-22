@@ -1,7 +1,7 @@
-﻿namespace JT.Rx.Net.Monads
+﻿namespace Potassium.Providers
 {
     using System;
-    using JT.Rx.Net.Core;
+    using Potassium.Core;
 
     /// <summary>
     /// State Monad

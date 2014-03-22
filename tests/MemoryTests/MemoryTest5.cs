@@ -1,6 +1,6 @@
-namespace JT.Rx.Net.MemoryTests
+namespace Potassium.MemoryTests
 {
-    using JT.Rx.Net.Core;
+    using Potassium.Core;
     using NUnit.Framework;
 
     [TestFixture]

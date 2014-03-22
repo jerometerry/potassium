@@ -1,9 +1,9 @@
-﻿namespace JT.Rx.Net.Core
+﻿namespace Potassium.Core
 {
     using System;
     using System.Collections.Generic;
-    using JT.Rx.Net.Internal;
-    using JT.Rx.Net.Utilities;
+    using Potassium.Internal;
+    using Potassium.Utilities;
 
     /// <summary>
     /// Observable is the base class for Events, containing the subscription logic (i.e. the Observer Pattern).

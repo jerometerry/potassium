@@ -7,8 +7,8 @@
     <ProjectGuid>{CC18D685-53D9-4A66-8CCA-3E8ED4EC8F13}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JT.Rx.Net</RootNamespace>
-    <AssemblyName>JT.Rx.Net</AssemblyName>
+    <RootNamespace>Potassium</RootNamespace>
+    <AssemblyName>Potassium</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -22,7 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\JT.Rx.Net.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\Potassium.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -48,21 +48,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\MonadExtensions.cs" />
-    <Compile Include="Monads\MonadBinder.cs" />
-    <Compile Include="Monads\Monad.cs" />
+    <Compile Include="Providers\MonadBinder.cs" />
+    <Compile Include="Providers\Provider.cs" />
     <Compile Include="Core\IProvider.cs" />
     <Compile Include="Internal\BehaviorApplyEvent.cs" />
-    <Compile Include="Monads\BinaryMonad.cs" />
-    <Compile Include="Monads\Identity.cs" />
-    <Compile Include="Monads\IdentityPredicate.cs" />
+    <Compile Include="Providers\BinaryMonad.cs" />
+    <Compile Include="Providers\Identity.cs" />
+    <Compile Include="Providers\IdentityPredicate.cs" />
     <Compile Include="Core\EventPublisher.cs" />
-    <Compile Include="Monads\LocalTime.cs" />
-    <Compile Include="Monads\Map.cs" />
-    <Compile Include="Monads\Predicate.cs" />
-    <Compile Include="Monads\QueryPredicate.cs" />
-    <Compile Include="Monads\Query.cs" />
-    <Compile Include="Monads\RandomDouble.cs" />
-    <Compile Include="Monads\RandomInt.cs" />
+    <Compile Include="Providers\LocalTime.cs" />
+    <Compile Include="Providers\Map.cs" />
+    <Compile Include="Providers\Predicate.cs" />
+    <Compile Include="Providers\QueryPredicate.cs" />
+    <Compile Include="Providers\Query.cs" />
+    <Compile Include="Providers\RandomDouble.cs" />
+    <Compile Include="Providers\RandomInt.cs" />
     <Compile Include="Internal\SubscriptionPublisher.cs" />
     <Compile Include="Extensions\BehaviorExtensions.cs" />
     <Compile Include="Core\Observable.cs" />
@@ -83,18 +83,18 @@
     <Compile Include="Core\ISubscription.cs" />
     <Compile Include="Internal\Subscription.cs" />
     <Compile Include="Internal\MapEvent.cs" />
-    <Compile Include="Monads\Maybe.cs" />
+    <Compile Include="Providers\Maybe.cs" />
     <Compile Include="Internal\MergeEvent.cs" />
     <Compile Include="Internal\OnceEvent.cs" />
-    <Compile Include="Monads\State.cs" />
-    <Compile Include="Monads\UnaryMonad.cs" />
+    <Compile Include="Providers\State.cs" />
+    <Compile Include="Providers\UnaryMonad.cs" />
     <Compile Include="Utilities\PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Internal\BehaviorLastValueEvent.cs" />
-    <Compile Include="Monads\TernaryMonad.cs" />
-    <Compile Include="Monads\UtcTime.cs" />
-    <Compile Include="Monads\EqualityPredicate.cs" />
-    <Compile Include="Monads\WebResource.cs" />
+    <Compile Include="Providers\TernaryMonad.cs" />
+    <Compile Include="Providers\UtcTime.cs" />
+    <Compile Include="Providers\EqualityPredicate.cs" />
+    <Compile Include="Providers\WebResource.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Behavior.cs" />
@@ -102,7 +102,7 @@
   <ItemGroup>
     <Compile Include="Internal\SnapshotEvent.cs" />
     <Compile Include="Internal\SwitchEvent.cs" />
-    <Compile Include="Monads\Time.cs" />
+    <Compile Include="Providers\Time.cs" />
     <Compile Include="Core\Transaction.cs" />
   </ItemGroup>
   <ItemGroup>

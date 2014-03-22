@@ -1,11 +1,11 @@
-namespace JT.Rx.Net.Tests
+namespace Potassium.Tests
 {
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using JT.Rx.Net.Core;
-    using JT.Rx.Net.Monads;
-    using JT.Rx.Net.Extensions;
+    using Potassium.Core;
+    using Potassium.Providers;
+    using Potassium.Extensions;
     using NUnit.Framework;
 
     [TestFixture]

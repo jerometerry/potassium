@@ -1,9 +1,9 @@
-﻿namespace JT.Rx.Net.Examples.MouseDrag
+﻿namespace Potassium.Examples.MouseDrag
 {
     using System;
     using System.Windows.Forms;
-    using JT.Rx.Net.Core;
-    using JT.Rx.Net.Monads;
+    using Potassium.Core;
+    using Potassium.Providers;
 
     public partial class Form1 : Form
     {

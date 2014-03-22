@@ -1,7 +1,7 @@
-﻿namespace JT.Rx.Net.Monads
+﻿namespace Potassium.Providers
 {
     using System;
-    using JT.Rx.Net.Core;
+    using Potassium.Core;
 
     /// <summary>
     /// A TernaryMonad lifts a ternary function into a Monad
@@ -10,7 +10,7 @@
     /// <typeparam name="TB">The type of the second parameter to the ternary function</typeparam>
     /// <typeparam name="TC">They type of the third parameter to the ternary function</typeparam>
     /// <typeparam name="TD">The return type of the ternary function</typeparam>
-    public class TernaryMonad<T, TB, TC, TD> : Monad<TD>
+    public class TernaryMonad<T, TB, TC, TD> : Provider<TD>
     {
         private Func<T, TB, TC, TD> lift;
         private IProvider<T> a;

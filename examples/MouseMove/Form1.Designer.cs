@@ -1,4 +1,4 @@
-﻿namespace JT.Rx.Net.Examples.MouseMove
+﻿namespace Potassium.Examples.MouseMove
 {
     partial class Form1
     {

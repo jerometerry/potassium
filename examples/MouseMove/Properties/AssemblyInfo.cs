@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("JT.Rx.Net.Examples.MouseMove")]
-[assembly: AssemblyDescription("Sample project showing how to use JT.Rx.Net with the MouseMove event handler")]
+[assembly: AssemblyTitle("Potassium.Examples.MouseMove")]
+[assembly: AssemblyDescription("Sample project showing how to use Potassium with the MouseMove event handler")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Jerome Terry")]
-[assembly: AssemblyProduct("JT.Rx.Net")]
+[assembly: AssemblyProduct("Potassium")]
 [assembly: AssemblyCopyright("Copyright © 2014, Jerome Terry")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

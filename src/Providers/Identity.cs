@@ -1,10 +1,10 @@
-﻿namespace JT.Rx.Net.Monads
+﻿namespace Potassium.Providers
 {
     /// <summary>
     /// Identity is a Monad having a constant value
     /// </summary>
     /// <typeparam name="T">The type of value of the Monad</typeparam>
-    public class Identity<T> : Monad<T>
+    public class Identity<T> : Provider<T>
     {
         private T value;
 

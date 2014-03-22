@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{019F3FF6-66A8-400C-92F8-7DE8FBF44851}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3FF7AA6A-3EE2-435E-B28C-E2B6F065C474}"
@@ -9,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MemoryTests", "MemoryTests", "{08AA5695-9AD5-4C0A-B6AE-175CF700A4F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JT.Rx.Net.MemoryTests", "tests\MemoryTests\JT.Rx.Net.MemoryTests.csproj", "{F6BA09F8-17E3-402C-86ED-A717804A3A14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potassium.MemoryTests", "tests\MemoryTests\Potassium.MemoryTests.csproj", "{F6BA09F8-17E3-402C-86ED-A717804A3A14}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{F828071F-45D1-40DB-AEBA-7D12C2B12440}"
 EndProject
@@ -17,21 +19,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{EEBE186B-7
 	ProjectSection(SolutionItems) = preProject
 		LICENSE = LICENSE
 		README.md = README.md
-		sodium\Sodium.ClassDiagram.pdf = sodium\Sodium.ClassDiagram.pdf
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JT.Rx.Net.Tests", "tests\UnitTests\JT.Rx.Net.Tests.csproj", "{1D1FFCFA-CDD6-401A-BE6A-D079CC98200B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potassium.Tests", "tests\UnitTests\Potassium.Tests.csproj", "{1D1FFCFA-CDD6-401A-BE6A-D079CC98200B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JT.Rx.Net.Examples.MouseDrag", "examples\MouseDrag\JT.Rx.Net.Examples.MouseDrag.csproj", "{E639F622-0C53-4760-B3DB-F277CC42CBD7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potassium.Examples.MouseDrag", "examples\MouseDrag\Potassium.Examples.MouseDrag.csproj", "{E639F622-0C53-4760-B3DB-F277CC42CBD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JT.Rx.Net.Examples.MouseMove", "examples\MouseMove\JT.Rx.Net.Examples.MouseMove.csproj", "{EA5D9EBC-4B79-4971-9E96-755B688B1825}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potassium.Examples.MouseMove", "examples\MouseMove\Potassium.Examples.MouseMove.csproj", "{EA5D9EBC-4B79-4971-9E96-755B688B1825}"
 EndProject
-Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "JT.Rx.Net.Documentation", "documentation\JT.Rx.Net.Documentation.shfbproj", "{08FCB85E-E1DE-4DAD-90CC-5652E7462451}"
+Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "Potassium.Documentation", "documentation\Potassium.Documentation.shfbproj", "{08FCB85E-E1DE-4DAD-90CC-5652E7462451}"
 	ProjectSection(ProjectDependencies) = postProject
 		{CC18D685-53D9-4A66-8CCA-3E8ED4EC8F13} = {CC18D685-53D9-4A66-8CCA-3E8ED4EC8F13}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JT.Rx.Net", "src\JT.Rx.Net.csproj", "{CC18D685-53D9-4A66-8CCA-3E8ED4EC8F13}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potassium", "src\Potassium.csproj", "{CC18D685-53D9-4A66-8CCA-3E8ED4EC8F13}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

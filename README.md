@@ -1,7 +1,7 @@
-JT.Rx.Net
+Potassium
 =========
 
-JT.Rx.Net is a Functional Rective Programming Library for .NET, based on [Sodium](https://github.com/kentuckyfriedtakahe/sodium).
+Potassium is a Functional Rective Programming Library for .NET, based on [Sodium](https://github.com/kentuckyfriedtakahe/sodium).
 
 [Sodium](https://github.com/kentuckyfriedtakahe/sodium) is a Reactive Programming Library that has been implemented in several languages including Haskell, Java, C++, Embedded-C, and Rust. 
 
@@ -9,18 +9,18 @@ However, there was no implementation for .NET. Hence this project.
 
 Check out the [wiki](https://github.com/jerometerry/jt.rx.net/wiki) for more information.
 
-JT.Rx.Net API [documentation](http://jterry.azurewebsites.net/jt.rx.net/)
+Potassium API [documentation](http://jterry.azurewebsites.net/jt.rx.net/)
 
 Overview
 ==========
 
-JT.Rx.Net is made up of 2 primitives with 12 opeartions.
+Potassium is made up of 2 primitives with 12 opeartions.
 
 The primitives are Event, and Behavior.
 
 The operations are Accum, Apply, Coalesce, Collect, Filter, Gate, Hold, Lift, Map, Merge, Snapshot, Switch
 
-JT.Rx.Net uses the Publish / Subscribe Pattern
+Potassium uses the Publish / Subscribe Pattern
 
 * EventPublisher / BehaviorPublisher are the Publishers
 * Event.Subscribe is used to create subscriptions
@@ -37,7 +37,7 @@ Here's a code snippit for listening to an Event of int's.
     var s = e.Subscribe(v => Console.Write("{0} ", v));
 ```
 
-**Behavior** - a continuous, time varying value. In JT.Rx.Net, a Behavior is composed of a value, and an Event that is listened to to update the value. The Event inside the Behavior is accessed via the *Source* Property.
+**Behavior** - a continuous, time varying value. In Potassium, a Behavior is composed of a value, and an Event that is listened to to update the value. The Event inside the Behavior is accessed via the *Source* Property.
 
 Here's a code snippit for listeneing to a Behavior of int's. 
 ```
@@ -105,7 +105,7 @@ An example would having a running sum total, starting with an initial value and 
 
 **Hold** - A Hold is an operation on an Event given an initial value, that creates a Behavior with the initial value that updates whenever the Event publishes.
 
-**Lift** - Lifting is the process of taking a multi-valued function (2 or 3 valued functions in JT.Rx.Net), along with Behaviors for each value of the function, and creating a new Behavior that is computed by evaluating the function with the current values of each of the Behaviors values.
+**Lift** - Lifting is the process of taking a multi-valued function (2 or 3 valued functions in Potassium), along with Behaviors for each value of the function, and creating a new Behavior that is computed by evaluating the function with the current values of each of the Behaviors values.
 
 A lifted Behavior has the property that if any of the input Behaviors are modified simultaneously, the lifted Behavior should publish only once.
 
@@ -121,7 +121,7 @@ A lifted Behavior has the property that if any of the input Behaviors are modifi
 
 **Transaction** - A Transaction is used to provide the concept of simultaneous Events. 
 
-In JT.Rx.Net, only one Transaction can be open at a time. A Transaction is requested when registering a listener, or when publishing a value. A Transaction is closed when the initial request that created the Transaction completes. 
+In Potassium, only one Transaction can be open at a time. A Transaction is requested when registering a listener, or when publishing a value. A Transaction is closed when the initial request that created the Transaction completes. 
 
 Firing and listening can cause a chain reaction of operations that may cause other publishing and listening operations. This chain of operations will all execute inside the same Transaction. 
 

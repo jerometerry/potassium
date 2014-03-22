@@ -1,8 +1,8 @@
-﻿namespace JT.Rx.Net.Internal
+﻿namespace Potassium.Internal
 {
     using System;
     using System.Linq;
-    using JT.Rx.Net.Core;
+    using Potassium.Core;
 
     internal sealed class MapEvent<T, TB> : SubscribePublishEvent<TB>
     {

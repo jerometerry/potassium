@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace JT.Rx.Net.Examples.MouseMove.Properties {
+namespace Potassium.Examples.MouseMove.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace JT.Rx.Net.Examples.MouseMove.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("JT.Rx.Net.Examples.MouseMove.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Potassium.Examples.MouseMove.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

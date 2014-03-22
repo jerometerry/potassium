@@ -1,4 +1,4 @@
-﻿namespace JT.Rx.Net.MemoryTests
+﻿namespace Potassium.MemoryTests
 {
     internal static class Program
     {

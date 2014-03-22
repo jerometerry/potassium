@@ -1,6 +1,6 @@
-﻿namespace JT.Rx.Net.Core
+﻿namespace Potassium.Core
 {
-    using JT.Rx.Net.Internal;    
+    using Potassium.Internal;    
 
     /// <summary>
     /// An EventPublisher is an Event that allows callers to publish values to subscribers.

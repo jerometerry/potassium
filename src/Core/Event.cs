@@ -1,8 +1,8 @@
-﻿namespace JT.Rx.Net.Core
+﻿namespace Potassium.Core
 {
     using System;
-    using JT.Rx.Net.Internal;
-    using JT.Rx.Net.Monads;
+    using Potassium.Internal;
+    using Potassium.Providers;
 
     /// <summary>
     /// An Event is a discrete signal of values.

@@ -1,6 +1,6 @@
-﻿namespace JT.Rx.Net.Monads
+﻿namespace Potassium.Providers
 {
-    using JT.Rx.Net.Core;
+    using Potassium.Core;
     
     /// <summary>
     /// EqualityPredicate is a Predicate that (lazily) determines if the value of an IProvider is equal to a given constant value

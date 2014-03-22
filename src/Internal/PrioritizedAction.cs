@@ -1,8 +1,8 @@
-namespace JT.Rx.Net.Internal
+namespace Potassium.Internal
 {
     using System;
-    using JT.Rx.Net.Core;
-    using JT.Rx.Net.Utilities;
+    using Potassium.Core;
+    using Potassium.Utilities;
 
     internal sealed class PrioritizedAction : IComparable<PrioritizedAction>
     {

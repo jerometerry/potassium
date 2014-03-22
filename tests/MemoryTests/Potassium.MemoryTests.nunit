@@ -1,7 +1,7 @@
 ﻿<NUnitProject>
   <Settings activeconfig="Debug" />
   <Config name="Debug" binpathtype="Auto">
-    <assembly path="bin\Debug\Sodium.MemoryTests.exe" />
+    <assembly path="bin\Debug\Potassium.MemoryTests.exe" />
   </Config>
   <Config name="Release" binpathtype="Auto" />
 </NUnitProject>

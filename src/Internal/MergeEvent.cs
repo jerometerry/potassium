@@ -1,7 +1,7 @@
-namespace JT.Rx.Net.Internal
+namespace Potassium.Internal
 {
     using System.Linq;
-    using JT.Rx.Net.Core;
+    using Potassium.Core;
 
     internal sealed class MergeEvent<T> : SubscribePublishEvent<T>
     {

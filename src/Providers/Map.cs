@@ -1,4 +1,4 @@
-namespace JT.Rx.Net.Monads
+namespace Potassium.Providers
 {
     using System;
 
@@ -7,7 +7,7 @@ namespace JT.Rx.Net.Monads
     /// </summary>
     /// <typeparam name="TA">The input type of the mapping function</typeparam>
     /// <typeparam name="TB">The return type of the mapping function</typeparam>
-    public class Map<TA, TB> : Monad<Func<TA, TB>>
+    public class Map<TA, TB> : Provider<Func<TA, TB>>
     {
         private Func<TA, TB> map;
 

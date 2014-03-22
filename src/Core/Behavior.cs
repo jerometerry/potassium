@@ -1,14 +1,14 @@
-namespace JT.Rx.Net.Core
+namespace Potassium.Core
 {
     using System;
-    using JT.Rx.Net.Internal;
-    using JT.Rx.Net.Monads;
+    using Potassium.Internal;
+    using Potassium.Providers;
 
     /// <summary>
     /// Behavior contains a value which is updated when the underlying Event is updated.
     /// </summary>
     /// <typeparam name="T">The type of values that will be published through the Behavior.</typeparam>
-    public class Behavior<T> : Monad<T>
+    public class Behavior<T> : Provider<T>
     {
         private ObservedValue<T> observedValue;
 

@@ -1,7 +1,7 @@
-﻿namespace JT.Rx.Net.Tests
+﻿namespace Potassium.Tests
 {
     using System;
-    using JT.Rx.Net.Utilities;
+    using Potassium.Utilities;
     using NUnit.Framework;
 
     [TestFixture]

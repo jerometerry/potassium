@@ -1,4 +1,4 @@
-namespace JT.Rx.Net.Utilities
+namespace Potassium.Utilities
 {
     using System;
     using System.Collections.Generic;

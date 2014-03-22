@@ -1,4 +1,4 @@
-﻿namespace JT.Rx.Net.Monads
+﻿namespace Potassium.Providers
 {
     /// <summary>
     /// IdentityPredicate is a Predicate with a constant boolean value

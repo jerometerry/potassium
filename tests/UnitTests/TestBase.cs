@@ -1,4 +1,4 @@
-﻿namespace JT.Rx.Net.Tests
+﻿namespace Potassium.Tests
 {
     using System;
     using System.Collections.Generic;

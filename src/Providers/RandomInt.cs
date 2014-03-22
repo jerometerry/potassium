@@ -1,11 +1,11 @@
-namespace JT.Rx.Net.Monads
+namespace Potassium.Providers
 {
     using System;
 
     /// <summary>
     /// RandomInt is a Monad that lazily returns a random int when it's value is requested
     /// </summary>
-    public class RandomInt : Monad<int>
+    public class RandomInt : Provider<int>
     {
         private Random rnd = new Random();
         private int max;

@@ -1,4 +1,4 @@
-namespace JT.Rx.Net.Monads
+namespace Potassium.Providers
 {
     using System;
     

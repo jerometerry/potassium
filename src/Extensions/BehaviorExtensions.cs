@@ -1,7 +1,7 @@
-﻿namespace JT.Rx.Net.Extensions
+﻿namespace Potassium.Extensions
 {
-    using JT.Rx.Net.Core;
-    using JT.Rx.Net.Internal;    
+    using Potassium.Core;
+    using Potassium.Internal;    
 
     /// <summary>
     /// Behavior extensions methods

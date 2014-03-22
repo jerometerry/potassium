@@ -1,7 +1,7 @@
-﻿namespace JT.Rx.Net.Tests
+﻿namespace Potassium.Tests
 {
     using System;
-    using JT.Rx.Net.Monads;
+    using Potassium.Providers;
     
     using NUnit.Framework;
 
