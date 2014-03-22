@@ -1,4 +1,4 @@
-namespace JT.Rx.Net
+namespace JT.Rx.Net.Internal
 {
     internal sealed class Subscription<T> : Disposable, ISubscription<T>
     {

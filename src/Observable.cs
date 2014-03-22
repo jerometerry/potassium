@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using JT.Rx.Net.Internal;
 
     /// <summary>
     /// Observable is the base class for Observables and Behaviors, containing the subscription logic (i.e. the Observer Pattern).

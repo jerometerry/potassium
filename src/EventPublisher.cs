@@ -1,6 +1,6 @@
 ﻿namespace JT.Rx.Net
 {
-    
+    using JT.Rx.Net.Internal;    
 
     /// <summary>
     /// An EventPublisher is an Event that allows callers to publish values to subscribers.

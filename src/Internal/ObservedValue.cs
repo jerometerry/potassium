@@ -1,4 +1,4 @@
-namespace JT.Rx.Net
+namespace JT.Rx.Net.Internal
 {
     
 
@@ -7,7 +7,7 @@ namespace JT.Rx.Net
     /// starting with an initial value.
     /// </summary>
     /// <typeparam name="T">The type of value published through the Observable</typeparam>
-    public sealed class ObservedValue<T> : Disposable
+    internal sealed class ObservedValue<T> : Disposable
     {
         private Observable<T> source;
 

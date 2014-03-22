@@ -1,7 +1,7 @@
 ﻿namespace JT.Rx.Net
 {
-    
     using System;
+    using JT.Rx.Net.Internal;
 
     public static class MonadExtensions
     {

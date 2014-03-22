@@ -1,8 +1,8 @@
 namespace JT.Rx.Net
 {
-    
     using System.Collections.Generic;
     using System.Linq;
+    using JT.Rx.Net.Internal;
 
     /// <summary>
     /// SubscribeRepublishEvent is an Event that republishes values that have been published in the current

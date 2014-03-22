@@ -52,8 +52,8 @@
     <Compile Include="Identity.cs" />
     <Compile Include="Monad.cs" />
     <Compile Include="IValueSource.cs" />
-    <Compile Include="BehaviorApplyEvent.cs" />
-    <Compile Include="BinaryMonad.cs" />
+    <Compile Include="Internal\BehaviorApplyEvent.cs" />
+    <Compile Include="Internal\BinaryMonad.cs" />
     <Compile Include="Constant.cs" />
     <Compile Include="IdentityPredicate.cs" />
     <Compile Include="EventPublisher.cs" />
@@ -64,32 +64,32 @@
     <Compile Include="Query.cs" />
     <Compile Include="RandomDouble.cs" />
     <Compile Include="RandomInt.cs" />
-    <Compile Include="SubscriptionPublisher.cs" />
+    <Compile Include="Internal\SubscriptionPublisher.cs" />
     <Compile Include="BehaviorExtensions.cs" />
     <Compile Include="Observable.cs" />
-    <Compile Include="ObservedValue.cs" />
+    <Compile Include="Internal\ObservedValue.cs" />
     <Compile Include="EventFeed.cs" />
-    <Compile Include="SubscribePublishEvent.cs" />
-    <Compile Include="LastFiringEvent.cs" />
+    <Compile Include="Internal\SubscribePublishEvent.cs" />
+    <Compile Include="Internal\LastFiringEvent.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="Disposable.cs" />
-    <Compile Include="BehaviorValueEvent.cs" />
-    <Compile Include="CoalesceEvent.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="PrioritizedAction.cs" />
+    <Compile Include="Internal\BehaviorValueEvent.cs" />
+    <Compile Include="Internal\CoalesceEvent.cs" />
+    <Compile Include="Internal\Constants.cs" />
+    <Compile Include="Internal\PrioritizedAction.cs" />
     <Compile Include="SubscribeRepublishEvent.cs" />
-    <Compile Include="SuppressedSubscribeEvent.cs" />
-    <Compile Include="SwitchBehaviorEvent.cs" />
-    <Compile Include="FilterEvent.cs" />
+    <Compile Include="Internal\SuppressedSubscribeEvent.cs" />
+    <Compile Include="Internal\SwitchBehaviorEvent.cs" />
+    <Compile Include="Internal\FilterEvent.cs" />
     <Compile Include="ISubscription.cs" />
-    <Compile Include="Subscription.cs" />
-    <Compile Include="MapEvent.cs" />
+    <Compile Include="Internal\Subscription.cs" />
+    <Compile Include="Internal\MapEvent.cs" />
     <Compile Include="Maybe.cs" />
-    <Compile Include="MergeEvent.cs" />
-    <Compile Include="OnceEvent.cs" />
+    <Compile Include="Internal\MergeEvent.cs" />
+    <Compile Include="Internal\OnceEvent.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="BehaviorLastValueEvent.cs" />
+    <Compile Include="Internal\BehaviorLastValueEvent.cs" />
     <Compile Include="TernaryMonad.cs" />
     <Compile Include="UtcTime.cs" />
     <Compile Include="EqualityPredicate.cs" />
@@ -99,8 +99,8 @@
     <Compile Include="Behavior.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SnapshotEvent.cs" />
-    <Compile Include="SwitchEvent.cs" />
+    <Compile Include="Internal\SnapshotEvent.cs" />
+    <Compile Include="Internal\SwitchEvent.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="Transaction.cs" />
   </ItemGroup>
@@ -108,7 +108,7 @@
     <Compile Include="Priority.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TransactionContext.cs" />
+    <Compile Include="Internal\TransactionContext.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>
   <ItemGroup />

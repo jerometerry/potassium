@@ -2,6 +2,7 @@ namespace JT.Rx.Net
 {
     using System;
     using System.Collections.Generic;
+    using JT.Rx.Net.Internal;
 
     /// <summary>
     /// A Transaction is used to order a stream of actions. Events that occur in the same Transaction

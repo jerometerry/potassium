@@ -1,7 +1,7 @@
 namespace JT.Rx.Net
 {
     using System;
-    
+    using JT.Rx.Net.Internal;
 
     /// <summary>
     /// Behavior contains a value which is updated when the underlying Event is updated.

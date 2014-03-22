@@ -1,6 +1,6 @@
 ﻿namespace JT.Rx.Net
 {
-    
+    using JT.Rx.Net.Internal;    
 
     /// <summary>
     /// Reactive extensions for Behaviors

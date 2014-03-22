@@ -1,6 +1,7 @@
 ﻿namespace JT.Rx.Net
 {
     using System;
+    using JT.Rx.Net.Internal;
 
     /// <summary>
     /// An Event is a discrete signal of values.
