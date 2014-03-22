@@ -4,7 +4,7 @@
     using System.Linq;
     using Potassium.Core;
 
-    internal sealed class MapEvent<T, TB> : SubscribePublishEvent<TB>
+    internal sealed class MapEvent<T, TB> : PublishEvent<TB>
     {
         private Observable<T> source;
         private Func<T, TB> map;

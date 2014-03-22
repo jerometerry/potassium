@@ -7,7 +7,7 @@
     /// <summary>
     /// Monad extension methods
     /// </summary>
-    public static class MonadExtensions
+    public static class ProviderExtensions
     {
         public static Provider<TB> Bind<TA, TB>(this IProvider<TA> source, IProvider<Func<TA, TB>> bf)
         {

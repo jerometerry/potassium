@@ -4,7 +4,7 @@ namespace Potassium.Internal
     using System.Linq;
     using Potassium.Core;
 
-    internal class FilterEvent<T> : SubscribePublishEvent<T>
+    internal class FilterEvent<T> : PublishEvent<T>
     {
         private Observable<T> source;
         private Func<T, bool> f;

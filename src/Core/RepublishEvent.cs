@@ -9,7 +9,7 @@ namespace Potassium.Core
     /// Transaction when subscribed to.
     /// </summary>
     /// <typeparam name="T">The type of values published through the Event</typeparam>
-    public abstract class SubscribeRepublishEvent<T> : EventPublisher<T>
+    public abstract class RepublishEvent<T> : EventPublisher<T>
     {
         /// <summary>
         /// List of values that have been published on the current Event in the current transaction.

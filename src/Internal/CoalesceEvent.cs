@@ -10,7 +10,7 @@ namespace Potassium.Internal
     /// combining function.
     /// </summary>
     /// <typeparam name="T">The type of values published through the source</typeparam>
-    internal class CoalesceEvent<T> : SubscribePublishEvent<T>
+    internal class CoalesceEvent<T> : PublishEvent<T>
     {
         private Func<T, T, T> coalesce;
         private ISubscription<T> subscription;

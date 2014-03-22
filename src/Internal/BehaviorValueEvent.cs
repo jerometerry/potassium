@@ -7,7 +7,7 @@ namespace Potassium.Internal
     /// and publishes all updates thereafter.
     /// </summary>
     /// <typeparam name="T">The type of values published through the Behavior</typeparam>
-    internal sealed class BehaviorValueEvent<T> : SubscribePublishEvent<T>
+    internal sealed class BehaviorValueEvent<T> : PublishEvent<T>
     {
         private Behavior<T> behavior;
         private ISubscription<T> subscription;

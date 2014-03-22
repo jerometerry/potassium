@@ -3,7 +3,7 @@ namespace Potassium.Internal
     using System.Linq;
     using Potassium.Core;
 
-    internal sealed class MergeEvent<T> : SubscribePublishEvent<T>
+    internal sealed class MergeEvent<T> : PublishEvent<T>
     {
         private Observable<T> source1;
         private Observable<T> source2;

@@ -2,7 +2,7 @@ namespace Potassium.Internal
 {
     using Potassium.Core;    
 
-    internal sealed class OnceEvent<T> : SubscribePublishEvent<T>
+    internal sealed class OnceEvent<T> : PublishEvent<T>
     {
         private Observable<T> source;
         private ISubscription<T>[] subscriptions;

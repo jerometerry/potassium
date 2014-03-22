@@ -9,7 +9,7 @@
     /// <typeparam name="T">The type of the value published through the event</typeparam>
     /// <remarks>An EventFeed can only be fed values from one Event. 
     /// If Feed is Invoked multiple times, an exception will be raised.</remarks>
-    public class EventFeed<T> : SubscribeRepublishEvent<T>
+    public class EventFeed<T> : RepublishEvent<T>
     {
         private ISubscription<T> subscription;
 

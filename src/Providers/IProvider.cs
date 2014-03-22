@@ -1,4 +1,4 @@
-﻿namespace Potassium.Core
+﻿namespace Potassium.Providers
 {
     /// <summary>
     /// IProvider is an interface that exposes a Property Value that provides values upon request.

@@ -8,7 +8,7 @@ namespace Potassium.Internal
     /// </summary>
     /// <typeparam name="T">The type of values published through the Event</typeparam>
     /// <remarks>Used by Behavior to support publishing of initial values of the Behavior</remarks>
-    internal abstract class SubscribePublishEvent<T> : SubscribeRepublishEvent<T>
+    internal abstract class PublishEvent<T> : RepublishEvent<T>
     {
         /// <summary>
         /// Gets the values that will be sent to newly added
@@ -23,7 +23,7 @@ namespace Potassium.Internal
 
         internal static TF[] GetSubscribeFirings<TF>(Observable<TF> source)
         {
-            var sink = source as SubscribePublishEvent<TF>;
+            var sink = source as PublishEvent<TF>;
             return sink == null ? null : sink.SubscriptionFirings();
         }
 

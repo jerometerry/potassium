@@ -3,8 +3,9 @@ namespace Potassium.Internal
     using System;
     using System.Linq;
     using Potassium.Core;
+    using Potassium.Providers;
 
-    internal sealed class SnapshotEvent<T, TB, TC> : SubscribePublishEvent<TC>
+    internal sealed class SnapshotEvent<T, TB, TC> : PublishEvent<TC>
     {
         private Observable<T> source;
         private Func<T, TB, TC> snapshot;
