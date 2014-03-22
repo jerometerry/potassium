@@ -2,6 +2,7 @@ namespace JT.Rx.Net.MemoryTests
 {
     using System;
     using System.Collections.Generic;
+    using JT.Rx.Net.Core;
     using JT.Rx.Net.Extensions;
     using NUnit.Framework;
 

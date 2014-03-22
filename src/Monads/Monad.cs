@@ -1,5 +1,7 @@
 ﻿namespace JT.Rx.Net.Monads
 {
+    using JT.Rx.Net.Core;
+
     public abstract class Monad<T> : Disposable, IValueSource<T>
     {
         /// <summary>

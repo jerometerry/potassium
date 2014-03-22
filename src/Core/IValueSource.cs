@@ -1,4 +1,4 @@
-﻿namespace JT.Rx.Net
+﻿namespace JT.Rx.Net.Core
 {
     public interface IValueSource<out T>
     {

@@ -1,5 +1,6 @@
 namespace JT.Rx.Net.MemoryTests
 {
+    using JT.Rx.Net.Core;
     using JT.Rx.Net.Extensions;
     using NUnit.Framework;
 

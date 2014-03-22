@@ -1,6 +1,6 @@
 namespace JT.Rx.Net.Internal
 {
-    
+    using JT.Rx.Net.Core;    
 
     /// <summary>
     /// SubscribePublishEvent is an Event that publishes some initial values 

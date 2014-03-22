@@ -1,8 +1,6 @@
 namespace JT.Rx.Net.MemoryTests
 {
-    
-    
-    
+    using JT.Rx.Net.Core;
     using NUnit.Framework;
 
     [TestFixture]

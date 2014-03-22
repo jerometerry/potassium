@@ -1,5 +1,6 @@
 namespace JT.Rx.Net.Internal
 {
+    using JT.Rx.Net.Core;
     using JT.Rx.Net.Monads;
     using JT.Rx.Net.Utilities;
 

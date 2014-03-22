@@ -2,6 +2,7 @@ namespace JT.Rx.Net.Internal
 {
     using System;
     using System.Collections.Generic;
+    using JT.Rx.Net.Core;
 
     /// <summary>
     /// Notification wraps an System.Action used to subscribe to Observables.

@@ -1,8 +1,8 @@
 namespace JT.Rx.Net.Internal
 {
-    
     using System;
     using System.Linq;
+    using JT.Rx.Net.Core;
 
     internal class FilterEvent<T> : SubscribePublishEvent<T>
     {

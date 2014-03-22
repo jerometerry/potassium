@@ -1,6 +1,6 @@
 ﻿namespace JT.Rx.Net.Internal
 {
-    
+    using JT.Rx.Net.Core;
 
     internal sealed class SwitchEvent<T> : EventPublisher<T>
     {

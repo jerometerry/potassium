@@ -1,7 +1,7 @@
 ﻿namespace JT.Rx.Net.Internal
 {
-    
     using System;
+    using JT.Rx.Net.Core;
 
     /// <summary>
     /// Publish the mapped value once per transaction if either the source Behavior or Behavior Map publishes.

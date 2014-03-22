@@ -1,4 +1,4 @@
-namespace JT.Rx.Net
+namespace JT.Rx.Net.Core
 {
     using System;
 

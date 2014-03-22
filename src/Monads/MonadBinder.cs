@@ -1,7 +1,7 @@
 ﻿namespace JT.Rx.Net.Monads
 {
-    
     using System;
+    using JT.Rx.Net.Core;
 
     /// <summary>
     /// MonadBinder is a continuous Behavior who's value is computed

@@ -1,8 +1,8 @@
 namespace JT.Rx.Net.Internal
 {
-    
     using System;
     using System.Collections.Generic;
+    using JT.Rx.Net.Core;
     using JT.Rx.Net.Monads;
 
     /// <summary>

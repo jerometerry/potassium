@@ -1,6 +1,7 @@
 ﻿namespace JT.Rx.Net.Internal
 {
     using System;
+    using JT.Rx.Net.Core;
 
     /// <summary>
     /// A TransactionContext is responsible for obtaining a Transaction

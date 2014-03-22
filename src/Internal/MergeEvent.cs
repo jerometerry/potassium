@@ -1,7 +1,7 @@
 namespace JT.Rx.Net.Internal
 {
-    
     using System.Linq;
+    using JT.Rx.Net.Core;
 
     internal sealed class MergeEvent<T> : SubscribePublishEvent<T>
     {

@@ -1,5 +1,6 @@
 ﻿namespace JT.Rx.Net.Extensions
 {
+    using JT.Rx.Net.Core;
     using JT.Rx.Net.Internal;    
 
     /// <summary>

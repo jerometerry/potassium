@@ -1,7 +1,7 @@
 ﻿namespace JT.Rx.Net.Monads
 {
     using System.Net;
-    
+    using JT.Rx.Net.Core;
     
     public class WebResource : Monad<string>
     {

@@ -1,7 +1,7 @@
 ﻿namespace JT.Rx.Net.Monads
 {
-    
     using System;
+    using JT.Rx.Net.Core;
 
     /// <summary>
     /// TernaryBehavior is a continuous Behavior that lifts a ternary function into a Behavior.

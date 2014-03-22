@@ -1,6 +1,6 @@
 ﻿namespace JT.Rx.Net.Monads
 {
-    
+    using JT.Rx.Net.Core;
     
     public class EqualityPredicate<T> : Predicate
     {
