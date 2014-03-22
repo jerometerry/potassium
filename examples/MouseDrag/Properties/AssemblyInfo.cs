@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Sodium.Examples.MouseDrag")]
-[assembly: AssemblyDescription("Sample project showing how to use Sodium.net to implement mouse drag, without yucky state management")]
+[assembly: AssemblyTitle("JT.Rx.Net.Examples.MouseDrag")]
+[assembly: AssemblyDescription("Sample project showing how to use JT.Rx.Net to implement mouse drag, without yucky state management")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Jerome Terry")]
-[assembly: AssemblyProduct("Sodium.net")]
+[assembly: AssemblyProduct("JT.Rx.Net")]
 [assembly: AssemblyCopyright("Copyright © 2014, Jerome Terry")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Sodium.MemoryTests")]
-[assembly: AssemblyDescription("Memory tests for the Sodium.net functional reactive programming library")]
+[assembly: AssemblyTitle("JT.Rx.Net.MemoryTests")]
+[assembly: AssemblyDescription("Memory tests for the JT.Rx.Net functional reactive programming library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Jerome Terry")]
-[assembly: AssemblyProduct("Sodium.net")]
+[assembly: AssemblyProduct("JT.Rx.Net")]
 [assembly: AssemblyCopyright("Copyright © 2014, Jerome Terry")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

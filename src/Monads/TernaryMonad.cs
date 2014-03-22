@@ -4,9 +4,7 @@
     using JT.Rx.Net.Core;
 
     /// <summary>
-    /// TernaryBehavior is a continuous Behavior that lifts a ternary function into a Behavior.
-    /// The value of the TernaryBehavior is computed by calling the ternary function, where
-    /// the parameters are the current values of Behaviors.
+    /// A TernaryMonad lifts a ternary function into a Monad
     /// </summary>
     /// <typeparam name="T">The type of the first parameter to the ternary function</typeparam>
     /// <typeparam name="TB">The type of the second parameter to the ternary function</typeparam>

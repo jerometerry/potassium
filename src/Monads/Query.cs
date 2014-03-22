@@ -3,7 +3,7 @@
     using System;
 
     /// <summary>
-    /// QueryBehavior is a continuous Behavior who's value is computed using a query method.
+    /// Query is a Monad who's value is computed by evaluating a query function.
     /// </summary>
     /// <typeparam name="T">The type of the return value of the query function</typeparam>
     public class Query<T> : Monad<T>

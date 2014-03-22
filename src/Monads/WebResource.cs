@@ -3,6 +3,9 @@
     using System.Net;
     using JT.Rx.Net.Core;
     
+    /// <summary>
+    /// WebResource is a Monad (of type string) who's value is computed by downloading content from the web (e.g. a REST web service returning JSON data).
+    /// </summary>
     public class WebResource : Monad<string>
     {
         private IValueSource<string> urlValueSource;
@@ -13,7 +16,7 @@
         /// <param name="url">The URL to load the content from</param>
         public WebResource(string url)
         {
-            var cb = new Constant<string>(url);
+            var cb = new Identity<string>(url);
             this.urlValueSource = cb;
             this.Register(cb);
         }

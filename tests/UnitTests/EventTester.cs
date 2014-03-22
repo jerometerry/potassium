@@ -4,7 +4,8 @@ namespace JT.Rx.Net.Tests
     using System.Collections.Generic;
     using System.Globalization;
     using JT.Rx.Net.Core;
-    using JT.Rx.Net.Monads;    
+    using JT.Rx.Net.Monads;
+    using JT.Rx.Net.Extensions;
     using NUnit.Framework;
 
     [TestFixture]
@@ -125,14 +126,15 @@ namespace JT.Rx.Net.Tests
         [Test]
         public void TestGate()
         {
+            var enabled = new IdentityPredicate(true);
             var ec = new EventPublisher<char>();
-            var epred = new IdentityPredicate(true);
+            var epred = new QueryPredicate(() => enabled.Value);
             var o = new List<char>();
             var l = ec.Gate(epred).Subscribe(o.Add);
             ec.Publish('H');
-            epred.SetValue(false);
+            enabled = new IdentityPredicate(false);
             ec.Publish('O');
-            epred.SetValue(true);
+            enabled = new IdentityPredicate(true);
             ec.Publish('I');
             l.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('H', 'I'), o);

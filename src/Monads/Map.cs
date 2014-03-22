@@ -2,7 +2,12 @@ namespace JT.Rx.Net.Monads
 {
     using System;
 
-    public class Map<TA,TB> : Monad<Func<TA, TB>>
+    /// <summary>
+    /// Map is a Monad who's value is a mapping function
+    /// </summary>
+    /// <typeparam name="TA">The input type of the mapping function</typeparam>
+    /// <typeparam name="TB">The return type of the mapping function</typeparam>
+    public class Map<TA, TB> : Monad<Func<TA, TB>>
     {
         private Func<TA, TB> map;
 

@@ -45,11 +45,14 @@
     <PresentationStyle>VS2010</PresentationStyle>
     <Preliminary>False</Preliminary>
     <NamingMethod>Guid</NamingMethod>
-    <HelpTitle>Sodium.net</HelpTitle>
+    <HelpTitle>JT.Rx.Net</HelpTitle>
     <ContentPlacement>AboveNamespaces</ContentPlacement>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="(global)" isDocumented="False" />
-      <NamespaceSummaryItem name="Sodium" isDocumented="True">The Sodium namespace contains all classes and interfaces for Sodium.net</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="JT.Rx.Net.Core" isDocumented="True">JT.Rx.Net.Core contains the main classes and interfaces for JT.Rx.Net</NamespaceSummaryItem>
+	  <NamespaceSummaryItem name="JT.Rx.Net.Extensions" isDocumented="True">JT.Rx.Net.Extensions contains the C# extension methods for JT.Rx.Net.</NamespaceSummaryItem>
+	  <NamespaceSummaryItem name="JT.Rx.Net.Monads" isDocumented="True">JT.Rx.Net.Monads classes for using monadic operations, such as Bind. The use of monads evolved from trying to implement a Behavior based on pure mathematical functions, which turns out can be done using the Identity Monad.</NamespaceSummaryItem>
+	  <NamespaceSummaryItem name="JT.Rx.Net.Utilities" isDocumented="True">JT.Rx.Net.Utility contains helper classes for JT.Rx.Net.</NamespaceSummaryItem>
     </NamespaceSummaries>
     <VisibleItems>None</VisibleItems>
     <FeedbackEMailAddress>jerome.l.terry%40gmail.com</FeedbackEMailAddress>

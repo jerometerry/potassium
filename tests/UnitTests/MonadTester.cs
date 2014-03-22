@@ -8,8 +8,9 @@
     [TestFixture]
     public class MonadTester
     {
-        private const double TwoPi = 2 * Math.PI;
-        
+        private const double TwoPi = 2.0 * Math.PI;
+        private const double PiBy2 = Math.PI / 2.0;
+
         [Test]
         public void TestRandomSin()
         {
@@ -25,14 +26,12 @@
         [Test]
         public void TestSin()
         {
-            var b = TwoPi.ToIdentity();
-            var sb = new Map<double, double>(Math.Sin);
-            var s = b.Bind(sb);
-            Console.WriteLine(s.Value);
-            Assert.AreEqual(0.0, s.Value, 1e-5);
-
-            b.SetValue(Math.PI / 2.0);
-            Assert.AreEqual(1.0, s.Value, 1e-5);
+            var u = new UnaryMonad<double, double>(Math.Sin, TwoPi.ToIdentity());
+            Console.WriteLine(u.Value);
+            Assert.AreEqual(0.0,u.Value, 1e-5);
+            
+            u = new UnaryMonad<double, double>(Math.Sin, PiBy2.ToIdentity());
+            Assert.AreEqual(1.0, u.Value, 1e-5);
         }
     }
 }

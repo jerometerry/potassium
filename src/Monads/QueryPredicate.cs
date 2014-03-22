@@ -2,6 +2,9 @@
 {
     using System;
 
+    /// <summary>
+    /// QueryPredicate is a Predicate who's value is computed by executing a predicate function.
+    /// </summary>
     public class QueryPredicate : Predicate
     {
         private Func<bool> predicate;

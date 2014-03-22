@@ -6,7 +6,7 @@
     using JT.Rx.Net.Utilities;
 
     /// <summary>
-    /// Observable is the base class for Observables and Behaviors, containing the subscription logic (i.e. the Observer Pattern).
+    /// Observable is the base class for Events, containing the subscription logic (i.e. the Observer Pattern).
     /// </summary>
     /// <typeparam name="T">The type of value published through the Observable</typeparam>
     public abstract class Observable<T> : Disposable

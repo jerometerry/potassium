@@ -1,11 +1,10 @@
-﻿namespace JT.Rx.Net.Internal
+﻿namespace JT.Rx.Net.Monads
 {
     using System;
     using JT.Rx.Net.Core;
-    using JT.Rx.Net.Monads;
 
     /// <summary>
-    /// A BinaryBehavior is a continuous Behavior that lifts a binary function
+    /// A BinaryBehavior lifts a binary function into a Monad
     /// </summary>
     /// <typeparam name="T">The type of first parameter to the lift function</typeparam>
     /// <typeparam name="TB">The type of the second parameter of the lift function</typeparam>

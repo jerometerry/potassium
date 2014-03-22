@@ -1,15 +1,17 @@
-namespace JT.Rx.Net.Monads
+﻿namespace JT.Rx.Net.Monads
 {
-    
-
+    /// <summary>
+    /// Identity is a Monad having a constant value
+    /// </summary>
+    /// <typeparam name="T">The type of value of the Monad</typeparam>
     public class Identity<T> : Monad<T>
     {
         private T value;
 
         /// <summary>
-        /// Constructs a new Identity
+        /// Constructs a new Constant
         /// </summary>
-        /// <param name="value">The value of the Identity</param>
+        /// <param name="value">The constant value of the Monad</param>
         public Identity(T value)
         {
             this.value = value;
@@ -19,20 +21,15 @@ namespace JT.Rx.Net.Monads
         {
             get
             {
-                return this.value;
+                return value;
             }
-        }
-
-        public void SetValue(T value)
-        {
-            this.value = value;
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                this.value = default(T);
+                value = default(T);
             }
 
             base.Dispose(disposing);

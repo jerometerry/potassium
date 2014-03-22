@@ -2,7 +2,9 @@
 {
     using System;
     
-
+    /// <summary>
+    /// RandomDouble is a Monad that lazily returns a random double when it's value is requested
+    /// </summary>
     public class RandomDouble : Monad<double>
     {
         private Random rnd = new Random();

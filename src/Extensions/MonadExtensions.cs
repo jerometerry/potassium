@@ -5,6 +5,9 @@
     using JT.Rx.Net.Internal;
     using JT.Rx.Net.Monads;
 
+    /// <summary>
+    /// Monad extension methods
+    /// </summary>
     public static class MonadExtensions
     {
         public static Monad<TB> Bind<TA, TB>(this IValueSource<TA> source, IValueSource<Func<TA, TB>> bf)

@@ -4,7 +4,7 @@
     using JT.Rx.Net.Internal;    
 
     /// <summary>
-    /// Reactive extensions for Behaviors
+    /// Behavior extensions methods
     /// </summary>
     public static class BehaviorExtensions
     {
