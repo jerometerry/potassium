@@ -3,9 +3,9 @@ namespace JT.Rx.Net.Tests
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using JT.Rx.Net.Continuous;
-    using JT.Rx.Net.Core;
-    using JT.Rx.Net.Discrete;
+    
+    
+    
     using NUnit.Framework;
 
     [TestFixture]

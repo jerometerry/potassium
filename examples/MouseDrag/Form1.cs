@@ -1,8 +1,8 @@
 ﻿namespace JT.Rx.Net.Examples.MouseDrag
 {
-    using JT.Rx.Net.Core;
-    using JT.Rx.Net.Continuous;
-    using JT.Rx.Net.Discrete;
+    
+    
+    
 
     using System;
     using System.Windows.Forms;

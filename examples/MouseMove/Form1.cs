@@ -1,7 +1,7 @@
 ﻿namespace JT.Rx.Net.Examples.MouseMove
 {
-    using JT.Rx.Net.Core;
-    using JT.Rx.Net.Discrete;
+    
+    
     using System;
     using System.Windows.Forms;
 

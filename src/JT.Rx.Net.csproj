@@ -47,72 +47,72 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Extensions.cs" />
-    <Compile Include="Core\MonadBinder.cs" />
-    <Compile Include="Continuous\Extensions.cs" />
-    <Compile Include="Core\Identity.cs" />
-    <Compile Include="Core\Monad.cs" />
-    <Compile Include="Continuous\Discretizer.cs" />
-    <Compile Include="Core\IBehavior.cs" />
-    <Compile Include="Discrete\BehaviorApplyEvent.cs" />
-    <Compile Include="Core\BinaryMonad.cs" />
-    <Compile Include="Core\Constant.cs" />
-    <Compile Include="Continuous\IdentityPredicate.cs" />
-    <Compile Include="Discrete\EventPublisher.cs" />
-    <Compile Include="Continuous\LocalTime.cs" />
-    <Compile Include="Core\Map.cs" />
-    <Compile Include="Core\Predicate.cs" />
-    <Compile Include="Continuous\QueryPredicate.cs" />
-    <Compile Include="Core\Query.cs" />
-    <Compile Include="Continuous\RandomDouble.cs" />
-    <Compile Include="Continuous\RandomInt.cs" />
-    <Compile Include="Core\SubscriptionPublisher.cs" />
-    <Compile Include="Discrete\BehaviorExtensions.cs" />
-    <Compile Include="Core\Observable.cs" />
-    <Compile Include="Discrete\ObservedValue.cs" />
-    <Compile Include="Discrete\EventFeed.cs" />
-    <Compile Include="Discrete\SubscribePublishEvent.cs" />
-    <Compile Include="Discrete\LastFiringEvent.cs" />
-    <Compile Include="Core\Event.cs" />
-    <Compile Include="Core\Disposable.cs" />
-    <Compile Include="Discrete\BehaviorValueEvent.cs" />
-    <Compile Include="Discrete\CoalesceEvent.cs" />
-    <Compile Include="Core\Constants.cs" />
-    <Compile Include="Core\PrioritizedAction.cs" />
-    <Compile Include="Discrete\SubscribeRepublishEvent.cs" />
-    <Compile Include="Discrete\SuppressedSubscribeEvent.cs" />
-    <Compile Include="Discrete\SwitchBehaviorEvent.cs" />
-    <Compile Include="Discrete\FilterEvent.cs" />
-    <Compile Include="Core\ISubscription.cs" />
-    <Compile Include="Core\Subscription.cs" />
-    <Compile Include="Discrete\MapEvent.cs" />
-    <Compile Include="Core\Maybe.cs" />
-    <Compile Include="Discrete\MergeEvent.cs" />
-    <Compile Include="Discrete\OnceEvent.cs" />
-    <Compile Include="Core\PriorityQueue.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="MonadBinder.cs" />
+    <Compile Include="Identity.cs" />
+    <Compile Include="Monad.cs" />
+    <Compile Include="Discretizer.cs" />
+    <Compile Include="IBehavior.cs" />
+    <Compile Include="BehaviorApplyEvent.cs" />
+    <Compile Include="BinaryMonad.cs" />
+    <Compile Include="Constant.cs" />
+    <Compile Include="IdentityPredicate.cs" />
+    <Compile Include="EventPublisher.cs" />
+    <Compile Include="LocalTime.cs" />
+    <Compile Include="Map.cs" />
+    <Compile Include="Predicate.cs" />
+    <Compile Include="QueryPredicate.cs" />
+    <Compile Include="Query.cs" />
+    <Compile Include="RandomDouble.cs" />
+    <Compile Include="RandomInt.cs" />
+    <Compile Include="SubscriptionPublisher.cs" />
+    <Compile Include="BehaviorExtensions.cs" />
+    <Compile Include="Observable.cs" />
+    <Compile Include="ObservedValue.cs" />
+    <Compile Include="EventFeed.cs" />
+    <Compile Include="SubscribePublishEvent.cs" />
+    <Compile Include="LastFiringEvent.cs" />
+    <Compile Include="Event.cs" />
+    <Compile Include="Disposable.cs" />
+    <Compile Include="BehaviorValueEvent.cs" />
+    <Compile Include="CoalesceEvent.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="PrioritizedAction.cs" />
+    <Compile Include="SubscribeRepublishEvent.cs" />
+    <Compile Include="SuppressedSubscribeEvent.cs" />
+    <Compile Include="SwitchBehaviorEvent.cs" />
+    <Compile Include="FilterEvent.cs" />
+    <Compile Include="ISubscription.cs" />
+    <Compile Include="Subscription.cs" />
+    <Compile Include="MapEvent.cs" />
+    <Compile Include="Maybe.cs" />
+    <Compile Include="MergeEvent.cs" />
+    <Compile Include="OnceEvent.cs" />
+    <Compile Include="PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Discrete\BehaviorLastValueEvent.cs" />
-    <Compile Include="Core\TernaryMonad.cs" />
-    <Compile Include="Continuous\UtcTime.cs" />
-    <Compile Include="Continuous\EqualityPredicate.cs" />
-    <Compile Include="Continuous\WebResource.cs" />
+    <Compile Include="BehaviorLastValueEvent.cs" />
+    <Compile Include="TernaryMonad.cs" />
+    <Compile Include="UtcTime.cs" />
+    <Compile Include="EqualityPredicate.cs" />
+    <Compile Include="WebResource.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Discrete\Behavior.cs" />
+    <Compile Include="Behavior.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Discrete\SnapshotEvent.cs" />
-    <Compile Include="Discrete\SwitchEvent.cs" />
-    <Compile Include="Continuous\Time.cs" />
-    <Compile Include="Core\Transaction.cs" />
+    <Compile Include="SnapshotEvent.cs" />
+    <Compile Include="SwitchEvent.cs" />
+    <Compile Include="Time.cs" />
+    <Compile Include="Transaction.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Priority.cs" />
+    <Compile Include="Priority.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\TransactionContext.cs" />
-    <Compile Include="Core\Unit.cs" />
+    <Compile Include="TransactionContext.cs" />
+    <Compile Include="Unit.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
