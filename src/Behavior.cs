@@ -2,6 +2,7 @@ namespace JT.Rx.Net
 {
     using System;
     using JT.Rx.Net.Internal;
+    using JT.Rx.Net.Monads;
 
     /// <summary>
     /// Behavior contains a value which is updated when the underlying Event is updated.

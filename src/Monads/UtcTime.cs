@@ -1,14 +1,14 @@
-namespace JT.Rx.Net
+namespace JT.Rx.Net.Monads
 {
     using System;
     
-    public class LocalTime : Time
+    public class UtcTime : Time
     {
         public override DateTime Value
         {
             get
             {
-                return DateTime.Now;
+                return DateTime.UtcNow;
             }
         }
     }

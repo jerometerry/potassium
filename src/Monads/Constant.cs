@@ -1,4 +1,4 @@
-﻿namespace JT.Rx.Net
+﻿namespace JT.Rx.Net.Monads
 {
     /// <summary>
     /// A Behavior who's value never changes, even if published new values.

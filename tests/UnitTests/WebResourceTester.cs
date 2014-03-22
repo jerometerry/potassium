@@ -1,8 +1,7 @@
 ﻿namespace JT.Rx.Net.Tests
 {
     using System;
-    using System.Collections.Generic;
-    using System.Threading;
+    using JT.Rx.Net.Monads;
     
     using NUnit.Framework;
 

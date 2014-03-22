@@ -2,6 +2,7 @@
 {
     using System;
     using JT.Rx.Net.Internal;
+    using JT.Rx.Net.Monads;
 
     /// <summary>
     /// An Event is a discrete signal of values.

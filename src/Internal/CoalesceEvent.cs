@@ -3,6 +3,7 @@ namespace JT.Rx.Net.Internal
     
     using System;
     using System.Collections.Generic;
+    using JT.Rx.Net.Monads;
 
     /// <summary>
     /// CoalesceEvent combines multiple publishings from a source into a single publishing, using a 

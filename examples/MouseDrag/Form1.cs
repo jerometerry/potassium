@@ -1,11 +1,8 @@
 ﻿namespace JT.Rx.Net.Examples.MouseDrag
 {
-    
-    
-    
-
     using System;
     using System.Windows.Forms;
+    using JT.Rx.Net.Monads;
 
     public partial class Form1 : Form
     {

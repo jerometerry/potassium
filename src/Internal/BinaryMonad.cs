@@ -1,6 +1,7 @@
 ﻿namespace JT.Rx.Net.Internal
 {
     using System;
+    using JT.Rx.Net.Monads;
 
     /// <summary>
     /// A BinaryBehavior is a continuous Behavior that lifts a binary function

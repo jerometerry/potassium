@@ -47,23 +47,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MonadExtensions.cs" />
-    <Compile Include="MonadBinder.cs" />
-    <Compile Include="Identity.cs" />
-    <Compile Include="Monad.cs" />
+    <Compile Include="Monads\MonadExtensions.cs" />
+    <Compile Include="Monads\MonadBinder.cs" />
+    <Compile Include="Monads\Identity.cs" />
+    <Compile Include="Monads\Monad.cs" />
     <Compile Include="IValueSource.cs" />
     <Compile Include="Internal\BehaviorApplyEvent.cs" />
     <Compile Include="Internal\BinaryMonad.cs" />
-    <Compile Include="Constant.cs" />
-    <Compile Include="IdentityPredicate.cs" />
+    <Compile Include="Monads\Constant.cs" />
+    <Compile Include="Monads\IdentityPredicate.cs" />
     <Compile Include="EventPublisher.cs" />
-    <Compile Include="LocalTime.cs" />
-    <Compile Include="Map.cs" />
-    <Compile Include="Predicate.cs" />
-    <Compile Include="QueryPredicate.cs" />
-    <Compile Include="Query.cs" />
-    <Compile Include="RandomDouble.cs" />
-    <Compile Include="RandomInt.cs" />
+    <Compile Include="Monads\LocalTime.cs" />
+    <Compile Include="Monads\Map.cs" />
+    <Compile Include="Monads\Predicate.cs" />
+    <Compile Include="Monads\QueryPredicate.cs" />
+    <Compile Include="Monads\Query.cs" />
+    <Compile Include="Monads\RandomDouble.cs" />
+    <Compile Include="Monads\RandomInt.cs" />
     <Compile Include="Internal\SubscriptionPublisher.cs" />
     <Compile Include="BehaviorExtensions.cs" />
     <Compile Include="Observable.cs" />
@@ -84,16 +84,16 @@
     <Compile Include="ISubscription.cs" />
     <Compile Include="Internal\Subscription.cs" />
     <Compile Include="Internal\MapEvent.cs" />
-    <Compile Include="Maybe.cs" />
+    <Compile Include="Monads\Maybe.cs" />
     <Compile Include="Internal\MergeEvent.cs" />
     <Compile Include="Internal\OnceEvent.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Internal\BehaviorLastValueEvent.cs" />
-    <Compile Include="TernaryMonad.cs" />
-    <Compile Include="UtcTime.cs" />
-    <Compile Include="EqualityPredicate.cs" />
-    <Compile Include="WebResource.cs" />
+    <Compile Include="Monads\TernaryMonad.cs" />
+    <Compile Include="Monads\UtcTime.cs" />
+    <Compile Include="Monads\EqualityPredicate.cs" />
+    <Compile Include="Monads\WebResource.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behavior.cs" />
@@ -101,7 +101,7 @@
   <ItemGroup>
     <Compile Include="Internal\SnapshotEvent.cs" />
     <Compile Include="Internal\SwitchEvent.cs" />
-    <Compile Include="Time.cs" />
+    <Compile Include="Monads\Time.cs" />
     <Compile Include="Transaction.cs" />
   </ItemGroup>
   <ItemGroup>
