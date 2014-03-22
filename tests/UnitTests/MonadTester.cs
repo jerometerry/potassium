@@ -45,16 +45,28 @@
             return Tuple.Create(rand, newState);
         }
 
-        [Test]
-        public void TestStateGetRandom()
+        public State<int, short> GetRandom()
         {
             var s = State.Get<int>();
-            var tmp = s.Bind(s0 =>
+            return s.Bind(s0 =>
             {
                 var rand = NextShort(s0);
                 var setState = State.Set(rand.Item2);
                 return setState.Bind(_ => new State<int, short>(a => Tuple.Create(rand.Item2, rand.Item1)));
             });
+        }
+
+        [Test]
+        public void TestRandom()
+        {
+            var state = GetRandom().Bind(
+                a => GetRandom().Bind(
+                    b => GetRandom().Bind(
+                        c => (a + b + c)
+                            .ToState<int, int>())));
+
+            var result = state.Computation(0);
+            Console.WriteLine(result.Item2);
         }
     }
 }
