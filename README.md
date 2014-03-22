@@ -7,9 +7,9 @@ Potassium is a Functional Rective Programming Library for .NET, based on [Sodium
 
 However, there was no implementation for .NET. Hence this project.
 
-Check out the [wiki](https://github.com/jerometerry/jt.rx.net/wiki) for more information.
+Check out the [wiki](https://github.com/jerometerry/potassium/wiki) for more information.
 
-Potassium API [documentation](http://jterry.azurewebsites.net/jt.rx.net/)
+Potassium API [documentation](http://jterry.azurewebsites.net/potassium/)
 
 Overview
 ==========
