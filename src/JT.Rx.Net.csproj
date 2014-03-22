@@ -86,6 +86,7 @@
     <Compile Include="Monads\Maybe.cs" />
     <Compile Include="Internal\MergeEvent.cs" />
     <Compile Include="Internal\OnceEvent.cs" />
+    <Compile Include="Monads\State.cs" />
     <Compile Include="Monads\UnaryMonad.cs" />
     <Compile Include="Utilities\PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
