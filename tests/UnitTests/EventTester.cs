@@ -8,7 +8,7 @@ namespace JT.Rx.Net.Tests
     using NUnit.Framework;
 
     [TestFixture]
-    public class EventTester : SodiumTestCase
+    public class EventTester : TestBase
     {
         [Test]
         public void TestPublishEvent()

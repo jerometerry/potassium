@@ -9,7 +9,7 @@ namespace JT.Rx.Net.Tests
     using NUnit.Framework;
 
     [TestFixture]
-    public class BehaviorTester : SodiumTestCase
+    public class BehaviorTester : TestBase
     {
         [Test]
         public void TestHold()

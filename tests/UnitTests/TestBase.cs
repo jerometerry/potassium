@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using NUnit.Framework;
 
-    public class SodiumTestCase
+    public class TestBase
     {
         public static void AssertArraysEqual<TA>(List<TA> l1, List<TA> l2)
         {
