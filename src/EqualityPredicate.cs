@@ -4,21 +4,22 @@
     
     public class EqualityPredicate<T> : Predicate
     {
-        private IBehavior<T> behavior;
-        private T value;
+        private IValueSource<T> valueSource;
+        
+        private T v;
 
-        public EqualityPredicate(IBehavior<T> behavior, T value)
+        public EqualityPredicate(IValueSource<T> valueSource, T v)
         {
-            this.behavior = behavior;
-            this.value = value;
+            this.valueSource = valueSource;
+            this.v = v;
         }
 
         public override bool Value
         {
             get
             {
-                var v1 = new Maybe<T>(behavior.Value);
-                var v2 = new Maybe<T>(value);
+                var v1 = new Maybe<T>(this.valueSource.Value);
+                var v2 = new Maybe<T>(v);
                 return v1.Equals(v2);
             }
         }
@@ -27,8 +28,8 @@
         {
             if (disposing)
             {
-                behavior = null;
-                value = default(T);
+                this.valueSource = null;
+                v = default(T);
             }
 
             base.Dispose(disposing);

@@ -1,7 +1,5 @@
 ﻿namespace JT.Rx.Net
 {
-    
-    
     using System;
 
     /// <summary>
@@ -192,86 +190,6 @@
             return new MapEvent<T, TB>(this, map);
         }
 
-        public static Event<T> operator +(Event<T> e, T value)
-        {
-            return e.Map<T>((t) =>
-            {
-                dynamic a = t;
-                dynamic b = value;
-                return a + b;
-            });
-        }
-
-        public static Event<T> operator -(Event<T> e, T value)
-        {
-            return e.Map<T>((t) =>
-            {
-                dynamic a = t;
-                dynamic b = value;
-                return a - b;
-            });
-        }
-
-        public static Event<T> operator *(Event<T> e, T value)
-        {
-            return e.Map<T>((t) =>
-            {
-                dynamic a = t;
-                dynamic b = value;
-                return a * b;
-            });
-        }
-        
-        public static Event<T> operator /(Event<T> e, T value)
-        {
-            return e.Map<T>((t) =>
-            {
-                dynamic a = t;
-                dynamic b = value;
-                return a / b;
-            });
-        }
-
-        public static Event<T> operator +(Event<T> e, IBehavior<T> b)
-        {
-            return e.Map<T>((t) =>
-            {
-                dynamic v1 = t;
-                dynamic v2 = b.Value;
-                return v1 + v2;
-            });
-        }
-
-        public static Event<T> operator -(Event<T> e, IBehavior<T> b)
-        {
-            return e.Map<T>((t) =>
-            {
-                dynamic v1 = t;
-                dynamic v2 = b.Value;
-                return v1 - v2;
-            });
-        }
-
-        public static Event<T> operator *(Event<T> e, IBehavior<T> b)
-        {
-            return e.Map<T>((t) =>
-            {
-                dynamic v1 = t;
-                dynamic v2 = b.Value;
-                return v1 * v2;
-            });
-        }
-
-        public static Event<T> operator /(Event<T> e, IBehavior<T> b)
-        {
-            return e.Map<T>((t) =>
-            {
-                dynamic v1 = t;
-                dynamic v2 = b.Value;
-                return v1 / v2;
-            });
-        }
-
         /// <summary>
         /// Merge two streams of events of the same type.
         /// </summary>
@@ -304,21 +222,10 @@
         /// </remarks>
         public Event<T> Merge(Observable<T> observable, Func<T, T, T> coalesce)
         {
-            var merge = this + observable;
+            var merge = this.Merge(observable);
             var c = merge.Coalesce(coalesce);
             c.Register(merge);
             return c;
-        }
-
-        /// <summary>
-        /// The addition operation merges two Observables together to form a new Event
-        /// </summary>
-        /// <param name="c1">The first Observable</param>
-        /// <param name="c2">The second Observable</param>
-        /// <returns>A new Event combining the publishings of the two Observable</returns>
-        public static Event<T> operator +(Event<T> e, Observable<T> o)
-        {
-            return e.Merge(o);
         }
 
         /// <summary>
@@ -337,23 +244,23 @@
         /// </summary>
         /// <typeparam name="TB">The type of the Behavior</typeparam>
         /// <typeparam name="TC">The return type of the snapshot function</typeparam>
-        /// <param name="valueStream">The Behavior to sample when calculating the snapshot</param>
+        /// <param name="valueSourceStream">The Behavior to sample when calculating the snapshot</param>
         /// <param name="snapshot">The snapshot generation function.</param>
         /// <returns>A new Event that will produce the snapshot when the current event publishes</returns>
-        public Event<TC> Snapshot<TB, TC>(IBehavior<TB> valueStream, Func<T, TB, TC> snapshot)
+        public Event<TC> Snapshot<TB, TC>(IValueSource<TB> valueSourceStream, Func<T, TB, TC> snapshot)
         {
-            return new SnapshotEvent<T, TB, TC>(this, snapshot, valueStream);
+            return new SnapshotEvent<T, TB, TC>(this, snapshot, valueSourceStream);
         }
 
         /// <summary>
         /// Variant of snapshot that throws away the event's value and captures the behavior's.
         /// </summary>
         /// <typeparam name="TB">The type of the Behavior</typeparam>
-        /// <param name="valueStream">The Behavior to sample when taking the snapshot</param>
+        /// <param name="valueSourceStream">The Behavior to sample when taking the snapshot</param>
         /// <returns>An event that captures the Behaviors value when the current event publishes</returns>
-        public Event<TB> Snapshot<TB>(IBehavior<TB> valueStream)
+        public Event<TB> Snapshot<TB>(IValueSource<TB> valueSourceStream)
         {
-            return this.Snapshot(valueStream, (a, b) => b);
+            return this.Snapshot(valueSourceStream, (a, b) => b);
         }
     }
 }

@@ -11,8 +11,8 @@
     public class BinaryMonad<T, TB, TC> : Monad<TC>
     {
         private Func<T, TB, TC> lift;
-        private IBehavior<T> a;
-        private IBehavior<TB> b;
+        private IValueSource<T> a;
+        private IValueSource<TB> b;
 
         /// <summary>
         /// 
@@ -20,7 +20,7 @@
         /// <param name="lift"></param>
         /// <param name="a"></param>
         /// <param name="b"></param>
-        public BinaryMonad(Func<T, TB, TC> lift, IBehavior<T> a, IBehavior<TB> b)
+        public BinaryMonad(Func<T, TB, TC> lift, IValueSource<T> a, IValueSource<TB> b)
         {
             this.lift = lift;
             this.a = a;

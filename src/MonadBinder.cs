@@ -13,15 +13,15 @@
     /// <typeparam name="TB">The return type of the mapping functions</typeparam>
     public class MonadBinder<T, TB> : Monad<TB>
     {
-        private IBehavior<T> source;
-        private IBehavior<Func<T, TB>> bf;
+        private IValueSource<T> source;
+        private IValueSource<Func<T, TB>> bf;
 
-        public MonadBinder(IBehavior<T> source, Func<T, TB> bf)
+        public MonadBinder(IValueSource<T> source, Func<T, TB> bf)
             : this(source, new Map<T, TB>(bf))
         {
         }
 
-        public MonadBinder(IBehavior<T> source, IBehavior<Func<T, TB>> bf)
+        public MonadBinder(IValueSource<T> source, IValueSource<Func<T, TB>> bf)
         {
             this.source = source;
             this.bf = bf;

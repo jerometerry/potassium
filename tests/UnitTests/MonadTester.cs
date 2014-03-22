@@ -11,33 +11,7 @@
     public class MonadTester
     {
         private const double TwoPi = 2 * Math.PI;
-
-        [Test]
-        public void TestDiscretize()
-        {
-            var timeB = new LocalTime();
-            var results = new List<DateTime>();
-
-            var p = new QueryPredicate(() => results.Count >= 5);
-            var evt = timeB.ToEvent(TimeSpan.FromMilliseconds(100), p);
-            var s = evt.Subscribe(results.Add);
-            evt.Start();
-
-            while (!evt.Complete)
-            {
-                Thread.Sleep(0);
-            }
-
-            s.Dispose();
-            evt.Dispose();
-            Assert.AreEqual(5, results.Count);
-
-            foreach (var t in results)
-            {
-                Console.WriteLine("{0:dd/MM/yy HH:mm:ss.fff}", t);
-            }
-        }
-
+        
         [Test]
         public void TestRandomSin()
         {

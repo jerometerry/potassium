@@ -37,69 +37,12 @@ namespace JT.Rx.Net.Tests
         }
 
         [Test]
-        public void TestAdd()
-        {
-            var e = new EventPublisher<int>();
-            var m = e + 100;
-            var o = new List<int>();
-            var l = m.Subscribe(o.Add);
-            e.Publish(5);
-            e.Publish(6);
-            e.Publish(7);
-            l.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(105, 106, 107), o);
-        }
-
-        [Test]
-        public void TestAddBehavior()
-        {
-            var b = new Constant<int>(100);
-            var e = new EventPublisher<int>();
-            var m = e + b;
-            var o = new List<int>();
-            var l = m.Subscribe(o.Add);
-            e.Publish(5);
-            e.Publish(6);
-            e.Publish(7);
-            l.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(105, 106, 107), o);
-        }
-
-        [Test]
-        public void TestAddStrings()
-        {
-            var e = new EventPublisher<string>();
-            var m = e + "@";
-            var o = new List<string>();
-            var l = m.Subscribe(o.Add);
-            e.Publish("5");
-            e.Publish("6");
-            e.Publish("7");
-            l.Dispose();
-            AssertArraysEqual(Arrays<string>.AsList("5@", "6@", "7@"), o);
-        }
-
-        [Test]
-        public void TestMultiply()
-        {
-            var e = new EventPublisher<int>();
-            var m = e * 2;
-            var o = new List<int>();
-            var l = m.Subscribe(o.Add);
-            e.Publish(5);
-            e.Publish(6);
-            e.Publish(7);
-            l.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(10, 12, 14), o);
-        }
-
-        [Test]
         public void TestMergeNonSimultaneous()
         {
             var e1 = new EventPublisher<int>();
             var e2 = new EventPublisher<int>();
             var o = new List<int>();
-            var l = (e1 + e2).Subscribe(o.Add);
+            var l = e1.Merge(e2).Subscribe(o.Add);
             e1.Publish(7);
             e2.Publish(9);
             e1.Publish(8);
@@ -112,7 +55,7 @@ namespace JT.Rx.Net.Tests
         {
             var e = new EventPublisher<int>();
             var o = new List<int>();
-            var l = (e + e).Subscribe(o.Add);
+            var l = e.Merge(e).Subscribe(o.Add);
             e.Publish(7);
             e.Publish(9);
             l.Dispose();
@@ -126,8 +69,8 @@ namespace JT.Rx.Net.Tests
             var e2 = new EventPublisher<int>();
             var o = new List<int>();
             var evt2 = e1.Map(x => x * 100);
-            var evt = evt2 + e2;
-            var l = (e1 + evt)
+            var evt = evt2.Merge(e2);
+            var l = e1.Merge(evt)
                       .Coalesce((a, b) => a + b)
                       .Subscribe(o.Add);
             e1.Publish(2);

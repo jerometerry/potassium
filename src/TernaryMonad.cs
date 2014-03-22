@@ -15,11 +15,11 @@
     public class TernaryMonad<T, TB, TC, TD> : Monad<TD>
     {
         private Func<T, TB, TC, TD> lift;
-        private IBehavior<T> a;
-        private IBehavior<TB> b;
-        private IBehavior<TC> c;
+        private IValueSource<T> a;
+        private IValueSource<TB> b;
+        private IValueSource<TC> c;
 
-        public TernaryMonad(Func<T, TB, TC, TD> lift, IBehavior<T> a, IBehavior<TB> b, IBehavior<TC> c)
+        public TernaryMonad(Func<T, TB, TC, TD> lift, IValueSource<T> a, IValueSource<TB> b, IValueSource<TC> c)
         {
             this.lift = lift;
             this.a = a;

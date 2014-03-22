@@ -8,14 +8,14 @@ namespace JT.Rx.Net
     {
         private Observable<T> source;
         private Func<T, TB, TC> snapshot;
-        private IBehavior<TB> behavior;
+        private IValueSource<TB> valueSource;
         private ISubscription<T> subscription;
 
-        public SnapshotEvent(Observable<T> source, Func<T, TB, TC> snapshot, IBehavior<TB> behavior)
+        public SnapshotEvent(Observable<T> source, Func<T, TB, TC> snapshot, IValueSource<TB> valueSource)
         {
             this.source = source;
             this.snapshot = snapshot;
-            this.behavior = behavior;
+            this.valueSource = valueSource;
 
             var callback = new SubscriptionPublisher<T>(this.Publish);
             this.subscription = source.Subscribe(callback, this.Priority);
@@ -23,7 +23,7 @@ namespace JT.Rx.Net
 
         public void Publish(T publishing, Transaction transaction)
         {
-            var f = this.behavior.Value;
+            var f = this.valueSource.Value;
             var v = this.snapshot(publishing, f);
             this.Publish(v, transaction);
         }
@@ -36,7 +36,7 @@ namespace JT.Rx.Net
                 return null;
             }
             
-            var results = events.Select(e => this.snapshot(e, this.behavior.Value));
+            var results = events.Select(e => this.snapshot(e, this.valueSource.Value));
             return results.ToArray();
         }
 
@@ -49,7 +49,7 @@ namespace JT.Rx.Net
             }
 
             source = null;
-            behavior = null;
+            this.valueSource = null;
             snapshot = null;
 
             base.Dispose(disposing);

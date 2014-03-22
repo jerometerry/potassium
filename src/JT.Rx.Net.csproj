@@ -47,12 +47,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions.cs" />
+    <Compile Include="MonadExtensions.cs" />
     <Compile Include="MonadBinder.cs" />
     <Compile Include="Identity.cs" />
     <Compile Include="Monad.cs" />
-    <Compile Include="Discretizer.cs" />
-    <Compile Include="IBehavior.cs" />
+    <Compile Include="IValueSource.cs" />
     <Compile Include="BehaviorApplyEvent.cs" />
     <Compile Include="BinaryMonad.cs" />
     <Compile Include="Constant.cs" />
