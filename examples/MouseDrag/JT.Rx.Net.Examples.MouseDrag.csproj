@@ -7,8 +7,8 @@
     <ProjectGuid>{E639F622-0C53-4760-B3DB-F277CC42CBD7}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sodium.Examples.MouseDrag</RootNamespace>
-    <AssemblyName>Sodium.Examples.MouseDrag</AssemblyName>
+    <RootNamespace>JT.Rx.Net.Examples.MouseDrag</RootNamespace>
+    <AssemblyName>JT.Rx.Net.Examples.MouseDrag</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>

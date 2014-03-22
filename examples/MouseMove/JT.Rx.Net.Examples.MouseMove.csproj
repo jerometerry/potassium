@@ -7,8 +7,8 @@
     <ProjectGuid>{EA5D9EBC-4B79-4971-9E96-755B688B1825}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sodium.Examples.MouseMove</RootNamespace>
-    <AssemblyName>Sodium.Examples.MouseMove</AssemblyName>
+    <RootNamespace>JT.Rx.Net.Examples.MouseMove</RootNamespace>
+    <AssemblyName>JT.Rx.Net.Examples.MouseMove</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -63,6 +63,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
