@@ -37,7 +37,7 @@ namespace JT.Rx.Net.Discrete
         /// </summary>
         /// <param name="source">The Observable to monitor for value updates</param>
         /// <param name="initValue">The initial value of the ObservedValue</param>
-        public ObservedValue(Observable<T> source, T initValue)
+        public ObservedValue(T initValue, Observable<T> source)
         {
             this.source = source;
             this.Value = initValue;

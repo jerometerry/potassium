@@ -4,10 +4,10 @@ namespace JT.Rx.Net.Discrete
     using JT.Rx.Net.Core;
 
     /// <summary>
-    /// EventBasedBehavior is a Behavior who's value is updated when the underlying Event is updated.
+    /// Behavior contains a value which is updated when the underlying Event is updated.
     /// </summary>
     /// <typeparam name="T">The type of values that will be published through the Behavior.</typeparam>
-    public class Behavior<T> : Disposable, IBehavior<T>
+    public class Behavior<T> : Monad<T>
     {
         private ObservedValue<T> observedValue;
 
@@ -27,19 +27,9 @@ namespace JT.Rx.Net.Discrete
         /// <param name="source">The Observable to listen for updates from</param>
         /// <param name="value">The initial value of the Behavior</param>
         public Behavior(T value, Event<T> source)
-            : this(source, value)
         {
             this.Source = source;
-        }
-
-        /// <summary>
-        /// Constructs a new ObservableDrivenBehavior from an observable and a starting value
-        /// </summary>
-        /// <param name="observable">The Observable to monitor for updates</param>
-        /// <param name="value">The initial value of the Behavior</param>
-        private Behavior(Observable<T> observable, T value)
-        {
-            this.observedValue = new ObservedValue<T>(observable, value);
+            this.observedValue = new ObservedValue<T>(value, source);
         }
 
         /// <summary>
@@ -47,7 +37,7 @@ namespace JT.Rx.Net.Discrete
         /// </summary>
         public Event<T> Source { get; private set; }
 
-        public T Value
+        public override T Value
         {
             get
             {
