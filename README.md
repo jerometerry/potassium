@@ -23,7 +23,7 @@ The operations are Accum, Apply, Coalesce, Collect, Filter, Gate, Hold, Lift, Ma
 JT.Rx.Net uses the Publish / Subscribe Pattern
 
 * EventPublisher / BehaviorPublisher are the Publishers
-* Observable.Subscribe is used to create subscriptions
+* Event.Subscribe is used to create subscriptions
 
 Key Classes
 ==========
@@ -34,7 +34,7 @@ Here's a code snippit for listening to an Event of int's.
 ```
     Event<int> e; // obtained from a series of operations on Events / Behaviors
     ...
-    var l = e.Listen(v => Console.Write("{0} ", v));
+    var s = e.Subscribe(v => Console.Write("{0} ", v));
 ```
 
 **Behavior** - a continuous, time varying value. In JT.Rx.Net, a Behavior is composed of a value, and an Event that is listened to to update the value. The Event inside the Behavior is accessed via the *Source* Property.
@@ -43,10 +43,10 @@ Here's a code snippit for listeneing to a Behavior of int's.
 ```
     Behavior<int> b; // obtained from a series of operations on Events / Behaviors
     ...
-    var l = b.Listen(v => Console.Write("{0} ", v));
+    var s = b.Subscribe(v => Console.Write("{0} ", v));
 ``` 
 
-**EventPublisher** - EventPublisher is an Event that can be published.
+**EventPublisher** - EventPublisher is an Event that exposes a Publish method, allowing callers to publish values to it's subscribers.
 
 Here's an example of creating an EventPublisher, and publishing a value to all registered subscribers.
 ```
@@ -55,7 +55,7 @@ Here's an example of creating an EventPublisher, and publishing a value to all r
     e.Publish(0);
 ```
 
-**BehaviorPublisher** - BehaviorPublisher is a Behavior that can be published
+**BehaviorPublisher** - BehaviorPublisher is a Behavior that that exposes a Publish method, allowing callers to publish values to it's subscribers.
 
 Here's an example of constructing a BehaviorPublisher with an initial value of zero, and publishing a new value of one,  after some operations that register subscribers.
 ```
@@ -64,25 +64,25 @@ Here's an example of constructing a BehaviorPublisher with an initial value of z
     b.Publish(1);
 ```
 
-**EventLoop** - EventLoop is an EventPublisher that listens to another Event for publishings, and publishes the same value on itself, known as looping. 
+**EventFeed** - EventFeed is an EventPublisher that fed values from another Event. 
 
-Below is a basic example of using the EventLoop. Firing happens on *e*, which triggers the callback on *loop*, writing the value to the console.
+Below is a basic example of using the EventFeed. Publishing happens on *e*, which triggers the callback on *feed*, writing the value to the console.
 ```
     var e = new EventPublisher<int>(); 
-    var loop = new EventLoop<int>();
-    loop.Loop(e);
-    var l = loop.Listen(v => Console.Write("{0} ", v);
+    var feed = new EventFeed<int>();
+    feed.Feed(e);
+    var s = feed.Subscribe(v => Console.Write("{0} ", v);
     e.Publish(0);
 ```
 
-**BehaviorLoop** - BehaviorLoop loops publishings from one Behavior to another, similar to EventLoop (internally, Behavior just calls the EventLoop.Loop method).
+**BehaviorFeed** - BehaviorFeed is a Behavior that can be fed values from another Behavior
 
-Below is a basic example of using the BehaviorLoop. Firing happens on *b*, which triggers the callback on *loop*, writing the value to the console.
+Below is a basic example of using the BehaviorFeed. Publishing happens on *b*, which triggers the callback on *feed*, writing the value to the console.
 ```
     var b = new BehaviorPublisher<int>(0);
-    var loop = new BehaviorLoop<int>();
-    loop.Loop(b);
-    var l = loop.Listen(v => Console.Write("{0} ", v);
+    var feed = new BehaviorFeed<int>();
+    feed.Feed(b);
+    var s = feed.Subscribe(v => Console.Write("{0} ", v);
     e.Publish(1);
 ```
 
@@ -179,10 +179,10 @@ Event Examples
 **Echo**
 ```
     var e = new EventPublisher<int>();
-    var l = e.Listen(v => Console.Write("{0} ", v));
+    var s = e.Subscribe(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
         e.Publish(i);
-    l.Dispose();
+    s.Dispose();
     e.Dispose();
 ```
 *Output*
@@ -195,10 +195,10 @@ Event Examples
 ```
     var e = new EventPublisher<int>();
     var m = e.Map(v => v.ToString());
-    var l = m.Listen(v => Console.Write("{0} ", v));
+    var s = m.Subscribe(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
         e.Publish(i);
-    l.Dispose();
+    s.Dispose();
     m.Dispose();
     e.Dispose();
 ```
@@ -212,7 +212,7 @@ Event Examples
     var e1 = new EventPublisher<int>();
     var e2 = new EventPublisher<int>();
     var m = e1.Merge(e2);
-    var l = m.Listen(v => Console.Write("{0} ", v));
+    var s = m.Subscribe(v => Console.Write("{0} ", v));
     for (var i = 0; i < 10; i++) {
         if (i % 2 == 0) {
             e1.Publish(i);
@@ -221,7 +221,7 @@ Event Examples
             e2.Publish(i);
         }
     }
-    l.Dispose();
+    s.Dispose();
     m.Dispose();
     e2.Dispose();
     e1.Dispose();
@@ -235,11 +235,11 @@ Event Examples
 ```
     var e = new EventPublisher<char>();
     var f = e.Filter(c => char.IsUpper(c));
-    var l = f.Listen(v => Console.Write("{0} ", v));
+    var s = f.Subscribe(v => Console.Write("{0} ", v));
     e.Publish('H');
     e.Publish('o');
     e.Publish('I');
-    l.Dispose();
+    s.Dispose();
 ```
 *Output*
 ```
@@ -252,10 +252,10 @@ Behavior Examples
 **Echo**
 ```
     var b = new BehaviorPublisher<int>(0);
-    var l = b.Listen(v => Console.Write("{0} ", v));
+    var s = b.Subscribe(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
         b.Publish(i);
-    l.Dispose();
+    s.Dispose();
     b.Dispose();
 ```
 *Output*
@@ -267,10 +267,10 @@ Behavior Examples
 ```
     var e = new EventPublisher<int>();
     var b = e.Hold(0);
-    var l = b.Listen(v => Console.Write("{0} ", v));
+    var s = b.Subscribe(v => Console.Write("{0} ", v));
     for (var i = 1; i <= 5; i++) 
         e.Publish(i);
-    l.Dispose();
+    s.Dispose();
     b.Dispose();
     e.Dispose();
 ```
@@ -284,10 +284,10 @@ Behavior Examples
     var e = new EventPublisher<int>();
     var b = e.Hold(0);
     var v = b.Values();
-    var l = v.Listen(v => Console.Write("{0} ", v));
+    var s = v.Subscribe(v => Console.Write("{0} ", v));
     for (var i = 1; i <= 5; i++) 
         e.Publish(i);
-    l.Dispose();
+    s.Dispose();
     v.Dispose();
     b.Dispose();
     e.Dispose();
