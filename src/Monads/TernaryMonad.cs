@@ -13,11 +13,11 @@
     public class TernaryMonad<T, TB, TC, TD> : Monad<TD>
     {
         private Func<T, TB, TC, TD> lift;
-        private IValueSource<T> a;
-        private IValueSource<TB> b;
-        private IValueSource<TC> c;
+        private IProvider<T> a;
+        private IProvider<TB> b;
+        private IProvider<TC> c;
 
-        public TernaryMonad(Func<T, TB, TC, TD> lift, IValueSource<T> a, IValueSource<TB> b, IValueSource<TC> c)
+        public TernaryMonad(Func<T, TB, TC, TD> lift, IProvider<T> a, IProvider<TB> b, IProvider<TC> c)
         {
             this.lift = lift;
             this.a = a;

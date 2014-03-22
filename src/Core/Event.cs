@@ -246,23 +246,23 @@
         /// </summary>
         /// <typeparam name="TB">The type of the Behavior</typeparam>
         /// <typeparam name="TC">The return type of the snapshot function</typeparam>
-        /// <param name="valueSourceStream">The Behavior to sample when calculating the snapshot</param>
+        /// <param name="provider">The Behavior to sample when calculating the snapshot</param>
         /// <param name="snapshot">The snapshot generation function.</param>
         /// <returns>A new Event that will produce the snapshot when the current event publishes</returns>
-        public Event<TC> Snapshot<TB, TC>(IValueSource<TB> valueSourceStream, Func<T, TB, TC> snapshot)
+        public Event<TC> Snapshot<TB, TC>(IProvider<TB> provider, Func<T, TB, TC> snapshot)
         {
-            return new SnapshotEvent<T, TB, TC>(this, snapshot, valueSourceStream);
+            return new SnapshotEvent<T, TB, TC>(this, snapshot, provider);
         }
 
         /// <summary>
         /// Variant of snapshot that throws away the event's value and captures the behavior's.
         /// </summary>
         /// <typeparam name="TB">The type of the Behavior</typeparam>
-        /// <param name="valueSourceStream">The Behavior to sample when taking the snapshot</param>
+        /// <param name="provider">The Behavior to sample when taking the snapshot</param>
         /// <returns>An event that captures the Behaviors value when the current event publishes</returns>
-        public Event<TB> Snapshot<TB>(IValueSource<TB> valueSourceStream)
+        public Event<TB> Snapshot<TB>(IProvider<TB> provider)
         {
-            return this.Snapshot(valueSourceStream, (a, b) => b);
+            return this.Snapshot(provider, (a, b) => b);
         }
     }
 }

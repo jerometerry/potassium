@@ -12,8 +12,8 @@
     public class BinaryMonad<T, TB, TC> : Monad<TC>
     {
         private Func<T, TB, TC> lift;
-        private IValueSource<T> a;
-        private IValueSource<TB> b;
+        private IProvider<T> a;
+        private IProvider<TB> b;
 
         /// <summary>
         /// 
@@ -21,7 +21,7 @@
         /// <param name="lift"></param>
         /// <param name="a"></param>
         /// <param name="b"></param>
-        public BinaryMonad(Func<T, TB, TC> lift, IValueSource<T> a, IValueSource<TB> b)
+        public BinaryMonad(Func<T, TB, TC> lift, IProvider<T> a, IProvider<TB> b)
         {
             this.lift = lift;
             this.a = a;

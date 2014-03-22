@@ -8,14 +8,14 @@ namespace JT.Rx.Net.Internal
     {
         private Observable<T> source;
         private Func<T, TB, TC> snapshot;
-        private IValueSource<TB> valueSource;
+        private IProvider<TB> provider;
         private ISubscription<T> subscription;
 
-        public SnapshotEvent(Observable<T> source, Func<T, TB, TC> snapshot, IValueSource<TB> valueSource)
+        public SnapshotEvent(Observable<T> source, Func<T, TB, TC> snapshot, IProvider<TB> provider)
         {
             this.source = source;
             this.snapshot = snapshot;
-            this.valueSource = valueSource;
+            this.provider = provider;
 
             var callback = new SubscriptionPublisher<T>(this.Publish);
             this.subscription = source.Subscribe(callback, this.Priority);
@@ -23,7 +23,7 @@ namespace JT.Rx.Net.Internal
 
         public void Publish(T publishing, Transaction transaction)
         {
-            var f = this.valueSource.Value;
+            var f = this.provider.Value;
             var v = this.snapshot(publishing, f);
             this.Publish(v, transaction);
         }
@@ -36,7 +36,7 @@ namespace JT.Rx.Net.Internal
                 return null;
             }
             
-            var results = events.Select(e => this.snapshot(e, this.valueSource.Value));
+            var results = events.Select(e => this.snapshot(e, this.provider.Value));
             return results.ToArray();
         }
 
@@ -49,7 +49,7 @@ namespace JT.Rx.Net.Internal
             }
 
             source = null;
-            this.valueSource = null;
+            this.provider = null;
             snapshot = null;
 
             base.Dispose(disposing);

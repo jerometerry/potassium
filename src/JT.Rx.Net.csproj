@@ -50,7 +50,7 @@
     <Compile Include="Extensions\MonadExtensions.cs" />
     <Compile Include="Monads\MonadBinder.cs" />
     <Compile Include="Monads\Monad.cs" />
-    <Compile Include="Core\IValueSource.cs" />
+    <Compile Include="Core\IProvider.cs" />
     <Compile Include="Internal\BehaviorApplyEvent.cs" />
     <Compile Include="Monads\BinaryMonad.cs" />
     <Compile Include="Monads\Identity.cs" />

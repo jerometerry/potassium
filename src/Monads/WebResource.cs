@@ -8,7 +8,7 @@
     /// </summary>
     public class WebResource : Monad<string>
     {
-        private IValueSource<string> urlValueSource;
+        private IProvider<string> urlProvider;
         
         /// <summary>
         /// Constructs a new WebResource to fetch from a constant URL
@@ -17,7 +17,7 @@
         public WebResource(string url)
         {
             var cb = new Identity<string>(url);
-            this.urlValueSource = cb;
+            this.urlProvider = cb;
             this.Register(cb);
         }
 
@@ -25,16 +25,16 @@
         /// Constructs a new WebResource to fetch from a dynamic URL
         /// </summary>
         /// <param name="urlValueior">Behavior containing the URL to load</param>
-        public WebResource(IValueSource<string> urlValueSource)
+        public WebResource(IProvider<string> urlProvider)
         {
-            this.urlValueSource = urlValueSource;
+            this.urlProvider = urlProvider;
         }
 
         public override string Value
         {
             get
             {
-                var url = this.urlValueSource.Value;
+                var url = this.urlProvider.Value;
                 using (var client = new WebClient())
                 {
                     string result = client.DownloadString(url);
@@ -47,7 +47,7 @@
         {
             if (disposing)
             {
-                this.urlValueSource = null;
+                this.urlProvider = null;
             }
 
             base.Dispose(disposing);

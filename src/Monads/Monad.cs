@@ -6,7 +6,7 @@
     /// A Monad lazily evaluates a value, and has monadic operations that allow Monads to be chained together
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class Monad<T> : Disposable, IValueSource<T>
+    public abstract class Monad<T> : Disposable, IProvider<T>
     {
         /// <summary>
         /// Evaluates the value of the Monad

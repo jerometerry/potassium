@@ -12,14 +12,14 @@
     public class UnaryMonad<T, TB> : Monad<TB>
     {
         private Func<T, TB> lift;
-        private IValueSource<T> source;
+        private IProvider<T> source;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="lift"></param>
         /// <param name="source"></param>
-        public UnaryMonad(Func<T, TB> lift, IValueSource<T> source)
+        public UnaryMonad(Func<T, TB> lift, IProvider<T> source)
         {
             this.lift = lift;
             this.source = source;

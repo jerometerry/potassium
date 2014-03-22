@@ -9,13 +9,13 @@
     /// <remarks>EqualityPredicate is lazy in that the equality check doesn't happen until the Value (bool) is requestd.</remarks>
     public class EqualityPredicate<T> : Predicate
     {
-        private IValueSource<T> valueSource;
+        private IProvider<T> provider;
         
         private T v;
 
-        public EqualityPredicate(IValueSource<T> valueSource, T v)
+        public EqualityPredicate(IProvider<T> provider, T v)
         {
-            this.valueSource = valueSource;
+            this.provider = provider;
             this.v = v;
         }
 
@@ -23,7 +23,7 @@
         {
             get
             {
-                var v1 = new Maybe<T>(this.valueSource.Value);
+                var v1 = new Maybe<T>(this.provider.Value);
                 var v2 = new Maybe<T>(v);
                 return v1.Equals(v2);
             }
@@ -33,7 +33,7 @@
         {
             if (disposing)
             {
-                this.valueSource = null;
+                this.provider = null;
                 v = default(T);
             }
 
