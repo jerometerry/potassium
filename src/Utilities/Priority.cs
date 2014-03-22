@@ -1,4 +1,4 @@
-namespace JT.Rx.Net
+namespace JT.Rx.Net.Utilities
 {
     using System;
     using System.Collections.Generic;

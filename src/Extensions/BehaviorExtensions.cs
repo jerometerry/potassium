@@ -1,4 +1,4 @@
-﻿namespace JT.Rx.Net
+﻿namespace JT.Rx.Net.Extensions
 {
     using JT.Rx.Net.Internal;    
 

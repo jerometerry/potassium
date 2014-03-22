@@ -1,9 +1,7 @@
 ﻿namespace JT.Rx.Net.Tests
 {
-    
-    
-    
     using System;
+    using JT.Rx.Net.Utilities;
     using NUnit.Framework;
 
     [TestFixture]

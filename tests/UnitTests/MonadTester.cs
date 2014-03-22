@@ -1,6 +1,7 @@
 ﻿namespace JT.Rx.Net.Tests
 {
     using System;
+    using JT.Rx.Net.Extensions;
     using JT.Rx.Net.Monads;
     using NUnit.Framework;
 

@@ -1,5 +1,7 @@
 namespace JT.Rx.Net.Internal
 {
+    using JT.Rx.Net.Utilities;
+
     internal sealed class Subscription<T> : Disposable, ISubscription<T>
     {
         /// <summary>

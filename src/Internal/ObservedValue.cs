@@ -1,6 +1,7 @@
 namespace JT.Rx.Net.Internal
 {
     using JT.Rx.Net.Monads;
+    using JT.Rx.Net.Utilities;
 
     /// <summary>
     /// ObservedValue stores the last published value of an Observable,
