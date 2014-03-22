@@ -1,6 +1,7 @@
 ﻿namespace JT.Rx.Net.Tests
 {
     using System;
+    using JT.Rx.Net.Core;
     using JT.Rx.Net.Extensions;
     using JT.Rx.Net.Monads;
     using NUnit.Framework;
@@ -32,6 +33,28 @@
             
             u = new UnaryMonad<double, double>(Math.Sin, PiBy2.ToIdentity());
             Assert.AreEqual(1.0, u.Value, 1e-5);
+        }
+
+        public static Tuple<short, int> NextShort(int state)
+        {
+            const int multiplier = 214013;
+            const int increment = 2531011;
+            const int modulus = int.MaxValue;
+            var newState = multiplier * state + increment;
+            var rand = (short)((newState & modulus) >> 16);
+            return Tuple.Create(rand, newState);
+        }
+
+        [Test]
+        public void TestStateGetRandom()
+        {
+            var s = State.Get<int>();
+            var tmp = s.Bind(s0 =>
+            {
+                var rand = NextShort(s0);
+                var setState = State.Set(rand.Item2);
+                return setState.Bind(_ => new State<int, short>(a => Tuple.Create(rand.Item2, rand.Item1)));
+            });
         }
     }
 }
