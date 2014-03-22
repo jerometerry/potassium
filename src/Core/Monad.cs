@@ -4,12 +4,6 @@
     using JT.Rx.Net.Continuous;
     using JT.Rx.Net.Discrete;
 
-    /// <summary>
-    /// ContinuousBehavior is the base class for Behaviors based on a continuous stream of values,
-    /// such as the System Clock, or for values pulled lazily (when value is requested) 
-    /// from external sources such as web services.
-    /// </summary>
-    /// <typeparam name="T">The type of value of the current Behavior</typeparam>
     public abstract class Monad<T> : Disposable, IBehavior<T>
     {
         /// <summary>
