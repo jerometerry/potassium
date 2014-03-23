@@ -1,5 +1,7 @@
 ﻿namespace Potassium.Internal
 {
+    using System;
+
     internal static class Constants
     {
         /// <summary>
@@ -11,5 +13,10 @@
         /// Coarse-grained lock that's held during the whole transaction. 
         /// </summary>
         internal static readonly object TransactionLock = new object();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        internal static readonly TimeSpan LockTimeout = TimeSpan.FromSeconds(1);
     }
 }

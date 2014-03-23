@@ -18,7 +18,13 @@
             InitializeComponent();
 
             startBtn.Click += (o, s) => runningEvent.Publish(true);
-            stopBtn.Click += (o, s) => runningEvent.Publish(false);
+            
+            stopBtn.Click += (o, s) => 
+            {
+                signal.Stop();
+                runningEvent.Publish(false);
+            };
+            
             frequency.ValueChanged += (o, s) => intervalChanged.Publish(frequency.Value);
 
             signal = new Signal<DateTime>(new LocalTime());

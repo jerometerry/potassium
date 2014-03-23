@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using Potassium.Internal;
     using Potassium.Utilities;
 
@@ -66,7 +67,15 @@
         internal virtual ISubscription<T> CreateSubscription(SubscriptionPublisher<T> publisher, Priority superior, Transaction transaction)
         {
             Subscription<T> subscription;
-            lock (Constants.SubscriptionLock)
+
+            bool lockTaken = false;
+            Monitor.TryEnter(Constants.SubscriptionLock, Constants.LockTimeout, ref lockTaken);
+            if (!lockTaken)
+            {
+                throw new InvalidOperationException("Potential Deadlock");
+            }
+
+            try
             {
                 if (this.priority.AddSuperior(superior))
                 {
@@ -75,6 +84,10 @@
 
                 subscription = new Subscription<T>(this, publisher, superior);
                 this.Subscriptions.Add(subscription);
+            }
+            finally
+            {
+                Monitor.Exit(Constants.SubscriptionLock);
             }
 
             this.OnSubscribe(subscription, transaction);
@@ -119,10 +132,21 @@
 
             var s = (Subscription<T>)subscription;
 
-            lock (Constants.SubscriptionLock)
+            bool lockTaken = false;
+            Monitor.TryEnter(Constants.SubscriptionLock, Constants.LockTimeout, ref lockTaken);
+            if (!lockTaken)
+            {
+                throw new InvalidOperationException("Potential Deadlock");
+            }
+
+            try
             {
                 Priority.RemoveSuperior(s.Priority);
                 return this.Subscriptions.Remove(s);
+            }
+            finally
+            {
+                Monitor.Exit(Constants.TransactionLock);
             }
         }
 

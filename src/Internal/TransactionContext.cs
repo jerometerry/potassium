@@ -1,6 +1,7 @@
 ﻿namespace Potassium.Internal
 {
     using System;
+    using System.Threading;
     using Potassium.Core;
 
     /// <summary>
@@ -29,8 +30,15 @@
         /// <returns>The return value of the function</returns>
         public T Run<T>(Func<Transaction, T> f)
         {
-            lock (Constants.TransactionLock)
+            bool lockTaken = false;
+            Monitor.TryEnter(Constants.TransactionLock, Constants.LockTimeout, ref lockTaken);
+            if (!lockTaken)
             {
+                throw new InvalidOperationException("Potential Deadlock");
+            }
+
+            try
+            { 
                 var created = false;
                 if (currentTransaction == null)
                 {
@@ -48,6 +56,10 @@
                 }
 
                 return v;
+            }
+            finally
+            {
+                Monitor.Exit(Constants.TransactionLock);
             }
         }
     }
