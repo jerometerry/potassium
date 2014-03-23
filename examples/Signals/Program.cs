@@ -1,4 +1,4 @@
-﻿namespace Potassium.Examples.MouseMove
+﻿namespace Potassium.Examples.Signals
 {
     using System;
     using System.Windows.Forms;

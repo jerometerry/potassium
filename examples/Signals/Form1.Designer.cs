@@ -1,4 +1,4 @@
-﻿namespace Potassium.Examples.MouseMove
+﻿namespace Potassium.Examples.Signals
 {
     partial class Form1
     {
@@ -50,9 +50,24 @@
             // interval
             // 
             this.interval.Location = new System.Drawing.Point(128, 17);
+            this.interval.Maximum = new decimal(new int[] {
+            3600000,
+            0,
+            0,
+            0});
+            this.interval.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.interval.Name = "interval";
-            this.interval.Size = new System.Drawing.Size(120, 20);
+            this.interval.Size = new System.Drawing.Size(167, 20);
             this.interval.TabIndex = 1;
+            this.interval.Value = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             // 
             // startBtn
             // 
@@ -86,7 +101,7 @@
             this.latestValue.Location = new System.Drawing.Point(128, 93);
             this.latestValue.Name = "latestValue";
             this.latestValue.ReadOnly = true;
-            this.latestValue.Size = new System.Drawing.Size(120, 20);
+            this.latestValue.Size = new System.Drawing.Size(167, 20);
             this.latestValue.TabIndex = 5;
             // 
             // Form1
