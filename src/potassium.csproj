@@ -49,6 +49,9 @@
   <ItemGroup>
     <Compile Include="Core\Signal.cs" />
     <Compile Include="Extensions\ProviderExtensions.cs" />
+    <Compile Include="Providers\AutoDouble.cs" />
+    <Compile Include="Providers\AutoInt.cs" />
+    <Compile Include="Providers\AutoLong.cs" />
     <Compile Include="Providers\MonadBinder.cs" />
     <Compile Include="Providers\Provider.cs" />
     <Compile Include="Providers\IProvider.cs" />
