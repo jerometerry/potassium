@@ -50,7 +50,7 @@
     <Compile Include="Core\Hz.cs" />
     <Compile Include="Core\Signal.cs" />
     <Compile Include="Extensions\ProviderExtensions.cs" />
-    <Compile Include="Frequency.cs" />
+    <Compile Include="Core\Frequency.cs" />
     <Compile Include="Providers\AutoDouble.cs" />
     <Compile Include="Providers\AutoInt.cs" />
     <Compile Include="Providers\AutoLong.cs" />

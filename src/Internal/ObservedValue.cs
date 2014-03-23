@@ -39,11 +39,11 @@ namespace Potassium.Internal
         /// </summary>
         /// <param name="source">The Observable to monitor for value updates</param>
         /// <param name="initValue">The initial value of the ObservedValue</param>
-        public ObservedValue(T initValue, Observable<T> source)
+        public ObservedValue(T initValue, Observable<T> source, Transaction transaction)
         {
             this.source = source;
             this.Value = initValue;
-            this.subscription = this.Subscribe();
+            this.subscription = this.Subscribe(transaction);
         }
 
         /// <summary>
@@ -118,15 +118,6 @@ namespace Potassium.Internal
         {
             this.Value = this.update.Value;
             this.update = Maybe<T>.Null;
-        }
-
-        /// <summary>
-        /// Listen to the underlying event for publishings
-        /// </summary>
-        /// <returns>The ISubscription registered with the underlying event.</returns>
-        private ISubscription<T> Subscribe()
-        {
-            return Transaction.Start(this.Subscribe);
         }
 
         /// <summary>

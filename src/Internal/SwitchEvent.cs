@@ -9,10 +9,10 @@
         private ISubscription<T> wrappedSubscription;
         private Behavior<Event<T>> source;
 
-        public SwitchEvent(Behavior<Event<T>> source)
+        public SwitchEvent(Behavior<Event<T>> source, Transaction transaction)
         {
             this.source = source;
-            Transaction.Start(this.Initialize);
+            this.Initialize(transaction);
         }
 
         protected override void Dispose(bool disposing)
