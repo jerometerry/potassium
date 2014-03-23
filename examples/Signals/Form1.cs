@@ -11,18 +11,27 @@
         EventPublisher<decimal> intervalChanged;
         Behavior<decimal> intervalBehavior;
 
+        EventPublisher<bool> runningEvent;
+
+        Behavior<bool> runningBehavior;
+
         public Form1()
         {
             InitializeComponent();
 
-            startBtn.Click += (o, s) => StartSignal();
-            stopBtn.Click += (o, s) => StopSignal();
+            startBtn.Click += (o, s) => runningEvent.Publish(true);
+            stopBtn.Click += (o, s) => runningEvent.Publish(false);
             interval.ValueChanged += (o, s) => IntervalChanged();
             
             var frm = this;
 
             signal = new Signal<DateTime>(new LocalTime());
             signal.Subscribe(t => { frm.RunOnUI<DateTime>(SetDate, t); });
+
+            runningEvent = new EventPublisher<bool>();
+            runningEvent.Subscribe(r => { signal.Running = r; });
+            runningBehavior = runningEvent.Hold(false);
+            runningBehavior.Values().Subscribe(EnableControls);
 
             intervalChanged = new EventPublisher<decimal>();
             
@@ -52,16 +61,10 @@
             latestValue.Text = string.Format("{0:dd/MM/yy HH:mm:ss.fff}", t);
         }
 
-        private void StartSignal()
+        private void EnableControls(bool running)
         {
-            signal.Start();
+            this.startBtn.Enabled = !running;
+            this.stopBtn.Enabled = running;
         }
-
-        private void StopSignal()
-        {
-            signal.Stop();
-        }
-
-
     }
 }

@@ -25,7 +25,19 @@
 
         public bool Running
         {
-            get { return running; }
+            get 
+            { 
+                return running; 
+            }
+            set
+            {
+                if (value)
+                    Start();
+                else
+                    Stop();
+
+                running = value;
+            }
         }
 
         public TimeSpan Interval
