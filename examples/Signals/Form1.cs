@@ -9,10 +9,8 @@
     {
         Signal<DateTime> signal;
         EventPublisher<decimal> intervalChanged;
-        Behavior<decimal> intervalBehavior;
-
         EventPublisher<bool> runningEvent;
-
+        Behavior<decimal> intervalBehavior;
         Behavior<bool> runningBehavior;
 
         public Form1()
@@ -21,30 +19,24 @@
 
             startBtn.Click += (o, s) => runningEvent.Publish(true);
             stopBtn.Click += (o, s) => runningEvent.Publish(false);
-            interval.ValueChanged += (o, s) => IntervalChanged();
-            
-            var frm = this;
+            interval.ValueChanged += (o, s) => intervalChanged.Publish(interval.Value);
 
             signal = new Signal<DateTime>(new LocalTime());
-            signal.Subscribe(t => { frm.RunOnUI<DateTime>(SetDate, t); });
-
             runningEvent = new EventPublisher<bool>();
+            intervalChanged = new EventPublisher<decimal>();
+
+            var frm = this;
+            signal.Subscribe(t => { frm.RunOnUI<DateTime>(SetDate, t); });
+            
             runningEvent.Subscribe(r => { signal.Running = r; });
             runningBehavior = runningEvent.Hold(false);
             runningBehavior.Values().Subscribe(EnableControls);
 
-            intervalChanged = new EventPublisher<decimal>();
-            
             intervalBehavior = intervalChanged.Hold(interval.Value);
             intervalBehavior
                 .Values()
                 .Map(t => TimeSpan.FromMilliseconds((double)t))
                 .Subscribe(IntervalChanged);
-        }
-
-        private void IntervalChanged()
-        {
-            intervalChanged.Publish(interval.Value);
         }
 
         private void IntervalChanged(TimeSpan t)
