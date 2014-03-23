@@ -30,12 +30,12 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.interval = new System.Windows.Forms.NumericUpDown();
+            this.frequency = new System.Windows.Forms.NumericUpDown();
             this.startBtn = new System.Windows.Forms.Button();
             this.stopBtn = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.latestValue = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.interval)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.frequency)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -43,28 +43,23 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 21);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 13);
+            this.label1.Size = new System.Drawing.Size(79, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Interval (s)";
+            this.label1.Text = "Frequency (Hz)";
             // 
-            // interval
+            // frequency
             // 
-            this.interval.Location = new System.Drawing.Point(128, 17);
-            this.interval.Maximum = new decimal(new int[] {
-            3600000,
+            this.frequency.Location = new System.Drawing.Point(128, 17);
+            this.frequency.Maximum = new decimal(new int[] {
+            1000000,
             0,
             0,
             0});
-            this.interval.Minimum = new decimal(new int[] {
+            this.frequency.Name = "frequency";
+            this.frequency.Size = new System.Drawing.Size(167, 20);
+            this.frequency.TabIndex = 1;
+            this.frequency.Value = new decimal(new int[] {
             1,
-            0,
-            0,
-            0});
-            this.interval.Name = "interval";
-            this.interval.Size = new System.Drawing.Size(167, 20);
-            this.interval.TabIndex = 1;
-            this.interval.Value = new decimal(new int[] {
-            1000,
             0,
             0,
             0});
@@ -113,11 +108,11 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.stopBtn);
             this.Controls.Add(this.startBtn);
-            this.Controls.Add(this.interval);
+            this.Controls.Add(this.frequency);
             this.Controls.Add(this.label1);
             this.Name = "Form1";
             this.Text = "Form1";
-            ((System.ComponentModel.ISupportInitialize)(this.interval)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.frequency)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -126,7 +121,7 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.NumericUpDown interval;
+        private System.Windows.Forms.NumericUpDown frequency;
         private System.Windows.Forms.Button startBtn;
         private System.Windows.Forms.Button stopBtn;
         private System.Windows.Forms.Label label2;

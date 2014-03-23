@@ -19,7 +19,7 @@
 
             startBtn.Click += (o, s) => runningEvent.Publish(true);
             stopBtn.Click += (o, s) => runningEvent.Publish(false);
-            interval.ValueChanged += (o, s) => intervalChanged.Publish(interval.Value);
+            frequency.ValueChanged += (o, s) => intervalChanged.Publish(frequency.Value);
 
             signal = new Signal<DateTime>(new LocalTime());
             runningEvent = new EventPublisher<bool>();
@@ -32,16 +32,16 @@
             runningBehavior = runningEvent.Hold(false);
             runningBehavior.Values().Subscribe(EnableControls);
 
-            intervalBehavior = intervalChanged.Hold(interval.Value);
+            intervalBehavior = intervalChanged.Hold(frequency.Value);
             intervalBehavior
                 .Values()
-                .Map(t => TimeSpan.FromMilliseconds((double)t))
-                .Subscribe(IntervalChanged);
+                .Map(t => Frequency.Hz(t))
+                .Subscribe(FrequencyChanged);
         }
 
-        private void IntervalChanged(TimeSpan t)
+        private void FrequencyChanged(Hz frequence)
         {
-            signal.Interval = t;
+            signal.Frequency = frequence;
             if (signal.Running)
             {
                 signal.Restart();

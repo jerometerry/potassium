@@ -6,20 +6,20 @@
 
     public class Signal<T> : EventPublisher<T>
     {
-        private TimeSpan interval;
+        private Hz frequency;
         private Timer timer;
         private IProvider<T> source;
         private bool running;
 
         public Signal(IProvider<T> source)
-            : this(source, TimeSpan.MaxValue)
+            : this(source, new Hz(0.0))
         {
         }
-        
-        public Signal(IProvider<T> source, TimeSpan interval)
+
+        public Signal(IProvider<T> source, Hz frequency)
         {
             this.source = source;
-            this.interval = interval;
+            this.frequency = frequency;
             timer = new Timer(Tick);
         }
 
@@ -40,10 +40,10 @@
             }
         }
 
-        public TimeSpan Interval
+        public Hz Frequency
         {
-            get  {  return interval;  }
-            set  {  interval = value; }
+            get  {  return frequency;  }
+            set { frequency = value; }
         }
 
         public bool Start()
@@ -53,7 +53,8 @@
                 return false;
             }
 
-            this.timer.Change(this.interval, this.interval);
+            this.SetTimerInterval();
+            
             this.running = true;
             return true;
         }
@@ -73,8 +74,10 @@
 
         public void Restart()
         {
-            this.Stop();
-            this.Start();
+            if (this.Running)
+            {
+                this.SetTimerInterval();
+            }
         }
 
         protected override void Dispose(bool disposing)
@@ -88,6 +91,19 @@
             }
 
             base.Dispose(disposing);
+        }
+
+        private void SetTimerInterval()
+        {
+            if (this.frequency.Value == 0.0)
+            {
+                this.timer.Change(Timeout.Infinite, Timeout.Infinite);
+            }
+            else
+            { 
+                var interval = this.frequency.Interval();
+                this.timer.Change(interval, interval);
+            }
         }
 
         private void Tick(object state)
