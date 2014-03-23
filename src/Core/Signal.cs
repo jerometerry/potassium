@@ -2,6 +2,7 @@
 {
     using System;
     using System.Threading;
+    using Potassium.Dispatchers;
     using Potassium.Providers;
 
     /// <summary>
@@ -14,6 +15,7 @@
         private Timer timer;
         private IProvider<T> source;
         private bool running;
+        private IDispatcher dispatcher;
 
         public Signal(IProvider<T> source)
             : this(source, new Hz(0.0))
@@ -21,10 +23,16 @@
         }
 
         public Signal(IProvider<T> source, Hz frequency)
+            : this(source, frequency, new CurrentThreadDispatcher())
+        {
+        }
+
+        public Signal(IProvider<T> source, Hz frequency, IDispatcher dispatcher)
         {
             this.source = source;
             this.frequency = frequency;
             timer = new Timer(Tick);
+            this.dispatcher = dispatcher;
         }
 
         public bool Running
@@ -110,9 +118,14 @@
             }
         }
 
-        private void Tick(object state)
+        private void PublishCurrentValue()
         {
             this.Publish(this.source.Value);
+        }
+
+        private void Tick(object state)
+        {
+            dispatcher.Dispatch(PublishCurrentValue);
         }
     }
 }

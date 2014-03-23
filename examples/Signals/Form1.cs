@@ -27,12 +27,12 @@
             
             frequency.ValueChanged += (o, s) => intervalChanged.Publish(frequency.Value);
 
-            signal = new Signal<DateTime>(new LocalTime());
+            signal = new Signal<DateTime>(new LocalTime(), Frequency.Hz(0.0), this.CreateDispatcher());
             runningEvent = new EventPublisher<bool>();
             intervalChanged = new EventPublisher<decimal>();
 
             var frm = this;
-            signal.Subscribe(t => { frm.RunOnUI<DateTime>(SetDate, t); });
+            signal.Subscribe(SetDate);
             
             runningEvent.Subscribe(r => { signal.Running = r; });
             runningBehavior = runningEvent.Hold(false);

@@ -40,6 +40,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,8 +48,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dispatchers\CurrentThreadDispatcher.cs" />
     <Compile Include="Core\Hz.cs" />
+    <Compile Include="Dispatchers\IDispatcher.cs" />
     <Compile Include="Core\Signal.cs" />
+    <Compile Include="Dispatchers\UiThreadDispatcher.cs" />
     <Compile Include="Extensions\ProviderExtensions.cs" />
     <Compile Include="Core\Frequency.cs" />
     <Compile Include="Providers\AutoDouble.cs" />
