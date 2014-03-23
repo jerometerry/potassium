@@ -30,36 +30,36 @@
         /// <returns>The return value of the function</returns>
         public T Run<T>(Func<Transaction, T> f)
         {
-            bool lockTaken = false;
-            Monitor.TryEnter(Constants.TransactionLock, Constants.LockTimeout, ref lockTaken);
-            if (!lockTaken)
-            {
-                throw new InvalidOperationException("Potential Deadlock");
-            }
-
-            try
+            if (Monitor.TryEnter(Constants.TransactionLock, Constants.LockTimeout))
             { 
-                var created = false;
-                if (currentTransaction == null)
-                {
-                    created = true;
-                    currentTransaction = new Transaction();
+                try
+                { 
+                    var created = false;
+                    if (currentTransaction == null)
+                    {
+                        created = true;
+                        currentTransaction = new Transaction();
+                    }
+
+                    var v = f(currentTransaction);
+
+                    if (created)
+                    {
+                        currentTransaction.Close();
+                        currentTransaction.Dispose();
+                        currentTransaction = null;
+                    }
+
+                    return v;
                 }
-
-                var v = f(currentTransaction);
-
-                if (created)
+                finally
                 {
-                    currentTransaction.Close();
-                    currentTransaction.Dispose();
-                    currentTransaction = null;
+                    Monitor.Exit(Constants.TransactionLock);
                 }
-
-                return v;
             }
-            finally
+            else
             {
-                Monitor.Exit(Constants.TransactionLock);
+                throw new InvalidOperationException("Could not acquire the transaction lock");
             }
         }
     }

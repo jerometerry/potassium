@@ -77,7 +77,7 @@ namespace Potassium.Tests
         public void TestMapB2()
         {
             var behavior = new Identity<int>(1);
-            var behavior1 = new MonadBinder<int, int>(behavior, x => x * 3);
+            var behavior1 = new Binder<int, int>(behavior, x => x * 3);
             Assert.AreEqual(3, behavior1.Value);
             behavior1.Dispose();
             behavior.Dispose();

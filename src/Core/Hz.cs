@@ -2,6 +2,9 @@
 {
     using System;
 
+    /// <summary>
+    /// The frequency, in Hertz, of a Signal
+    /// </summary>
     public class Hz
     {
         public double Value { get; set; }

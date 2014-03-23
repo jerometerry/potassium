@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="false">
   <TopNode>[0-1000]C:\Projects\potassium\tests\UnitTests\Potassium.Tests.nunit</TopNode>
-  <SelectedNode>[0-1000]C:\Projects\potassium\tests\UnitTests\Potassium.Tests.nunit</SelectedNode>
+  <SelectedNode>[0-1017]Potassium.Tests.BehaviorTester.TestAccum</SelectedNode>
   <ExcludeCategories>false</ExcludeCategories>
   <Nodes>
     <Node UniqueName="[0-1000]C:\Projects\potassium\tests\UnitTests\Potassium.Tests.nunit" Expanded="true" />
     <Node UniqueName="[0-1056]C:\Projects\potassium\tests\UnitTests\bin\Debug\Potassium.Tests.dll" Expanded="true" />
     <Node UniqueName="[0-1057]Potassium" Expanded="true" />
     <Node UniqueName="[0-1058]Potassium.Tests" Expanded="true" />
+    <Node UniqueName="[0-1001]Potassium.Tests.BehaviorTester" Expanded="true" />
+    <Node UniqueName="[0-1018]Potassium.Tests.BehaviorValuesTester" Expanded="true" />
   </Nodes>
 </VisualState>

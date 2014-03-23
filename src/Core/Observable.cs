@@ -68,26 +68,26 @@
         {
             Subscription<T> subscription;
 
-            bool lockTaken = false;
-            Monitor.TryEnter(Constants.SubscriptionLock, Constants.LockTimeout, ref lockTaken);
-            if (!lockTaken)
+            if (Monitor.TryEnter(Constants.SubscriptionLock, Constants.LockTimeout))
             {
-                throw new InvalidOperationException("Potential Deadlock");
-            }
+                try
+                { 
+                    if (this.priority.AddSuperior(superior))
+                    {
+                        transaction.Reprioritize = true;
+                    }
 
-            try
-            {
-                if (this.priority.AddSuperior(superior))
-                {
-                    transaction.Reprioritize = true;
+                    subscription = new Subscription<T>(this, publisher, superior);
+                    this.Subscriptions.Add(subscription);
                 }
-
-                subscription = new Subscription<T>(this, publisher, superior);
-                this.Subscriptions.Add(subscription);
+                finally
+                {
+                    Monitor.Exit(Constants.SubscriptionLock);
+                }
             }
-            finally
+            else
             {
-                Monitor.Exit(Constants.SubscriptionLock);
+                throw new InvalidOperationException("Could not obtain the subscription lock while creating a subscription");
             }
 
             this.OnSubscribe(subscription, transaction);
@@ -132,21 +132,21 @@
 
             var s = (Subscription<T>)subscription;
 
-            bool lockTaken = false;
-            Monitor.TryEnter(Constants.SubscriptionLock, Constants.LockTimeout, ref lockTaken);
-            if (!lockTaken)
+            if (Monitor.TryEnter(Constants.SubscriptionLock, Constants.LockTimeout))
             {
-                throw new InvalidOperationException("Potential Deadlock");
+                try
+                { 
+                    Priority.RemoveSuperior(s.Priority);
+                    return this.Subscriptions.Remove(s);
+                }
+                finally
+                {
+                    Monitor.Exit(Constants.SubscriptionLock);
+                }
             }
-
-            try
+            else
             {
-                Priority.RemoveSuperior(s.Priority);
-                return this.Subscriptions.Remove(s);
-            }
-            finally
-            {
-                Monitor.Exit(Constants.TransactionLock);
+                throw new InvalidOperationException("Could not obtain the subscription lock while canceling a subscription");
             }
         }
 

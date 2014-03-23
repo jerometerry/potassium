@@ -4,6 +4,10 @@
     using System.Threading;
     using Potassium.Providers;
 
+    /// <summary>
+    /// Signal is an EventPublisher that publishes the value of an IProvider using a timer
+    /// </summary>
+    /// <typeparam name="T">The type of values published from the Signal</typeparam>
     public class Signal<T> : EventPublisher<T>
     {
         private Hz frequency;

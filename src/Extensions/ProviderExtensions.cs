@@ -11,12 +11,12 @@
     {
         public static Provider<TB> Bind<TA, TB>(this IProvider<TA> source, IProvider<Func<TA, TB>> bf)
         {
-            return new MonadBinder<TA, TB>(source, bf);
+            return new Binder<TA, TB>(source, bf);
         }
 
         public static Provider<TB> Bind<TA,TB>(this IProvider<TA> source, Func<TA, TB> bf)
         {
-            return new MonadBinder<TA, TB>(source, bf);
+            return new Binder<TA, TB>(source, bf);
         }
 
         public static Identity<T> ToIdentity<T>(this T value)
@@ -26,12 +26,12 @@
 
         public static Provider<TC> Lift<TA, TB, TC>(Func<TA, TB, TC> lift, IProvider<TA> a, IProvider<TB> b)
         {
-            return new BinaryMonad<TA, TB, TC>(lift, a, b);
+            return new BinaryLift<TA, TB, TC>(lift, a, b);
         }
 
         public static Provider<TD> Lift<TA, TB, TC, TD>(Func<TA, TB, TC, TD> lift, IProvider<TA> a, IProvider<TB> b, IProvider<TC> c)
         {
-            return new TernaryMonad<TA, TB, TC, TD>(lift, a, b, c);
+            return new TernaryLift<TA, TB, TC, TD>(lift, a, b, c);
         }
 
         public static State<TS, TB> Bind<TS, TA, TB>(this State<TS, TA> a, Func<TA, State<TS, TB>> func)

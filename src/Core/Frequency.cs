@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Potassium.Core
 {
+    /// <summary>
+    /// Helper class for generating instances Hz 
+    /// </summary>
     public static class Frequency
     {
         public static Hz Hz(TimeSpan ts)

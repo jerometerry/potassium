@@ -27,11 +27,11 @@
         [Test]
         public void TestSin()
         {
-            var u = new UnaryMonad<double, double>(Math.Sin, TwoPi.ToIdentity());
+            var u = new UnaryLift<double, double>(Math.Sin, TwoPi.ToIdentity());
             Console.WriteLine(u.Value);
             Assert.AreEqual(0.0,u.Value, 1e-5);
             
-            u = new UnaryMonad<double, double>(Math.Sin, PiBy2.ToIdentity());
+            u = new UnaryLift<double, double>(Math.Sin, PiBy2.ToIdentity());
             Assert.AreEqual(1.0, u.Value, 1e-5);
         }
 

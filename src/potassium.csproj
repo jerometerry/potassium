@@ -54,11 +54,11 @@
     <Compile Include="Providers\AutoDouble.cs" />
     <Compile Include="Providers\AutoInt.cs" />
     <Compile Include="Providers\AutoLong.cs" />
-    <Compile Include="Providers\MonadBinder.cs" />
+    <Compile Include="Providers\Binder.cs" />
     <Compile Include="Providers\Provider.cs" />
     <Compile Include="Providers\IProvider.cs" />
     <Compile Include="Internal\BehaviorApplyEvent.cs" />
-    <Compile Include="Providers\BinaryMonad.cs" />
+    <Compile Include="Providers\BinaryLift.cs" />
     <Compile Include="Providers\Identity.cs" />
     <Compile Include="Providers\IdentityPredicate.cs" />
     <Compile Include="Core\EventPublisher.cs" />
@@ -93,11 +93,11 @@
     <Compile Include="Internal\MergeEvent.cs" />
     <Compile Include="Internal\OnceEvent.cs" />
     <Compile Include="Providers\State.cs" />
-    <Compile Include="Providers\UnaryMonad.cs" />
+    <Compile Include="Providers\UnaryLift.cs" />
     <Compile Include="Utilities\PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Internal\BehaviorLastValueEvent.cs" />
-    <Compile Include="Providers\TernaryMonad.cs" />
+    <Compile Include="Providers\TernaryLift.cs" />
     <Compile Include="Providers\UtcTime.cs" />
     <Compile Include="Providers\EqualityPredicate.cs" />
     <Compile Include="Providers\WebResource.cs" />

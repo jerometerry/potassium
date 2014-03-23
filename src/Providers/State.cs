@@ -19,6 +19,9 @@
         public Func<TS, Tuple<TS, TA>> Computation { get; private set; }
     }
 
+    /// <summary>
+    /// Static helpers for the State Monad
+    /// </summary>
     public static class State
     {
         public static State<TS,TS> Get<TS>()
