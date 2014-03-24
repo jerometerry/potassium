@@ -57,10 +57,8 @@
                     Monitor.Exit(Constants.TransactionLock);
                 }
             }
-            else
-            {
-                throw new InvalidOperationException("Could not acquire the transaction lock");
-            }
+
+            throw new InvalidOperationException("Could not acquire the transaction lock");
         }
     }
 }

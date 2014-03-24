@@ -35,7 +35,7 @@
             base.Dispose(disposing);
         }
 
-        private Unit Initialize(Transaction transaction)
+        private void Initialize(Transaction transaction)
         {
             this.wrappedEventSubscriptionCallback = this.CreateSubscriptionPublisher();
             this.wrappedSubscription = source.Value.CreateSubscription(this.wrappedEventSubscriptionCallback, this.Priority, transaction);
@@ -43,7 +43,7 @@
             var behaviorEventChanged = new SubscriptionPublisher<Event<T>>(this.UpdateWrappedEventSubscription);
             this.behaviorSubscription = source.Source.CreateSubscription(behaviorEventChanged, this.Priority, transaction);
 
-            return Unit.Nothing;
+            return;
         }
 
         private void UpdateWrappedEventSubscription(Event<T> newEvent, Transaction transaction)

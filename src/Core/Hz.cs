@@ -7,8 +7,6 @@
     /// </summary>
     public class Hz
     {
-        public double Value { get; set; }
-
         public Hz(double hz)
         {
             this.Value = hz;
@@ -18,6 +16,8 @@
         {
             this.Value = 1 / interval.TotalSeconds;
         }
+
+        public double Value { get; set; }
 
         public TimeSpan Interval()
         {

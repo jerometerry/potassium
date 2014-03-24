@@ -39,6 +39,7 @@ namespace Potassium.Internal
         /// </summary>
         /// <param name="source">The Observable to monitor for value updates</param>
         /// <param name="initValue">The initial value of the ObservedValue</param>
+        /// <param name="transaction">Transaction used to subscribe to the source</param>
         public ObservedValue(T initValue, Observable<T> source, Transaction transaction)
         {
             this.source = source;

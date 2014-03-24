@@ -30,7 +30,7 @@ namespace Potassium.Core
         public Behavior(T value, Event<T> source)
         {
             this.Source = source;
-            this.observedValue = Transaction.Start<ObservedValue<T>>(t => { return new ObservedValue<T>(value, source, t); });
+            this.observedValue = Transaction.Start(t => new ObservedValue<T>(value, source, t));
         }
 
         /// <summary>

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Potassium.Core
+﻿namespace Potassium.Core
 {
+    using System;
+
     /// <summary>
     /// Helper class for generating instances Hz 
     /// </summary>

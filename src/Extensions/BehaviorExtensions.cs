@@ -40,7 +40,7 @@
         /// </remarks>
         public static Event<T> Switch<T>(this Behavior<Event<T>> behavior)
         {
-            return Transaction.Start<SwitchEvent<T>>((t) => new SwitchEvent<T>(behavior, t));
+            return Transaction.Start(t => new SwitchEvent<T>(behavior, t));
         }
     }
 }

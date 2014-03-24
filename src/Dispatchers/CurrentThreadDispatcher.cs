@@ -7,10 +7,6 @@
     /// </summary>
     public class CurrentThreadDispatcher : IDispatcher
     {
-        public CurrentThreadDispatcher()
-        {
-        }
-
         public void Dispatch(Action action)
         {
             action();

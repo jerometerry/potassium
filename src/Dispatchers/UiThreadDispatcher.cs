@@ -8,8 +8,12 @@
     /// </summary>
     public class UiThreadDispatcher : IDispatcher
     {
-        Control control;
+        private readonly Control control;
 
+        /// <summary>
+        /// Creates a new UiThreadDispatcher
+        /// </summary>
+        /// <param name="control">The control used to dispatch to the UI thread.</param>
         public UiThreadDispatcher(Control control)
         {
             this.control = control;
@@ -17,7 +21,7 @@
 
         public void Dispatch(Action action)
         {
-            control.Invoke((MethodInvoker)delegate { action(); });
+            control.Invoke((MethodInvoker)(() => action()));
         }
     }
 }

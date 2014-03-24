@@ -1,6 +1,5 @@
 ﻿namespace Potassium.Core
 {
-    using System;
     using System.Threading;
     using Potassium.Dispatchers;
     using Potassium.Providers;
@@ -17,16 +16,31 @@
         private bool running;
         private IDispatcher dispatcher;
 
+        /// <summary>
+        /// Creates a new disabled Signal
+        /// </summary>
+        /// <param name="source">The source IProvider who's value will be fired when the Signals timer ticks</param>
         public Signal(IProvider<T> source)
             : this(source, new Hz(0.0))
         {
         }
 
+        /// <summary>
+        /// Creates a new Signal
+        /// </summary>
+        /// <param name="source">The source IProvider who's value will be fired when the Signals timer ticks</param>
+        /// <param name="frequency">The frequency of the Signal</param>
         public Signal(IProvider<T> source, Hz frequency)
             : this(source, frequency, new CurrentThreadDispatcher())
         {
         }
 
+        /// <summary>
+        /// Creates a new Signal
+        /// </summary>
+        /// <param name="source">The source IProvider who's value will be fired when the Signals timer ticks</param>
+        /// <param name="frequency">The frequency of the Signal</param>
+        /// <param name="dispatcher">The dispatcher used to invoke the Signal on the appropriate thread</param>
         public Signal(IProvider<T> source, Hz frequency, IDispatcher dispatcher)
         {
             this.source = source;
@@ -35,6 +49,9 @@
             this.dispatcher = dispatcher;
         }
 
+        /// <summary>
+        /// Gets / sets the running state of the signal timer
+        /// </summary>
         public bool Running
         {
             get 
@@ -44,20 +61,31 @@
             set
             {
                 if (value)
+                {
                     Start();
+                }
                 else
+                {
                     Stop();
+                }
 
                 running = value;
             }
         }
 
+        /// <summary>
+        /// Gets / sets the frequency of the signal
+        /// </summary>
         public Hz Frequency
         {
-            get  {  return frequency;  }
+            get { return frequency;  }
             set { frequency = value; }
         }
 
+        /// <summary>
+        /// Start the signals timer
+        /// </summary>
+        /// <returns>True if the timer was started, false if the timer was already running</returns>
         public bool Start()
         {
             if (this.running)
@@ -71,6 +99,10 @@
             return true;
         }
 
+        /// <summary>
+        /// Stop the signal timer
+        /// </summary>
+        /// <returns>True if the timer was stopped, false if the timer was already stopped</returns>
         public bool Stop()
         {
             if (!this.running)
@@ -84,6 +116,9 @@
             return true;
         }
 
+        /// <summary>
+        /// Restart the timer, if running, using the updated frequency
+        /// </summary>
         public void Restart()
         {
             if (this.Running)
@@ -100,6 +135,7 @@
                 this.timer.Dispose();
                 this.timer = null;
                 this.source = null;
+                this.dispatcher = null;
             }
 
             base.Dispose(disposing);

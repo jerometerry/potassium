@@ -1,6 +1,5 @@
 ﻿namespace Potassium.Core
-{
-    
+{    
     using System;
 
     /// <summary>

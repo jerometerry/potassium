@@ -144,10 +144,8 @@
                     Monitor.Exit(Constants.SubscriptionLock);
                 }
             }
-            else
-            {
-                throw new InvalidOperationException("Could not obtain the subscription lock while canceling a subscription");
-            }
+            
+            throw new InvalidOperationException("Could not obtain the subscription lock while canceling a subscription");
         }
 
         /// <summary>
