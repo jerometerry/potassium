@@ -1,5 +1,5 @@
-Potassium
-=========
+![alt text](https://github.com/jerometerry/potassium/raw/master/potassium.png "Potassium") Potassium
+====================================================================================================
 
 Potassium is a Functional Rective Programming Library for .NET, based on [Sodium](https://github.com/kentuckyfriedtakahe/sodium).
 
@@ -12,7 +12,7 @@ Check out the [wiki](https://github.com/jerometerry/potassium/wiki) for more inf
 Potassium API [documentation](http://jterry.azurewebsites.net/potassium/)
 
 Overview
-==========
+========
 
 Potassium is made up of 2 primitives with 12 opeartions.
 
@@ -26,7 +26,7 @@ Potassium uses the Publish / Subscribe Pattern
 * Event.Subscribe is used to create subscriptions
 
 Key Classes
-==========
+===========
 
 **Event** - a series of discrete event occurrences.
 
