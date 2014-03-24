@@ -61,7 +61,7 @@
     <Compile Include="Providers\Binder.cs" />
     <Compile Include="Providers\Provider.cs" />
     <Compile Include="Providers\IProvider.cs" />
-    <Compile Include="Internal\BehaviorApplyEvent.cs" />
+    <Compile Include="Internal\CurryEvent.cs" />
     <Compile Include="Providers\BinaryLift.cs" />
     <Compile Include="Providers\Identity.cs" />
     <Compile Include="Providers\IdentityPredicate.cs" />

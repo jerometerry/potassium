@@ -117,14 +117,14 @@ namespace Potassium.Tests
         }
 
         [Test]
-        public void TestApply()
+        public void TestCurry()
         {
             var pbf = new EventPublisher<Func<long, string>>();
             var bf = new Behavior<Func<long, string>>(b => "1 " + b, pbf);
             var pba = new EventPublisher<long>();
             var ba = new Behavior<long>(5L, pba);
             var results = new List<string>();
-            var apply = ba.Apply(bf);
+            var apply = Behavior<long>.Curry(bf, ba);
             var values = apply.Values();
             var listener = values.Subscribe(results.Add);
             pbf.Publish(b => "12 " + b);
@@ -145,7 +145,7 @@ namespace Potassium.Tests
             var pub2 = new EventPublisher<long>();
             var behavior2 = new Behavior<long>(5L, pub2);
             var results = new List<string>();
-            var combinedBehavior = behavior1.Lift((x, y) => x + " " + y, behavior2);
+            var combinedBehavior = Behavior<int>.Lift((x, y) => x + " " + y, behavior1, behavior2);
             var values = combinedBehavior.Values();
             var listener = values.Subscribe(results.Add);
             pub1.Publish(12);
@@ -170,7 +170,7 @@ namespace Potassium.Tests
             var mappedBehavior1 = behavior.Map(x => x * 3);
             var mappedBehavior2 = behavior.Map(x => x * 5);
             var results = new List<string>();
-            var combinedBehavior = mappedBehavior1.Lift((x, y) => x + " " + y, mappedBehavior2);
+            var combinedBehavior = Behavior<int>.Lift((x, y) => x + " " + y, mappedBehavior1, mappedBehavior2);
             var values = combinedBehavior.Values();
             var listener = values.Subscribe(results.Add);
             publisher.Publish(2);

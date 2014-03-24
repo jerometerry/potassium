@@ -4,23 +4,23 @@
     using Potassium.Core;
 
     /// <summary>
-    /// Publish the mapped value once per transaction if either the source Behavior or Behavior Map publishes.
+    /// Event that curries a Behavior holding a partial function by supplying another behavior.
     /// </summary>
     /// <typeparam name="T">The type of value published through the source Behavior</typeparam>
     /// <typeparam name="TB">The return type of the Behavior Mapping functions</typeparam>
-    internal sealed class BehaviorApplyEvent<T, TB> : EventPublisher<TB>
+    internal sealed class CurryEvent<T, TB> : EventPublisher<TB>
     {
         /// <summary>
         /// Set to true when waiting for the Publish Priority Action to run.
         /// </summary>
         private bool published;
         private Behavior<T> source;
-        private Behavior<Func<T, TB>> behaviorMap;
+        private Behavior<Func<T, TB>> partialBehavior;
         
-        public BehaviorApplyEvent(Behavior<T> source, Behavior<Func<T, TB>> behaviorMap)
+        public CurryEvent(Behavior<Func<T, TB>> partialBehavior, Behavior<T> source)
         {
             this.source = source;
-            this.behaviorMap = behaviorMap;
+            this.partialBehavior = partialBehavior;
 
             SubscribeSource();
             SubscribeMap();
@@ -31,7 +31,7 @@
             if (disposing)
             {
                 source = null;
-                behaviorMap = null;
+                this.partialBehavior = null;
             }
 
             base.Dispose(disposing);
@@ -47,7 +47,7 @@
         private void SubscribeMap()
         {
             var functionChanged = new SubscriptionPublisher<Func<T, TB>>((f, t) => this.SchedulePublish(t));
-            var subscription = behaviorMap.Source.Subscribe(functionChanged, this.Priority);
+            var subscription = this.partialBehavior.Source.Subscribe(functionChanged, this.Priority);
             this.Register(subscription);
         }
 
@@ -79,7 +79,7 @@
 
         private TB GetValueToPublish()
         {
-            var map = this.behaviorMap.NewValue;
+            var map = this.partialBehavior.NewValue;
             var a = this.source.NewValue;
             var b = map(a);
             return b;

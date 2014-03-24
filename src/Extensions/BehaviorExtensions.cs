@@ -9,6 +9,17 @@
     public static class BehaviorExtensions
     {
         /// <summary>
+        /// Lifts a value into a constant Behavior
+        /// </summary>
+        /// <typeparam name="T">The type of the value</typeparam>
+        /// <param name="value">The value of the constant Behavior</param>
+        /// <returns>A constant Behavior having the given value</returns>
+        public static Behavior<T> Lift<T>(this T value)
+        {
+            return Behavior<T>.Lift(value);
+        }
+
+        /// <summary>
         /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
         /// </summary>
         /// <typeparam name="T">The type of values published through the source</typeparam>
