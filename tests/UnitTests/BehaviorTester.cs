@@ -3,10 +3,10 @@ namespace Potassium.Tests
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using NUnit.Framework;
     using Potassium.Core;
     using Potassium.Extensions;
     using Potassium.Providers;
-    using NUnit.Framework;
 
     [TestFixture]
     public class BehaviorTester : TestBase

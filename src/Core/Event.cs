@@ -29,20 +29,6 @@
         }
 
         /// <summary>
-        /// Push each event occurrence onto a new transaction.
-        /// </summary>
-        /// <typeparam name="T">The type of values published through the source</typeparam>
-        /// <returns>An event that is published with the lowest priority in the current Transaction the current Event is published in.</returns>
-        public Event<T> Delay()
-        {
-            var evt = new EventPublisher<T>();
-            var callback = new SubscriptionPublisher<T>((a, t) => t.Low(() => evt.Publish(a)));
-            var subscription = this.Subscribe(callback, evt.Priority);
-            evt.Register(subscription);
-            return evt;
-        }
-
-        /// <summary>
         /// Only keep event occurrences for which the predicate returns true.
         /// </summary>
         /// <param name="predicate">A predicate used to include publishings</param>
@@ -65,25 +51,6 @@
         }
 
         /// <summary>
-        /// Let event occurrences through only when the behavior's value is True.
-        /// Note that the behavior's value is as it was at the start of the transaction,
-        /// that is, no state changes from the current transaction are taken into account.
-        /// </summary>
-        /// <param name="predicate">A behavior who's current value acts as a predicate</param>
-        /// <returns>A new Event that publishes whenever the current Event publishes and the Behaviors value
-        /// is true.</returns>
-        public Event<T> Gate(Predicate predicate)
-        {
-            Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
-            var sn = this.Snapshot(snapshot, predicate);
-            var filter = sn.FilterNotNull();
-            var map = filter.Map(a => a.Value);
-            map.Register(filter);
-            map.Register(sn);
-            return map;
-        }
-
-        /// <summary>
         /// Create a behavior with the specified initial value, that gets updated
         /// by the values coming through the event. The 'current value' of the behavior
         /// is notionally the value as it was 'at the start of the transaction'.
@@ -95,21 +62,7 @@
         /// having the specified initial value.</returns>
         public Behavior<T> Hold(T value)
         {
-            return Transaction.Start(t => Hold(value, t));
-        }
-
-        /// <summary>
-        /// Creates a Behavior from an Observable and an initial value
-        /// </summary>
-        /// <param name="value">The initial value of the Behavior</param>
-        /// <param name="t">The Transaction to perform the Hold</param>
-        /// <returns>The Behavior with the given value</returns>
-        public Behavior<T> Hold(T value, Transaction t)
-        {
-            var s = new LastFiringEvent<T>(this, t);
-            var b = new Behavior<T>(value, s);
-            b.Register(s);
-            return b;
+            return Transaction.Start(t => new HoldBehavior<T>(this, value, t));
         }
 
         /// <summary>
@@ -148,27 +101,6 @@
         public Event<T> Merge(Observable<T> observable)
         {
             return new MergeEvent<T>(this, observable);
-        }
-
-        /// <summary>
-        /// Merge two streams of events of the same type, combining simultaneous
-        /// event occurrences.
-        /// </summary>
-        /// <param name="observable">The Event to merge with the current Event</param>
-        /// <param name="coalesce">The coalesce function that combines simultaneous publishings.</param>
-        /// <returns>An Event that is published whenever the current or source Events publish, where
-        /// simultaneous publishings are handled by the coalesce function.</returns>
-        /// <remarks>
-        /// In the case where multiple event occurrences are simultaneous (i.e. all
-        /// within the same transaction), they are combined using the same logic as
-        /// 'coalesce'.
-        /// </remarks>
-        public Event<T> Merge(Observable<T> observable, Func<T, T, T> coalesce)
-        {
-            var merge = this.Merge(observable);
-            var c = merge.Coalesce(coalesce);
-            c.Register(merge);
-            return c;
         }
 
         /// <summary>

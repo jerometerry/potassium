@@ -2,6 +2,8 @@
 {
     using System;
     using Potassium.Core;
+    using Potassium.Internal;
+    using Potassium.Providers;
 
     /// <summary>
     /// Event extension methods
@@ -80,6 +82,62 @@
             mappedEvent.Register(snapshotEvent);
 
             return mappedEvent;
+        }
+
+        /// <summary>
+        /// Push each event occurrence onto a new transaction.
+        /// </summary>
+        /// <typeparam name="T">The type of values published through the source</typeparam>
+        /// <returns>An event that is published with the lowest priority in the current Transaction the current Event is published in.</returns>
+        public static Event<T> Delay<T>(this Event<T> source)
+        {
+            var evt = new EventPublisher<T>();
+            var callback = new SubscriptionPublisher<T>((a, t) => t.Low(() => evt.Publish(a)));
+            var subscription = source.Subscribe(callback, evt.Priority);
+            evt.Register(subscription);
+            return evt;
+        }
+
+        /// <summary>
+        /// Let event occurrences through only when the behavior's value is True.
+        /// Note that the behavior's value is as it was at the start of the transaction,
+        /// that is, no state changes from the current transaction are taken into account.
+        /// </summary>
+        /// <param name="source">The source Event</param>
+        /// <param name="predicate">A behavior who's current value acts as a predicate</param>
+        /// <returns>A new Event that publishes whenever the current Event publishes and the Behaviors value
+        /// is true.</returns>
+        public static Event<T> Gate<T>(this Event<T> source, Predicate predicate)
+        {
+            Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
+            var sn = source.Snapshot(snapshot, predicate);
+            var filter = sn.FilterNotNull();
+            var map = filter.Map(a => a.Value);
+            map.Register(filter);
+            map.Register(sn);
+            return map;
+        }
+
+        /// <summary>
+        /// Merge two streams of events of the same type, combining simultaneous
+        /// event occurrences.
+        /// </summary>
+        /// <param name="source">The source Event</param>
+        /// <param name="observable">The Event to merge with the current Event</param>
+        /// <param name="coalesce">The coalesce function that combines simultaneous publishings.</param>
+        /// <returns>An Event that is published whenever the current or source Events publish, where
+        /// simultaneous publishings are handled by the coalesce function.</returns>
+        /// <remarks>
+        /// In the case where multiple event occurrences are simultaneous (i.e. all
+        /// within the same transaction), they are combined using the same logic as
+        /// 'coalesce'.
+        /// </remarks>
+        public static Event<T> Merge<T>(this Event<T> source, Observable<T> observable, Func<T, T, T> coalesce)
+        {
+            var merge = source.Merge(observable);
+            var c = merge.Coalesce(coalesce);
+            c.Register(merge);
+            return c;
         }
     }
 }

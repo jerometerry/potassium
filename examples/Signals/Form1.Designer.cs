@@ -67,7 +67,7 @@
             this.frequency.Size = new System.Drawing.Size(167, 20);
             this.frequency.TabIndex = 1;
             this.frequency.Value = new decimal(new int[] {
-            1,
+            1000,
             0,
             0,
             0});
