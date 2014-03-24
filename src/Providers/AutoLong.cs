@@ -1,5 +1,9 @@
 ﻿namespace Potassium.Providers
 {
+    using System;
+    using System.Threading;
+    using Potassium.Internal;
+
     /// <summary>
     /// AutoLong is an IProvider of type long that starts with an initial value, 
     /// and auto increments by a step after each request of the Value
@@ -31,9 +35,23 @@
         {
             get 
             { 
-                var result = value;
-                value += increment;
-                return result;
+                if (Monitor.TryEnter(Constants.ProviderValueLock, Constants.LockTimeout))
+                { 
+                    try
+                    { 
+                        var result = value;
+                        value += increment;
+                        return result;
+                    }
+                    finally
+                    {
+                        Monitor.Exit(Constants.ProviderValueLock);
+                    }
+                }
+                else
+                {
+                    throw new InvalidOperationException("Could not obtain the provider value lock");
+                }
             }
         }
     }

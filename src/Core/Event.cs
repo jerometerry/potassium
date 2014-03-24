@@ -240,26 +240,27 @@
         }
 
         /// <summary>
-        /// Sample the behavior at the time of the event publishing. Note that the 'current value'
-        /// of the behavior that's sampled is the value as at the start of the transaction
-        /// before any state changes of the current transaction are applied through 'hold's.
+        /// Sample the behavior at the time of the event publishing. 
         /// </summary>
         /// <typeparam name="TB">The type of the Behavior</typeparam>
         /// <typeparam name="TC">The return type of the snapshot function</typeparam>
         /// <param name="provider">The Behavior to sample when calculating the snapshot</param>
         /// <param name="snapshot">The snapshot generation function.</param>
         /// <returns>A new Event that will produce the snapshot when the current event publishes</returns>
+        /// <remarks>Note that the 'current value' of the behavior that's sampled is the value 
+        /// as at the start of the transaction before any state changes of the current transaction 
+        /// are applied through 'hold's.</remarks>
         public Event<TC> Snapshot<TB, TC>(IProvider<TB> provider, Func<T, TB, TC> snapshot)
         {
             return new SnapshotEvent<T, TB, TC>(this, snapshot, provider);
         }
 
         /// <summary>
-        /// Variant of snapshot that throws away the event's value and captures the behavior's.
+        /// Sample the providers value at the time of the event publishing
         /// </summary>
-        /// <typeparam name="TB">The type of the Behavior</typeparam>
-        /// <param name="provider">The Behavior to sample when taking the snapshot</param>
-        /// <returns>An event that captures the Behaviors value when the current event publishes</returns>
+        /// <typeparam name="TB">The type of the Provider</typeparam>
+        /// <param name="provider">The IProvider to sample when taking the snapshot</param>
+        /// <returns>An event that captures the IProviders value when the current event publishes</returns>
         public Event<TB> Snapshot<TB>(IProvider<TB> provider)
         {
             return this.Snapshot(provider, (a, b) => b);

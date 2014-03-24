@@ -8,6 +8,7 @@
     public partial class Form1 : Form
     {
         Signal<DateTime> signal;
+        Event<long> signalTickCount;
         EventPublisher<decimal> intervalChanged;
         EventPublisher<bool> runningEvent;
         Behavior<decimal> intervalBehavior;
@@ -33,6 +34,8 @@
 
             var frm = this;
             signal.Subscribe(SetDate);
+            signalTickCount = signal.Snapshot(new AutoLong());
+            signalTickCount.Subscribe(UpdateTickCount);
             
             runningEvent.Subscribe(r => { signal.Running = r; });
             runningBehavior = runningEvent.Hold(false);
@@ -63,6 +66,11 @@
         {
             this.startBtn.Enabled = !running;
             this.stopBtn.Enabled = running;
+        }
+
+        private void UpdateTickCount(long count)
+        {
+            ticks.Text = count.ToString();
         }
     }
 }

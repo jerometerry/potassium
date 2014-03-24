@@ -35,6 +35,8 @@
             this.stopBtn = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.latestValue = new System.Windows.Forms.TextBox();
+            this.ticks = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.frequency)).BeginInit();
             this.SuspendLayout();
             // 
@@ -99,11 +101,30 @@
             this.latestValue.Size = new System.Drawing.Size(167, 20);
             this.latestValue.TabIndex = 5;
             // 
+            // ticks
+            // 
+            this.ticks.Location = new System.Drawing.Point(126, 126);
+            this.ticks.Name = "ticks";
+            this.ticks.ReadOnly = true;
+            this.ticks.Size = new System.Drawing.Size(167, 20);
+            this.ticks.TabIndex = 7;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(10, 130);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(65, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Signal Ticks";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(549, 347);
+            this.Controls.Add(this.ticks);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.latestValue);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.stopBtn);
@@ -126,5 +147,7 @@
         private System.Windows.Forms.Button stopBtn;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox latestValue;
+        private System.Windows.Forms.TextBox ticks;
+        private System.Windows.Forms.Label label3;
     }
 }
