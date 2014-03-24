@@ -34,7 +34,7 @@ namespace Potassium.Tests
             var evt = new EventPublisher<long>();
             var results = new List<string>();
             Func<long, int, string> snapshotFunction = (x, y) => string.Format("{0} {1}", x, y);
-            var listener = evt.Snapshot(behavior, snapshotFunction).Subscribe(results.Add);
+            var listener = evt.Snapshot(snapshotFunction, behavior).Subscribe(results.Add);
 
             evt.Publish(100L);
             publisher.Publish(2);
@@ -185,7 +185,7 @@ namespace Potassium.Tests
         {
             var evt = new EventPublisher<int>();
             var behavior = evt.Hold(0);
-            var pair = evt.Snapshot(behavior, (a, b) => a + " " + b);
+            var pair = evt.Snapshot((a, b) => a + " " + b, behavior);
             var results = new List<string>();
             var listener = pair.Subscribe(results.Add);
             evt.Publish(2);
@@ -270,7 +270,7 @@ namespace Potassium.Tests
             var feed = new EventFeed<int>();
             var ea = new EventPublisher<int>();
             var sum = new Behavior<int>(0, feed);
-            var sumOut = ea.Snapshot(sum, (x, y) => x + y).Hold(0);
+            var sumOut = ea.Snapshot((x, y) => x + y, sum).Hold(0);
             feed.Feed(sumOut.Source);
             var o = new List<int>();
             var values = sumOut.Values();
@@ -292,7 +292,7 @@ namespace Potassium.Tests
         {
             var ea = new EventPublisher<int>();
             var o = new List<int>();
-            var sum = ea.Hold(100).Collect(0, (a, s) => new Tuple<int, int>(a + s, a + s));
+            var sum = ea.Hold(100).Collect((a, s) => new Tuple<int, int>(a + s, a + s), 0);
             var values = sum.Values();
             var l = values.Subscribe(o.Add);
             ea.Publish(5);
@@ -311,7 +311,7 @@ namespace Potassium.Tests
         {
             var ea = new EventPublisher<int>();
             var o = new List<int>();
-            var sum = ea.Accum(100, (a, s) => a + s);
+            var sum = ea.Accum((a, s) => a + s, 100);
             var values = sum.Values();
             var l = values.Subscribe(o.Add);
             ea.Publish(5);

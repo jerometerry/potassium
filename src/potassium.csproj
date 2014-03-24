@@ -53,6 +53,7 @@
     <Compile Include="Dispatchers\IDispatcher.cs" />
     <Compile Include="Core\Signal.cs" />
     <Compile Include="Dispatchers\UiThreadDispatcher.cs" />
+    <Compile Include="Extensions\EventExtensions.cs" />
     <Compile Include="Extensions\ProviderExtensions.cs" />
     <Compile Include="Core\Frequency.cs" />
     <Compile Include="Providers\AutoDouble.cs" />

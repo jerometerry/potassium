@@ -5,31 +5,32 @@ namespace Potassium.Internal
     using Potassium.Core;
     using Potassium.Providers;
 
-    internal sealed class SnapshotEvent<T, TB, TC> : PublishEvent<TC>
+    /// <summary>
+    /// SnapshotEvent is an event that publishes snapshots of a source event, computed by
+    /// invoking a snapshot function with the current published value of the source event
+    /// as the first parameter, and the current value of the IProvider as the second parameter.
+    /// </summary>
+    /// <typeparam name="T">The type of the first parameter of the snapshot function</typeparam>
+    /// <typeparam name="TB">The type of the second parameter of the snapshot function</typeparam>
+    /// <typeparam name="TS">The return type of the snapshot function</typeparam>
+    internal sealed class SnapshotEvent<T, TB, TS> : PublishEvent<TS>
     {
         private Observable<T> source;
-        private Func<T, TB, TC> snapshot;
+        private Func<T, TB, TS> snapshot;
         private IProvider<TB> provider;
         private ISubscription<T> subscription;
 
-        public SnapshotEvent(Observable<T> source, Func<T, TB, TC> snapshot, IProvider<TB> provider)
+        public SnapshotEvent(Observable<T> source, Func<T, TB, TS> snapshot, IProvider<TB> provider)
         {
             this.source = source;
             this.snapshot = snapshot;
             this.provider = provider;
 
-            var callback = new SubscriptionPublisher<T>(this.Publish);
+            var callback = new SubscriptionPublisher<T>(this.PublishSnapshot);
             this.subscription = source.Subscribe(callback, this.Priority);
         }
 
-        public void Publish(T publishing, Transaction transaction)
-        {
-            var f = this.provider.Value;
-            var v = this.snapshot(publishing, f);
-            this.Publish(v, transaction);
-        }
-
-        public override TC[] SubscriptionFirings()
+        public override TS[] SubscriptionFirings()
         {
             var events = GetSubscribeFirings(source);
             if (events == null)
@@ -54,6 +55,12 @@ namespace Potassium.Internal
             snapshot = null;
 
             base.Dispose(disposing);
+        }
+
+        private void PublishSnapshot(T value, Transaction transaction)
+        {
+            var v = snapshot(value, provider.Value);
+            this.Publish(v, transaction);
         }
     }
 }

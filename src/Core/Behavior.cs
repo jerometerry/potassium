@@ -150,24 +150,36 @@ namespace Potassium.Core
         /// <param name="initState">Value to pass to the snapshot function</param>
         /// <param name="snapshot">Snapshot function</param>
         /// <returns>A new Behavior that collects values of type TB</returns>
-        public Behavior<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> snapshot)
+        public Behavior<TB> Collect<TB, TS>(Func<T, TS, Tuple<TB, TS>> snapshot, TS initState)
         {
-            var coalesceEvent = this.Source.Coalesce((a, b) => b);
-            var currentValue = this.Value;
-            var tuple = snapshot(currentValue, initState);
-            var loop = new EventFeed<Tuple<TB, TS>>();
-            var loopBehavior = loop.Hold(tuple);
-            var snapshotBehavior = loopBehavior.Map(x => x.Item2);
-            var coalesceSnapshotEvent = coalesceEvent.Snapshot(snapshotBehavior, snapshot);
-            loop.Feed(coalesceSnapshotEvent);
+            // Only listen for the last firing of the Source of the Current Behavior
+            Event<T> lastFiring = this.Source.LastFiring();
 
-            var result = loopBehavior.Map(x => x.Item1);
-            result.Register(loop);
-            result.Register(loopBehavior);
-            result.Register(coalesceEvent);
-            result.Register(coalesceSnapshotEvent);
-            result.Register(snapshotBehavior);
-            return result;
+            // Event that fires whenever a new snapshot is generated
+            EventFeed<Tuple<TB, TS>> snapshotFeed = new EventFeed<Tuple<TB, TS>>();
+            
+            // Behavior that holds the last snapshot tuple
+            Behavior<Tuple<TB, TS>> snapshotBehavior = snapshotFeed.Hold(snapshot(Value, initState));
+            
+            // Behavior that holds the last snapshot value, extracted out of the tuple
+            Behavior<TS> lastSnapshotValue = snapshotBehavior.Map(x => x.Item2);
+            
+            // Takes snapshots from the last firing of the Source of the current Behavior
+            Event<Tuple<TB, TS>> snapshotGenerator = lastFiring.Snapshot(snapshot, lastSnapshotValue);
+            
+            // Feed the new snapshots back into the snapshot feed.
+            snapshotFeed.Feed(snapshotGenerator);
+
+            // Extracts the value out of the snapshot Behavior tuple
+            var collected = snapshotBehavior.Map(x => x.Item1);
+            
+            collected.Register(snapshotFeed);
+            collected.Register(snapshotBehavior);
+            collected.Register(lastFiring);
+            collected.Register(snapshotGenerator);
+            collected.Register(lastSnapshotValue);
+            
+            return collected;
         }
 
         /// <summary>

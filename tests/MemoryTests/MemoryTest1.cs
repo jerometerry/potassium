@@ -26,7 +26,7 @@ namespace Potassium.MemoryTests
             var etens = evt.Map(x => x / 10);
             finalizers.Add(etens);
 
-            var snapshotEvent = evt.Snapshot(behavior, (neu, old) => neu.Equals(old) ? null : neu);
+            var snapshotEvent = evt.Snapshot((neu, old) => neu.Equals(old) ? null : neu, behavior);
             finalizers.Add(snapshotEvent);
 
             var changeTens = snapshotEvent.FilterNotNull();

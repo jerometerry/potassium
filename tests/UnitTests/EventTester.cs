@@ -145,7 +145,7 @@ namespace Potassium.Tests
         {
             var ea = new EventPublisher<int>();
             var o = new List<int>();
-            var sum = ea.Collect(100, (a, s) => new Tuple<int, int>(a + s, a + s));
+            var sum = ea.Collect((a, s) => new Tuple<int, int>(a + s, a + s), 100);
             var l = sum.Subscribe(o.Add);
             ea.Publish(5);
             ea.Publish(7);
@@ -161,7 +161,7 @@ namespace Potassium.Tests
         {
             var ea = new EventPublisher<int>();
             var o = new List<int>();
-            var sum = ea.Accum(100, (a, s) => a + s);
+            var sum = ea.Accum((a, s) => a + s, 100);
             var l = sum.Source.Subscribe(o.Add);
             ea.Publish(5);
             ea.Publish(7);

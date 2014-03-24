@@ -11,37 +11,6 @@
     public class Event<T> : Observable<T>
     {
         /// <summary>
-        /// Accumulate on input event, outputting the new state each time.
-        /// </summary>
-        /// <typeparam name="TS">The return type of the snapshot function</typeparam>
-        /// <param name="value">The initial state of the behavior</param>
-        /// <param name="accumulator">The snapshot generation function</param>
-        /// <returns>A new Behavior starting with the given value, that updates 
-        /// whenever the current event publishes, getting a value computed by the snapshot function.</returns>
-        public Behavior<TS> Accum<TS>(TS value, Func<T, TS, TS> accumulator)
-        {
-            var eventFeed = new EventFeed<TS>();
-
-            // Behavior holds the running snapshot value
-            var previousShapshotBehavior = eventFeed.Hold(value);
-
-            // Event that fires the new accumulated values, using the accumulator and the previous values
-            var accumulationEvent = this.Snapshot(previousShapshotBehavior, accumulator);
-
-            // Feed the new accumulated values into the Behavior, to store the new snapshot as the previous snapshot
-            eventFeed.Feed(accumulationEvent);
-
-            // Behavior that holds the value of the new accumulated values
-            var result = accumulationEvent.Hold(value);
-
-            result.Register(eventFeed);
-            result.Register(previousShapshotBehavior);
-            result.Register(accumulationEvent);
-
-            return result;
-        }
-
-        /// <summary>
         /// If there's more than one publishing in a single transaction, combine them into
         /// one using the specified combining function.
         /// </summary>
@@ -57,43 +26,6 @@
         public Event<T> Coalesce(Func<T, T, T> coalesce)
         {
             return Transaction.Start(t => new CoalesceEvent<T>(this, coalesce, t));
-        }
-
-        /// <summary>
-        /// Transform an event with a generalized state loop (a mealy machine). The function
-        /// is passed the input and the old state and returns the new state and output value.
-        /// </summary>
-        /// <typeparam name="TB">The return type of the new Event</typeparam>
-        /// <typeparam name="TS">The snapshot type</typeparam>
-        /// <param name="initState">The initial state for the internal Behavior</param>
-        /// <param name="collector">The mealy machine</param>
-        /// <returns>An Event that collects new values</returns>
-        public Event<TB> Collect<TB, TS>(TS initState, Func<T, TS, Tuple<TB, TS>> collector)
-        {
-            // snapshotFeed is used to create the Behavior that holds the snapshot values
-            var snapshotFeed = new EventFeed<TS>();
-
-            // Behavior that holds the previous collected value
-            var snapshotBehavior = snapshotFeed.Hold(initState);
-
-            // Event that emits a Tuple<TB,TS> containing the mapped value and the snapshot
-            var mappedEventSnapshot = this.Snapshot(snapshotBehavior, collector);
-
-            // Event that emits the snapshot values from the mappedEventSnapshot above
-            var snapshotEvent = mappedEventSnapshot.Map(bs => bs.Item2);
-
-            // Feed the snapshots into the Behavior holding the snapshot values
-            snapshotFeed.Feed(snapshotEvent);
-
-            // Event that extracts the mapped value from the mappedEventSnapshot above
-            var mappedEvent = mappedEventSnapshot.Map(bs => bs.Item1);
-
-            mappedEvent.Register(snapshotFeed);
-            mappedEvent.Register(snapshotBehavior);
-            mappedEvent.Register(mappedEventSnapshot);
-            mappedEvent.Register(snapshotEvent);
-
-            return mappedEvent;
         }
 
         /// <summary>
@@ -143,7 +75,7 @@
         public Event<T> Gate(Predicate predicate)
         {
             Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
-            var sn = this.Snapshot(predicate, snapshot);
+            var sn = this.Snapshot(snapshot, predicate);
             var filter = sn.FilterNotNull();
             var map = filter.Map(a => a.Value);
             map.Register(filter);
@@ -178,6 +110,15 @@
             var b = new Behavior<T>(value, s);
             b.Register(s);
             return b;
+        }
+
+        /// <summary>
+        /// Gets an Event that only fires once if the current Event fires multiple times in the same transaction
+        /// </summary>
+        /// <returns>The Event that fires only the last event in a Transaction</returns>
+        public Event<T> LastFiring()
+        {
+            return Transaction.Start(t => new LastFiringEvent<T>(this, t));
         }
 
         /// <summary>
@@ -244,13 +185,13 @@
         /// </summary>
         /// <typeparam name="TB">The type of the Behavior</typeparam>
         /// <typeparam name="TC">The return type of the snapshot function</typeparam>
-        /// <param name="provider">The Behavior to sample when calculating the snapshot</param>
         /// <param name="snapshot">The snapshot generation function.</param>
+        /// <param name="provider">The Behavior to sample when calculating the snapshot</param>
         /// <returns>A new Event that will produce the snapshot when the current event publishes</returns>
         /// <remarks>Note that the 'current value' of the behavior that's sampled is the value 
         /// as at the start of the transaction before any state changes of the current transaction 
         /// are applied through 'hold's.</remarks>
-        public Event<TC> Snapshot<TB, TC>(IProvider<TB> provider, Func<T, TB, TC> snapshot)
+        public Event<TC> Snapshot<TB, TC>(Func<T, TB, TC> snapshot, IProvider<TB> provider)
         {
             return new SnapshotEvent<T, TB, TC>(this, snapshot, provider);
         }
@@ -263,7 +204,7 @@
         /// <returns>An event that captures the IProviders value when the current event publishes</returns>
         public Event<TB> Snapshot<TB>(IProvider<TB> provider)
         {
-            return this.Snapshot(provider, (a, b) => b);
+            return this.Snapshot((a, b) => b, provider);
         }
     }
 }
