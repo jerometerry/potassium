@@ -25,7 +25,7 @@
         /// <remarks>The returned SubscriptionPublisher can be used by the current Event to notify subscribers
         /// on the Event they were subscribed on, or by another event to forward values to subscribers from an
         /// alternate Event.</remarks>
-        internal SubscriptionPublisher<T> CreateSubscriptionPublisher()
+        internal SubscriptionPublisher<T> CreatePublisher()
         {
             return new SubscriptionPublisher<T>((t, v) => this.Publish(t, v));
         }

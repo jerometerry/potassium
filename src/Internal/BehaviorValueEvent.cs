@@ -49,8 +49,8 @@ namespace Potassium.Internal
         private void CreateLoop(Transaction transaction)
         {
             var source = this.behavior.Source;
-            var target = this.CreateSubscriptionPublisher();
-            this.subscription = source.CreateSubscription(target, this.Priority, transaction);
+            var target = this.CreatePublisher();
+            this.subscription = source.Subscribe(target, this.Priority, transaction);
         }
     }
 }

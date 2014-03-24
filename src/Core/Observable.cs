@@ -53,7 +53,7 @@
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
         public ISubscription<T> Subscribe(Action<T> callback)
         {
-            return Transaction.Start(t => this.CreateSubscription(new SubscriptionPublisher<T>(callback), Priority.Max, t));
+            return Transaction.Start(t => this.Subscribe(new SubscriptionPublisher<T>(callback), Priority.Max, t));
         }
 
         /// <summary>
@@ -67,7 +67,7 @@
         /// actions triggered during Subscribe requiring a transaction all get the same instance.</remarks>
         internal ISubscription<T> Subscribe(SubscriptionPublisher<T> publisher, Priority subscriptionRank)
         {
-            return Transaction.Start(t => this.CreateSubscription(publisher, subscriptionRank, t));
+            return Transaction.Start(t => this.Subscribe(publisher, subscriptionRank, t));
         }
 
         /// <summary>
@@ -78,7 +78,7 @@
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Observable</param>
         /// <returns>An ISubscription to be used to stop listening for Observables.</returns>
         /// <remarks>Any publishings that have occurred on the current transaction will be re-published immediate after subscribing.</remarks>
-        internal ISubscription<T> CreateSubscription(SubscriptionPublisher<T> publisher, Priority superior, Transaction transaction)
+        internal ISubscription<T> Subscribe(SubscriptionPublisher<T> publisher, Priority superior, Transaction transaction)
         {
             Subscription<T> subscription;
 

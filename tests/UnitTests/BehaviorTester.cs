@@ -238,8 +238,8 @@ namespace Potassium.Tests
         public void TestSwitchE()
         {
             var ese = new EventPublisher<Se>();
-            var ea = ese.Map(s => s.C1).FilterNotNull();
-            var eb = ese.Map(s => s.C2).FilterNotNull();
+            var ea = ese.Map(s => s.C1);
+            var eb = ese.Map(s => s.C2);
             var tmp1 = ese.Map(s => s.Event);
             var tmp2 = tmp1.FilterNotNull();
             var bsw = tmp2.Hold(ea);

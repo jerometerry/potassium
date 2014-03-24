@@ -2,43 +2,40 @@ namespace Potassium.Internal
 {
     using Potassium.Core;    
 
+    /// <summary>
+    /// SwitchBehaviorEvent is an EventPublisher that publishes new values whenever the current Behavior in the 
+    /// Behavior of Behaviors fires.
+    /// </summary>
+    /// <typeparam name="T">The type of the Behavior</typeparam>
+    /// <remarks>SwitchBehaviorEvent works by subscribing to the Behaviors Behavior at the time of construction,
+    /// then recreating the subscription when new Behaviors are published to the Behavior (aka switching).</remarks>
     internal sealed class SwitchBehaviorEvent<T> : EventPublisher<T>
     {
-        private ISubscription<Behavior<T>> subscription;
-        private ISubscription<T> wrappedSubscription;
-        private Event<T> wrappedEvent;
+        private ISubscription<Behavior<T>> behaviorSubscription;
+        private ISubscription<T> eventSubscription;
+        private Event<Behavior<T>> values;
+        private SubscriptionPublisher<T> eventPublisher;
 
         public SwitchBehaviorEvent(Behavior<Behavior<T>> source)
         {
-            var evt = source.Values();
-            var callback = new SubscriptionPublisher<Behavior<T>>(this.Invoke);
-            this.subscription = evt.Subscribe(callback, this.Priority);
+            values = source.Values();
+            eventPublisher = CreatePublisher();
+            behaviorSubscription = values.Subscribe(new SubscriptionPublisher<Behavior<T>>(CreateNewSubscription), Priority);
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (this.subscription != null)
+            if (disposing)
             {
-                this.subscription.Dispose();
-                this.subscription = null;
-            }
-
-            if (this.wrappedSubscription != null)
-            {
-                this.wrappedSubscription.Dispose();
-                this.wrappedSubscription = null;
-            }
-
-            if (this.wrappedEvent != null)
-            {
-                this.wrappedEvent.Dispose();
-                this.wrappedEvent = null;
+                CancelBehaviorSubscription();
+                CancelEventSubscription();
+                eventPublisher = null;
             }
 
             base.Dispose(disposing);
         }
 
-        private void Invoke(Behavior<T> behavior, Transaction transaction)
+        private void CreateNewSubscription(Behavior<T> behavior, Transaction transaction)
         {
             // Note: If any switch takes place during a transaction, then the
             // GetValueStream().Subscribe will always cause a sample to be fetched from the
@@ -46,20 +43,35 @@ namespace Potassium.Internal
             // using GetValueStream().Subscribe, and GetValueStream() throws away all publishings except
             // for the last one. Therefore, anything from the old input behavior
             // that might have happened during this transaction will be suppressed.
-            if (this.wrappedSubscription != null)
+            CancelEventSubscription();
+
+            var evt = new BehaviorLastValueEvent<T>(behavior, transaction);
+            this.eventSubscription = evt.Subscribe(eventPublisher, Priority, transaction);
+            ((Disposable)this.eventSubscription).Register(evt);
+        }
+
+        private void CancelBehaviorSubscription()
+        {
+            if (values != null)
             {
-                this.wrappedSubscription.Dispose();
-                this.wrappedSubscription = null;
+                values.Dispose();
+                values = null;
             }
 
-            if (this.wrappedEvent != null)
+            if (behaviorSubscription != null)
             {
-                this.wrappedEvent.Dispose();
-                this.wrappedEvent = null;
+                behaviorSubscription.Dispose();
+                behaviorSubscription = null;
             }
+        }
 
-            this.wrappedEvent = new BehaviorLastValueEvent<T>(behavior, transaction);
-            this.wrappedSubscription = this.wrappedEvent.CreateSubscription(this.CreateSubscriptionPublisher(), this.Priority, transaction);
+        private void CancelEventSubscription()
+        {
+            if (eventSubscription != null)
+            {
+                eventSubscription.Dispose();
+                eventSubscription = null;
+            }
         }
     }
 }

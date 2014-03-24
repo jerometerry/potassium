@@ -22,7 +22,7 @@ namespace Potassium.Internal
             this.coalesce = coalesce;
 
             var callback = new SubscriptionPublisher<T>(Accumulate);
-            subscription = source.CreateSubscription(callback, Priority, transaction);
+            subscription = source.Subscribe(callback, Priority, transaction);
         }
 
         protected Observable<T> Source { get; private set; }

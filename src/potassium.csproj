@@ -89,7 +89,7 @@
     <Compile Include="Internal\Constants.cs" />
     <Compile Include="Internal\PrioritizedAction.cs" />
     <Compile Include="Core\RepublishEvent.cs" />
-    <Compile Include="Internal\SuppressedSubscribeEvent.cs" />
+    <Compile Include="Internal\Subscribe.cs" />
     <Compile Include="Internal\SwitchBehaviorEvent.cs" />
     <Compile Include="Internal\FilterEvent.cs" />
     <Compile Include="Core\ISubscription.cs" />

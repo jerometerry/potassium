@@ -129,7 +129,7 @@ namespace Potassium.Internal
         private ISubscription<T> Subscribe(Transaction transaction)
         {
             var callback = new SubscriptionPublisher<T>(this.ScheduleApplyValueUpdate);
-            var result = this.source.CreateSubscription(callback, Priority.Max, transaction);
+            var result = this.source.Subscribe(callback, Priority.Max, transaction);
             return result;
         }
     }
