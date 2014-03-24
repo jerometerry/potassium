@@ -11,6 +11,15 @@ Check out the [wiki](https://github.com/jerometerry/potassium/wiki) for more inf
 
 Potassium API [documentation](http://jterry.azurewebsites.net/potassium/)
 
+Installing
+==========
+
+Potassium is available for download on [NuGet](http://www.nuget.org/packages/Potassium/)
+
+To install Potassium, run the following command in the [Package Manager Console](http://docs.nuget.org/docs/start-here/using-the-package-manager-console)
+
+**Install-Package Potassium**
+
 Overview
 ========
 
