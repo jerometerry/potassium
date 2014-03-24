@@ -2,8 +2,6 @@
 {
     using System;
     using Potassium.Core;
-    using Potassium.Internal;
-    using Potassium.Providers;
 
     /// <summary>
     /// Event extension methods
@@ -82,40 +80,6 @@
             mappedEvent.Register(snapshotEvent);
 
             return mappedEvent;
-        }
-
-        /// <summary>
-        /// Push each event occurrence onto a new transaction.
-        /// </summary>
-        /// <typeparam name="T">The type of values published through the source</typeparam>
-        /// <returns>An event that is published with the lowest priority in the current Transaction the current Event is published in.</returns>
-        public static Event<T> Delay<T>(this Event<T> source)
-        {
-            var evt = new EventPublisher<T>();
-            var callback = new SubscriptionPublisher<T>((a, t) => t.Low(() => evt.Publish(a)));
-            var subscription = source.Subscribe(callback, evt.Priority);
-            evt.Register(subscription);
-            return evt;
-        }
-
-        /// <summary>
-        /// Let event occurrences through only when the behavior's value is True.
-        /// Note that the behavior's value is as it was at the start of the transaction,
-        /// that is, no state changes from the current transaction are taken into account.
-        /// </summary>
-        /// <param name="source">The source Event</param>
-        /// <param name="predicate">A behavior who's current value acts as a predicate</param>
-        /// <returns>A new Event that publishes whenever the current Event publishes and the Behaviors value
-        /// is true.</returns>
-        public static Event<T> Gate<T>(this Event<T> source, Predicate predicate)
-        {
-            Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
-            var sn = source.Snapshot(snapshot, predicate);
-            var filter = sn.FilterNotNull();
-            var map = filter.Map(a => a.Value);
-            map.Register(filter);
-            map.Register(sn);
-            return map;
         }
 
         /// <summary>

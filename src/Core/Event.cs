@@ -29,6 +29,16 @@
         }
 
         /// <summary>
+        /// Push each event occurrence onto a new transaction.
+        /// </summary>
+        /// <typeparam name="T">The type of values published through the source</typeparam>
+        /// <returns>An event that is published with the lowest priority in the current Transaction the current Event is published in.</returns>
+        public Event<T> Delay()
+        {
+            return new DelayEvent<T>(this);
+        }
+
+        /// <summary>
         /// Only keep event occurrences for which the predicate returns true.
         /// </summary>
         /// <param name="predicate">A predicate used to include publishings</param>
@@ -48,6 +58,19 @@
         public Event<T> FilterNotNull()
         {
             return new FilterEvent<T>(this, a => a != null);
+        }
+
+        /// <summary>
+        /// Let event occurrences through only when the behavior's value is True.
+        /// Note that the behavior's value is as it was at the start of the transaction,
+        /// that is, no state changes from the current transaction are taken into account.
+        /// </summary>
+        /// <param name="predicate">A behavior who's current value acts as a predicate</param>
+        /// <returns>A new Event that publishes whenever the current Event publishes and the Behaviors value
+        /// is true.</returns>
+        public Event<T> Gate(Predicate predicate)
+        {
+            return new GateEvent<T>(this, predicate);
         }
 
         /// <summary>
