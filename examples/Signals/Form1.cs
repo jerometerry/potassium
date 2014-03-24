@@ -4,6 +4,7 @@
     using System.Windows.Forms;
     using Potassium.Core;
     using Potassium.Providers;
+    using Potassium.Utilities;
 
     public partial class Form1 : Form
     {

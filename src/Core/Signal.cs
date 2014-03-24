@@ -3,6 +3,7 @@
     using System.Threading;
     using Potassium.Dispatchers;
     using Potassium.Providers;
+    using Potassium.Utilities;
 
     /// <summary>
     /// Signal is an EventPublisher that publishes the value of an IProvider using a timer

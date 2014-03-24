@@ -48,14 +48,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Lifter.cs" />
     <Compile Include="Dispatchers\CurrentThreadDispatcher.cs" />
-    <Compile Include="Core\Hz.cs" />
+    <Compile Include="Utilities\Hz.cs" />
     <Compile Include="Dispatchers\IDispatcher.cs" />
     <Compile Include="Core\Signal.cs" />
     <Compile Include="Dispatchers\UiThreadDispatcher.cs" />
     <Compile Include="Extensions\EventExtensions.cs" />
     <Compile Include="Extensions\ProviderExtensions.cs" />
-    <Compile Include="Core\Frequency.cs" />
+    <Compile Include="Utilities\Frequency.cs" />
     <Compile Include="Internal\DelayEvent.cs" />
     <Compile Include="Internal\GateEvent.cs" />
     <Compile Include="Internal\HoldBehavior.cs" />
