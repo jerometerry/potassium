@@ -1,4 +1,4 @@
-![alt text](https://github.com/jerometerry/potassium/raw/master/potassium.png "Potassium") Potassium
+![alt text](https://github.com/jerometerry/potassium/raw/master/potassium64.png "Potassium") Potassium
 ====================================================================================================
 
 Potassium is a Functional Rective Programming Library for .NET, based on [Sodium](https://github.com/kentuckyfriedtakahe/sodium).
