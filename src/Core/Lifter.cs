@@ -6,7 +6,7 @@
     /// <summary>
     /// Lifter providers methods to lift Unary, Binary and Ternary functions into Behaviors
     /// </summary>
-    public class Lifter
+    public static class Lifter
     {
         /// <summary>
         /// Apply a value inside a behavior to a function inside a behavior. This is the
