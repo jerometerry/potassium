@@ -41,7 +41,7 @@ namespace Potassium.Internal
         /// </summary>
         /// <param name="t"></param>
         /// <param name="value"></param>
-        protected override bool Publish(T value, Transaction t)
+        internal override bool Publish(T value, Transaction t)
         {
             return this.f(value) && base.Publish(value, t);
         }

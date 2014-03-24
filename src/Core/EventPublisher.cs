@@ -35,7 +35,7 @@
         /// </summary>
         /// <param name="transaction">The transaction to invoke the callbacks on</param>
         /// <param name="value">The value to publish to registered callbacks</param>
-        protected virtual bool Publish(T value, Transaction transaction)
+        internal virtual bool Publish(T value, Transaction transaction)
         {
             var clone = this.Subscriptions.ToArray();
             SubscriptionPublisher<T>.PublishToSubscribers(value, clone, transaction);

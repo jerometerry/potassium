@@ -32,7 +32,7 @@ namespace Potassium.Internal
         /// </summary>
         /// <param name="subscription">The newly created subscription</param>
         /// <param name="transaction">The current transaction</param>
-        protected override void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
+        internal override void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
         {
             var values = this.SubscriptionFirings();
             SubscriptionPublisher<T>.PublishToSubscriber(subscription, values, transaction);

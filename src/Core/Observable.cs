@@ -153,7 +153,7 @@
         /// </summary>
         /// <param name="subscription">The newly created subscription</param>
         /// <param name="transaction">The current transaction</param>
-        protected virtual void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
+        internal virtual void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
         {
         }
 

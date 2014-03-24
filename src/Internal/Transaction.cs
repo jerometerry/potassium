@@ -1,8 +1,8 @@
-namespace Potassium.Core
+namespace Potassium.Internal
 {
     using System;
     using System.Collections.Generic;
-    using Potassium.Internal;
+    using Potassium.Core;
     using Potassium.Utilities;
 
     /// <summary>
@@ -19,7 +19,7 @@ namespace Potassium.Core
     /// High priority actions are ordered by Rank using a Priority Queue. Medium 
     /// and Low priority actions are run in the order they are added.
     /// </remarks>
-    public sealed class Transaction : Disposable
+    internal sealed class Transaction : Disposable
     {
         private PriorityQueue<PrioritizedAction> high;
         private List<Action> medium;

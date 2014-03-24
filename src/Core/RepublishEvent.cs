@@ -25,7 +25,7 @@ namespace Potassium.Core
         /// <param name="transaction">The transaction to invoke the callbacks on</param>
         /// <param name="value">The value to publish to registered callbacks</param>
         /// <remarks>Overrides EventPublisher.Publish</remarks>
-        protected override bool Publish(T value, Transaction transaction)
+        internal override bool Publish(T value, Transaction transaction)
         {
             this.ScheduleClearPublishings(transaction);
             this.RecordPublishing(value);
@@ -38,7 +38,7 @@ namespace Potassium.Core
         /// </summary>
         /// <param name="transaction"></param>
         /// <param name="subscription"></param>
-        protected virtual bool Republish(ISubscription<T> subscription, Transaction transaction)
+        internal virtual bool Republish(ISubscription<T> subscription, Transaction transaction)
         {
             var values = this.publishings;
             SubscriptionPublisher<T>.PublishToSubscriber(subscription, values, transaction);
@@ -50,7 +50,7 @@ namespace Potassium.Core
         /// </summary>
         /// <param name="subscription">The newly created subscription</param>
         /// <param name="transaction">The current transaction</param>
-        protected override void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
+        internal override void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
         {
             this.Republish(subscription, transaction);
             base.OnSubscribe(subscription, transaction);

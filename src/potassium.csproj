@@ -115,7 +115,7 @@
     <Compile Include="Internal\SnapshotEvent.cs" />
     <Compile Include="Internal\SwitchEvent.cs" />
     <Compile Include="Providers\Time.cs" />
-    <Compile Include="Core\Transaction.cs" />
+    <Compile Include="Internal\Transaction.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Utilities\Priority.cs" />
