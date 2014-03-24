@@ -34,9 +34,15 @@
             this.startBtn = new System.Windows.Forms.Button();
             this.stopBtn = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.latestValue = new System.Windows.Forms.TextBox();
+            this.sinValue = new System.Windows.Forms.TextBox();
             this.ticks = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.degValue = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.radValue = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.cosValue = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.frequency)).BeginInit();
             this.SuspendLayout();
             // 
@@ -87,45 +93,102 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 97);
+            this.label2.Location = new System.Drawing.Point(17, 200);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(66, 13);
+            this.label2.Size = new System.Drawing.Size(28, 13);
             this.label2.TabIndex = 4;
-            this.label2.Text = "Latest Value";
+            this.label2.Text = "Sine";
             // 
-            // latestValue
+            // sinValue
             // 
-            this.latestValue.Location = new System.Drawing.Point(128, 93);
-            this.latestValue.Name = "latestValue";
-            this.latestValue.ReadOnly = true;
-            this.latestValue.Size = new System.Drawing.Size(167, 20);
-            this.latestValue.TabIndex = 5;
+            this.sinValue.Location = new System.Drawing.Point(128, 196);
+            this.sinValue.Name = "sinValue";
+            this.sinValue.ReadOnly = true;
+            this.sinValue.Size = new System.Drawing.Size(167, 20);
+            this.sinValue.TabIndex = 6;
             // 
             // ticks
             // 
-            this.ticks.Location = new System.Drawing.Point(126, 126);
+            this.ticks.Location = new System.Drawing.Point(128, 266);
             this.ticks.Name = "ticks";
             this.ticks.ReadOnly = true;
             this.ticks.Size = new System.Drawing.Size(167, 20);
-            this.ticks.TabIndex = 7;
+            this.ticks.TabIndex = 8;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 130);
+            this.label3.Location = new System.Drawing.Point(17, 270);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(65, 13);
+            this.label3.Size = new System.Drawing.Size(33, 13);
             this.label3.TabIndex = 6;
-            this.label3.Text = "Signal Ticks";
+            this.label3.Text = "Ticks";
+            // 
+            // degValue
+            // 
+            this.degValue.Location = new System.Drawing.Point(128, 126);
+            this.degValue.Name = "degValue";
+            this.degValue.ReadOnly = true;
+            this.degValue.Size = new System.Drawing.Size(167, 20);
+            this.degValue.TabIndex = 4;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(17, 130);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(47, 13);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Degrees";
+            // 
+            // radValue
+            // 
+            this.radValue.Location = new System.Drawing.Point(128, 161);
+            this.radValue.Name = "radValue";
+            this.radValue.ReadOnly = true;
+            this.radValue.Size = new System.Drawing.Size(167, 20);
+            this.radValue.TabIndex = 4;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(17, 165);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(46, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Radians";
+            // 
+            // cosValue
+            // 
+            this.cosValue.Location = new System.Drawing.Point(128, 231);
+            this.cosValue.Name = "cosValue";
+            this.cosValue.ReadOnly = true;
+            this.cosValue.Size = new System.Drawing.Size(167, 20);
+            this.cosValue.TabIndex = 7;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(17, 235);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(39, 13);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "Cosine";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(549, 347);
+            this.ClientSize = new System.Drawing.Size(549, 431);
+            this.Controls.Add(this.cosValue);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.radValue);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.degValue);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.ticks);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.latestValue);
+            this.Controls.Add(this.sinValue);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.stopBtn);
             this.Controls.Add(this.startBtn);
@@ -133,6 +196,7 @@
             this.Controls.Add(this.label1);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.frequency)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -146,8 +210,14 @@
         private System.Windows.Forms.Button startBtn;
         private System.Windows.Forms.Button stopBtn;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox latestValue;
+        private System.Windows.Forms.TextBox sinValue;
         private System.Windows.Forms.TextBox ticks;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox degValue;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox radValue;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox cosValue;
+        private System.Windows.Forms.Label label6;
     }
 }

@@ -7,12 +7,17 @@
 
     public partial class Form1 : Form
     {
-        Signal<DateTime> signal;
-        Event<long> signalTickCount;
-        EventPublisher<decimal> intervalChanged;
-        EventPublisher<bool> runningEvent;
-        Behavior<decimal> intervalBehavior;
-        Behavior<bool> runningBehavior;
+        private const double RadsPerDeg = Math.PI / 180.0;
+
+        private Signal<double> degreesSignal;
+        private Event<double> radiansSignal;
+        private Event<double> sineSignal;
+        private Event<double> cosineSignal;
+        private Event<long> signalTickCount;
+        private EventPublisher<decimal> intervalChanged;
+        private EventPublisher<bool> runningEvent;
+        private Behavior<decimal> intervalBehavior;
+        private Behavior<bool> runningBehavior;
 
         public Form1()
         {
@@ -22,55 +27,107 @@
             
             stopBtn.Click += (o, s) => 
             {
-                signal.Stop();
+                degreesSignal.Stop();
                 runningEvent.Publish(false);
             };
             
             frequency.ValueChanged += (o, s) => intervalChanged.Publish(frequency.Value);
 
-            signal = new Signal<DateTime>(new LocalTime(), Frequency.Hz(0.0), this.CreateDispatcher());
-            runningEvent = new EventPublisher<bool>();
-            intervalChanged = new EventPublisher<decimal>();
+            degreesSignal = new Signal<double>(new AutoDouble(0.0, 0.001), Frequency.Hz(0.0), this.CreateDispatcher());
+            degreesSignal.Subscribe(SetDegValue);
 
-            var frm = this;
-            signal.Subscribe(SetDate);
-            signalTickCount = signal.Snapshot(new AutoLong());
-            signalTickCount.Subscribe(UpdateTickCount);
+            signalTickCount = degreesSignal.Snapshot(new AutoLong());
+            signalTickCount.Subscribe(SetTickCount);
+
+            radiansSignal = degreesSignal.Map(d => d * RadsPerDeg);
+            radiansSignal.Subscribe(SetRadValue);
+
+            sineSignal = radiansSignal.Map(Math.Sin);
+            sineSignal.Subscribe(SetSinValue);
+
+            cosineSignal = radiansSignal.Map(Math.Cos);
+            cosineSignal.Subscribe(SetCosValue);
+
+            runningEvent = new EventPublisher<bool>();
+            runningEvent.Subscribe(r => { degreesSignal.Running = r; });
             
-            runningEvent.Subscribe(r => { signal.Running = r; });
             runningBehavior = runningEvent.Hold(false);
             runningBehavior.Values().Subscribe(EnableControls);
 
+            intervalChanged = new EventPublisher<decimal>();
             intervalBehavior = intervalChanged.Hold(frequency.Value);
             intervalBehavior
                 .Values()
-                .Map(t => Frequency.Hz(t))
+                .Map(Frequency.Hz)
                 .Subscribe(FrequencyChanged);
         }
 
         private void FrequencyChanged(Hz frequence)
         {
-            signal.Frequency = frequence;
-            if (signal.Running)
+            degreesSignal.Frequency = frequence;
+            if (degreesSignal.Running)
             {
-                signal.Restart();
+                degreesSignal.Restart();
             }
         }
 
-        private void SetDate(DateTime t)
+        private void SetDegValue(double d)
         {
-            latestValue.Text = string.Format("{0:dd/MM/yy HH:mm:ss.fff}", t);
+            degValue.Text = string.Format("{0:N3}", d);
+        }
+
+        private void SetRadValue(double r)
+        {
+            radValue.Text = string.Format("{0:N3}", r);
+        }
+
+        private void SetSinValue(double r)
+        {
+            sinValue.Text = string.Format("{0:N3}", r);
+        }
+
+        private void SetCosValue(double r)
+        {
+            cosValue.Text = string.Format("{0:N3}", r);
+        }
+
+        private void SetTickCount(long count)
+        {
+            ticks.Text = string.Format("{0}", count);
         }
 
         private void EnableControls(bool running)
         {
-            this.startBtn.Enabled = !running;
-            this.stopBtn.Enabled = running;
+            startBtn.Enabled = !running;
+            stopBtn.Enabled = running;
         }
 
-        private void UpdateTickCount(long count)
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            ticks.Text = count.ToString();
+            degreesSignal.Stop();
+            degreesSignal.Dispose();
+            degreesSignal = null;
+
+            radiansSignal.Dispose();
+            radiansSignal = null;
+
+            sineSignal.Dispose();
+            sineSignal = null;
+
+            signalTickCount.Dispose();
+            signalTickCount = null;
+
+            intervalChanged.Dispose();
+            intervalChanged = null;
+
+            runningEvent.Dispose();
+            runningEvent = null;
+
+            intervalBehavior.Dispose();
+            intervalBehavior = null;
+
+            runningBehavior.Dispose();
+            runningBehavior = null;
         }
     }
 }
