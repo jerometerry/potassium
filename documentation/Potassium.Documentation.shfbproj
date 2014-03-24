@@ -15,7 +15,7 @@
     <!-- SHFB properties -->
     <FrameworkVersion>.NET Framework 4.0</FrameworkVersion>
     <OutputPath>.\Help\</OutputPath>
-    <HtmlHelpName>Sodium.Documentation</HtmlHelpName>
+    <HtmlHelpName>Potassium</HtmlHelpName>
     <Language>en-US</Language>
     <TransformComponentArguments>
       <Argument Key="logoFile" Value="Help.png" xmlns="" />
@@ -31,7 +31,7 @@
       <DocumentationSource sourceFile="..\src\bin\Debug\Potassium.xml" />
     </DocumentationSources>
     <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
-    <HelpFileFormat>Website</HelpFileFormat>
+    <HelpFileFormat>HtmlHelp1, Website</HelpFileFormat>
     <IndentHtml>False</IndentHtml>
     <KeepLogFile>True</KeepLogFile>
     <DisableCodeBlockComponent>False</DisableCodeBlockComponent>
@@ -50,10 +50,10 @@
     <NamespaceSummaries>
       <NamespaceSummaryItem name="(global)" isDocumented="False" />
       <NamespaceSummaryItem name="Potassium.Core" isDocumented="True">Potassium.Core contains the main classes and interfaces for Potassium</NamespaceSummaryItem>
-	  <NamespaceSummaryItem name="Potassium.Dispatchers" isDocumented="True">Potassium.Dispatchers contains Dispatchers used to invoke methods on different threads.</NamespaceSummaryItem>
-	  <NamespaceSummaryItem name="Potassium.Extensions" isDocumented="True">Potassium.Extensions contains the C# extension methods for Potassium.</NamespaceSummaryItem>
-	  <NamespaceSummaryItem name="Potassium.Providers" isDocumented="True">Potassium.Monads classes for using monadic operations, such as Bind. The use of monads evolved from trying to implement a Behavior based on pure mathematical functions, which turns out can be done using the Identity Monad.</NamespaceSummaryItem>
-	  <NamespaceSummaryItem name="Potassium.Utilities" isDocumented="True">Potassium.Utility contains helper classes for Potassium.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Potassium.Dispatchers" isDocumented="True">Potassium.Dispatchers contains Dispatchers used to invoke methods on different threads.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Potassium.Extensions" isDocumented="True">Potassium.Extensions contains the C# extension methods for Potassium.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Potassium.Providers" isDocumented="True">Potassium.Monads classes for using monadic operations, such as Bind. The use of monads evolved from trying to implement a Behavior based on pure mathematical functions, which turns out can be done using the Identity Monad.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Potassium.Utilities" isDocumented="True">Potassium.Utility contains helper classes for Potassium.</NamespaceSummaryItem>
     </NamespaceSummaries>
     <VisibleItems>None</VisibleItems>
     <FeedbackEMailAddress>jerome.l.terry%40gmail.com</FeedbackEMailAddress>
