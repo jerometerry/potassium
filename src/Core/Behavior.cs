@@ -58,6 +58,25 @@ namespace Potassium.Core
         }
 
         /// <summary>
+        /// Apply a value inside a behavior to a function inside a behavior. This is the
+        /// primitive for all function lifting.
+        /// </summary>
+        /// <typeparam name="TB">The return type of the inner function of the given Behavior</typeparam>
+        /// <param name="partialBehavior">Behavior of functions that maps from T -> TB</param>
+        /// <param name="a">Parameter to supply to the partial function</param>
+        /// <returns>The new applied Behavior</returns>
+        public static Behavior<TB> Curry<TB>(Behavior<Func<T, TB>> partialBehavior, Behavior<T> a)
+        {
+            var evt = new CurryEvent<T, TB>(partialBehavior, a);
+            var map = partialBehavior.Value;
+            var valA = a.Value;
+            var valB = map(valA);
+            var behavior = evt.Hold(valB);
+            behavior.Register(evt);
+            return behavior;
+        }
+
+        /// <summary>
         /// Lift a constant into a Behavior
         /// </summary>
         /// <param name="value">The value to lift into a Behavior</param>
@@ -120,66 +139,6 @@ namespace Potassium.Core
             behaviorD.Register(partialB);
             behaviorD.Register(partialC);
             return behaviorD;
-        }
-
-        /// <summary>
-        /// Apply a value inside a behavior to a function inside a behavior. This is the
-        /// primitive for all function lifting.
-        /// </summary>
-        /// <typeparam name="TB">The return type of the inner function of the given Behavior</typeparam>
-        /// <param name="partialBehavior">Behavior of functions that maps from T -> TB</param>
-        /// <param name="a">Parameter to supply to the partial function</param>
-        /// <returns>The new applied Behavior</returns>
-        public static Behavior<TB> Curry<TB>(Behavior<Func<T, TB>> partialBehavior, Behavior<T> a)
-        {
-            var evt = new CurryEvent<T, TB>(partialBehavior, a);
-            var map = partialBehavior.Value;
-            var valA = a.Value;
-            var valB = map(valA);
-            var behavior = evt.Hold(valB);
-            behavior.Register(evt);
-            return behavior;
-        }
-
-        /// <summary>
-        /// Transform a behavior with a generalized state loop (a mealy machine). The function
-        /// is passed the input and the old state and returns the new state and output value.
-        /// </summary>
-        /// <typeparam name="TB">The type of the returned Behavior</typeparam>
-        /// <typeparam name="TS">The snapshot function</typeparam>
-        /// <param name="initState">Value to pass to the snapshot function</param>
-        /// <param name="snapshot">Snapshot function</param>
-        /// <returns>A new Behavior that collects values of type TB</returns>
-        public Behavior<TB> Collect<TB, TS>(Func<T, TS, Tuple<TB, TS>> snapshot, TS initState)
-        {
-            // Only listen for the last firing of the Source of the Current Behavior
-            Event<T> lastFiring = this.Source.LastFiring();
-
-            // Event that fires whenever a new snapshot is generated
-            EventFeed<Tuple<TB, TS>> snapshotFeed = new EventFeed<Tuple<TB, TS>>();
-            
-            // Behavior that holds the last snapshot tuple
-            Behavior<Tuple<TB, TS>> snapshotBehavior = snapshotFeed.Hold(snapshot(Value, initState));
-            
-            // Behavior that holds the last snapshot value, extracted out of the tuple
-            Behavior<TS> lastSnapshotValue = snapshotBehavior.Map(x => x.Item2);
-            
-            // Takes snapshots from the last firing of the Source of the current Behavior
-            Event<Tuple<TB, TS>> snapshotGenerator = lastFiring.Snapshot(snapshot, lastSnapshotValue);
-            
-            // Feed the new snapshots back into the snapshot feed.
-            snapshotFeed.Feed(snapshotGenerator);
-
-            // Extracts the value out of the snapshot Behavior tuple
-            var collected = snapshotBehavior.Map(x => x.Item1);
-            
-            collected.Register(snapshotFeed);
-            collected.Register(snapshotBehavior);
-            collected.Register(lastFiring);
-            collected.Register(snapshotGenerator);
-            collected.Register(lastSnapshotValue);
-            
-            return collected;
         }
 
         /// <summary>
