@@ -1,5 +1,9 @@
 ﻿namespace Potassium.Providers
 {
+    /// <summary>
+    /// AutoLong is an IProvider of type long that starts with an initial value, 
+    /// and auto increments by a step after each request of the Value
+    /// </summary>
     public class AutoLong : IProvider<long>
     {
         private long value;

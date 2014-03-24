@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Potassium.Dispatchers
+﻿namespace Potassium.Dispatchers
 {
+    using System;
+
+    /// <summary>
+    /// CurrentThreadDispatcher is an IDispatcher that invokes methods on the current thread
+    /// </summary>
     public class CurrentThreadDispatcher : IDispatcher
     {
         public CurrentThreadDispatcher()

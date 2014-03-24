@@ -3,6 +3,9 @@
     using System;
     using System.Windows.Forms;
 
+    /// <summary>
+    /// UiThreadDispatcher is an IDispatcher that dispatches methods on the UI thread
+    /// </summary>
     public class UiThreadDispatcher : IDispatcher
     {
         Control control;

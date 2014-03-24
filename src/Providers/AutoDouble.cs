@@ -1,5 +1,9 @@
 ﻿namespace Potassium.Providers
 {
+    /// <summary>
+    /// AutoDouble is an IProvider of type double that starts with an initial value, 
+    /// and auto increments by a step after each request of the Value
+    /// </summary>
     public class AutoDouble : IProvider<double>
     {
         private double value;
