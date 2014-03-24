@@ -51,7 +51,7 @@
             // 
             this.frequency.Location = new System.Drawing.Point(128, 17);
             this.frequency.Maximum = new decimal(new int[] {
-            1000000,
+            1000,
             0,
             0,
             0});

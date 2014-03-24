@@ -21,15 +21,5 @@
         {
             return new Hz(Convert.ToDouble(hz));
         }
-
-        public static Hz kHz(double khz)
-        {
-            return new Hz(1000.0 * khz);
-        }
-
-        public static Hz MHz(double mhz)
-        {
-            return new Hz(1000000.0 * mhz);
-        }
     }
 }

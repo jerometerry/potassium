@@ -149,8 +149,8 @@
             }
             else
             { 
-                var interval = this.frequency.Interval();
-                this.timer.Change(interval, interval);
+                var ms = this.frequency.Milliseconds;
+                this.timer.Change(ms, ms);
             }
         }
 
