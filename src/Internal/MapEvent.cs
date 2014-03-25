@@ -14,7 +14,7 @@
         {
             this.source = source;
             this.map = map;
-            this.subscription = source.Subscribe(new SubscriptionPublisher<T>(this.Publish), this.Priority);
+            this.subscription = source.Subscribe(new Observer<T>(this.Publish), this.Priority);
         }
 
         public void Publish(T publishing, Transaction trans)

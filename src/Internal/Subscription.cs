@@ -9,14 +9,14 @@ namespace Potassium.Internal
         /// Constructs a new Subscription
         /// </summary>
         /// <param name="source">The Observable being subscribed to</param>
-        /// <param name="publisher">The Publisher that contains knowledge of how to notify the caller of updates</param>
+        /// <param name="observer">The Publisher that contains knowledge of how to notify the caller of updates</param>
         /// <param name="priority">The priority of the subscription.</param>
         /// <remarks>Priority will be Priority.Max for externally triggered subscriptions. Priority will
         /// be the current Priority of an Observable when triggered internally.</remarks>
-        public Subscription(Observable<T> source, SubscriptionPublisher<T> publisher, Priority priority)
+        public Subscription(Observable<T> source, Observer<T> observer, Priority priority)
         {
             this.Source = source;
-            this.Publisher = publisher;
+            this.Observer = observer;
             this.Priority = priority;
         }
 
@@ -28,7 +28,7 @@ namespace Potassium.Internal
         /// <summary>
         /// Means to notify subscriber of updates via a callback method
         /// </summary>
-        public SubscriptionPublisher<T> Publisher { get; private set; }
+        public Observer<T> Observer { get; private set; }
 
         /// <summary>
         /// The Priority of the subscription, used during cancellation to re-prioritize actions in Transactions.
@@ -48,7 +48,7 @@ namespace Potassium.Internal
                 this.Source = null;
             }
 
-            this.Publisher = null;
+            this.Observer = null;
             Priority = null;
 
             base.Dispose(disposing);

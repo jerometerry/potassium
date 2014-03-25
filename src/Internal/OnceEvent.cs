@@ -14,7 +14,7 @@ namespace Potassium.Internal
             // This is a bit long-winded but it's efficient because it de-registers
             // the subscription.
             this.subscriptions = new ISubscription<T>[1];
-            this.subscriptions[0] = source.Subscribe(new SubscriptionPublisher<T>((a, t) => this.Publish(this.subscriptions, a, t)), this.Priority);
+            this.subscriptions[0] = source.Subscribe(new Observer<T>((a, t) => this.Publish(this.subscriptions, a, t)), this.Priority);
         }
 
         public override T[] SubscriptionFirings()

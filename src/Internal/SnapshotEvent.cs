@@ -26,8 +26,8 @@ namespace Potassium.Internal
             this.snapshot = snapshot;
             this.provider = provider;
 
-            var callback = new SubscriptionPublisher<T>(this.PublishSnapshot);
-            this.subscription = source.Subscribe(callback, this.Priority);
+            var observer = new Observer<T>(this.PublishSnapshot);
+            this.subscription = source.Subscribe(observer, this.Priority);
         }
 
         public override TS[] SubscriptionFirings()

@@ -15,7 +15,7 @@ namespace Potassium.Internal
             this.source1 = source1;
             this.source2 = source2;
 
-            var callback = this.CreatePublisher();
+            var callback = this.CreateObserver();
             l1 = source1.Subscribe(callback, this.Priority);
             l2 = source2.Subscribe(callback, this.Priority);
         }

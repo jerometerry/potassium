@@ -26,8 +26,8 @@
                 throw new ApplicationException("EventFeed is already been fed from another Event.");
             }
 
-            var target = this.CreatePublisher();
-            this.subscription = source.Subscribe(target, Priority);
+            var observer = this.CreateObserver();
+            this.subscription = source.Subscribe(observer, Priority);
             return subscription;
         }
 

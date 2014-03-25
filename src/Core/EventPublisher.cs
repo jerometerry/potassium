@@ -19,15 +19,15 @@
         }
 
         /// <summary>
-        /// Creates a SubscriptionPublisher that can notify subscribers to the current Event of new values.
+        /// Creates a Observer that can notify subscribers to the current Event of new values.
         /// </summary>
         /// <returns>In Publisher that calls Publish, when invoked.</returns>
         /// <remarks>The returned SubscriptionPublisher can be used by the current Event to notify subscribers
         /// on the Event they were subscribed on, or by another event to forward values to subscribers from an
         /// alternate Event.</remarks>
-        internal SubscriptionPublisher<T> CreatePublisher()
+        internal Observer<T> CreateObserver()
         {
-            return new SubscriptionPublisher<T>((t, v) => this.Publish(t, v));
+            return new Observer<T>((t, v) => this.Publish(t, v));
         }
 
         /// <summary>
@@ -38,7 +38,7 @@
         internal virtual bool Publish(T value, Transaction transaction)
         {
             var clone = this.Subscriptions.ToArray();
-            SubscriptionPublisher<T>.PublishToSubscribers(value, clone, transaction);
+            Observer<T>.Notify(value, clone, transaction);
             return true;
         }
     }

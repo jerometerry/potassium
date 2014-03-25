@@ -41,7 +41,7 @@ namespace Potassium.Core
         internal virtual bool Republish(ISubscription<T> subscription, Transaction transaction)
         {
             var values = this.publishings;
-            SubscriptionPublisher<T>.PublishToSubscriber(subscription, values, transaction);
+            Observer<T>.Notify(subscription, values, transaction);
             return true;
         }
 

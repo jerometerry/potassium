@@ -13,7 +13,7 @@
     {
         private ISubscription<Event<T>> behaviorSubscription;
         private ISubscription<T> eventSubscription;
-        private SubscriptionPublisher<T> eventPublisher;
+        private Observer<T> observer;
 
         public SwitchEvent(Behavior<Event<T>> source, Transaction transaction)
         {
@@ -27,7 +27,7 @@
             {
                 CancelBehaviorSubscription();
                 CancelEventSubscription();
-                eventPublisher = null;
+                observer = null;
             }
 
             base.Dispose(disposing);
@@ -36,7 +36,7 @@
         private void CreateBehaviorSubscription(Behavior<Event<T>> source, Transaction transaction)
         {
             behaviorSubscription = source.Source.Subscribe(
-                new SubscriptionPublisher<Event<T>>((e, t) => 
+                new Observer<Event<T>>((e, t) => 
                     t.Medium(() =>
                     {
                         CancelEventSubscription();
@@ -48,8 +48,8 @@
 
         private void CreateEventSubscription(Behavior<Event<T>> source, Transaction transaction)
         {
-            eventPublisher = CreatePublisher();
-            eventSubscription = source.Value.Subscribe(eventPublisher, Priority, transaction);
+            observer = CreateObserver();
+            eventSubscription = source.Value.Subscribe(observer, Priority, transaction);
         }
 
         private void CreateNewSubscription(Observable<T> newEvent, Transaction transaction)
@@ -58,7 +58,7 @@
             var suppressed = new SuppressedSubscribeEvent<T>(newEvent);
 
             // Subscribe to the new event, suppressing publish on subscribe
-            eventSubscription = suppressed.Subscribe(eventPublisher, Priority, transaction);
+            eventSubscription = suppressed.Subscribe(observer, Priority, transaction);
          
             // Register the suppressed Event for disposable on the subscription, so that 
             // we don't need to dispose of two objects when cleaning up when a new Event 

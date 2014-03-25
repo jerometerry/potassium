@@ -128,8 +128,8 @@ namespace Potassium.Internal
         /// <returns>The ISubscription registered with the underlying event.</returns>
         private ISubscription<T> Subscribe(Transaction transaction)
         {
-            var callback = new SubscriptionPublisher<T>(this.ScheduleApplyValueUpdate);
-            var result = this.source.Subscribe(callback, Priority.Max, transaction);
+            var observer = new Observer<T>(this.ScheduleApplyValueUpdate);
+            var result = this.source.Subscribe(observer, Priority.Max, transaction);
             return result;
         }
     }

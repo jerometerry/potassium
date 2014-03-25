@@ -5,10 +5,10 @@ namespace Potassium.Internal
     using Potassium.Core;
 
     /// <summary>
-    /// Notification wraps an System.Action used to subscribe to Observables.
+    /// The Observer in the Observer Pattern, used to notify subscribers of new values.
     /// </summary>
     /// <typeparam name="T">The type of value that will be published</typeparam>
-    internal sealed class SubscriptionPublisher<T>
+    internal sealed class Observer<T>
     {
         private readonly Action<T, Transaction> action;
 
@@ -16,7 +16,7 @@ namespace Potassium.Internal
         /// Constructs a new Notification from the given Action
         /// </summary>
         /// <param name="action">The Action to invoke when the Observable publishes</param>
-        public SubscriptionPublisher(Action<T> action)
+        public Observer(Action<T> action)
             : this((a, t) => action(a))
         {
         }
@@ -25,16 +25,16 @@ namespace Potassium.Internal
         /// Constructs a new Notification from the given Action
         /// </summary>
         /// <param name="action">The Action to invoke when the Observable publishes</param>
-        public SubscriptionPublisher(Action<T, Transaction> action)
+        public Observer(Action<T, Transaction> action)
         {
             this.action = action;
         }
 
-        public static void PublishToSubscribers(T value, ISubscription<T>[] subscriptions, Transaction transaction)
+        public static void Notify(T value, ISubscription<T>[] subscriptions, Transaction transaction)
         {
             foreach (var subscription in subscriptions)
             {
-                PublishToSubscriber(value, subscription, transaction);
+                Notify(value, subscription, transaction);
             }
         }
 
@@ -44,7 +44,7 @@ namespace Potassium.Internal
         /// <param name="subscription"></param>
         /// <param name="values"></param>
         /// <param name="transaction"></param>
-        public static void PublishToSubscriber(ISubscription<T> subscription, ICollection<T> values, Transaction transaction)
+        public static void Notify(ISubscription<T> subscription, ICollection<T> values, Transaction transaction)
         {
             if (values == null || values.Count == 0)
             {
@@ -53,14 +53,14 @@ namespace Potassium.Internal
 
             foreach (var value in values)
             {
-                PublishToSubscriber(value, subscription, transaction);
+                Notify(value, subscription, transaction);
             }
         }
 
-        public static void PublishToSubscriber(T value, ISubscription<T> subscription, Transaction transaction)
+        public static void Notify(T value, ISubscription<T> subscription, Transaction transaction)
         {
             var s = (Subscription<T>)subscription;
-            s.Publisher.Publish(value, transaction);
+            s.Observer.Notify(value, transaction);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Potassium.Internal
         /// </summary>
         /// <param name="value">The value to be published to the </param>
         /// <param name="transaction">The Transaction used to order the publishing</param>
-        public void Publish(T value, Transaction transaction)
+        public void Notify(T value, Transaction transaction)
         {
             action(value, transaction);
         }

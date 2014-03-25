@@ -35,7 +35,7 @@ namespace Potassium.Internal
         internal override void OnSubscribe(ISubscription<T> subscription, Transaction transaction)
         {
             var values = this.SubscriptionFirings();
-            SubscriptionPublisher<T>.PublishToSubscriber(subscription, values, transaction);
+            Observer<T>.Notify(subscription, values, transaction);
             base.OnSubscribe(subscription, transaction);
         }
     }

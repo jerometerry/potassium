@@ -39,14 +39,14 @@
 
         private void SubscribeSource()
         {
-            var valueChanged = new SubscriptionPublisher<T>((a, t) => this.SchedulePublish(t));
+            var valueChanged = new Observer<T>((a, t) => this.SchedulePublish(t));
             var subscription = source.Source.Subscribe(valueChanged, this.Priority);
             this.Register(subscription);
         }
 
         private void SubscribeMap()
         {
-            var functionChanged = new SubscriptionPublisher<Func<T, TB>>((f, t) => this.SchedulePublish(t));
+            var functionChanged = new Observer<Func<T, TB>>((f, t) => this.SchedulePublish(t));
             var subscription = this.partialBehavior.Source.Subscribe(functionChanged, this.Priority);
             this.Register(subscription);
         }

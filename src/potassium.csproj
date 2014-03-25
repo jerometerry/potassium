@@ -75,7 +75,7 @@
     <Compile Include="Providers\Query.cs" />
     <Compile Include="Providers\RandomDouble.cs" />
     <Compile Include="Providers\RandomInt.cs" />
-    <Compile Include="Internal\SubscriptionPublisher.cs" />
+    <Compile Include="Internal\Observer.cs" />
     <Compile Include="Extensions\BehaviorExtensions.cs" />
     <Compile Include="Core\Observable.cs" />
     <Compile Include="Internal\ObservedValue.cs" />
@@ -89,7 +89,7 @@
     <Compile Include="Internal\Constants.cs" />
     <Compile Include="Internal\PrioritizedAction.cs" />
     <Compile Include="Core\RepublishEvent.cs" />
-    <Compile Include="Internal\Subscribe.cs" />
+    <Compile Include="Internal\SuppressedSubscribeEvent.cs" />
     <Compile Include="Internal\SwitchBehaviorEvent.cs" />
     <Compile Include="Internal\FilterEvent.cs" />
     <Compile Include="Core\ISubscription.cs" />
