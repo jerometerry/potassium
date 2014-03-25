@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="523cd5d8-2103-47d7-b74c-b31a922ba534" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>
+        Version 0.1.1 was released on Monday, March 24, 2014.
+      </para>
+    </introduction>
+
+    <section>
+      <title>Changes in This Release</title>
+      <content>
+
+        <list class="bullet">
+          <listItem>
+            <para>Fixing NuGet Package, moving examples and documentation out of the content folder into the root folder.</para>
+          </listItem>
+
+          <listItem>
+            <para>XML documentation updates</para>
+          </listItem>
+
+        </list>
+
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="ffc5eed7-48fe-4cc5-bb25-9bf0131edb45" />
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>
