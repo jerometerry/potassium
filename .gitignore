@@ -110,4 +110,4 @@ sodium.VisualState.xml
 tests/UnitTests/sodium.tests.VisualState.xml
 documentation/Help
 *.chm
-tests/UnitTests/JT.Rx.Net.Tests.VisualState.xml
+*.VisualState.xml
