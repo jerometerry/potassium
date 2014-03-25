@@ -13,7 +13,7 @@
     {
         private ISubscription<Event<T>> behaviorSubscription;
         private ISubscription<T> eventSubscription;
-        private Observer<T> observer;
+        private Observer<T> forward;
 
         public SwitchEvent(Behavior<Event<T>> source, Transaction transaction)
         {
@@ -27,7 +27,7 @@
             {
                 CancelBehaviorSubscription();
                 CancelEventSubscription();
-                observer = null;
+                forward = null;
             }
 
             base.Dispose(disposing);
@@ -48,8 +48,8 @@
 
         private void CreateEventSubscription(Behavior<Event<T>> source, Transaction transaction)
         {
-            observer = CreateObserver();
-            eventSubscription = source.Value.Subscribe(observer, Priority, transaction);
+            forward = Forward();
+            eventSubscription = source.Value.Subscribe(forward, Priority, transaction);
         }
 
         private void CreateNewSubscription(Observable<T> newEvent, Transaction transaction)
@@ -58,7 +58,7 @@
             var suppressed = new SuppressedSubscribeEvent<T>(newEvent);
 
             // Subscribe to the new event, suppressing publish on subscribe
-            eventSubscription = suppressed.Subscribe(observer, Priority, transaction);
+            eventSubscription = suppressed.Subscribe(forward, Priority, transaction);
          
             // Register the suppressed Event for disposable on the subscription, so that 
             // we don't need to dispose of two objects when cleaning up when a new Event 

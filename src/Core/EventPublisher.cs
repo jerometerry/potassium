@@ -19,13 +19,10 @@
         }
 
         /// <summary>
-        /// Creates a Observer that can notify subscribers to the current Event of new values.
+        /// Creates a Observer that forwards events from an Observable to the current EventPublisher
         /// </summary>
         /// <returns>In Publisher that calls Publish, when invoked.</returns>
-        /// <remarks>The returned SubscriptionPublisher can be used by the current Event to notify subscribers
-        /// on the Event they were subscribed on, or by another event to forward values to subscribers from an
-        /// alternate Event.</remarks>
-        internal Observer<T> CreateObserver()
+        internal Observer<T> Forward()
         {
             return new Observer<T>((t, v) => this.Publish(t, v));
         }

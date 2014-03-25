@@ -15,9 +15,9 @@ namespace Potassium.Internal
             this.source1 = source1;
             this.source2 = source2;
 
-            var callback = this.CreateObserver();
-            l1 = source1.Subscribe(callback, this.Priority);
-            l2 = source2.Subscribe(callback, this.Priority);
+            var forward = this.Forward();
+            l1 = source1.Subscribe(forward, this.Priority);
+            l2 = source2.Subscribe(forward, this.Priority);
         }
 
         public override T[] SubscriptionFirings()

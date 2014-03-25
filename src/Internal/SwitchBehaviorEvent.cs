@@ -14,12 +14,12 @@ namespace Potassium.Internal
         private ISubscription<Behavior<T>> behaviorSubscription;
         private ISubscription<T> eventSubscription;
         private Event<Behavior<T>> values;
-        private Observer<T> observer;
+        private Observer<T> forward;
 
         public SwitchBehaviorEvent(Behavior<Behavior<T>> source)
         {
             values = source.Values();
-            observer = CreateObserver();
+            forward = Forward();
             behaviorSubscription = values.Subscribe(new Observer<Behavior<T>>(CreateNewSubscription), Priority);
         }
 
@@ -29,7 +29,7 @@ namespace Potassium.Internal
             {
                 CancelBehaviorSubscription();
                 CancelEventSubscription();
-                observer = null;
+                forward = null;
             }
 
             base.Dispose(disposing);
@@ -46,7 +46,7 @@ namespace Potassium.Internal
             CancelEventSubscription();
 
             var evt = new BehaviorLastValueEvent<T>(behavior, transaction);
-            this.eventSubscription = evt.Subscribe(observer, Priority, transaction);
+            this.eventSubscription = evt.Subscribe(forward, Priority, transaction);
             ((Disposable)this.eventSubscription).Register(evt);
         }
 

@@ -19,16 +19,16 @@
         /// <returns>The current EventFeed</returns>
         /// <remarks>Loop can only be called once on an Event. If Loop is called multiple times,
         /// an ApplicationException will be raised.</remarks>
-        public ISubscription<T> Feed(Observable<T> source)
+        public EventFeed<T> Feed(Observable<T> source)
         {
             if (subscription != null)
             {
                 throw new ApplicationException("EventFeed is already been fed from another Event.");
             }
 
-            var observer = this.CreateObserver();
-            this.subscription = source.Subscribe(observer, Priority);
-            return subscription;
+            var forward = this.Forward();
+            this.subscription = source.Subscribe(forward, this.Priority);
+            return this;
         }
 
         /// <summary>
