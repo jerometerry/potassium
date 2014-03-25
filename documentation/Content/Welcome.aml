@@ -14,17 +14,7 @@
 
                 <para>The operations are Accum, Apply, Coalesce, Collect, Filter, Gate, Hold, Lift, Map, Merge, Snapshot, Switch</para>
 
-                <para>Potassium uses the Publish / Subscribe Pattern</para>
-
-                <list class="bullet">
-                    <listItem>
-                        EventPublisher / BehaviorPublisher are the Publishers
-                    </listItem>
-
-                    <listItem>
-                        Observable.Subscribe is used to create subscriptions
-                    </listItem>
-                </list>
+                <para>Potassium uses the Publish / Subscribe Pattern: EventPublisher publishes events, Observable.Subscribe listens for the events.</para>
 			</content>
 		</section>
 
@@ -131,6 +121,18 @@
 		<relatedTopics>
 			<link xlink:href="ffc5eed7-48fe-4cc5-bb25-9bf0131edb45" />
             <externalLink>
+                <linkText>Push-Pull Functional Reactive Programming</linkText>
+                <linkUri>http://conal.net/papers/push-pull-frp/</linkUri>
+            </externalLink>
+            <externalLink>
+                <linkText>Functional Reactive Programming, Haskell Wiki</linkText>
+                <linkUri>http://www.haskell.org/haskellwiki/Functional_Reactive_Programming</linkUri>
+            </externalLink>
+            <externalLink>
+                <linkText>Functional Reactive Programming from First Principles</linkText>
+                <linkUri>http://haskell.cs.yale.edu/wp-content/uploads/2011/02/frp-1st.pdf</linkUri>
+            </externalLink>
+            <externalLink>
                 <linkText>Sodium GitHub Page</linkText>
                 <linkUri>https://github.com/kentuckyfriedtakahe/sodium</linkUri>
             </externalLink>
@@ -153,14 +155,6 @@
             <externalLink>
                 <linkText>Rx.net, Reactive Extensions .NET library from Microsoft</linkText>
                 <linkUri>https://rx.codeplex.com/</linkUri>
-            </externalLink>
-            <externalLink>
-                <linkText>Functional Reactive Programming, Haskell Wiki</linkText>
-                <linkUri>http://www.haskell.org/haskellwiki/Functional_Reactive_Programming</linkUri>
-            </externalLink>
-            <externalLink>
-                <linkText>Functional Reactive Programming from First Principles</linkText>
-                <linkUri>http://haskell.cs.yale.edu/wp-content/uploads/2011/02/frp-1st.pdf</linkUri>
             </externalLink>
             <externalLink>
                 <linkText>End-to-End Reactive Programming at Netflix</linkText>
