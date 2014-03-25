@@ -64,15 +64,6 @@ Here's an example of creating an EventPublisher, and publishing a value to all r
     e.Publish(0);
 ```
 
-**BehaviorPublisher** - BehaviorPublisher is a Behavior that that exposes a Publish method, allowing callers to publish values to it's subscribers.
-
-Here's an example of constructing a BehaviorPublisher with an initial value of zero, and publishing a new value of one,  after some operations that register subscribers.
-```
-    var b = new BehaviorPublisher<int>(0);
-    ... // register subscribers
-    b.Publish(1);
-```
-
 **EventFeed** - EventFeed is an EventPublisher that fed values from another Event. 
 
 Below is a basic example of using the EventFeed. Publishing happens on *e*, which triggers the callback on *feed*, writing the value to the console.
@@ -84,21 +75,10 @@ Below is a basic example of using the EventFeed. Publishing happens on *e*, whic
     e.Publish(0);
 ```
 
-**BehaviorFeed** - BehaviorFeed is a Behavior that can be fed values from another Behavior
-
-Below is a basic example of using the BehaviorFeed. Publishing happens on *b*, which triggers the callback on *feed*, writing the value to the console.
-```
-    var b = new BehaviorPublisher<int>(0);
-    var feed = new BehaviorFeed<int>();
-    feed.Feed(b);
-    var s = feed.Subscribe(v => Console.Write("{0} ", v);
-    e.Publish(1);
-```
-
 Key Operations
 ==========
 
-**Accum** - Accum converts an Event, an initial value, and a snapshot function into a Behavior that accumulates a value as the Event fires. 
+**Accum** - Accum accumulates values into a Behavior, starting with an initial value, and applying an accumulator function on the previous value and the newly fired value to create the new value. The result of Accum is a Behavior that accumulates a value.
                         
 An example would having a running sum total, starting with an initial value and using the addition operation as the snapshot.
 
@@ -106,7 +86,7 @@ An example would having a running sum total, starting with an initial value and 
 
 **Coalesce** - Coalesce is the process of combining several simultaneous values into a single value. 
 
-**Collect** - 
+**Collect** - Collect is similar to Accum, except the output is an Event, and state is maintained by storing the mapped value and the snapshot in a Tuple. The result of a Collect is a new Event that fires the accumulated value when the source Event fires.
 
 **Filter** - Filtering is the process of throwing away any publishings from source Events that don't evaluate to true through a given filter predicate.
 
