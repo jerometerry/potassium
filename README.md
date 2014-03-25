@@ -3,10 +3,6 @@
 
 Potassium is a Functional Rective Programming Library for .NET, based on [Sodium](https://github.com/kentuckyfriedtakahe/sodium).
 
-[Sodium](https://github.com/kentuckyfriedtakahe/sodium) is a Reactive Programming Library that has been implemented in several languages including Haskell, Java, C++, Embedded-C, and Rust. 
-
-However, there was no implementation for .NET. Hence this project.
-
 Potassium API [documentation](http://jterry.azurewebsites.net/potassium/)
 
 Installing
@@ -18,8 +14,18 @@ To install Potassium, run the following command in the [Package Manager Console]
 
 **Install-Package Potassium**
 
-Overview
-========
+Background
+==========
+
+Functional Reactive Programming (FRP) was introduced by [Conal Elliott](http://conal.net/) and [Paul Hudak](http://haskell.cs.yale.edu/people/paul-hudak/) in the ICFP 97 paper [Functional Reactive Animation (Fran)](http://conal.net/papers/icfp97/).
+
+What is (functional) reactive programming?
+==========================================
+
+[Conal Elliott's](http://conal.net/) answer on [Stack Overflow](http://stackoverflow.com/questions/1028250/what-is-functional-reactive-programming) says it best.
+
+API
+===
 
 Potassium is made up of 2 primitives with 12 opeartions.
 
