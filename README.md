@@ -24,12 +24,16 @@ What is (functional) reactive programming?
 
 [Conal Elliott's](http://conal.net/) answer on [Stack Overflow](http://stackoverflow.com/questions/1028250/what-is-functional-reactive-programming) says it best.
 
-API
-===
+Potassium API
+=============
 
 Potassium is made up of 2 primitives with 12 opeartions.
 
-The primitives are Event, and Behavior.
+The primitives are: 
+
+**Event** - Represents stream of values (event occurrences) that can be observed
+
+**Behavior** - A dynamic value that updates via an Event
 
 The operations are Accum, Apply, Coalesce, Collect, Filter, Gate, Hold, Lift, Map, Merge, Snapshot, Switch
 
@@ -41,7 +45,7 @@ Potassium uses the Publish / Subscribe Pattern
 Key Classes
 ===========
 
-**Event** - a series of discrete event occurrences.
+**Event**
 
 Here's a code snippit for listening to an Event of int's.
 ```
@@ -50,7 +54,7 @@ Here's a code snippit for listening to an Event of int's.
     var s = e.Subscribe(v => Console.Write("{0} ", v));
 ```
 
-**Behavior** - a continuous, time varying value. In Potassium, a Behavior is composed of a value, and an Event that is listened to to update the value. The Event inside the Behavior is accessed via the *Source* Property.
+**Behavior**
 
 Here's a code snippit for listeneing to a Behavior of int's. 
 ```
