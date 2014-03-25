@@ -7,8 +7,6 @@ Potassium is a Functional Rective Programming Library for .NET, based on [Sodium
 
 However, there was no implementation for .NET. Hence this project.
 
-Check out the [wiki](https://github.com/jerometerry/potassium/wiki) for more information.
-
 Potassium API [documentation](http://jterry.azurewebsites.net/potassium/)
 
 Installing
@@ -163,7 +161,7 @@ Here's an example, extraced from *MemoryTest1.cs*
 Notice the use of ```DisposeFinalizers``` inside the ```changeTens.Map``` lambda expression. ```Behavior.Map``` creates a new instance of ```Behavior```, which needs to be disposed. Without this, there would be a memory leak.
 
 Event Examples
-==========
+==============
 
 **Echo**
 ```
@@ -236,27 +234,13 @@ Event Examples
 ```
 
 Behavior Examples
-==========
-
-**Echo**
-```
-    var b = new BehaviorPublisher<int>(0);
-    var s = b.Subscribe(v => Console.Write("{0} ", v));
-    for (var i = 0; i < 5; i++) 
-        b.Publish(i);
-    s.Dispose();
-    b.Dispose();
-```
-*Output*
-```
-    0 1 2 3 4
-```
+=================
 
 **Hold**
 ```
     var e = new EventPublisher<int>();
     var b = e.Hold(0);
-    var s = b.Subscribe(v => Console.Write("{0} ", v));
+    var s = b.Source.Subscribe(v => Console.Write("{0} ", v));
     for (var i = 1; i <= 5; i++) 
         e.Publish(i);
     s.Dispose();
