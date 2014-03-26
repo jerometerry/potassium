@@ -117,14 +117,14 @@ namespace Potassium.Tests
         }
 
         [Test]
-        public void TestCurry()
+        public void TestApply()
         {
             var pbf = new EventPublisher<Func<long, string>>();
             var bf = new Behavior<Func<long, string>>(b => "1 " + b, pbf);
             var pba = new EventPublisher<long>();
             var ba = new Behavior<long>(5L, pba);
             var results = new List<string>();
-            var apply = Lifter.Curry(bf, ba);
+            var apply = Lifter.Apply(bf, ba);
             var values = apply.Values();
             var listener = values.Subscribe(results.Add);
             pbf.Publish(b => "12 " + b);

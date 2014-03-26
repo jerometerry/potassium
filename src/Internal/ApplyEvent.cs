@@ -4,11 +4,11 @@
     using Potassium.Core;
 
     /// <summary>
-    /// Event that curries a Behavior holding a partial function by supplying another behavior.
+    /// Event that applies a Behavior holding a partial function by supplying another behavior.
     /// </summary>
     /// <typeparam name="T">The type of value published through the source Behavior</typeparam>
     /// <typeparam name="TB">The return type of the Behavior Mapping functions</typeparam>
-    internal sealed class CurryEvent<T, TB> : EventPublisher<TB>
+    internal sealed class ApplyEvent<T, TB> : EventPublisher<TB>
     {
         /// <summary>
         /// Set to true when waiting for the Publish Priority Action to run.
@@ -17,7 +17,7 @@
         private Behavior<T> source;
         private Behavior<Func<T, TB>> partialBehavior;
         
-        public CurryEvent(Behavior<Func<T, TB>> partialBehavior, Behavior<T> source)
+        public ApplyEvent(Behavior<Func<T, TB>> partialBehavior, Behavior<T> source)
         {
             this.source = source;
             this.partialBehavior = partialBehavior;

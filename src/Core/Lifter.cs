@@ -4,8 +4,11 @@
     using Potassium.Internal;
 
     /// <summary>
-    /// Lifter providers methods to lift Unary, Binary and Ternary functions into Behaviors
+    /// Functor providers methods to lift Unary, Binary and Ternary functions into Behaviors
     /// </summary>
+    /// <remarks>
+    /// http://www.haskell.org/haskellwiki/Lifting
+    /// </remarks>
     public static class Lifter
     {
         /// <summary>
@@ -17,9 +20,9 @@
         /// <param name="partialBehavior">Behavior of functions that maps from T -> TB</param>
         /// <param name="a">Parameter to supply to the partial function</param>
         /// <returns>The new applied Behavior</returns>
-        public static Behavior<TB> Curry<TA, TB>(Behavior<Func<TA, TB>> partialBehavior, Behavior<TA> a)
+        public static Behavior<TB> Apply<TA, TB>(Behavior<Func<TA, TB>> partialBehavior, Behavior<TA> a)
         {
-            var evt = new CurryEvent<TA, TB>(partialBehavior, a);
+            var evt = new ApplyEvent<TA, TB>(partialBehavior, a);
             var map = partialBehavior.Value;
             var valA = a.Value;
             var valB = map(valA);
@@ -67,7 +70,7 @@
         {
             Func<TA, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
             Behavior<Func<TB, TC>> partialB = Lift(ffa, a);
-            Behavior<TC> behaviorC = Curry(partialB, b);
+            Behavior<TC> behaviorC = Apply(partialB, b);
             behaviorC.Register(partialB);
             return behaviorC;
         }
@@ -90,8 +93,8 @@
         {
             Func<TA, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
             Behavior<Func<TB, Func<TC, TD>>> partialB = Lift(map, a);
-            Behavior<Func<TC, TD>> partialC = Curry(partialB, b);
-            Behavior<TD> behaviorD = Curry(partialC, c);
+            Behavior<Func<TC, TD>> partialC = Apply(partialB, b);
+            Behavior<TD> behaviorD = Apply(partialC, c);
             behaviorD.Register(partialB);
             behaviorD.Register(partialC);
             return behaviorD;
