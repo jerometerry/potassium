@@ -2,7 +2,7 @@
 {
     using Potassium.Core;
 
-    internal class DelayEvent<T> : EventPublisher<T>
+    internal class DelayEvent<T> : FirableEvent<T>
     {
         public DelayEvent(Observable<T> source)
         {

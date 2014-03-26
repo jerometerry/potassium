@@ -67,7 +67,7 @@
     <Compile Include="Providers\BinaryLift.cs" />
     <Compile Include="Providers\Identity.cs" />
     <Compile Include="Providers\IdentityPredicate.cs" />
-    <Compile Include="Core\EventPublisher.cs" />
+    <Compile Include="Core\FirableEvent.cs" />
     <Compile Include="Providers\LocalTime.cs" />
     <Compile Include="Providers\Map.cs" />
     <Compile Include="Providers\Predicate.cs" />

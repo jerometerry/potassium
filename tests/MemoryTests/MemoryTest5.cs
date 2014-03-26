@@ -9,7 +9,7 @@ namespace Potassium.MemoryTests
         [TestCase(1000000000)]
         public void Test(int iterations)
         {
-            var sink = new EventPublisher<int>();
+            var sink = new FirableEvent<int>();
             var obserable = sink.Hold(0);
             var values = obserable.Values();
             var listener = values.Subscribe(tt => { });

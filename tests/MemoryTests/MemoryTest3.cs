@@ -10,7 +10,7 @@ namespace Potassium.MemoryTests
         [TestCase(1000000000)]
         public void Test(int iterations)
         {
-            var evt = new EventPublisher<int>();
+            var evt = new FirableEvent<int>();
             var et = new Event<int>();
             var behavior = et.Hold(0);
             var eventOfBehaviors = evt.Map(x => behavior).Hold(behavior);

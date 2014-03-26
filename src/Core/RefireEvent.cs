@@ -9,7 +9,7 @@ namespace Potassium.Core
     /// Transaction when subscribed to.
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Event</typeparam>
-    public abstract class RefireEvent<T> : EventPublisher<T>
+    public abstract class RefireEvent<T> : FirableEvent<T>
     {
         /// <summary>
         /// List of values that have been fired on the current Event in the current transaction.
@@ -24,7 +24,7 @@ namespace Potassium.Core
         /// </summary>
         /// <param name="transaction">The transaction to invoke the callbacks on</param>
         /// <param name="value">The value to fire to registered callbacks</param>
-        /// <remarks>Overrides EventPublisher.Fire</remarks>
+        /// <remarks>Overrides FirableEvent.Fire</remarks>
         internal override bool Fire(T value, Transaction transaction)
         {
             this.ScheduleClearFirings(transaction);

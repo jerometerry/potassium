@@ -14,7 +14,7 @@ namespace Potassium.Tests
         [Test]
         public void TestHold()
         {
-            var evt = new EventPublisher<int>();
+            var evt = new FirableEvent<int>();
             var behavior = evt.Hold(0);
             var results = new List<int>();
             var listener = behavior.Source.Subscribe(results.Add);
@@ -29,9 +29,9 @@ namespace Potassium.Tests
         [Test]
         public void TestSnapshot()
         {
-            var publisher = new EventPublisher<int>();
+            var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(0, publisher);
-            var evt = new EventPublisher<long>();
+            var evt = new FirableEvent<long>();
             var results = new List<string>();
             Func<long, int, string> snapshotFunction = (x, y) => string.Format("{0} {1}", x, y);
             var listener = evt.Snapshot(snapshotFunction, behavior).Subscribe(results.Add);
@@ -59,7 +59,7 @@ namespace Potassium.Tests
         [Test]
         public void TestMapB()
         {
-            var publisher = new EventPublisher<int>();
+            var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(6, publisher);
             var results = new List<string>();
             var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
@@ -86,7 +86,7 @@ namespace Potassium.Tests
         [Test]
         public void TestMapB3()
         {
-            var publisher = new EventPublisher<int>();
+            var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(1, publisher);
             var behavior1 = behavior.Map(x => x * 3);
             var results = new List<int>();
@@ -102,7 +102,7 @@ namespace Potassium.Tests
         [Test]
         public void TestMapBLateListen()
         {
-            var publisher = new EventPublisher<int>();
+            var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(6, publisher);
             var results = new List<string>();
             var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
@@ -119,9 +119,9 @@ namespace Potassium.Tests
         [Test]
         public void TestApply()
         {
-            var pbf = new EventPublisher<Func<long, string>>();
+            var pbf = new FirableEvent<Func<long, string>>();
             var bf = new Behavior<Func<long, string>>(b => "1 " + b, pbf);
-            var pba = new EventPublisher<long>();
+            var pba = new FirableEvent<long>();
             var ba = new Behavior<long>(5L, pba);
             var results = new List<string>();
             var apply = Lifter.Apply(bf, ba);
@@ -140,9 +140,9 @@ namespace Potassium.Tests
         [Test]
         public void TestLift()
         {
-            var pub1 = new EventPublisher<int>();
+            var pub1 = new FirableEvent<int>();
             var behavior1 = new Behavior<int>(1, pub1);
-            var pub2 = new EventPublisher<long>();
+            var pub2 = new FirableEvent<long>();
             var behavior2 = new Behavior<long>(5L, pub2);
             var results = new List<string>();
             var combinedBehavior = Lifter.Lift((x, y) => x + " " + y, behavior1, behavior2);
@@ -165,7 +165,7 @@ namespace Potassium.Tests
         [Test]
         public void TestLiftGlitch()
         {
-            var publisher = new EventPublisher<int>();
+            var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(1, publisher);
             var mappedBehavior1 = behavior.Map(x => x * 3);
             var mappedBehavior2 = behavior.Map(x => x * 5);
@@ -183,7 +183,7 @@ namespace Potassium.Tests
         [Test]
         public void TestHoldIsDelayed()
         {
-            var evt = new EventPublisher<int>();
+            var evt = new FirableEvent<int>();
             var behavior = evt.Hold(0);
             var pair = evt.Snapshot((a, b) => a + " " + b, behavior);
             var results = new List<string>();
@@ -200,7 +200,7 @@ namespace Potassium.Tests
         [Test]
         public void TestSwitchB()
         {
-            var sink = new EventPublisher<Sb>();
+            var sink = new FirableEvent<Sb>();
 
             // Split each field o of SB so we can update multiple behaviors in a
             // single transaction.
@@ -237,7 +237,7 @@ namespace Potassium.Tests
         [Test]
         public void TestSwitchE()
         {
-            var ese = new EventPublisher<Se>();
+            var ese = new FirableEvent<Se>();
             var ea = ese.Map(s => s.C1);
             var eb = ese.Map(s => s.C2);
             var tmp1 = ese.Map(s => s.Event);
@@ -268,7 +268,7 @@ namespace Potassium.Tests
         public void TestLoopBehavior()
         {
             var feed = new EventFeed<int>();
-            var ea = new EventPublisher<int>();
+            var ea = new FirableEvent<int>();
             var sum = new Behavior<int>(0, feed);
             var sumOut = ea.Snapshot((x, y) => x + y, sum).Hold(0);
             feed.Feed(sumOut.Source);
@@ -290,7 +290,7 @@ namespace Potassium.Tests
         [Test]
         public void TestCollect()
         {
-            var ea = new EventPublisher<int>();
+            var ea = new FirableEvent<int>();
             var o = new List<int>();
             var sum = ea.Hold(100).Collect((a, s) => new Tuple<int, int>(a + s, a + s), 0);
             var values = sum.Values();
@@ -309,7 +309,7 @@ namespace Potassium.Tests
         [Test]
         public void TestAccum()
         {
-            var ea = new EventPublisher<int>();
+            var ea = new FirableEvent<int>();
             var o = new List<int>();
             var sum = ea.Accum((a, s) => a + s, 100);
             var values = sum.Values();

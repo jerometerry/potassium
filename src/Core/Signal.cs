@@ -6,10 +6,10 @@
     using Potassium.Utilities;
 
     /// <summary>
-    /// Signal is an EventPublisher that fires the value of an IProvider using a timer
+    /// Signal is an FirableEvent that fires the value of an IProvider using a timer
     /// </summary>
     /// <typeparam name="T">The type of values fired from the Signal</typeparam>
-    public class Signal<T> : EventPublisher<T>
+    public class Signal<T> : FirableEvent<T>
     {
         private Hz frequency;
         private Timer timer;

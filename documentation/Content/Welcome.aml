@@ -22,7 +22,7 @@
                   </listItem>
 
                   <listItem>
-                    <legacyBold>EventPublisher</legacyBold> - An Event that exposes a Fire method
+                    <legacyBold>FirableEvent</legacyBold> - An Event that exposes a Fire method
                   </listItem>
 
                   <listItem>
@@ -32,7 +32,7 @@
         
                 <para>The operations are Accum, Apply, Coalesce, Collect, Feed, Filter, Fire, Gate, Hold, Lift, Map, Merge, Snapshot, Switch</para>
 
-                <para>Potassium uses the Publish / Subscribe Pattern: EventPublisher fires events, Observable.Subscribe listens for the events.</para>
+                <para>Potassium uses the Publish / Subscribe Pattern: FirableEvent fires events, Observable.Subscribe listens for the events.</para>
 			</content>
 		</section>
 

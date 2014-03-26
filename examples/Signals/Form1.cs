@@ -15,8 +15,8 @@
         private Event<double> sineSignal;
         private Event<double> cosineSignal;
         private Event<long> signalTickCount;
-        private EventPublisher<decimal> intervalChanged;
-        private EventPublisher<bool> runningEvent;
+        private FirableEvent<decimal> intervalChanged;
+        private FirableEvent<bool> runningEvent;
         private Behavior<decimal> intervalBehavior;
         private Behavior<bool> runningBehavior;
 
@@ -49,13 +49,13 @@
             cosineSignal = radiansSignal.Map(Math.Cos);
             cosineSignal.Subscribe(SetCosValue);
 
-            runningEvent = new EventPublisher<bool>();
+            runningEvent = new FirableEvent<bool>();
             runningEvent.Subscribe(r => { degreesSignal.Running = r; });
             
             runningBehavior = runningEvent.Hold(false);
             runningBehavior.Values().Subscribe(EnableControls);
 
-            intervalChanged = new EventPublisher<decimal>();
+            intervalChanged = new FirableEvent<decimal>();
             intervalBehavior = intervalChanged.Hold(frequency.Value);
             intervalBehavior
                 .Values()

@@ -35,7 +35,7 @@ The primitives are:
 
 **Event** - A stream of values (event occurrences) that can be observed
 
-**EventPublisher** - An Event that exposes a Fire method
+**FirableEvent** - An Event that exposes a Fire method
 
 **EventFeed** - EventFeed fires values observed from another Event
 
@@ -64,20 +64,20 @@ Here's a code snippit for listeneing to a Behavior of int's.
     var s = b.Subscribe(v => Console.Write("{0} ", v));
 ``` 
 
-**EventPublisher** - EventPublisher is an Event that exposes a Publish method, allowing callers to fire values to it's subscribers.
+**FirableEvent** - FirableEvent is an Event that exposes a Publish method, allowing callers to fire values to it's subscribers.
 
-Here's an example of creating an EventPublisher, and publishing a value to all registered subscribers.
+Here's an example of creating an FirableEvent, and publishing a value to all registered subscribers.
 ```
-    var e = new EventPublisher<int>();
+    var e = new FirableEvent<int>();
     ... // register subscribers
     e.Publish(0);
 ```
 
-**EventFeed** - EventFeed is an EventPublisher that fed values from another Event. 
+**EventFeed** - EventFeed is an FirableEvent that fed values from another Event. 
 
 Below is a basic example of using the EventFeed. Publishing happens on *e*, which triggers the callback on *feed*, writing the value to the console.
 ```
-    var e = new EventPublisher<int>(); 
+    var e = new FirableEvent<int>(); 
     var feed = new EventFeed<int>();
     feed.Feed(e);
     var s = feed.Subscribe(v => Console.Write("{0} ", v);
@@ -180,7 +180,7 @@ Event Examples
 
 **Echo**
 ```
-    var e = new EventPublisher<int>();
+    var e = new FirableEvent<int>();
     var s = e.Subscribe(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
         e.Publish(i);
@@ -195,7 +195,7 @@ Event Examples
 
 **Map**
 ```
-    var e = new EventPublisher<int>();
+    var e = new FirableEvent<int>();
     var m = e.Map(v => v.ToString());
     var s = m.Subscribe(v => Console.Write("{0} ", v));
     for (var i = 0; i < 5; i++) 
@@ -211,8 +211,8 @@ Event Examples
 
 **Merge**
 ```
-    var e1 = new EventPublisher<int>();
-    var e2 = new EventPublisher<int>();
+    var e1 = new FirableEvent<int>();
+    var e2 = new FirableEvent<int>();
     var m = e1.Merge(e2);
     var s = m.Subscribe(v => Console.Write("{0} ", v));
     for (var i = 0; i < 10; i++) {
@@ -235,7 +235,7 @@ Event Examples
 
 **Filter**
 ```
-    var e = new EventPublisher<char>();
+    var e = new FirableEvent<char>();
     var f = e.Filter(c => char.IsUpper(c));
     var s = f.Subscribe(v => Console.Write("{0} ", v));
     e.Publish('H');
@@ -253,7 +253,7 @@ Behavior Examples
 
 **Hold**
 ```
-    var e = new EventPublisher<int>();
+    var e = new FirableEvent<int>();
     var b = e.Hold(0);
     var s = b.Source.Subscribe(v => Console.Write("{0} ", v));
     for (var i = 1; i <= 5; i++) 
@@ -269,7 +269,7 @@ Behavior Examples
 
 **Values**
 ```
-    var e = new EventPublisher<int>();
+    var e = new FirableEvent<int>();
     var b = e.Hold(0);
     var v = b.Values();
     var s = v.Subscribe(v => Console.Write("{0} ", v));

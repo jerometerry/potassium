@@ -16,7 +16,11 @@
 
         <list class="bullet">
           <listItem>
-            <para>EventPublishing.Publish has been renamed to Fire</para>
+            <para>EventPublisher.Publish renamed to Fire</para>
+          </listItem>
+
+          <listItem>
+            <para>EventPublisher renamed to FirableEvent</para>
           </listItem>
 
           <listItem>
@@ -43,4 +47,6 @@
     <relatedTopics>
       <link xlink:href="ffc5eed7-48fe-4cc5-bb25-9bf0131edb45" />
     </relatedTopics>
+
+  </developerConceptualDocument>
 </topic>

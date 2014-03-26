@@ -14,7 +14,7 @@ namespace Potassium.Tests
         [Test]
         public void TestPublishEvent()
         {
-            var e = new EventPublisher<int>();
+            var e = new FirableEvent<int>();
             var o = new List<int>();
             var l = e.Subscribe(o.Add);
             e.Fire(5);
@@ -27,7 +27,7 @@ namespace Potassium.Tests
         [Test]
         public void TestMap()
         {
-            var e = new EventPublisher<int>();
+            var e = new FirableEvent<int>();
             var m = e.Map(x => x.ToString(CultureInfo.InvariantCulture));
             var o = new List<string>();
             var l = m.Subscribe(o.Add);
@@ -39,8 +39,8 @@ namespace Potassium.Tests
         [Test]
         public void TestMergeNonSimultaneous()
         {
-            var e1 = new EventPublisher<int>();
-            var e2 = new EventPublisher<int>();
+            var e1 = new FirableEvent<int>();
+            var e2 = new FirableEvent<int>();
             var o = new List<int>();
             var l = e1.Merge(e2).Subscribe(o.Add);
             e1.Fire(7);
@@ -53,7 +53,7 @@ namespace Potassium.Tests
         [Test]
         public void TestMergeSimultaneous()
         {
-            var e = new EventPublisher<int>();
+            var e = new FirableEvent<int>();
             var o = new List<int>();
             var l = e.Merge(e).Subscribe(o.Add);
             e.Fire(7);
@@ -65,8 +65,8 @@ namespace Potassium.Tests
         [Test]
         public void TestCoalesce()
         {
-            var e1 = new EventPublisher<int>();
-            var e2 = new EventPublisher<int>();
+            var e1 = new FirableEvent<int>();
+            var e2 = new FirableEvent<int>();
             var o = new List<int>();
             var evt2 = e1.Map(x => x * 100);
             var evt = evt2.Merge(e2);
@@ -83,7 +83,7 @@ namespace Potassium.Tests
         [Test]
         public void TestFilter()
         {
-            var e = new EventPublisher<char>();
+            var e = new FirableEvent<char>();
             var o = new List<char>();
             var l = e.Filter(char.IsUpper).Subscribe(o.Add);
             e.Fire('H');
@@ -96,7 +96,7 @@ namespace Potassium.Tests
         [Test]
         public void TestFilterNotNull()
         {
-            var e = new EventPublisher<string>();
+            var e = new FirableEvent<string>();
             var o = new List<string>();
             var l = e.FilterNotNull().Subscribe(o.Add);
             e.Fire("tomato");
@@ -109,7 +109,7 @@ namespace Potassium.Tests
         [Test]
         public void TestLoopEvent()
         {
-            var ea = new EventPublisher<int>();
+            var ea = new FirableEvent<int>();
             var eb = new EventFeed<int>();
             var evt = ea.Map(x => x % 10);
             var ec = evt.Merge(eb, (x, y) => x + y);
@@ -127,7 +127,7 @@ namespace Potassium.Tests
         public void TestGate()
         {
             var enabled = new IdentityPredicate(true);
-            var ec = new EventPublisher<char>();
+            var ec = new FirableEvent<char>();
             var epred = new QueryPredicate(() => enabled.Value);
             var o = new List<char>();
             var l = ec.Gate(epred).Subscribe(o.Add);
@@ -143,7 +143,7 @@ namespace Potassium.Tests
         [Test]
         public void TestCollect()
         {
-            var ea = new EventPublisher<int>();
+            var ea = new FirableEvent<int>();
             var o = new List<int>();
             var sum = ea.Collect((a, s) => new Tuple<int, int>(a + s, a + s), 100);
             var l = sum.Subscribe(o.Add);
@@ -159,7 +159,7 @@ namespace Potassium.Tests
         [Test]
         public void TestAccum()
         {
-            var ea = new EventPublisher<int>();
+            var ea = new FirableEvent<int>();
             var o = new List<int>();
             var sum = ea.Accum((a, s) => a + s, 100);
             var l = sum.Source.Subscribe(o.Add);
@@ -175,7 +175,7 @@ namespace Potassium.Tests
         [Test]
         public void TestOnce()
         {
-            var e = new EventPublisher<char>();
+            var e = new FirableEvent<char>();
             var o = new List<char>();
             var l = e.Once().Subscribe(o.Add);
             e.Fire('A');
@@ -188,7 +188,7 @@ namespace Potassium.Tests
         [Test]
         public void TestDelay()
         {
-            var e = new EventPublisher<char>();
+            var e = new FirableEvent<char>();
             var b = e.Hold(' ');
             var o = new List<char>();
             var l = e.Delay().Snapshot(b).Subscribe(o.Add);

@@ -8,7 +8,7 @@
     /// </summary>
     /// <typeparam name="T">The type of value fired through the source Behavior</typeparam>
     /// <typeparam name="TB">The return type of the Behavior Mapping functions</typeparam>
-    internal sealed class ApplyEvent<T, TB> : EventPublisher<TB>
+    internal sealed class ApplyEvent<T, TB> : FirableEvent<TB>
     {
         /// <summary>
         /// Set to true when waiting for the Fire Priority Action to run.

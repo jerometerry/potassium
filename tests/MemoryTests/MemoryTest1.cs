@@ -16,7 +16,7 @@ namespace Potassium.MemoryTests
 
             var behaviorMapFinalizers = new List<IDisposable>();
 
-            var evt = new EventPublisher<int?>();
+            var evt = new FirableEvent<int?>();
             finalizers.Add(evt);
 
             var behavior = evt.Hold(0);

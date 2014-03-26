@@ -14,7 +14,7 @@
         [Test]
         public void TestValues()
         {
-            var publisher = new EventPublisher<int>();
+            var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(9, publisher);
             var results = new List<int>();
             var listener = behavior.Values().Subscribe(results.Add);
@@ -28,7 +28,7 @@
         [Test]
         public void TestValuesThenMap()
         {
-            var publisher = new EventPublisher<int>();
+            var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(9, publisher);
             var results = new List<int>();
             var l = behavior.Values().Map(x => x + 100).Subscribe(results.Add);
@@ -42,7 +42,7 @@
         [Test]
         public void TestValuesTwiceThenMap()
         {
-            var publisher = new EventPublisher<int>();
+            var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(9, publisher);
             var results = new List<int>();
             var listener = DoubleUp(behavior.Values()).Map(x => x + 100).Subscribe(results.Add);
@@ -56,7 +56,7 @@
         [Test]
         public void TestValuesThenCoalesce()
         {
-            var publisher = new EventPublisher<int>();
+            var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(9, publisher);
             var results = new List<int>();
             var listener = behavior.Values().Coalesce((fst, snd) => snd).Subscribe(results.Add);
@@ -70,7 +70,7 @@
         [Test]
         public void TestValuesTwiceThenCoalesce()
         {
-            var publisher = new EventPublisher<int>();
+            var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(9, publisher);
             var results = new List<int>();
             var listener = DoubleUp(behavior.Values()).Coalesce((fst, snd) => fst + snd).Subscribe(results.Add);
@@ -84,9 +84,9 @@
         [Test]
         public void TestValuesThenSnapshot()
         {
-            var publisherInt32 = new EventPublisher<int>();
+            var publisherInt32 = new FirableEvent<int>();
             var behaviorInt32 = new Behavior<int>(9, publisherInt32);
-            var publisherChar = new EventPublisher<char>();
+            var publisherChar = new FirableEvent<char>();
             var behaviorChar = new Behavior<char>('a', publisherChar);
             var results = new List<char>();
             var listener = behaviorInt32.Values().Snapshot(behaviorChar).Subscribe(results.Add);
@@ -103,9 +103,9 @@
         [Test]
         public void TestValuesTwiceThenSnapshot()
         {
-            var publisherInt32 = new EventPublisher<int>();
+            var publisherInt32 = new FirableEvent<int>();
             var behaviorInt32 = new Behavior<int>(9, publisherInt32);
-            var publisherChar = new EventPublisher<char>();
+            var publisherChar = new FirableEvent<char>();
             var behaviorChar = new Behavior<char>('a', publisherChar);
             var results = new List<char>();
             var listener = DoubleUp(behaviorInt32.Values()).Snapshot(behaviorChar).Subscribe(results.Add);
@@ -122,9 +122,9 @@
         [Test]
         public void TestValuesThenMerge()
         {
-            var publisher1 = new EventPublisher<int>();
+            var publisher1 = new FirableEvent<int>();
             var behavior1 = new Behavior<int>(9, publisher1);
-            var publisher2 = new EventPublisher<int>();
+            var publisher2 = new FirableEvent<int>();
             var behavior2 = new Behavior<int>(2, publisher2);
             var results = new List<int>();
             var listener = behavior1.Values().Merge(behavior2.Values(), (x, y) => x + y).Subscribe(results.Add);
@@ -139,7 +139,7 @@
         [Test]
         public void TestValuesThenFilter()
         {
-            var publisher = new EventPublisher<int>();
+            var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(9, publisher);
             var results = new List<int>();
             var listener = behavior.Values().Filter(a => true).Subscribe(results.Add);
@@ -153,7 +153,7 @@
         [Test]
         public void TestValuesTwiceThenFilter()
         {
-            var publisher = new EventPublisher<int>();
+            var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(9, publisher);
             var results = new List<int>();
             var listener = DoubleUp(behavior.Values()).Filter(a => true).Subscribe(results.Add);
@@ -167,7 +167,7 @@
         [Test]
         public void TestValuesThenOnce()
         {
-            var publisher = new EventPublisher<int>();
+            var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(9, publisher);
             var results = new List<int>();
             var listener = behavior.Values().Once().Subscribe(results.Add);
@@ -181,7 +181,7 @@
         [Test]
         public void TestValuesTwiceThenOnce()
         {
-            var publisher = new EventPublisher<int>();
+            var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(9, publisher);
             var results = new List<int>();
             var listener = DoubleUp(behavior.Values()).Once().Subscribe(results.Add);
@@ -195,7 +195,7 @@
         [Test]
         public void TestValuesLateListen()
         {
-            var publisher = new EventPublisher<int>();
+            var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(9, publisher);
             var results = new List<int>();
             var value = behavior.Values();

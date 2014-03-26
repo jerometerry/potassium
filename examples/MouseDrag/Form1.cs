@@ -8,9 +8,9 @@
 
     public partial class Form1 : Form
     {
-        private EventPublisher<MouseEventArgs> mouseMoveEvent;
+        private FirableEvent<MouseEventArgs> mouseMoveEvent;
         private Event<MouseEventArgs> mouseDragEvent;
-        private EventPublisher<MouseStatus> mouseButtonEvent;
+        private FirableEvent<MouseStatus> mouseButtonEvent;
         private Behavior<MouseStatus> mouseButtonBehavior;
         private Event<MouseStatus> mouseButtonUpdates;
         private Predicate mouseButtonDown;
@@ -23,8 +23,8 @@
 
         private void InitializeMouseHandler()
         {
-            mouseButtonEvent = new EventPublisher<MouseStatus>();
-            mouseMoveEvent = new EventPublisher<MouseEventArgs>();
+            mouseButtonEvent = new FirableEvent<MouseStatus>();
+            mouseMoveEvent = new FirableEvent<MouseEventArgs>();
             mouseButtonBehavior = mouseButtonEvent.Hold(MouseStatus.Up);
             this.mouseButtonDown = new EqualityPredicate<MouseStatus>(mouseButtonBehavior,  MouseStatus.Down);
             mouseDragEvent = mouseMoveEvent.Gate(this.mouseButtonDown);

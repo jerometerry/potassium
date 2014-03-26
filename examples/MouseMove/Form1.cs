@@ -6,7 +6,7 @@
 
     public partial class Form1 : Form
     {
-        private EventPublisher<MouseEventArgs> evt;
+        private FirableEvent<MouseEventArgs> evt;
         private Event<Tuple<string,string>> formattedEvent;
 
         public Form1()
@@ -18,7 +18,7 @@
         private void InitializeMouseHandler()
         {
             // Initialize the Sodium Event
-            evt = new EventPublisher<MouseEventArgs>();
+            evt = new FirableEvent<MouseEventArgs>();
             formattedEvent = evt.Map(e => new Tuple<string, string>(e.X.ToString(), e.Y.ToString()));
             formattedEvent.Subscribe(t =>
             {

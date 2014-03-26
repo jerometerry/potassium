@@ -3,13 +3,13 @@ namespace Potassium.Internal
     using Potassium.Core;    
 
     /// <summary>
-    /// SwitchBehaviorEvent is an EventPublisher that fires new values whenever the current Behavior in the 
+    /// SwitchBehaviorEvent is an FirableEvent that fires new values whenever the current Behavior in the 
     /// Behavior of Behaviors fires.
     /// </summary>
     /// <typeparam name="T">The type of the Behavior</typeparam>
     /// <remarks>SwitchBehaviorEvent works by subscribing to the Behaviors Behavior at the time of construction,
     /// then recreating the subscription when new Behaviors are fired to the Behavior (aka switching).</remarks>
-    internal sealed class SwitchBehaviorEvent<T> : EventPublisher<T>
+    internal sealed class SwitchBehaviorEvent<T> : FirableEvent<T>
     {
         private ISubscription<Behavior<T>> behaviorSubscription;
         private ISubscription<T> eventSubscription;
