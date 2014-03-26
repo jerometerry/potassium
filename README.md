@@ -21,8 +21,8 @@ To install Potassium, run the following command in the [Package Manager Console]
 Overview
 ========
 
-FRP is sometimes described as a *better observer pattern*. 
+FRP is sometimes described as a **better observer pattern**. 
 
-At the heart of FRP are *Events* and *Behaviors*.
+At the heart of FRP are **Events** and **Behaviors**.
 
 
