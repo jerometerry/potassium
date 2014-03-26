@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="1be3fe48-89b7-42e8-813f-35ec8f729641" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>
+        Version 0.1.2 was released on Wednesday, March 26, 2014.
+      </para>
+    </introduction>
+
+    <section>
+      <title>Changes in This Release</title>
+      <content>
+
+        <list class="bullet">
+          <listItem>
+            <para>EventPublishing.Publish has been renamed to Fire</para>
+          </listItem>
+
+          <listItem>
+            <para>Lifter.Curry was renamed back to Apply, since Curry was the wrong term.</para>
+          </listItem>
+
+          <listItem>
+            <para>EventFeed.Feed now returns an EventFeed instead of an ISubscription, to support chaining.</para>
+          </listItem>
+
+          <listItem>
+            <para>Internal class SubscriptionPublisher renamed to Observer, to complete the Observer Pattern.</para>
+          </listItem>
+
+          <listItem>
+            <para>Documentation updates.</para>
+          </listItem>
+
+        </list>
+
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="ffc5eed7-48fe-4cc5-bb25-9bf0131edb45" />
+    </relatedTopics>
+</topic>
