@@ -1,9 +1,11 @@
 ![alt text](https://github.com/jerometerry/potassium/raw/master/img/potassium64.png "Potassium") Potassium
 ====================================================================================================
 
-Potassium is a Functional Rective Programming Library for .NET, based on [Sodium](https://github.com/kentuckyfriedtakahe/sodium).
+Potassium is a [Functional Rective Programming (FRP)](http://www.haskell.org/haskellwiki/Functional_Reactive_Programming) Library for .Net, based on  [Sodium](https://github.com/kentuckyfriedtakahe/sodium).
 
-Potassium API [documentation](http://jterry.azurewebsites.net/potassium/)
+FRP was introduced by [Conal Elliott](http://conal.net/) and [Paul Hudak](http://haskell.cs.yale.edu/people/paul-hudak/) in the ICFP 97 paper [Functional Reactive Animation (Fran)](http://conal.net/papers/icfp97/). 
+
+[Conal Elliott's](http://conal.net/) answer to [What is (Functional) Reactive Programming?'](http://stackoverflow.com/questions/1028250/what-is-functional-reactive-programming) is a great resource for learning about FRP.
 
 Installing
 ==========
@@ -14,18 +16,8 @@ To install Potassium, run the following command in the [Package Manager Console]
 
 **Install-Package Potassium**
 
-Background
-==========
-
-Functional Reactive Programming (FRP) was introduced by [Conal Elliott](http://conal.net/) and [Paul Hudak](http://haskell.cs.yale.edu/people/paul-hudak/) in the ICFP 97 paper [Functional Reactive Animation (Fran)](http://conal.net/papers/icfp97/).
-
-What is (functional) reactive programming?
-==========================================
-
-[Conal Elliott's](http://conal.net/) answer on [Stack Overflow](http://stackoverflow.com/questions/1028250/what-is-functional-reactive-programming) says it best.
-
-Potassium API
-=============
+[Potassium API](http://jterry.azurewebsites.net/potassium/)
+===========================================================
 
 Potassium is made up of 4 primitives with 14 opeartions.
 
@@ -284,6 +276,3 @@ Behavior Examples
 ```
     0 1 2 3 4 5
 ```
-
-==========
-[Sodium](https://github.com/kentuckyfriedtakahe/sodium) [Copyright](https://github.com/kentuckyfriedtakahe/sodium/blob/master/COPYING)
