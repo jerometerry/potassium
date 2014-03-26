@@ -96,7 +96,7 @@ namespace Potassium.Internal
         }
 
         /// <summary>
-        /// Clean up the current Transaction, purging any actions without publishing
+        /// Clean up the current Transaction, purging any actions without firing
         /// </summary>
         protected override void Dispose(bool disposing)
         {

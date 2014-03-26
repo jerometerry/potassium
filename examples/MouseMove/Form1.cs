@@ -26,8 +26,8 @@
                 y.Text = t.Item2;
             });
 
-            // Register the mouse move event to publish on the Sodium.Event
-            MouseMove += (s, e) => evt.Publish(e);
+            // Register the mouse move event to fire on the Potassium.Event
+            MouseMove += (s, e) => evt.Fire(e);
         }
     }
 }

@@ -18,8 +18,8 @@ namespace Potassium.Tests
             var behavior = evt.Hold(0);
             var results = new List<int>();
             var listener = behavior.Source.Subscribe(results.Add);
-            evt.Publish(2);
-            evt.Publish(9);
+            evt.Fire(2);
+            evt.Fire(9);
             listener.Dispose();
             evt.Dispose();
             behavior.Dispose();
@@ -36,12 +36,12 @@ namespace Potassium.Tests
             Func<long, int, string> snapshotFunction = (x, y) => string.Format("{0} {1}", x, y);
             var listener = evt.Snapshot(snapshotFunction, behavior).Subscribe(results.Add);
 
-            evt.Publish(100L);
-            publisher.Publish(2);
-            evt.Publish(200L);
-            publisher.Publish(9);
-            publisher.Publish(1);
-            evt.Publish(300L);
+            evt.Fire(100L);
+            publisher.Fire(2);
+            evt.Fire(200L);
+            publisher.Fire(9);
+            publisher.Fire(1);
+            evt.Fire(300L);
             listener.Dispose();
             behavior.Dispose();
             evt.Dispose();
@@ -65,7 +65,7 @@ namespace Potassium.Tests
             var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
             var values = map.Values();
             var listener = values.Subscribe(results.Add);
-            publisher.Publish(8);
+            publisher.Fire(8);
             listener.Dispose();
             values.Dispose();
             map.Dispose();
@@ -92,7 +92,7 @@ namespace Potassium.Tests
             var results = new List<int>();
             var values = behavior1.Values();
             var listener = values.Subscribe(results.Add);
-            publisher.Publish(2);
+            publisher.Fire(2);
             listener.Dispose();
             values.Dispose();
             behavior.Dispose();
@@ -106,10 +106,10 @@ namespace Potassium.Tests
             var behavior = new Behavior<int>(6, publisher);
             var results = new List<string>();
             var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
-            publisher.Publish(2);
+            publisher.Fire(2);
             var values = map.Values();
             var listener = values.Subscribe(results.Add);
-            publisher.Publish(8);
+            publisher.Fire(8);
             listener.Dispose();
             map.Dispose();
             behavior.Dispose();
@@ -127,8 +127,8 @@ namespace Potassium.Tests
             var apply = Lifter.Apply(bf, ba);
             var values = apply.Values();
             var listener = values.Subscribe(results.Add);
-            pbf.Publish(b => "12 " + b);
-            pba.Publish(6L);
+            pbf.Fire(b => "12 " + b);
+            pba.Fire(6L);
             listener.Dispose();
             values.Dispose();
             apply.Dispose();
@@ -148,8 +148,8 @@ namespace Potassium.Tests
             var combinedBehavior = Lifter.Lift((x, y) => x + " " + y, behavior1, behavior2);
             var values = combinedBehavior.Values();
             var listener = values.Subscribe(results.Add);
-            pub1.Publish(12);
-            pub2.Publish(6L);
+            pub1.Fire(12);
+            pub2.Fire(6L);
             listener.Dispose();
             values.Dispose();
             behavior1.Dispose();
@@ -158,9 +158,9 @@ namespace Potassium.Tests
         }
 
         /// <summary>
-        /// A Lift Glitch is when two behaviors that are combined into a single behavior publish at the same time,
-        /// and the resulting behavior publishes twice. What should happen is that the resulting behavior
-        /// publishes once when the source behaviors publish simultaneously.
+        /// A Lift Glitch is when two behaviors that are combined into a single behavior fired at the same time,
+        /// and the resulting behavior fires twice. What should happen is that the resulting behavior
+        /// fires once when the source behaviors fire simultaneously.
         /// </summary>
         [Test]
         public void TestLiftGlitch()
@@ -173,7 +173,7 @@ namespace Potassium.Tests
             var combinedBehavior = Lifter.Lift((x, y) => x + " " + y, mappedBehavior1, mappedBehavior2);
             var values = combinedBehavior.Values();
             var listener = values.Subscribe(results.Add);
-            publisher.Publish(2);
+            publisher.Fire(2);
             listener.Dispose();
             values.Dispose();
             behavior.Dispose();
@@ -188,8 +188,8 @@ namespace Potassium.Tests
             var pair = evt.Snapshot((a, b) => a + " " + b, behavior);
             var results = new List<string>();
             var listener = pair.Subscribe(results.Add);
-            evt.Publish(2);
-            evt.Publish(3);
+            evt.Fire(2);
+            evt.Fire(3);
             listener.Dispose();
             evt.Dispose();
             behavior.Dispose();
@@ -215,16 +215,16 @@ namespace Potassium.Tests
                 Assert.IsNotNull(c, "c != null");
                 results.Add(c.Value);
             });
-            sink.Publish(new Sb('B', 'b', null));
-            sink.Publish(new Sb('C', 'c', behaviorB));
-            sink.Publish(new Sb('D', 'd', null));
-            sink.Publish(new Sb('E', 'e', behaviorA));
-            sink.Publish(new Sb('F', 'f', null));
-            sink.Publish(new Sb(null, null, behaviorB));
-            sink.Publish(new Sb(null, null, behaviorA));
-            sink.Publish(new Sb('G', 'g', behaviorB));
-            sink.Publish(new Sb('H', 'h', behaviorA));
-            sink.Publish(new Sb('I', 'i', behaviorA));
+            sink.Fire(new Sb('B', 'b', null));
+            sink.Fire(new Sb('C', 'c', behaviorB));
+            sink.Fire(new Sb('D', 'd', null));
+            sink.Fire(new Sb('E', 'e', behaviorA));
+            sink.Fire(new Sb('F', 'f', null));
+            sink.Fire(new Sb(null, null, behaviorB));
+            sink.Fire(new Sb(null, null, behaviorA));
+            sink.Fire(new Sb('G', 'g', behaviorB));
+            sink.Fire(new Sb('H', 'h', behaviorA));
+            sink.Fire(new Sb('I', 'i', behaviorA));
             listener.Dispose();
             values.Dispose();
             behaviorA.Dispose();
@@ -246,15 +246,15 @@ namespace Potassium.Tests
             var o = new List<char>();
             var eo = bsw.Switch();
             var l = eo.Subscribe(o.Add);
-            ese.Publish(new Se('A', 'a', null));
-            ese.Publish(new Se('B', 'b', null));
-            ese.Publish(new Se('C', 'c', eb));
-            ese.Publish(new Se('D', 'd', null));
-            ese.Publish(new Se('E', 'e', ea));
-            ese.Publish(new Se('F', 'f', null));
-            ese.Publish(new Se('G', 'g', eb));
-            ese.Publish(new Se('H', 'h', ea));
-            ese.Publish(new Se('I', 'i', ea));
+            ese.Fire(new Se('A', 'a', null));
+            ese.Fire(new Se('B', 'b', null));
+            ese.Fire(new Se('C', 'c', eb));
+            ese.Fire(new Se('D', 'd', null));
+            ese.Fire(new Se('E', 'e', ea));
+            ese.Fire(new Se('F', 'f', null));
+            ese.Fire(new Se('G', 'g', eb));
+            ese.Fire(new Se('H', 'h', ea));
+            ese.Fire(new Se('I', 'i', ea));
             l.Dispose();
             ese.Dispose();
             ea.Dispose();
@@ -275,9 +275,9 @@ namespace Potassium.Tests
             var o = new List<int>();
             var values = sumOut.Values();
             var l = values.Subscribe(o.Add);
-            ea.Publish(2);
-            ea.Publish(3);
-            ea.Publish(1);
+            ea.Fire(2);
+            ea.Fire(3);
+            ea.Fire(1);
             var sample = sum.Value;
             l.Dispose();
             ea.Dispose();
@@ -295,11 +295,11 @@ namespace Potassium.Tests
             var sum = ea.Hold(100).Collect((a, s) => new Tuple<int, int>(a + s, a + s), 0);
             var values = sum.Values();
             var l = values.Subscribe(o.Add);
-            ea.Publish(5);
-            ea.Publish(7);
-            ea.Publish(1);
-            ea.Publish(2);
-            ea.Publish(3);
+            ea.Fire(5);
+            ea.Fire(7);
+            ea.Fire(1);
+            ea.Fire(2);
+            ea.Fire(3);
             l.Dispose();
             ea.Dispose();
             sum.Dispose();
@@ -314,11 +314,11 @@ namespace Potassium.Tests
             var sum = ea.Accum((a, s) => a + s, 100);
             var values = sum.Values();
             var l = values.Subscribe(o.Add);
-            ea.Publish(5);
-            ea.Publish(7);
-            ea.Publish(1);
-            ea.Publish(2);
-            ea.Publish(3);
+            ea.Fire(5);
+            ea.Fire(7);
+            ea.Fire(1);
+            ea.Fire(2);
+            ea.Fire(3);
             l.Dispose();
             values.Dispose();
             ea.Dispose();

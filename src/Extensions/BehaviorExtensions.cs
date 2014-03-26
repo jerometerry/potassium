@@ -66,7 +66,7 @@
         /// <summary>
         /// Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
         /// </summary>
-        /// <typeparam name="T">The type of values published through the source</typeparam>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="source">The Behavior with an inner Behavior to unwrap.</param>
         /// <returns>The new, unwrapped Behavior</returns>
         /// <remarks>Switch allows the reactive network to change dynamically, using 
@@ -83,7 +83,7 @@
         /// <summary>
         /// Unwrap an event inside a behavior to give a time-varying event implementation.
         /// </summary>
-        /// <typeparam name="T">The type of values published through the source</typeparam>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <param name="behavior">The behavior that wraps the event</param>
         /// <returns>The unwrapped event</returns>
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 

@@ -8,13 +8,31 @@
 		<section>
 			<title>Overview</title>
 			<content>
-                <para>Potassium is made up of 2 primitives with 12 operations.</para>
+                <para>Potassium is made up of 4 primitives with 14 operations.</para>
 
                 <para>The primitives are <legacyBold>Event</legacyBold>, and <legacyBold>Behavior</legacyBold>.</para>
 
-                <para>The operations are Accum, Apply, Coalesce, Collect, Filter, Gate, Hold, Lift, Map, Merge, Snapshot, Switch</para>
+                <list class="bullet">
+                  <listItem>
+                    <legacyBold>Behavior</legacyBold> - A dynamic value that updates via an Event
+                  </listItem>
+                  
+                  <listItem>
+                    <legacyBold>Event</legacyBold> - A stream of values (event occurrences) that can be observed
+                  </listItem>
 
-                <para>Potassium uses the Publish / Subscribe Pattern: EventPublisher publishes events, Observable.Subscribe listens for the events.</para>
+                  <listItem>
+                    <legacyBold>EventPublisher</legacyBold> - An Event that exposes a Fire method
+                  </listItem>
+
+                  <listItem>
+                    <legacyBold>EventFeed</legacyBold> - EventFeed fires values observed from another Event
+                  </listItem>
+                </list>
+        
+                <para>The operations are Accum, Apply, Coalesce, Collect, Feed, Filter, Fire, Gate, Hold, Lift, Map, Merge, Snapshot, Switch</para>
+
+                <para>Potassium uses the Publish / Subscribe Pattern: EventPublisher fires events, Observable.Subscribe listens for the events.</para>
 			</content>
 		</section>
 
@@ -36,12 +54,20 @@
                         <legacyBold>Coalesce</legacyBold> - Coalesce is the process of combining several simultaneous values into a single value.
                     </listItem>
 
-                  <listItem>
-                    <legacyBold>Collect</legacyBold> - Collect transforms an Event or Behavior with a generalized state loop (a mealy machine). The function is passed the input and the old state and returns the new state and output value.
-                  </listItem>
+                    <listItem>
+                      <legacyBold>Collect</legacyBold> - Collect transforms an Event or Behavior with a generalized state loop (a mealy machine). The function is passed the input and the old state and returns the new state and output value.
+                    </listItem>
+
+                    <listItem>
+                      <legacyBold>Feed</legacyBold> - Feeding is a way of chaining together Events. Given an Event e and an EventFeed f, f.Feed(e) will cause firings on e to be fired on f.
+                    </listItem>
                     
                     <listItem>
-                        <legacyBold>Filter</legacyBold> - Filtering is the process of throwing away any publishings from source Events that don't evaluate to true through a given filter predicate.
+                        <legacyBold>Filter</legacyBold> - Filtering is the process of throwing away any firings from source Events that don't evaluate to true through a given filter predicate.
+                    </listItem>
+
+                    <listItem>
+                      <legacyBold>Fire</legacyBold> - Firing is the process of sending a value through an Event.
                     </listItem>
 
                     <listItem>
@@ -49,7 +75,7 @@
                     </listItem>
                     
                     <listItem>
-                        <legacyBold>Hold</legacyBold> - A Hold is an operation on an Event given an initial value, that creates a Behavior with the initial value that updates whenever the Event publishes.
+                        <legacyBold>Hold</legacyBold> - A Hold is an operation on an Event given an initial value, that creates a Behavior with the initial value that updates whenever the Event fires.
                     </listItem>
 
                     <listItem>
@@ -57,10 +83,10 @@
                             <legacyBold>Lift</legacyBold> - Lifting is the process of taking a multi-valued function (2 or 3 valued functions in Potassium), along with Behaviors for each value of the function, and creating a new Behavior that is computed by evaluating the function with the current values of each of the Behaviors values.
                         </para>
                         
-                        <para>A lifted Behavior has the property that if any of the input Behaviors are modified simultaneously, the lifted Behavior should publish only once.</para>
+                        <para>A lifted Behavior has the property that if any of the input Behaviors are modified simultaneously, the lifted Behavior should fire only once.</para>
 
                         <para>
-                            <legacyBold>Lift Glitch</legacyBold> - A lift glitch occurs if a lifted Behavior publishes multiple times in response to simultaneous updates of it's input Behaviors.
+                            <legacyBold>Lift Glitch</legacyBold> - A lift glitch occurs if a lifted Behavior fires multiple times in response to simultaneous updates of it's input Behaviors.
                         </para>
                     </listItem>
 
@@ -73,7 +99,7 @@
                     </listItem>
 
                     <listItem>
-                        <legacyBold>Snapshot</legacyBold> - Snapshot is the process of sampling a Behaviors value at the time of an Event publishing, and producing a value (a snapshot) by passing the value of the Behavior at the time of the publishing and the value published on the Event into a snapshot function.
+                        <legacyBold>Snapshot</legacyBold> - Snapshot is the process of sampling a Behaviors value at the time of an Event firing, and producing a value (a snapshot) by passing the value of the Behavior at the time of the firing and the value fired on the Event into a snapshot function.
                     </listItem>
 
                     <listItem>
@@ -92,9 +118,9 @@
                     <listItem>
                         <legacyBold>Transaction</legacyBold> - A Transaction is used to provide the concept of simultaneous Events.
 
-                        <para>In Potassium, only one Transaction can be open at a time. A Transaction is requested when registering a listener, or when publishing a value. A Transaction is closed when the initial request that created the Transaction completes.</para>
+                        <para>In Potassium, only one Transaction can be open at a time. A Transaction is requested when registering a listener, or when firing a value. A Transaction is closed when the initial request that created the Transaction completes.</para>
 
-                        <para>Firing and listening can cause a chain reaction of operations that may cause other publishing and listening operations. This chain of operations will all execute inside the same Transaction.</para>
+                        <para>Firing and listening can cause a chain reaction of operations that may cause other firing and listening operations. This chain of operations will all execute inside the same Transaction.</para>
 
                         <para>Once a Transaction has been opened, actions can be added to it, using the High, Medium and Low methods.</para>
 

@@ -40,9 +40,9 @@
                 y.Text = t.Item2;
             });
 
-            MouseMove += (s, e) => mouseMoveEvent.Publish(e);
-            MouseDown += (s, e) => mouseButtonEvent.Publish(MouseStatus.Down);
-            MouseUp += (s, e) => mouseButtonEvent.Publish(MouseStatus.Up);
+            MouseMove += (s, e) => mouseMoveEvent.Fire(e);
+            MouseDown += (s, e) => mouseButtonEvent.Fire(MouseStatus.Down);
+            MouseUp += (s, e) => mouseButtonEvent.Fire(MouseStatus.Up);
         }
     }
 }

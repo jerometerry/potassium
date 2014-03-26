@@ -9,7 +9,7 @@ namespace Potassium.Internal
         /// Constructs a new Subscription
         /// </summary>
         /// <param name="source">The Observable being subscribed to</param>
-        /// <param name="observer">The Publisher that contains knowledge of how to notify the caller of updates</param>
+        /// <param name="observer">The Observer that contains knowledge of how to notify the caller of updates</param>
         /// <param name="priority">The priority of the subscription.</param>
         /// <remarks>Priority will be Priority.Max for externally triggered subscriptions. Priority will
         /// be the current Priority of an Observable when triggered internally.</remarks>

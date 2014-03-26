@@ -4,7 +4,7 @@
     using System.Linq;
     using Potassium.Core;
 
-    internal sealed class MapEvent<T, TB> : PublishEvent<TB>
+    internal sealed class MapEvent<T, TB> : FireEvent<TB>
     {
         private Observable<T> source;
         private Func<T, TB> map;
@@ -14,24 +14,24 @@
         {
             this.source = source;
             this.map = map;
-            this.subscription = source.Subscribe(new Observer<T>(this.Publish), this.Priority);
+            this.subscription = source.Subscribe(new Observer<T>(this.Fire), this.Priority);
         }
 
-        public void Publish(T publishing, Transaction trans)
+        public void Fire(T firing, Transaction trans)
         {
-            var v = this.map(publishing);
-            this.Publish(v, trans);
+            var v = this.map(firing);
+            this.Fire(v, trans);
         }
 
         public override TB[] SubscriptionFirings()
         {
-            var publishings = GetSubscribeFirings(source);
-            if (publishings == null)
+            var firings = GetSubscribeFirings(source);
+            if (firings == null)
             { 
                 return null;
             }
 
-            return publishings.Select(e => map(e)).ToArray();
+            return firings.Select(e => map(e)).ToArray();
         }
 
         protected override void Dispose(bool disposing)

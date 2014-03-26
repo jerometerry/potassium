@@ -3,12 +3,12 @@ namespace Potassium.Internal
     using Potassium.Core;    
 
     /// <summary>
-    /// SwitchBehaviorEvent is an EventPublisher that publishes new values whenever the current Behavior in the 
+    /// SwitchBehaviorEvent is an EventPublisher that fires new values whenever the current Behavior in the 
     /// Behavior of Behaviors fires.
     /// </summary>
     /// <typeparam name="T">The type of the Behavior</typeparam>
     /// <remarks>SwitchBehaviorEvent works by subscribing to the Behaviors Behavior at the time of construction,
-    /// then recreating the subscription when new Behaviors are published to the Behavior (aka switching).</remarks>
+    /// then recreating the subscription when new Behaviors are fired to the Behavior (aka switching).</remarks>
     internal sealed class SwitchBehaviorEvent<T> : EventPublisher<T>
     {
         private ISubscription<Behavior<T>> behaviorSubscription;
@@ -40,7 +40,7 @@ namespace Potassium.Internal
             // Note: If any switch takes place during a transaction, then the
             // GetValueStream().Subscribe will always cause a sample to be fetched from the
             // one we just switched to. The caller will be fetching our output
-            // using GetValueStream().Subscribe, and GetValueStream() throws away all publishings except
+            // using GetValueStream().Subscribe, and GetValueStream() throws away all firings except
             // for the last one. Therefore, anything from the old input behavior
             // that might have happened during this transaction will be suppressed.
             CancelEventSubscription();

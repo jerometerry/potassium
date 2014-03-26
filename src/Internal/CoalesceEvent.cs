@@ -6,11 +6,11 @@ namespace Potassium.Internal
     using Potassium.Providers;
 
     /// <summary>
-    /// CoalesceEvent combines multiple publishings from a source into a single publishing, using a 
+    /// CoalesceEvent combines multiple firings from a source into a single firing, using a 
     /// combining function.
     /// </summary>
-    /// <typeparam name="T">The type of values published through the source</typeparam>
-    internal class CoalesceEvent<T> : PublishEvent<T>
+    /// <typeparam name="T">The type of values fired through the source</typeparam>
+    internal class CoalesceEvent<T> : FireEvent<T>
     {
         private Func<T, T, T> coalesce;
         private ISubscription<T> subscription;
@@ -27,7 +27,7 @@ namespace Potassium.Internal
 
         protected Observable<T> Source { get; private set; }
 
-        private bool PreviouslyPublished
+        private bool PreviouslyFired
         {
             get
             {
@@ -63,7 +63,7 @@ namespace Potassium.Internal
 
         private void Accumulate(T data, Transaction transaction)
         {
-            if (this.PreviouslyPublished)
+            if (this.PreviouslyFired)
             {
                 Combine(data);
             }
@@ -74,10 +74,10 @@ namespace Potassium.Internal
         }
 
         /// <summary>
-        /// There was a previous publishing, so combine the new publishing with the old publishing 
+        /// There was a previous firing, so combine the new firing with the old firing 
         /// using the combining function.
         /// </summary>
-        /// <param name="newFiring">The newly published value</param>
+        /// <param name="newFiring">The newly fired value</param>
         private void Combine(T newFiring)
         {
             var newValue = coalesce(accumulatedValue.Value, newFiring);
@@ -85,41 +85,41 @@ namespace Potassium.Internal
         }
 
         /// <summary>
-        /// There is no previous publishing, so set the value to the published value, 
-        /// and schedule a publishing that will happen when the transaction is closed.
+        /// There is no previous firing, so set the value to the fired value, 
+        /// and schedule a firing that will happen when the transaction is closed.
         /// </summary>
         /// <param name="initialValue">The initial value</param>
         /// <param name="transaction">The current transaction</param>
         private void ScheduleFiring(T initialValue, Transaction transaction)
         {
             accumulatedValue = new Maybe<T>(initialValue);
-            transaction.High(Publish, Priority);
+            transaction.High(Fire, Priority);
         }
 
         /// <summary>
-        /// Callback method that publishes the accumulated value when the current
+        /// Callback method that fires the accumulated value when the current
         /// transaction is closed.
         /// </summary>
         /// <param name="transaction">The current transaction</param>
-        /// <remarks>The accumulated value is cleared after the publishing.</remarks>
-        private void Publish(Transaction transaction)
+        /// <remarks>The accumulated value is cleared after the firing.</remarks>
+        private void Fire(Transaction transaction)
         {
             var v = accumulatedValue.Value;
-            this.Publish(v, transaction);
+            this.Fire(v, transaction);
             accumulatedValue = Maybe<T>.Null;
         }
 
         /// <summary>
-        /// Combine the list of values to publish during subscription using the combining function
+        /// Combine the list of values to fire during subscription using the combining function
         /// </summary>
-        /// <param name="publishings">The publishings to combine</param>
+        /// <param name="firings">The publishings to combine</param>
         /// <returns>The combined value</returns>
-        private T Combine(IList<T> publishings)
+        private T Combine(IList<T> firings)
         {
-            var e = publishings[0];
-            for (var i = 1; i < publishings.Count; i++)
+            var e = firings[0];
+            for (var i = 1; i < firings.Count; i++)
             {
-                e = coalesce(e, publishings[i]);
+                e = coalesce(e, firings[i]);
             }
 
             return e;

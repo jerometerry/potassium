@@ -6,14 +6,14 @@ namespace Potassium.Internal
     using Potassium.Providers;
 
     /// <summary>
-    /// SnapshotEvent is an event that publishes snapshots of a source event, computed by
-    /// invoking a snapshot function with the current published value of the source event
+    /// SnapshotEvent is an event that fires snapshots of a source event, computed by
+    /// invoking a snapshot function with the current fired value of the source event
     /// as the first parameter, and the current value of the IProvider as the second parameter.
     /// </summary>
     /// <typeparam name="T">The type of the first parameter of the snapshot function</typeparam>
     /// <typeparam name="TB">The type of the second parameter of the snapshot function</typeparam>
     /// <typeparam name="TS">The return type of the snapshot function</typeparam>
-    internal sealed class SnapshotEvent<T, TB, TS> : PublishEvent<TS>
+    internal sealed class SnapshotEvent<T, TB, TS> : FireEvent<TS>
     {
         private Observable<T> source;
         private Func<T, TB, TS> snapshot;
@@ -26,7 +26,7 @@ namespace Potassium.Internal
             this.snapshot = snapshot;
             this.provider = provider;
 
-            var observer = new Observer<T>(this.PublishSnapshot);
+            var observer = new Observer<T>(this.FireSnapshot);
             this.subscription = source.Subscribe(observer, this.Priority);
         }
 
@@ -57,10 +57,10 @@ namespace Potassium.Internal
             base.Dispose(disposing);
         }
 
-        private void PublishSnapshot(T value, Transaction transaction)
+        private void FireSnapshot(T value, Transaction transaction)
         {
             var v = snapshot(value, provider.Value);
-            this.Publish(v, transaction);
+            this.Fire(v, transaction);
         }
     }
 }

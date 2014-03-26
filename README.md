@@ -27,20 +27,21 @@ What is (functional) reactive programming?
 Potassium API
 =============
 
-Potassium is made up of 2 primitives with 12 opeartions.
+Potassium is made up of 4 primitives with 14 opeartions.
 
 The primitives are: 
 
-**Event** - Represents stream of values (event occurrences) that can be observed
-
 **Behavior** - A dynamic value that updates via an Event
 
-The operations are Accum, Apply, Coalesce, Collect, Filter, Gate, Hold, Lift, Map, Merge, Snapshot, Switch
+**Event** - A stream of values (event occurrences) that can be observed
 
-Potassium uses the Publish / Subscribe Pattern
+**EventPublisher** - An Event that exposes a Fire method
 
-* EventPublisher / BehaviorPublisher are the Publishers
-* Event.Subscribe is used to create subscriptions
+**EventFeed** - EventFeed fires values observed from another Event
+
+The operations are Accum, Apply, Coalesce, Collect, Feed, Filter, Fire, Gate, Hold, Lift, Map, Merge, Snapshot, Switch
+
+Potassium uses the Publish / Subscribe Pattern.
 
 Key Classes
 ===========
@@ -63,7 +64,7 @@ Here's a code snippit for listeneing to a Behavior of int's.
     var s = b.Subscribe(v => Console.Write("{0} ", v));
 ``` 
 
-**EventPublisher** - EventPublisher is an Event that exposes a Publish method, allowing callers to publish values to it's subscribers.
+**EventPublisher** - EventPublisher is an Event that exposes a Publish method, allowing callers to fire values to it's subscribers.
 
 Here's an example of creating an EventPublisher, and publishing a value to all registered subscribers.
 ```
@@ -96,7 +97,11 @@ An example would having a running sum total, starting with an initial value and 
 
 **Collect** - Collect is similar to Accum, except the output is an Event, and state is maintained by storing the mapped value and the snapshot in a Tuple. The result of a Collect is a new Event that fires the accumulated value when the source Event fires.
 
+**Feed** - Feeding is a way of chaining together Events. Given an Event e and an EventFeed f, f.Feed(e) will cause firings on e to be fired on f.
+
 **Filter** - Filtering is the process of throwing away any publishings from source Events that don't evaluate to true through a given filter predicate.
+
+**Fire** - Firing is the process of sending a value through an Event.
 
 **Gate** - Gating is the process of now allowing Firing values that don't evaluate to true through a given gate predicate.
 
@@ -104,7 +109,7 @@ An example would having a running sum total, starting with an initial value and 
 
 **Lift** - Lifting is the process of taking a multi-valued function (2 or 3 valued functions in Potassium), along with Behaviors for each value of the function, and creating a new Behavior that is computed by evaluating the function with the current values of each of the Behaviors values.
 
-A lifted Behavior has the property that if any of the input Behaviors are modified simultaneously, the lifted Behavior should publish only once.
+A lifted Behavior has the property that if any of the input Behaviors are modified simultaneously, the lifted Behavior should fire only once.
 
 **Lift Glitch** - A lift glitch occurs if a lifted Behavior publishes multiple times in response to simultaneous updates of it's input Behaviors.
 

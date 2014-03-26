@@ -9,7 +9,7 @@
     /// <summary>
     /// Observable is the base class for Events, containing the subscription logic (i.e. the Observer Pattern).
     /// </summary>
-    /// <typeparam name="T">The type of value published through the Observable</typeparam>
+    /// <typeparam name="T">The type of value fired through the Observable</typeparam>
     public abstract class Observable<T> : Disposable
     {
         /// <summary>
@@ -18,13 +18,13 @@
         private readonly Priority priority = new Priority();
 
         /// <summary>
-        /// List of ISubscriptions that are currently listening for publishings 
+        /// List of ISubscriptions that are currently listening for firings
         /// from the current Observable.
         /// </summary>
         private readonly List<ISubscription<T>> subscriptions = new List<ISubscription<T>>();
 
         /// <summary>
-        /// The current Rank of the Observable, used to prioritize publishings on the current transaction.
+        /// The current Rank of the Observable, used to prioritize firings on the current transaction.
         /// </summary>
         public Priority Priority
         {
@@ -35,7 +35,7 @@
         }
 
         /// <summary>
-        /// List of ISubscriptions that are currently listening for publishings 
+        /// List of ISubscriptions that are currently listening for firings
         /// from the current Observable.
         /// </summary>
         protected List<ISubscription<T>> Subscriptions
@@ -49,7 +49,7 @@
         /// <summary>
         /// Subscribe to publications of the current Observable.
         /// </summary>
-        /// <param name="callback">An Action to be invoked when the current Observable publishes values.</param>
+        /// <param name="callback">An Action to be invoked when the current Observable fires values.</param>
         /// <returns>An ISubscription, that should be Disposed when no longer needed. </returns>
         public ISubscription<T> Subscribe(Action<T> callback)
         {
@@ -59,7 +59,7 @@
         /// <summary>
         /// Subscribe to publications of the current Observable.
         /// </summary>
-        /// <param name="observer">The action to invoke on a publishing</param>
+        /// <param name="observer">The action to invoke on a firing</param>
         /// <param name="subscriptionRank">A rank that will be added as a superior of the Rank of the current Observable</param>
         /// <returns>An ISubscription to be used to stop listening for Observables</returns>
         /// <remarks>TransactionContext.Current.Run is used to invoke the overload of the 
@@ -73,11 +73,11 @@
         /// <summary>
         /// Subscribe to publications of the current Observable.
         /// </summary>
-        /// <param name="transaction">Transaction to send any publishings on</param>
-        /// <param name="observer">The action to invoke on a publishing</param>
+        /// <param name="transaction">Transaction to send any firings on</param>
+        /// <param name="observer">The action to invoke on a firing</param>
         /// <param name="superior">A rank that will be added as a superior of the Rank of the current Observable</param>
         /// <returns>An ISubscription to be used to stop listening for Observables.</returns>
-        /// <remarks>Any publishings that have occurred on the current transaction will be re-published immediate after subscribing.</remarks>
+        /// <remarks>Any firings that have occurred on the current transaction will be re-fired immediate after subscribing.</remarks>
         internal ISubscription<T> Subscribe(Observer<T> observer, Priority superior, Transaction transaction)
         {
             Subscription<T> subscription;

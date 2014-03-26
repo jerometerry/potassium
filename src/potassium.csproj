@@ -80,7 +80,7 @@
     <Compile Include="Core\Observable.cs" />
     <Compile Include="Internal\ObservedValue.cs" />
     <Compile Include="Core\EventFeed.cs" />
-    <Compile Include="Internal\PublishEvent.cs" />
+    <Compile Include="Internal\FireEvent.cs" />
     <Compile Include="Internal\LastFiringEvent.cs" />
     <Compile Include="Core\Event.cs" />
     <Compile Include="Core\Disposable.cs" />
@@ -88,7 +88,7 @@
     <Compile Include="Internal\CoalesceEvent.cs" />
     <Compile Include="Internal\Constants.cs" />
     <Compile Include="Internal\PrioritizedAction.cs" />
-    <Compile Include="Core\RepublishEvent.cs" />
+    <Compile Include="Core\RefireEvent.cs" />
     <Compile Include="Internal\SuppressedSubscribeEvent.cs" />
     <Compile Include="Internal\SwitchBehaviorEvent.cs" />
     <Compile Include="Internal\FilterEvent.cs" />

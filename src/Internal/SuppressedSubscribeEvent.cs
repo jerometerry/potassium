@@ -9,7 +9,7 @@
             this.Feed(source);
         }
 
-        internal override bool Republish(ISubscription<T> subscription, Transaction transaction)
+        internal override bool Refire(ISubscription<T> subscription, Transaction transaction)
         {
             return false;
         }

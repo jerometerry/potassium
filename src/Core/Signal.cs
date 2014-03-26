@@ -6,9 +6,9 @@
     using Potassium.Utilities;
 
     /// <summary>
-    /// Signal is an EventPublisher that publishes the value of an IProvider using a timer
+    /// Signal is an EventPublisher that fires the value of an IProvider using a timer
     /// </summary>
-    /// <typeparam name="T">The type of values published from the Signal</typeparam>
+    /// <typeparam name="T">The type of values fired from the Signal</typeparam>
     public class Signal<T> : EventPublisher<T>
     {
         private Hz frequency;
@@ -155,14 +155,14 @@
             }
         }
 
-        private void PublishCurrentValue()
+        private void FireCurrentValue()
         {
-            this.Publish(this.source.Value);
+            this.Fire(this.source.Value);
         }
 
         private void Tick(object state)
         {
-            dispatcher.Dispatch(PublishCurrentValue);
+            dispatcher.Dispatch(FireCurrentValue);
         }
     }
 }

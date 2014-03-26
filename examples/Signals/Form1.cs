@@ -24,15 +24,15 @@
         {
             InitializeComponent();
 
-            startBtn.Click += (o, s) => runningEvent.Publish(true);
+            startBtn.Click += (o, s) => runningEvent.Fire(true);
             
             stopBtn.Click += (o, s) => 
             {
                 degreesSignal.Stop();
-                runningEvent.Publish(false);
+                runningEvent.Fire(false);
             };
             
-            frequency.ValueChanged += (o, s) => intervalChanged.Publish(frequency.Value);
+            frequency.ValueChanged += (o, s) => intervalChanged.Fire(frequency.Value);
 
             degreesSignal = new Signal<double>(new AutoDouble(0.0, 0.001), Frequency.Hz(0.0), this.CreateDispatcher());
             degreesSignal.Subscribe(SetDegValue);

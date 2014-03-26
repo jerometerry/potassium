@@ -7,7 +7,7 @@ namespace Potassium.Internal
     /// <summary>
     /// The Observer in the Observer Pattern, used to notify subscribers of new values.
     /// </summary>
-    /// <typeparam name="T">The type of value that will be published</typeparam>
+    /// <typeparam name="T">The type of value that will be fired</typeparam>
     internal sealed class Observer<T>
     {
         private readonly Action<T, Transaction> action;
@@ -15,7 +15,7 @@ namespace Potassium.Internal
         /// <summary>
         /// Constructs a new Notification from the given Action
         /// </summary>
-        /// <param name="action">The Action to invoke when the Observable publishes</param>
+        /// <param name="action">The Action to invoke when the Observable fires</param>
         public Observer(Action<T> action)
             : this((a, t) => action(a))
         {
@@ -24,7 +24,7 @@ namespace Potassium.Internal
         /// <summary>
         /// Constructs a new Notification from the given Action
         /// </summary>
-        /// <param name="action">The Action to invoke when the Observable publishes</param>
+        /// <param name="action">The Action to invoke when the Observable fires</param>
         public Observer(Action<T, Transaction> action)
         {
             this.action = action;
@@ -66,8 +66,8 @@ namespace Potassium.Internal
         /// <summary>
         /// Invokes the callback
         /// </summary>
-        /// <param name="value">The value to be published to the </param>
-        /// <param name="transaction">The Transaction used to order the publishing</param>
+        /// <param name="value">The value to be fired to the </param>
+        /// <param name="transaction">The Transaction used to order the firing</param>
         public void Notify(T value, Transaction transaction)
         {
             action(value, transaction);

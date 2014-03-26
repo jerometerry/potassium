@@ -4,7 +4,7 @@ namespace Potassium.Internal
     using System.Linq;
     using Potassium.Core;
 
-    internal class FilterEvent<T> : PublishEvent<T>
+    internal class FilterEvent<T> : FireEvent<T>
     {
         private Observable<T> source;
         private Func<T, bool> f;
@@ -37,13 +37,13 @@ namespace Potassium.Internal
         }
 
         /// <summary>
-        /// Publish the event if the predicate evaluates to true
+        /// Fire the event if the predicate evaluates to true
         /// </summary>
         /// <param name="t"></param>
         /// <param name="value"></param>
-        internal override bool Publish(T value, Transaction t)
+        internal override bool Fire(T value, Transaction t)
         {
-            return this.f(value) && base.Publish(value, t);
+            return this.f(value) && base.Fire(value, t);
         }
 
         protected override void Dispose(bool disposing)

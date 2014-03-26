@@ -5,10 +5,10 @@ namespace Potassium.Internal
     using Potassium.Utilities;
 
     /// <summary>
-    /// ObservedValue stores the last published value of an Observable,
+    /// ObservedValue stores the last fired value of an Observable,
     /// starting with an initial value.
     /// </summary>
-    /// <typeparam name="T">The type of value published through the Observable</typeparam>
+    /// <typeparam name="T">The type of value fired through the Observable</typeparam>
     internal sealed class ObservedValue<T> : Disposable
     {
         private Observable<T> source;
@@ -20,7 +20,7 @@ namespace Potassium.Internal
         private Maybe<T> update = Maybe<T>.Null;
 
         /// <summary>
-        /// Subscription that listens for publishings from the underlying Event.
+        /// Subscription that listens for firings from the underlying Event.
         /// </summary>
         private ISubscription<T> subscription;
 
@@ -35,7 +35,7 @@ namespace Potassium.Internal
 
         /// <summary>
         /// Constructs a time varying ObservedValue, having an initial value that 
-        /// gets updated when the Observable publishes new values.
+        /// gets updated when the Observable fires new values.
         /// </summary>
         /// <param name="source">The Observable to monitor for value updates</param>
         /// <param name="initValue">The initial value of the ObservedValue</param>
@@ -68,8 +68,8 @@ namespace Potassium.Internal
         /// <returns>
         /// The updated value, if any, otherwise the current value
         /// </returns>
-        /// <remarks>As the underlying event is published, the current behavior is 
-        /// updated with the value of the publishing. However, it doesn't go directly to the
+        /// <remarks>As the underlying event is fired, the current behavior is 
+        /// updated with the value of the firing. However, it doesn't go directly to the
         /// value field. Instead, the value is put into newValue, and a Last Action is
         /// scheduled to move the value from newValue to value.</remarks>
         public T NewValue
@@ -122,7 +122,7 @@ namespace Potassium.Internal
         }
 
         /// <summary>
-        /// Listen to the underlying event for publishings
+        /// Listen to the underlying event for firings
         /// </summary>
         /// <param name="transaction">The transaction to schedule the subscription on.</param>
         /// <returns>The ISubscription registered with the underlying event.</returns>

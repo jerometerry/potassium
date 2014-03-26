@@ -3,12 +3,12 @@
     using Potassium.Core;
 
     /// <summary>
-    /// SwitchEvent is an EventPublisher that publishes new values whenever the current Event in the 
+    /// SwitchEvent is an EventPublisher that fires new values whenever the current Event in the 
     /// Behavior of Events fires.
     /// </summary>
     /// <typeparam name="T">The type of the Event</typeparam>
     /// <remarks>SwitchEvent works by subscribing to the Behaviors Event at the time of construction,
-    /// then recreating the subscription when new Events are published to the Behavior (aka switching).</remarks>
+    /// then recreating the subscription when new Events are fired to the Behavior (aka switching).</remarks>
     internal sealed class SwitchEvent<T> : EventPublisher<T>
     {
         private ISubscription<Event<T>> behaviorSubscription;
@@ -54,15 +54,15 @@
 
         private void CreateNewSubscription(Observable<T> newEvent, Transaction transaction)
         {
-            // Using a SuppressedSubscribeEvent so that no spurious Events are published.
+            // Using a SuppressedSubscribeEvent so that no spurious Events are fired.
             var suppressed = new SuppressedSubscribeEvent<T>(newEvent);
 
-            // Subscribe to the new event, suppressing publish on subscribe
+            // Subscribe to the new event, suppressing fire on subscribe
             eventSubscription = suppressed.Subscribe(forward, Priority, transaction);
          
             // Register the suppressed Event for disposable on the subscription, so that 
             // we don't need to dispose of two objects when cleaning up when a new Event 
-            // is published to the Behavior.
+            // is fired to the Behavior.
             ((Disposable)eventSubscription).Register(suppressed);
         }
 

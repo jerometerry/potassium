@@ -7,18 +7,18 @@
     /// <summary>
     /// An Event is a discrete signal of values.
     /// </summary>
-    /// <typeparam name="T">The type of value that will be published through the Event</typeparam>
+    /// <typeparam name="T">The type of value that will be fired through the Event</typeparam>
     public class Event<T> : Observable<T>
     {
         /// <summary>
-        /// If there's more than one publishing in a single transaction, combine them into
+        /// If there's more than one firing in a single transaction, combine them into
         /// one using the specified combining function.
         /// </summary>
-        /// <param name="coalesce">A function that takes two publishings of the same type, and returns
-        /// produces a new publishing of the same type.</param>
-        /// <returns>A new Event that publishes the coalesced values</returns>
+        /// <param name="coalesce">A function that takes two firings of the same type, and returns
+        /// produces a new firing of the same type.</param>
+        /// <returns>A new Event that fires the coalesced values</returns>
         /// <remarks>
-        /// If the event publishings are ordered, then the first will appear at the left
+        /// If the event firings are ordered, then the first will appear at the left
         /// input of the combining function. In most common cases it's best not to
         /// make any assumptions about the ordering, and the combining function would
         /// ideally be commutative.
@@ -31,8 +31,8 @@
         /// <summary>
         /// Push each event occurrence onto a new transaction.
         /// </summary>
-        /// <typeparam name="T">The type of values published through the source</typeparam>
-        /// <returns>An event that is published with the lowest priority in the current Transaction the current Event is published in.</returns>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
+        /// <returns>An event that is fired with the lowest priority in the current Transaction the current Event is fired in.</returns>
         public Event<T> Delay()
         {
             return new DelayEvent<T>(this);
@@ -41,8 +41,8 @@
         /// <summary>
         /// Only keep event occurrences for which the predicate returns true.
         /// </summary>
-        /// <param name="predicate">A predicate used to include publishings</param>
-        /// <returns>A new Event that is published when the current Event publishes and
+        /// <param name="predicate">A predicate used to include firings</param>
+        /// <returns>A new Event that is fired when the current Event fires and
         /// the predicate evaluates to true.</returns>
         public Event<T> Filter(Func<T, bool> predicate)
         {
@@ -52,7 +52,7 @@
         /// <summary>
         /// Filter out any event occurrences whose value is null.
         /// </summary>
-        /// <returns>A new Event that publishes whenever the current Event publishes with a non-null value</returns>
+        /// <returns>A new Event that fires whenever the current Event fires with a non-null value</returns>
         /// <remarks>For value types, comparison against null will always be false. 
         /// FilterNotNull will not filter out any values for value types.</remarks>
         public Event<T> FilterNotNull()
@@ -66,7 +66,7 @@
         /// that is, no state changes from the current transaction are taken into account.
         /// </summary>
         /// <param name="predicate">A behavior who's current value acts as a predicate</param>
-        /// <returns>A new Event that publishes whenever the current Event publishes and the Behaviors value
+        /// <returns>A new Event that fires whenever the current Event fires and the Behaviors value
         /// is true.</returns>
         public Event<T> Gate(Predicate predicate)
         {
@@ -77,11 +77,11 @@
         /// Create a behavior with the specified initial value, that gets updated
         /// by the values coming through the event. The 'current value' of the behavior
         /// is notionally the value as it was 'at the start of the transaction'.
-        /// That is, state updates caused by event publishings get processed at the end of
+        /// That is, state updates caused by event firings get processed at the end of
         /// the transaction.
         /// </summary>
         /// <param name="value">The initial value for the Behavior</param>
-        /// <returns>A Behavior that updates when the current event is published,
+        /// <returns>A Behavior that updates when the current event is fired,
         /// having the specified initial value.</returns>
         public Behavior<T> Hold(T value)
         {
@@ -98,11 +98,11 @@
         }
 
         /// <summary>
-        /// Map publishings of the current event using the supplied mapping function.
+        /// Map firings of the current event using the supplied mapping function.
         /// </summary>
         /// <typeparam name="TB">The return type of the map</typeparam>
         /// <param name="map">A map from T -> TB</param>
-        /// <returns>A new Event that publishes whenever the current Event publishes, the
+        /// <returns>A new Event that fires whenever the current Event fires, the
         /// the mapped value is computed using the supplied mapping.</returns>
         public Event<TB> Map<TB>(Func<T, TB> map)
         {
@@ -113,11 +113,11 @@
         /// Merge two streams of events of the same type.
         /// </summary>
         /// <param name="observable">The Event to merge with the current Event</param>
-        /// <returns>A new Event that publishes whenever either the current or source Events publish.</returns>
+        /// <returns>A new Event that fires whenever either the current or source Events fire.</returns>
         /// <remarks>
         /// In the case where two event occurrences are simultaneous (i.e. both
         /// within the same transaction), both will be delivered in the same
-        /// transaction. If the event publishings are ordered for some reason, then
+        /// transaction. If the event firings are ordered for some reason, then
         /// their ordering is retained. In many common cases the ordering will
         /// be undefined.
         /// </remarks>
@@ -129,20 +129,20 @@
         /// <summary>
         /// Throw away all event occurrences except for the first one.
         /// </summary>
-        /// <returns>An Event that only publishes one time, the first time the current event publishes.</returns>
+        /// <returns>An Event that only fires one time, the first time the current event fires.</returns>
         public Event<T> Once()
         {
             return new OnceEvent<T>(this);
         }
 
         /// <summary>
-        /// Sample the behavior at the time of the event publishing. 
+        /// Sample the behavior at the time of the event firing. 
         /// </summary>
         /// <typeparam name="TB">The type of the Behavior</typeparam>
         /// <typeparam name="TC">The return type of the snapshot function</typeparam>
         /// <param name="snapshot">The snapshot generation function.</param>
         /// <param name="provider">The Behavior to sample when calculating the snapshot</param>
-        /// <returns>A new Event that will produce the snapshot when the current event publishes</returns>
+        /// <returns>A new Event that will produce the snapshot when the current event fires</returns>
         /// <remarks>Note that the 'current value' of the behavior that's sampled is the value 
         /// as at the start of the transaction before any state changes of the current transaction 
         /// are applied through 'hold's.</remarks>
@@ -152,11 +152,11 @@
         }
 
         /// <summary>
-        /// Sample the providers value at the time of the event publishing
+        /// Sample the providers value at the time of the event firing
         /// </summary>
         /// <typeparam name="TB">The type of the Provider</typeparam>
         /// <param name="provider">The IProvider to sample when taking the snapshot</param>
-        /// <returns>An event that captures the IProviders value when the current event publishes</returns>
+        /// <returns>An event that captures the IProviders value when the current event fires</returns>
         public Event<TB> Snapshot<TB>(IProvider<TB> provider)
         {
             return this.Snapshot((a, b) => b, provider);

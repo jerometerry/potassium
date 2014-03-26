@@ -17,10 +17,10 @@ namespace Potassium.Tests
             var e = new EventPublisher<int>();
             var o = new List<int>();
             var l = e.Subscribe(o.Add);
-            e.Publish(5);
+            e.Fire(5);
             l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(5), o);
-            e.Publish(6);
+            e.Fire(6);
             AssertArraysEqual(Arrays<int>.AsList(5), o);
         }
 
@@ -31,7 +31,7 @@ namespace Potassium.Tests
             var m = e.Map(x => x.ToString(CultureInfo.InvariantCulture));
             var o = new List<string>();
             var l = m.Subscribe(o.Add);
-            e.Publish(5);
+            e.Fire(5);
             l.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("5"), o);
         }
@@ -43,9 +43,9 @@ namespace Potassium.Tests
             var e2 = new EventPublisher<int>();
             var o = new List<int>();
             var l = e1.Merge(e2).Subscribe(o.Add);
-            e1.Publish(7);
-            e2.Publish(9);
-            e1.Publish(8);
+            e1.Fire(7);
+            e2.Fire(9);
+            e1.Fire(8);
             l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(7, 9, 8), o);
         }
@@ -56,8 +56,8 @@ namespace Potassium.Tests
             var e = new EventPublisher<int>();
             var o = new List<int>();
             var l = e.Merge(e).Subscribe(o.Add);
-            e.Publish(7);
-            e.Publish(9);
+            e.Fire(7);
+            e.Fire(9);
             l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(7, 7, 9, 9), o);
         }
@@ -73,9 +73,9 @@ namespace Potassium.Tests
             var l = e1.Merge(evt)
                       .Coalesce((a, b) => a + b)
                       .Subscribe(o.Add);
-            e1.Publish(2);
-            e1.Publish(8);
-            e2.Publish(40);
+            e1.Fire(2);
+            e1.Fire(8);
+            e2.Fire(40);
             l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(202, 808, 40), o);
         }
@@ -86,9 +86,9 @@ namespace Potassium.Tests
             var e = new EventPublisher<char>();
             var o = new List<char>();
             var l = e.Filter(char.IsUpper).Subscribe(o.Add);
-            e.Publish('H');
-            e.Publish('o');
-            e.Publish('I');
+            e.Fire('H');
+            e.Fire('o');
+            e.Fire('I');
             l.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('H', 'I'), o);
         }
@@ -99,9 +99,9 @@ namespace Potassium.Tests
             var e = new EventPublisher<string>();
             var o = new List<string>();
             var l = e.FilterNotNull().Subscribe(o.Add);
-            e.Publish("tomato");
-            e.Publish(null);
-            e.Publish("peach");
+            e.Fire("tomato");
+            e.Fire(null);
+            e.Fire("peach");
             l.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("tomato", "peach"), o);
         }
@@ -117,8 +117,8 @@ namespace Potassium.Tests
             eb.Feed(ebO);
             var o = new List<int>();
             var l = ec.Subscribe(o.Add);
-            ea.Publish(2);
-            ea.Publish(52);
+            ea.Fire(2);
+            ea.Fire(52);
             l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(2, 7), o);
         }
@@ -131,11 +131,11 @@ namespace Potassium.Tests
             var epred = new QueryPredicate(() => enabled.Value);
             var o = new List<char>();
             var l = ec.Gate(epred).Subscribe(o.Add);
-            ec.Publish('H');
+            ec.Fire('H');
             enabled = new IdentityPredicate(false);
-            ec.Publish('O');
+            ec.Fire('O');
             enabled = new IdentityPredicate(true);
-            ec.Publish('I');
+            ec.Fire('I');
             l.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('H', 'I'), o);
         }
@@ -147,11 +147,11 @@ namespace Potassium.Tests
             var o = new List<int>();
             var sum = ea.Collect((a, s) => new Tuple<int, int>(a + s, a + s), 100);
             var l = sum.Subscribe(o.Add);
-            ea.Publish(5);
-            ea.Publish(7);
-            ea.Publish(1);
-            ea.Publish(2);
-            ea.Publish(3);
+            ea.Fire(5);
+            ea.Fire(7);
+            ea.Fire(1);
+            ea.Fire(2);
+            ea.Fire(3);
             l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(105, 112, 113, 115, 118), o);
         }
@@ -163,11 +163,11 @@ namespace Potassium.Tests
             var o = new List<int>();
             var sum = ea.Accum((a, s) => a + s, 100);
             var l = sum.Source.Subscribe(o.Add);
-            ea.Publish(5);
-            ea.Publish(7);
-            ea.Publish(1);
-            ea.Publish(2);
-            ea.Publish(3);
+            ea.Fire(5);
+            ea.Fire(7);
+            ea.Fire(1);
+            ea.Fire(2);
+            ea.Fire(3);
             l.Dispose();
             AssertArraysEqual(Arrays<int>.AsList(105, 112, 113, 115, 118), o);
         }
@@ -178,9 +178,9 @@ namespace Potassium.Tests
             var e = new EventPublisher<char>();
             var o = new List<char>();
             var l = e.Once().Subscribe(o.Add);
-            e.Publish('A');
-            e.Publish('B');
-            e.Publish('C');
+            e.Fire('A');
+            e.Fire('B');
+            e.Fire('C');
             l.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('A'), o);
         }
@@ -192,9 +192,9 @@ namespace Potassium.Tests
             var b = e.Hold(' ');
             var o = new List<char>();
             var l = e.Delay().Snapshot(b).Subscribe(o.Add);
-            e.Publish('C');
-            e.Publish('B');
-            e.Publish('A');
+            e.Fire('C');
+            e.Fire('B');
+            e.Fire('A');
             l.Dispose();
             AssertArraysEqual(Arrays<char>.AsList('C', 'B', 'A'), o);
         }

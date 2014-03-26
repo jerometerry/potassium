@@ -16,7 +16,7 @@ namespace Potassium.MemoryTests
             var i = 0;
             while (i < iterations)
             {
-                sink.Publish(i);
+                sink.Fire(i);
                 i++;
             }
 

@@ -7,7 +7,7 @@ namespace Potassium.Core
     /// <summary>
     /// Behavior contains a value which is updated when the underlying Event is updated.
     /// </summary>
-    /// <typeparam name="T">The type of values that will be published through the Behavior.</typeparam>
+    /// <typeparam name="T">The type of values that will be fired through the Behavior.</typeparam>
     public class Behavior<T> : Provider<T>
     {
         private ObservedValue<T> observedValue;
@@ -74,9 +74,9 @@ namespace Potassium.Core
         }
 
         /// <summary>
-        /// Get an Event that publishes the initial Behaviors value, and whenever the Behaviors value changes.
+        /// Get an Event that fires the initial Behaviors value, and whenever the Behaviors value changes.
         /// </summary>
-        /// <typeparam name="T">The type of values published through the source</typeparam>
+        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <returns>The event streams</returns>
         public Event<T> Values()
         {
