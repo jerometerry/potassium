@@ -4,50 +4,78 @@
     using Potassium.Core;
 
     /// <summary>
-    /// Event that applies a Behavior holding a partial function by supplying another behavior.
+    /// ApplyEvent applies a behavior of values to a behavior of functions, firing the computed
+    /// value whenver either of the behavior fires.
     /// </summary>
-    /// <typeparam name="T">The type of value fired through the source Behavior</typeparam>
-    /// <typeparam name="TB">The return type of the Behavior Mapping functions</typeparam>
-    internal sealed class ApplyEvent<T, TB> : FirableEvent<TB>
+    /// <typeparam name="TA">The type of value fired through the valueBehavior Behavior</typeparam>
+    /// <typeparam name="TB">The return type of the Behavior partial function</typeparam>
+    /// <remarks>
+    /// The computed value fired on the current ApplyEvent is computed by applying the current
+    /// value of the behavior of values to the current functio of the behavior of functions.
+    /// 
+    /// ApplyEvent is the basis for all lifting operations.</remarks>
+    internal sealed class ApplyEvent<TA, TB> : FirableEvent<TB>
     {
         /// <summary>
         /// Set to true when waiting for the Fire Priority Action to run.
         /// </summary>
         private bool fired;
-        private Behavior<T> source;
-        private Behavior<Func<T, TB>> partialBehavior;
+        private Behavior<Func<TA, TB>> funcBehavior;
+        private Behavior<TA> valBehavior;
         
-        public ApplyEvent(Behavior<Func<T, TB>> partialBehavior, Behavior<T> source)
+        /// <summary>
+        /// Creates a new ApplyEvent
+        /// </summary>
+        /// <param name="funcBehavior">Behavior of mapping functions</param>
+        /// <param name="valBehavior">Behavior to apply to the map</param>
+        public ApplyEvent(Behavior<Func<TA, TB>> funcBehavior, Behavior<TA> valBehavior)
         {
-            this.source = source;
-            this.partialBehavior = partialBehavior;
+            this.funcBehavior = funcBehavior;
+            this.valBehavior = valBehavior;
 
-            SubscribeSource();
-            SubscribeMap();
+            SubscribeVal();
+            SubscribeFunc();
+        }
+
+        private TB AppliedValue
+        {
+            get
+            {
+                var func = this.funcBehavior.NewValue;
+                var val = this.valBehavior.NewValue;
+                return func(val);
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                source = null;
-                this.partialBehavior = null;
+                this.valBehavior = null;
+                this.funcBehavior = null;
             }
 
             base.Dispose(disposing);
         }
 
-        private void SubscribeSource()
+        /// <summary>
+        /// Listen to the source Behavior for firings, firing the computed value on the current ApplyEvent
+        /// </summary>
+        private void SubscribeVal()
         {
-            var valueChanged = new Observer<T>((a, t) => this.ScheduleFiring(t));
-            var subscription = source.Source.Subscribe(valueChanged, this.Priority);
+            var observer = new Observer<TA>((a, t) => this.ScheduleFiring(t));
+            var subscription = this.valBehavior.Source.Subscribe(observer, this.Priority);
             this.Register(subscription);
         }
 
-        private void SubscribeMap()
+        /// <summary>
+        /// Listen to the behavior of functions for changes to the function, firing the computed value
+        /// on the current ApplyEvent
+        /// </summary>
+        private void SubscribeFunc()
         {
-            var functionChanged = new Observer<Func<T, TB>>((f, t) => this.ScheduleFiring(t));
-            var subscription = this.partialBehavior.Source.Subscribe(functionChanged, this.Priority);
+            var observer = new Observer<Func<TA, TB>>((f, t) => this.ScheduleFiring(t));
+            var subscription = this.funcBehavior.Source.Subscribe(observer, this.Priority);
             this.Register(subscription);
         }
 
@@ -55,34 +83,19 @@
         /// Schedule prioritized firing on the given transaction
         /// </summary>
         /// <param name="transaction">The transaction to fire the value on</param>
-        /// <returns>True if firing was added as a priority action on the given 
-        /// transaction, false if there is already an scheduled firing that 
-        /// is yet to fire.</returns>
-        private bool ScheduleFiring(Transaction transaction)
+        private void ScheduleFiring(Transaction transaction)
         {
-            if (fired)
+            if (!fired)
             {
-                return false;
+                transaction.High(t => this.Fire(transaction), this.Priority);
+                fired = true;
             }
-
-            fired = true;
-            transaction.High(Fire, this.Priority);
-            return true;
         }
 
         private void Fire(Transaction transaction)
         {
-            var value = this.GetValueToFire();
-            this.Fire(value, transaction);
+            this.Fire(this.AppliedValue, transaction);
             fired = false;
-        }
-
-        private TB GetValueToFire()
-        {
-            var map = this.partialBehavior.NewValue;
-            var a = this.source.NewValue;
-            var b = map(a);
-            return b;
         }
     }
 }

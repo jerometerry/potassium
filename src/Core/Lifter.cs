@@ -4,11 +4,16 @@
     using Potassium.Internal;
 
     /// <summary>
-    /// Functor providers methods to lift Unary, Binary and Ternary functions into Behaviors
+    /// Lifter providers methods to lift Unary, Binary and Ternary functions into Behaviors
     /// </summary>
     /// <remarks>
     /// http://www.haskell.org/haskellwiki/Lifting
+    /// 
+    /// http://en.wikipedia.org/wiki/Partial_application
+    /// 
+    /// http://en.wikipedia.org/wiki/Currying
     /// </remarks>
+    /// <remarks></remarks>
     public static class Lifter
     {
         /// <summary>
@@ -17,14 +22,14 @@
         /// </summary>
         /// <typeparam name="TA">The type of the parameter to the lift function in the behavior</typeparam>
         /// <typeparam name="TB">The return type of the inner function of the given Behavior</typeparam>
-        /// <param name="partialBehavior">Behavior of functions that maps from T -> TB</param>
-        /// <param name="a">Parameter to supply to the partial function</param>
+        /// <param name="funcBehavior">Behavior of functions that maps from T -> TB</param>
+        /// <param name="valueBehavior">Parameter to supply to the partial function</param>
         /// <returns>The new applied Behavior</returns>
-        public static Behavior<TB> Apply<TA, TB>(Behavior<Func<TA, TB>> partialBehavior, Behavior<TA> a)
+        public static Behavior<TB> Apply<TA, TB>(Behavior<Func<TA, TB>> funcBehavior, Behavior<TA> valueBehavior)
         {
-            var evt = new ApplyEvent<TA, TB>(partialBehavior, a);
-            var map = partialBehavior.Value;
-            var valA = a.Value;
+            var evt = new ApplyEvent<TA, TB>(funcBehavior, valueBehavior);
+            var map = funcBehavior.Value;
+            var valA = valueBehavior.Value;
             var valB = map(valA);
             var behavior = evt.Hold(valB);
             behavior.Register(evt);
@@ -32,10 +37,10 @@
         }
 
         /// <summary>
-        /// Lift a constant into a Behavior
+        /// Lift valueBehavior constant into valueBehavior Behavior
         /// </summary>
         /// <typeparam name="TA">The type of the value</typeparam>
-        /// <param name="value">The value to lift into a Behavior</param>
+        /// <param name="value">The value to lift into valueBehavior Behavior</param>
         /// <returns>A constant Behavior, having the given value</returns>
         public static Behavior<TA> Lift<TA>(TA value)
         {
@@ -43,12 +48,12 @@
         }
 
         /// <summary>
-        /// Lift a unary function into a Behavior
+        /// Lift valueBehavior unary function into valueBehavior Behavior
         /// </summary>
         /// <typeparam name="TA">The type of the first parameter to the lift function in the behavior</typeparam>
         /// <typeparam name="TB">The return type of the lift function</typeparam>
         /// <param name="lift">The function to lift</param>
-        /// <param name="a">The behavior to supply as a parameter to the lift function</param>
+        /// <param name="a">The behavior to supply as valueBehavior parameter to the lift function</param>
         /// <returns>The lifted Behavior</returns>
         public static Behavior<TB> Lift<TA, TB>(Func<TA, TB> lift, Behavior<TA> a)
         {
@@ -56,27 +61,27 @@
         }
 
         /// <summary>
-        /// Lift a binary function into behaviors.
+        /// Lift valueBehavior binary function into behaviors.
         /// </summary>
         /// <typeparam name="TA">The type of the first parameter to the lift function in the behavior</typeparam>
         /// <typeparam name="TB">The type of the given Behavior</typeparam>
         /// <typeparam name="TC">The return type of the lift function.</typeparam>
-        /// <param name="lift">The function to lift, taking a T and a TB, returning TC</param>
+        /// <param name="lift">The function to lift, taking valueBehavior T and valueBehavior TB, returning TC</param>
         /// <param name="a">Behavior who's value will be used as the first parameter to the lift function</param>
         /// <param name="b">Behavior who's value will be used as the second parameter to the lift function</param>
         /// <returns>A new Behavior who's value is computed using the current Behavior, the given
         /// Behavior, and the lift function.</returns>
         public static Behavior<TC> Lift<TA, TB, TC>(Func<TA, TB, TC> lift, Behavior<TA> a, Behavior<TB> b)
         {
-            Func<TA, Func<TB, TC>> ffa = aa => (bb => lift(aa, bb));
-            Behavior<Func<TB, TC>> partialB = Lift(ffa, a);
-            Behavior<TC> behaviorC = Apply(partialB, b);
-            behaviorC.Register(partialB);
-            return behaviorC;
+            Func<TA, Func<TB, TC>> curry = ta => (tb => lift(ta, tb));
+            Behavior<Func<TB, TC>> fb = Lift(curry, a);
+            Behavior<TC> bc = Apply(fb, b);
+            bc.Register(fb);
+            return bc;
         }
 
         /// <summary>
-        /// Lift a ternary function into behaviors.
+        /// Lift valueBehavior ternary function into behaviors.
         /// </summary>
         /// <typeparam name="TA">The type of the first parameter to the lift function in the behavior</typeparam>
         /// <typeparam name="TB">Type of Behavior b</typeparam>
@@ -88,16 +93,16 @@
         /// <param name="c">Behavior who's value will be used as the third parameter to the lift function</param>
         /// <returns>A new Behavior who's value is computed by applying the lift function to the current
         /// behavior, and the given behaviors.</returns>
-        /// <remarks>Lift converts a function on values to a Behavior on values</remarks>
+        /// <remarks>Lift converts valueBehavior function on values to valueBehavior Behavior on values</remarks>
         public static Behavior<TD> Lift<TA, TB, TC, TD>(Func<TA, TB, TC, TD> lift, Behavior<TA> a, Behavior<TB> b, Behavior<TC> c)
         {
-            Func<TA, Func<TB, Func<TC, TD>>> map = aa => bb => cc => { return lift(aa, bb, cc); };
-            Behavior<Func<TB, Func<TC, TD>>> partialB = Lift(map, a);
-            Behavior<Func<TC, TD>> partialC = Apply(partialB, b);
-            Behavior<TD> behaviorD = Apply(partialC, c);
-            behaviorD.Register(partialB);
-            behaviorD.Register(partialC);
-            return behaviorD;
+            Func<TA, Func<TB, Func<TC, TD>>> curry = ta => (tb => (tc => lift(ta, tb, tc)));
+            Behavior<Func<TB, Func<TC, TD>>> fb = Lift(curry, a);
+            Behavior<Func<TC, TD>> fc = Apply(fb, b);
+            Behavior<TD> bd = Apply(fc, c);
+            bd.Register(fb);
+            bd.Register(fc);
+            return bd;
         }
     }
 }
