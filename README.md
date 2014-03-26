@@ -25,4 +25,10 @@ FRP is sometimes described as a **better observer pattern**.
 
 At the heart of FRP are **Events** and **Behaviors**.
 
+**Events** should be familiar to programmers who've done any sort of Event Driven Programming. Mouse clicks, key presses, etc., are examples of Events. Event is technically an event stream of discrete occurrences.
 
+The type signagure for an Event of integers is **Event&lt;int&gt;**. 
+
+**Behaviors** are simply time varying values. Put another way, a **Behavior** is a *reactive value*. Behavior is simply a container for a value, where the value gets updated by firings of an Event.
+
+The type signature for a Behavior of integers is **Behavior&lt;int&gt;**.
