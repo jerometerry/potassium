@@ -2,7 +2,19 @@
 <topic id="89e8c167-b620-4a41-9657-af64fb0101ce" revisionNumber="1">
 	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
 		<introduction>
-			<para>Potassium is a Functional Reactive Programming Library for .NET, based on <externalLink><linkText>Sodium</linkText><linkUri>https://github.com/kentuckyfriedtakahe/sodium</linkUri></externalLink>. </para>
+			<para>Potassium is a Functional Reactive Programming Library for .NET, based on 
+        <externalLink>
+          <linkText>Sodium</linkText>
+          <linkUri>https://github.com/kentuckyfriedtakahe/sodium</linkUri>
+        </externalLink>. 
+      </para>
+
+      <para>The source code for Potassium is on 
+        <externalLink>
+          <linkText>GitHub</linkText>
+          <linkUri>https://github.com/jerometerry/potassium</linkUri>
+        </externalLink>. 
+    </para>
 		</introduction>
 
 		<section>
