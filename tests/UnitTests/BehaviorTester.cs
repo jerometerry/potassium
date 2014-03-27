@@ -77,7 +77,7 @@ namespace Potassium.Tests
         public void TestMapB2()
         {
             var behavior = new Identity<int>(1);
-            var behavior1 = new Binder<int, int>(behavior, x => x * 3);
+            var behavior1 = new UnaryLift<int, int>(x => x * 3, behavior);
             Assert.AreEqual(3, behavior1.Value);
             behavior1.Dispose();
             behavior.Dispose();
@@ -124,7 +124,7 @@ namespace Potassium.Tests
             var pba = new FirableEvent<long>();
             var ba = new Behavior<long>(5L, pba);
             var results = new List<string>();
-            var apply = Lifter.Apply(bf, ba);
+            var apply = Core.Lifter.Apply(bf, ba);
             var values = apply.Values();
             var listener = values.Subscribe(results.Add);
             pbf.Fire(b => "12 " + b);
@@ -145,7 +145,7 @@ namespace Potassium.Tests
             var pub2 = new FirableEvent<long>();
             var behavior2 = new Behavior<long>(5L, pub2);
             var results = new List<string>();
-            var combinedBehavior = Lifter.Lift((x, y) => x + " " + y, behavior1, behavior2);
+            var combinedBehavior = Core.Lifter.Lift((x, y) => x + " " + y, behavior1, behavior2);
             var values = combinedBehavior.Values();
             var listener = values.Subscribe(results.Add);
             pub1.Fire(12);
@@ -170,7 +170,7 @@ namespace Potassium.Tests
             var mappedBehavior1 = behavior.Map(x => x * 3);
             var mappedBehavior2 = behavior.Map(x => x * 5);
             var results = new List<string>();
-            var combinedBehavior = Lifter.Lift((x, y) => x + " " + y, mappedBehavior1, mappedBehavior2);
+            var combinedBehavior = Core.Lifter.Lift((x, y) => x + " " + y, mappedBehavior1, mappedBehavior2);
             var values = combinedBehavior.Values();
             var listener = values.Subscribe(results.Add);
             publisher.Fire(2);

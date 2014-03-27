@@ -15,8 +15,8 @@
         public void TestRandomSin()
         {
             var rd = new RandomDouble(TwoPi);
-            var sb = new Map<double, double>(Math.Sin);
-            var s = rd.Bind(sb);
+            var sb = new Identity<Func<double, double>>(Math.Sin);
+            var s = Lifter.Lift(sb, rd);
             for (int i = 0; i < 5; i++) 
             {
                 Console.WriteLine(s.Value);

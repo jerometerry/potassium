@@ -13,7 +13,7 @@ namespace Potassium.Providers
         /// </summary>
         /// <typeparam name="TS"></typeparam>
         /// <returns></returns>
-        public static State<TS,TS> Get<TS>()
+        public static State<TS, TS> Get<TS>()
         {
             return new State<TS, TS>(sx => Tuple.Create(sx, sx));
         }

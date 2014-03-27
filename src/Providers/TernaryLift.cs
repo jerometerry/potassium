@@ -1,7 +1,6 @@
 ﻿namespace Potassium.Providers
 {
     using System;
-    using Potassium.Core;
 
     /// <summary>
     /// A TernaryMonad lifts a ternary function into a Monad
@@ -12,7 +11,7 @@
     /// <typeparam name="TD">The return type of the ternary function</typeparam>
     public class TernaryLift<T, TB, TC, TD> : Provider<TD>
     {
-        private Func<T, TB, TC, TD> lift;
+        private IProvider<Func<T, TB, TC, TD>> lift;
         private IProvider<T> a;
         private IProvider<TB> b;
         private IProvider<TC> c;
@@ -25,6 +24,18 @@
         /// <param name="b"></param>
         /// <param name="c"></param>
         public TernaryLift(Func<T, TB, TC, TD> lift, IProvider<T> a, IProvider<TB> b, IProvider<TC> c)
+            : this (new Identity<Func<T, TB, TC, TD>>(lift), a, b, c)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lift"></param>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="c"></param>
+        public TernaryLift(IProvider<Func<T, TB, TC, TD>> lift, IProvider<T> a, IProvider<TB> b, IProvider<TC> c)
         {
             this.lift = lift;
             this.a = a;
@@ -39,7 +50,11 @@
         {
             get
             {
-                return lift(a.Value, b.Value, c.Value);
+                var f = lift.Value;
+                var x = a.Value;
+                var y = b.Value;
+                var z = c.Value;
+                return f(x, y, z);
             }
         }
 

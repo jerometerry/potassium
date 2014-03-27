@@ -11,7 +11,7 @@
     /// <typeparam name="TC">The return type of the lift function</typeparam>
     public class BinaryLift<T, TB, TC> : Provider<TC>
     {
-        private Func<T, TB, TC> lift;
+        private IProvider<Func<T, TB, TC>> lift;
         private IProvider<T> a;
         private IProvider<TB> b;
 
@@ -22,6 +22,17 @@
         /// <param name="a"></param>
         /// <param name="b"></param>
         public BinaryLift(Func<T, TB, TC> lift, IProvider<T> a, IProvider<TB> b)
+            : this(new Identity<Func<T, TB, TC>>(lift), a, b)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lift"></param>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        public BinaryLift(IProvider<Func<T, TB, TC>> lift, IProvider<T> a, IProvider<TB> b)
         {
             this.lift = lift;
             this.a = a;
@@ -35,7 +46,11 @@
         {
             get
             {
-                return lift(a.Value, b.Value);
+                var f = lift.Value;
+                var x = a.Value;
+                var y = b.Value;
+                var z = f(x, y);
+                return z;
             }
         }
 
