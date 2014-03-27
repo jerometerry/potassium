@@ -24,12 +24,15 @@
         /// <summary>
         /// Constructs a new WebResource to fetch from a dynamic URL
         /// </summary>
-        /// <param name="urlValueior">Behavior containing the URL to load</param>
+        /// <param name="urlProvider">Provider containing the URL to load</param>
         public WebResource(IProvider<string> urlProvider)
         {
             this.urlProvider = urlProvider;
         }
 
+        /// <summary>
+        /// Evaluates the value of the Provider
+        /// </summary>
         public override string Value
         {
             get
@@ -43,12 +46,14 @@
             }
         }
 
+        /// <summary>
+        /// Clean up all resources used by the current SodiumObject
+        /// </summary>
+        /// <param name="disposing">Whether to dispose managed resources
+        /// </param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                this.urlProvider = null;
-            }
+            this.urlProvider = null;
 
             base.Dispose(disposing);
         }

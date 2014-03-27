@@ -52,6 +52,24 @@
         }
 
         /// <summary>
+        /// Gets the value of the current Maybe
+        /// </summary>
+        /// <returns>The value of the current Maybe. If the Maybe has no value,
+        /// an Exception will be raised.</returns>
+        public override T Value
+        {
+            get
+            {
+                if (!HasValue)
+                {
+                    throw new InvalidOperationException("Maybe doesn't contain a value!");
+                }
+
+                return value;
+            }
+        }
+
+        /// <summary>
         /// Implicitly convert a Maybe to its underlying value
         /// </summary>
         /// <param name="m">The Maybe object to convert</param>
@@ -70,24 +88,6 @@
         public static implicit operator Maybe<T>(T m)
         {
             return new Maybe<T>(m);
-        }
-
-        /// <summary>
-        /// Gets the value of the current Maybe
-        /// </summary>
-        /// <returns>The value of the current Maybe. If the Maybe has no value,
-        /// an Exception will be raised.</returns>
-        public override T Value
-        {
-            get
-            {
-                if (!HasValue)
-                {
-                    throw new ArgumentException("Maybe doesn't contain a value!");
-                }
-
-                return value;
-            }
         }
 
         /// <summary>

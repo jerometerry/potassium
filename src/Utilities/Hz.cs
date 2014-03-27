@@ -7,28 +7,37 @@
     /// </summary>
     public class Hz
     {
-        private static readonly  Hz max = new Hz(1000);
+        /// <summary>
+        /// Gets the maximum value of Hz (1000 hz).
+        /// </summary>
+        public static readonly Hz Max = new Hz(1000);
         
-        public static Hz Max
-        {
-            get
-            {
-                return max;
-            }
-        }
-        
+        /// <summary>
+        /// Constructs a new Hz, with the given frequence in Hertz
+        /// </summary>
+        /// <param name="hz"></param>
         public Hz(double hz)
         {
             this.Value = hz;
         }
 
+        /// <summary>
+        /// Constructs a new Hz, with the given interval between cycles
+        /// </summary>
+        /// <param name="interval">The time span between cycles</param>
         public Hz(TimeSpan interval)
         {
             this.Value = 1 / interval.TotalSeconds;
         }
 
+        /// <summary>
+        /// Gets / Sets the frequency, in Hertz
+        /// </summary>
         public double Value { get; set; }
 
+        /// <summary>
+        /// Gets the number of milliseconds between cycles
+        /// </summary>
         public long Milliseconds
         {
             get
@@ -37,6 +46,10 @@
             }
         }
 
+        /// <summary>
+        /// Gets the timespan between cycles
+        /// </summary>
+        /// <returns></returns>
         public TimeSpan Interval()
         {
             return TimeSpan.FromMilliseconds(1000 / this.Value);

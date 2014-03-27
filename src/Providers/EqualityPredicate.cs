@@ -10,15 +10,22 @@
     public class EqualityPredicate<T> : Predicate
     {
         private IProvider<T> provider;
-        
         private T v;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <param name="v"></param>
         public EqualityPredicate(IProvider<T> provider, T v)
         {
             this.provider = provider;
             this.v = v;
         }
 
+        /// <summary>
+        /// Evaluates the value of the Provider
+        /// </summary>
         public override bool Value
         {
             get
@@ -29,13 +36,15 @@
             }
         }
 
+        /// <summary>
+        /// Clean up all resources used by the current SodiumObject
+        /// </summary>
+        /// <param name="disposing">Whether to dispose managed resources
+        /// </param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                this.provider = null;
-                v = default(T);
-            }
+            this.provider = null;
+            v = default(T);
 
             base.Dispose(disposing);
         }

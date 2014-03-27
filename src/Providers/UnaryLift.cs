@@ -25,6 +25,9 @@
             this.source = source;
         }
 
+        /// <summary>
+        /// Evaluates the value of the Provider
+        /// </summary>
         public override TB Value
         {
             get
@@ -33,13 +36,15 @@
             }
         }
 
+        /// <summary>
+        /// Clean up all resources used by the current SodiumObject
+        /// </summary>
+        /// <param name="disposing">Whether to dispose managed resources
+        /// </param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                lift = null;
-                source = null;
-            }
+            lift = null;
+            source = null;
 
             base.Dispose(disposing);
         }

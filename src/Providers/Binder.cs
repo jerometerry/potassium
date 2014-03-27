@@ -1,48 +1,61 @@
 ﻿namespace Potassium.Providers
 {
     using System;
-    using Potassium.Core;
 
     /// <summary>
-    /// MonadBinder is a Monad who's value is computed by passing the current value of an IProvider
-    /// to the current mapping function of an IProvider of functions.
+    /// Binder performs the monadic bind operation for IProviders
     /// </summary>
-    /// <typeparam name="T">Type of value stored in the source Behavior</typeparam>
-    /// <typeparam name="TB">The return type of the mapping functions</typeparam>
+    /// <typeparam name="T">Type of value stored in the source</typeparam>
+    /// <typeparam name="TB">The return type of the mapping function</typeparam>
     public class Binder<T, TB> : Provider<TB>
     {
         private IProvider<T> source;
-        private IProvider<Func<T, TB>> bf;
+        private IProvider<Func<T, TB>> map;
 
-        public Binder(IProvider<T> source, Func<T, TB> bf)
-            : this(source, new Map<T, TB>(bf))
+        /// <summary>
+        /// Constructs a new Binder from the given source and mapping function
+        /// </summary>
+        /// <param name="source">The source of the value to pass to the mapping function</param>
+        /// <param name="map">The mapping function</param>
+        public Binder(IProvider<T> source, Func<T, TB> map)
+            : this(source, new Map<T, TB>(map))
         {
         }
 
-        public Binder(IProvider<T> source, IProvider<Func<T, TB>> bf)
+        /// <summary>
+        /// Constructs a new Binder from the given source and mapping
+        /// </summary>
+        /// <param name="source">The IProvider that holds the values to pass to the mapping function</param>
+        /// <param name="map">The IProvider that holds the mapping functions</param>
+        public Binder(IProvider<T> source, IProvider<Func<T, TB>> map)
         {
             this.source = source;
-            this.bf = bf;
+            this.map = map;
         }
 
+        /// <summary>
+        /// Performs the bind opeartions on the current value of the source and mapping providers
+        /// </summary>
         public override TB Value
         {
             get
             {
-                var map = bf.Value;
-                var a = source.Value;
-                var b = map(a);
-                return b;
+                var f = this.map.Value;
+                var x = source.Value;
+                var y = f(x);
+                return y;
             }
         }
 
+        /// <summary>
+        /// Clean up all resources used by the current SodiumObject
+        /// </summary>
+        /// <param name="disposing">Whether to dispose managed resources
+        /// </param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                this.source = null;
-                this.bf = null;
-            }
+            this.source = null;
+            this.map = null;
 
             base.Dispose(disposing);
         }

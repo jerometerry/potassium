@@ -5,8 +5,20 @@
     /// </summary>
     public class IdentityPredicate : Predicate
     {
-        private bool predicate;
+        private readonly bool predicate;
 
+        /// <summary>
+        /// Constructs a new, constant, predicate with the given value
+        /// </summary>
+        /// <param name="predicate">The value of the Predicate</param>
+        public IdentityPredicate(bool predicate)
+        {
+            this.predicate = predicate;
+        }
+
+        /// <summary>
+        /// Get the Predicate that always evaluates to True
+        /// </summary>
         public static IdentityPredicate True
         {
             get
@@ -15,6 +27,9 @@
             }
         }
 
+        /// <summary>
+        /// Get the Predicate that always evaluates to False
+        /// </summary>
         public static IdentityPredicate False
         {
             get
@@ -23,11 +38,9 @@
             }
         }
 
-        public IdentityPredicate(bool predicate)
-        {
-            this.predicate = predicate;
-        }
-
+        /// <summary>
+        /// Evaluates the value of the Provider
+        /// </summary>
         public override bool Value
         {
             get

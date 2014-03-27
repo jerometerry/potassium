@@ -7,14 +7,21 @@
     /// </summary>
     public class RandomDouble : Provider<double>
     {
-        private Random rnd = new Random();
-        private double max;
+        private readonly Random rnd = new Random();
+        private readonly double max;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="max"></param>
         public RandomDouble(double max)
         {
             this.max = max;
         }
 
+        /// <summary>
+        /// Evaluates the value of the Provider
+        /// </summary>
         public override double Value
         {
             get

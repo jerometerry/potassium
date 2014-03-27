@@ -6,6 +6,9 @@
     /// <typeparam name="T">The type of value provided</typeparam>
     public interface IProvider<out T>
     {
+        /// <summary>
+        /// Samples the current value
+        /// </summary>
         T Value
         {
             get;

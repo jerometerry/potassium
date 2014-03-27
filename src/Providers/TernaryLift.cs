@@ -17,6 +17,13 @@
         private IProvider<TB> b;
         private IProvider<TC> c;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lift"></param>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="c"></param>
         public TernaryLift(Func<T, TB, TC, TD> lift, IProvider<T> a, IProvider<TB> b, IProvider<TC> c)
         {
             this.lift = lift;
@@ -25,6 +32,9 @@
             this.c = c;
         }
 
+        /// <summary>
+        /// Evaluates the value of the Provider
+        /// </summary>
         public override TD Value
         {
             get
@@ -33,15 +43,17 @@
             }
         }
 
+        /// <summary>
+        /// Clean up all resources used by the current SodiumObject
+        /// </summary>
+        /// <param name="disposing">Whether to dispose managed resources
+        /// </param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                lift = null;
-                a = null;
-                b = null;
-                c = null;
-            }
+            lift = null;
+            a = null;
+            b = null;
+            c = null;
 
             base.Dispose(disposing);
         }

@@ -100,13 +100,23 @@ namespace Potassium.Internal
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            this.high.Clear();
-            this.medium.Clear();
-            this.low.Clear();
+            if (this.high != null)
+            {
+                this.high.Clear();
+                this.high = null;
+            }
 
-            this.high = null;
-            this.medium = null;
-            this.low = null;
+            if (this.medium != null)
+            {
+                this.medium.Clear();
+                this.medium = null;
+            }
+
+            if (this.low != null)
+            {
+                this.low.Clear();
+                this.low = null;    
+            }
 
             base.Dispose(disposing);
         }

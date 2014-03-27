@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Core\Lifter.cs" />
     <Compile Include="Dispatchers\CurrentThreadDispatcher.cs" />
+    <Compile Include="Providers\StateFactory.cs" />
     <Compile Include="Providers\Toggle.cs" />
     <Compile Include="Utilities\Hz.cs" />
     <Compile Include="Dispatchers\IDispatcher.cs" />

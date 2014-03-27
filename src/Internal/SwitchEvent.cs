@@ -23,12 +23,9 @@
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                CancelBehaviorSubscription();
-                CancelEventSubscription();
-                forward = null;
-            }
+            CancelBehaviorSubscription();
+            CancelEventSubscription();
+            forward = null;
 
             base.Dispose(disposing);
         }

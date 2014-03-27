@@ -31,7 +31,6 @@
         /// <summary>
         /// Push each event occurrence onto a new transaction.
         /// </summary>
-        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <returns>An event that is fired with the lowest priority in the current Transaction the current Event is fired in.</returns>
         public Event<T> Delay()
         {

@@ -10,31 +10,44 @@
     /// </summary>
     public class AutoLong : IProvider<long>
     {
+        private readonly int increment;
         private long value;
-        private int increment;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public AutoLong()
             : this(0, 1)
         {
-
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
         public AutoLong(long value)
             : this(value, 1)
         {
-
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="increment"></param>
         public AutoLong(long value, int increment)
         {
             this.value = value;
             this.increment = increment;
         }
 
+        /// <summary>
+        /// Samples the current value
+        /// </summary>
         public long Value
         {
-            get 
-            { 
+            get
+            {
                 if (Monitor.TryEnter(Constants.ProviderValueLock, Constants.LockTimeout))
                 { 
                     try
@@ -48,10 +61,8 @@
                         Monitor.Exit(Constants.ProviderValueLock);
                     }
                 }
-                else
-                {
-                    throw new InvalidOperationException("Could not obtain the provider value lock");
-                }
+
+                throw new InvalidOperationException("Could not obtain the provider value lock");
             }
         }
     }

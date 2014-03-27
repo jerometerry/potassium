@@ -12,19 +12,29 @@
     {
         private bool value;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Toggle()
             : this(false)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="initValue"></param>
         public Toggle(bool initValue)
         {
             value = initValue;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public override bool Value
         {
-            get 
+            get
             {
                 if (Monitor.TryEnter(Constants.ProviderValueLock, Constants.LockTimeout))
                 {
@@ -39,10 +49,8 @@
                         Monitor.Exit(Constants.ProviderValueLock);
                     }
                 }
-                else
-                {
-                    throw new InvalidOperationException("Could not obtain the provider value lock");
-                }
+
+                throw new InvalidOperationException("Could not obtain the provider value lock");
             }
         }
     }

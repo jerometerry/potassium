@@ -1,10 +1,9 @@
 ﻿namespace Potassium.Tests
 {
     using System;
-    using Potassium.Core;
+    using NUnit.Framework;
     using Potassium.Extensions;
     using Potassium.Providers;
-    using NUnit.Framework;
 
     [TestFixture]
     public class MonadTester
@@ -29,7 +28,7 @@
         {
             var u = new UnaryLift<double, double>(Math.Sin, TwoPi.ToIdentity());
             Console.WriteLine(u.Value);
-            Assert.AreEqual(0.0,u.Value, 1e-5);
+            Assert.AreEqual(0.0, u.Value, 1e-5);
             
             u = new UnaryLift<double, double>(Math.Sin, PiBy2.ToIdentity());
             Assert.AreEqual(1.0, u.Value, 1e-5);
@@ -47,11 +46,11 @@
 
         public State<int, short> GetRandom()
         {
-            var s = State.Get<int>();
+            var s = StateFactory.Get<int>();
             return s.Bind(s0 =>
             {
                 var rand = NextShort(s0);
-                var setState = State.Set(rand.Item2);
+                var setState = StateFactory.Set(rand.Item2);
                 return setState.Bind(_ => new State<int, short>(a => Tuple.Create(rand.Item2, rand.Item1)));
             });
         }

@@ -11,17 +11,36 @@ namespace Potassium.Providers
     {
         private Func<TA, TB> map;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="map"></param>
         public Map(Func<TA, TB> map)
         {
             this.map = map;
         }
 
+        /// <summary>
+        /// Evaluates the value of the Provider
+        /// </summary>
         public override Func<TA, TB> Value
         {
             get
             {
                 return this.map;
             }
+        }
+
+        /// <summary>
+        /// Clean up all resources used by the current SodiumObject
+        /// </summary>
+        /// <param name="disposing">Whether to dispose managed resources
+        /// </param>
+        protected override void Dispose(bool disposing)
+        {
+            map = null;
+
+            base.Dispose(disposing);
         }
     }
 }

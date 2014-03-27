@@ -36,13 +36,10 @@
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            { 
-                if (subscription != null)
-                {
-                    subscription.Dispose();
-                    subscription = null;
-                }
+            if (subscription != null)
+            {
+                subscription.Dispose();
+                subscription = null;
             }
 
             base.Dispose(disposing);

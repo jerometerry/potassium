@@ -42,7 +42,7 @@ namespace Potassium.Internal
 
         protected override void Dispose(bool disposing)
         {
-            if (this.subscriptions[0] != null)
+            if (this.subscriptions != null && this.subscriptions[0] != null)
             {
                 this.subscriptions[0].Dispose();
                 this.subscriptions[0] = null;

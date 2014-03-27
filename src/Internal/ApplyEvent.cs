@@ -49,11 +49,8 @@
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                this.valBehavior = null;
-                this.funcBehavior = null;
-            }
+            this.valBehavior = null;
+            this.funcBehavior = null;
 
             base.Dispose(disposing);
         }

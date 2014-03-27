@@ -19,6 +19,10 @@
             this.control = control;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="action"></param>
         public void Dispatch(Action action)
         {
             control.Invoke((MethodInvoker)(() => action()));

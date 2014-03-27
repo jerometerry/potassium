@@ -8,6 +8,9 @@ namespace Potassium.Providers
     /// <remarks>DateTime.Now is evaluated when the value of the LocalTime is requested.</remarks>
     public class LocalTime : Time
     {
+        /// <summary>
+        /// Returns the current local time
+        /// </summary>
         public override DateTime Value
         {
             get

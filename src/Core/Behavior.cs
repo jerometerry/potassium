@@ -38,6 +38,9 @@ namespace Potassium.Core
         /// </summary>
         public Event<T> Source { get; private set; }
 
+        /// <summary>
+        /// Evaluates the value of the Provider
+        /// </summary>
         public override T Value
         {
             get
@@ -76,16 +79,20 @@ namespace Potassium.Core
         /// <summary>
         /// Get an Event that fires the initial Behaviors value, and whenever the Behaviors value changes.
         /// </summary>
-        /// <typeparam name="T">The type of values fired through the source</typeparam>
         /// <returns>The event streams</returns>
         public Event<T> Values()
         {
             return Transaction.Start(t => new BehaviorLastValueEvent<T>(this, t));
         }
 
+        /// <summary>
+        /// Clean up all resources used by the current SodiumObject
+        /// </summary>
+        /// <param name="disposing">Whether to dispose managed resources
+        /// </param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (observedValue != null)
             {
                 observedValue.Dispose();
                 observedValue = null;

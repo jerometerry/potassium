@@ -59,6 +59,7 @@
             { 
                 return running; 
             }
+
             set
             {
                 if (value)
@@ -128,16 +129,19 @@
             }
         }
 
+        /// <summary>
+        /// Cleanup the current Observable, disposing of any subscriptions.
+        /// </summary>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (this.timer != null)
             {
-                this.Stop();
                 this.timer.Dispose();
                 this.timer = null;
-                this.source = null;
-                this.dispatcher = null;
             }
+
+            this.source = null;
+            this.dispatcher = null;
 
             base.Dispose(disposing);
         }
