@@ -1,6 +1,7 @@
 ﻿namespace Potassium.Providers
 {
     using System;
+    using Potassium.Extensions;
 
     /// <summary>
     /// 
@@ -11,26 +12,26 @@
         /// 
         /// </summary>
         /// <param name="source"></param>
-        /// <param name="bf"></param>
+        /// <param name="lift"></param>
         /// <typeparam name="TA"></typeparam>
         /// <typeparam name="TB"></typeparam>
         /// <returns></returns>
-        public static IProvider<TB> Apply<TA, TB>(IProvider<Func<TA, TB>> bf, IProvider<TA> source)
+        public static IProvider<TB> Apply<TA, TB>(IProvider<Func<TA, TB>> lift, IProvider<TA> source)
         {
-            return new UnaryLift<TA, TB>(bf, source);
+            return source.Map(lift);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="bf"></param>
+        /// <param name="a"></param>
+        /// <param name="lift"></param>
         /// <typeparam name="TA"></typeparam>
         /// <typeparam name="TB"></typeparam>
         /// <returns></returns>
-        public static IProvider<TB> Lift<TA, TB>(Func<TA, TB> bf, IProvider<TA> source)
+        public static IProvider<TB> Apply<TA, TB>(Func<TA, TB> lift, IProvider<TA> a)
         {
-            return new UnaryLift<TA, TB>(bf, source);
+            return a.Map(lift);
         }
 
         /// <summary>

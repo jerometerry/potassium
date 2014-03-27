@@ -15,9 +15,7 @@
         public void TestRandomSin()
         {
             var rd = new RandomDouble(TwoPi);
-            Func<double, double> sin = Math.Sin;
-            var sb = sin.ToIdentity();
-            var s = Lifter.Apply(sb, rd);
+            var s = Lifter.Apply(Math.Sin, rd);
             for (int i = 0; i < 5; i++) 
             {
                 Console.WriteLine(s.Value);

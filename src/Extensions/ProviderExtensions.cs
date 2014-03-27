@@ -22,6 +22,32 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <typeparam name="TA"></typeparam>
+        /// <typeparam name="TB"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public static IProvider<TB> Map<TA, TB>(this IProvider<TA> source, Func<TA,TB> map)
+        {
+            return new UnaryLift<TA, TB>(map, source);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TA"></typeparam>
+        /// <typeparam name="TB"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public static IProvider<TB> Map<TA, TB>(this IProvider<TA> source, IProvider<Func<TA, TB>> map)
+        {
+            return new UnaryLift<TA, TB>(map, source);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="a"></param>
         /// <param name="func"></param>
         /// <typeparam name="TS"></typeparam>
