@@ -5,7 +5,7 @@ namespace Potassium.Core
     using Potassium.Providers;
 
     /// <summary>
-    /// Behavior contains a value which is updated when the underlying Event is updated.
+    /// Behavior is a time varying value. A Behavior starts with an initial value which gets updated when the underlying Event is fired.
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the Behavior.</typeparam>
     public class Behavior<T> : Provider<T>

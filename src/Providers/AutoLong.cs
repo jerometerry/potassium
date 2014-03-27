@@ -42,7 +42,7 @@
         }
 
         /// <summary>
-        /// Samples the current value
+        /// Get and increment the current (long) value.
         /// </summary>
         public long Value
         {

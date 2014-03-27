@@ -1,5 +1,9 @@
 ﻿namespace Potassium.Providers
 {
+    using System;
+    using System.Threading;
+    using Potassium.Internal;
+
     /// <summary>
     /// AutoDouble is an IProvider of type int that starts with an initial value, 
     /// and auto increments by a step after each request of the Value
@@ -38,15 +42,27 @@
         }
 
         /// <summary>
-        /// Gets the current value, then increment.
+        /// Get and increment the current (int) value.
         /// </summary>
         public int Value
         {
             get
             {
-                var result = value;
-                value += increment;
-                return result;
+                if (Monitor.TryEnter(Constants.ProviderValueLock, Constants.LockTimeout))
+                { 
+                    try
+                    { 
+                        var result = value;
+                        value += increment;
+                        return result;
+                    }
+                    finally
+                    {
+                        Monitor.Exit(Constants.ProviderValueLock);
+                    }
+                }
+
+                throw new InvalidOperationException("Could not obtain the provider value lock");
             }
         }
     }

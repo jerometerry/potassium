@@ -13,7 +13,7 @@
         private bool value;
 
         /// <summary>
-        /// 
+        /// Constructs a new Toggle, initialized to false.
         /// </summary>
         public Toggle()
             : this(false)
@@ -21,16 +21,16 @@
         }
 
         /// <summary>
-        /// 
+        /// Constructs a new Toggle having the specified initial value
         /// </summary>
-        /// <param name="initValue"></param>
+        /// <param name="initValue">The initial value for the Toggle</param>
         public Toggle(bool initValue)
         {
             value = initValue;
         }
 
         /// <summary>
-        /// 
+        /// Get and toggle the current (bool) value.
         /// </summary>
         public override bool Value
         {

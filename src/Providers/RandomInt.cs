@@ -8,16 +8,20 @@ namespace Potassium.Providers
     public class RandomInt : Provider<int>
     {
         private readonly Random rnd = new Random();
-        private readonly int max;
 
         /// <summary>
-        /// 
+        /// Constructs a new RandomInt, that generates values between zero and the maximum value
         /// </summary>
-        /// <param name="max"></param>
+        /// <param name="max">The maximum value</param>
         public RandomInt(int max)
         {
-            this.max = max;
+            this.Max = max;
         }
+
+        /// <summary>
+        /// Gets the maximum value
+        /// </summary>
+        public int Max { get; private set; }
 
         /// <summary>
         /// Evaluates the value of the Provider
@@ -26,7 +30,7 @@ namespace Potassium.Providers
         {
             get
             {
-                return this.rnd.Next(this.max);
+                return this.rnd.Next(this.Max);
             }
         }
     }

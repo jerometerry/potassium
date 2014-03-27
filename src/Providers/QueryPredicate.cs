@@ -19,7 +19,7 @@
         }
 
         /// <summary>
-        /// Evaluates the value of the Provider
+        /// Execute the query predicate function to retrieve the current value
         /// </summary>
         public override bool Value
         {

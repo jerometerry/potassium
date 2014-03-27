@@ -1,10 +1,9 @@
 ﻿namespace Potassium.Providers
 {
     using System;
-    using Potassium.Core;
 
     /// <summary>
-    /// A BinaryBehavior lifts a binary function into a Monad
+    /// A BinaryLift lifts a binary function into an IProvider
     /// </summary>
     /// <typeparam name="T">The type of first parameter to the lift function</typeparam>
     /// <typeparam name="TB">The type of the second parameter of the lift function</typeparam>

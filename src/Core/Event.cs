@@ -5,7 +5,7 @@
     using Potassium.Providers;
 
     /// <summary>
-    /// An Event is a discrete signal of values.
+    /// An Event is a discrete stream of occurrences (e.g. Mouse Clicks, Key Presses, etc.).
     /// </summary>
     /// <typeparam name="T">The type of value that will be fired through the Event</typeparam>
     public class Event<T> : Observable<T>

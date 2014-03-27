@@ -4,7 +4,7 @@
     using Potassium.Core;
     
     /// <summary>
-    /// WebResource is a Monad (of type string) who's value is computed by downloading content from the web (e.g. a REST web service returning JSON data).
+    /// WebResource is a IProvider (of type string) who's value is computed by downloading content from the web (e.g. a REST web service returning JSON data).
     /// </summary>
     public class WebResource : Provider<string>
     {

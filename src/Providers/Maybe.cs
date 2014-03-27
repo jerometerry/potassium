@@ -6,6 +6,9 @@
     /// Maybe is a class that might contain a value
     /// </summary>
     /// <typeparam name="T">The type of the value</typeparam>
+    /// <remarks>
+    /// The Maybe Monad http://en.wikibooks.org/wiki/Haskell/Understanding_monads/Maybe
+    /// </remarks>
     public sealed class Maybe<T> : Provider<T>
     {
         private readonly T value;

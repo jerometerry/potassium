@@ -3,7 +3,7 @@
     using System;
     
     /// <summary>
-    /// Time is a Monad that lazily returns a new DateTime
+    /// Time is an IProvider that provides Time (DateTime) values.
     /// </summary>
     public abstract class Time : Provider<DateTime>
     {

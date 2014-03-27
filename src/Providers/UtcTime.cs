@@ -3,7 +3,7 @@ namespace Potassium.Providers
     using System;
 
     /// <summary>
-    /// UtcTime is a Monad that lazily returns DateTime.UtcNow
+    /// UtcTime is an IProvider that providers the UTC time.
     /// </summary>
     /// <remarks>DateTime.UtcNow is evaluated when the value of the UtcTime is requested.</remarks>
     public class UtcTime : Time

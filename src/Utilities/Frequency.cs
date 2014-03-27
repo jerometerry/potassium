@@ -3,7 +3,7 @@
     using System;
 
     /// <summary>
-    /// Helper class for generating instances Hz 
+    /// Helper class for generating Hz instances
     /// </summary>
     public static class Frequency
     {

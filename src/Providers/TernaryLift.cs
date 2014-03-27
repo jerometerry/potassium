@@ -3,7 +3,7 @@
     using System;
 
     /// <summary>
-    /// A TernaryMonad lifts a ternary function into a Monad
+    /// A TernaryLift lifts a ternary function into an IProvider
     /// </summary>
     /// <typeparam name="T">The type of the first parameter to the ternary function</typeparam>
     /// <typeparam name="TB">The type of the second parameter to the ternary function</typeparam>

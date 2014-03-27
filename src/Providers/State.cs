@@ -3,7 +3,7 @@
     using System;
 
     /// <summary>
-    /// StateFactory Monad
+    /// State Monad
     /// </summary>
     /// <typeparam name="TS"></typeparam>
     /// <typeparam name="TA"></typeparam>
