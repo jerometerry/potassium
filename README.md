@@ -46,3 +46,18 @@ Here's an example illustrating the use of Events and Behaviors. The values **1**
 ```
 
 **0** is written to the console because the **Behavior.Values()** generates an **Event** that, on subscription, fires the value of the **Behavior**.
+
+The operations on **Events** and **Behaviors** are what make FRP interesting. 
+
+Take **Map** for example. Below is an example that doubles the fired values. 
+
+```
+	FirableEvent<int> evt = new FirableEvent<int>();
+	Event<int> timesTwo = evt.Map(v => 2*v);
+	ISubscription<int> s = timesTwo.Subscribe((v) => {
+		Console.WriteLine("{0}", v);
+	});
+	for (int i = 1; i <= 10; i++) {
+		evt.Fire(i);
+	}
+```
