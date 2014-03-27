@@ -15,7 +15,7 @@
         /// <typeparam name="TA"></typeparam>
         /// <typeparam name="TB"></typeparam>
         /// <returns></returns>
-        public static Provider<TB> Lift<TA, TB>(IProvider<Func<TA, TB>> bf, IProvider<TA> source)
+        public static IProvider<TB> Apply<TA, TB>(IProvider<Func<TA, TB>> bf, IProvider<TA> source)
         {
             return new UnaryLift<TA, TB>(bf, source);
         }
@@ -28,7 +28,7 @@
         /// <typeparam name="TA"></typeparam>
         /// <typeparam name="TB"></typeparam>
         /// <returns></returns>
-        public static Provider<TB> Lift<TA, TB>(Func<TA, TB> bf, IProvider<TA> source)
+        public static IProvider<TB> Lift<TA, TB>(Func<TA, TB> bf, IProvider<TA> source)
         {
             return new UnaryLift<TA, TB>(bf, source);
         }
@@ -43,7 +43,7 @@
         /// <typeparam name="TB"></typeparam>
         /// <typeparam name="TC"></typeparam>
         /// <returns></returns>
-        public static Provider<TC> Lift<TA, TB, TC>(Func<TA, TB, TC> lift, IProvider<TA> a, IProvider<TB> b)
+        public static IProvider<TC> Lift<TA, TB, TC>(Func<TA, TB, TC> lift, IProvider<TA> a, IProvider<TB> b)
         {
             return new BinaryLift<TA, TB, TC>(lift, a, b);
         }
@@ -60,7 +60,7 @@
         /// <typeparam name="TC"></typeparam>
         /// <typeparam name="TD"></typeparam>
         /// <returns></returns>
-        public static Provider<TD> Lift<TA, TB, TC, TD>(Func<TA, TB, TC, TD> lift, IProvider<TA> a, IProvider<TB> b, IProvider<TC> c)
+        public static IProvider<TD> Lift<TA, TB, TC, TD>(Func<TA, TB, TC, TD> lift, IProvider<TA> a, IProvider<TB> b, IProvider<TC> c)
         {
             return new TernaryLift<TA, TB, TC, TD>(lift, a, b, c);
         }
