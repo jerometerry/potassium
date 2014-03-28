@@ -36,7 +36,7 @@ namespace Potassium.Core
         }
 
         /// <summary>
-        /// Evaluates the value of the Provider
+        /// Samples the value of the Behavior
         /// </summary>
         public override T Value
         {
