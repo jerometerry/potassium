@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="d22a4d4f-76d4-419c-80d5-6fee6cc048b8" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>
+        Version 0.1.4 was released on Thursday, March 27, 2014.
+      </para>
+    </introduction>
+
+    <section>
+      <title>Changes in This Release</title>
+      <content>
+
+        <list class="bullet">
+          <listItem>
+            <para>Event.FilterNotNull was removed</para>
+          </listItem>
+
+          <listItem>
+            <para>Event.Filter renamed to Where</para>
+          </listItem>
+
+          <listItem>
+            <para>Overloaded the Event logical and (&amp;) operator to invoke Where</para>
+          </listItem>
+
+          <listItem>
+            <para>Overloaded the Event logical or (|) operator to invoke Merge</para>
+          </listItem>
+
+        </list>
+
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="ffc5eed7-48fe-4cc5-bb25-9bf0131edb45" />
+    </relatedTopics>
+    
+  </developerConceptualDocument>
+</topic>
