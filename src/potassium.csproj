@@ -46,15 +46,12 @@
   <ItemGroup>
     <Compile Include="Core\Lifter.cs" />
     <Compile Include="Dispatchers\CurrentThreadDispatcher.cs" />
-    <Compile Include="Providers\Lifter.cs" />
-    <Compile Include="Providers\StateFactory.cs" />
     <Compile Include="Providers\Toggle.cs" />
     <Compile Include="Utilities\Hz.cs" />
     <Compile Include="Dispatchers\IDispatcher.cs" />
     <Compile Include="Core\Signal.cs" />
     <Compile Include="Dispatchers\UiThreadDispatcher.cs" />
     <Compile Include="Extensions\EventExtensions.cs" />
-    <Compile Include="Extensions\ProviderExtensions.cs" />
     <Compile Include="Utilities\Frequency.cs" />
     <Compile Include="Internal\DelayEvent.cs" />
     <Compile Include="Internal\GateEvent.cs" />
@@ -62,11 +59,9 @@
     <Compile Include="Providers\AutoDouble.cs" />
     <Compile Include="Providers\AutoInt.cs" />
     <Compile Include="Providers\AutoLong.cs" />
-    <Compile Include="Providers\UnaryLift.cs" />
     <Compile Include="Providers\Provider.cs" />
     <Compile Include="Providers\IProvider.cs" />
     <Compile Include="Internal\ApplyEvent.cs" />
-    <Compile Include="Providers\BinaryLift.cs" />
     <Compile Include="Providers\Identity.cs" />
     <Compile Include="Providers\IdentityPredicate.cs" />
     <Compile Include="Core\FirableEvent.cs" />
@@ -99,11 +94,9 @@
     <Compile Include="Providers\Maybe.cs" />
     <Compile Include="Internal\MergeEvent.cs" />
     <Compile Include="Internal\OnceEvent.cs" />
-    <Compile Include="Providers\State.cs" />
     <Compile Include="Utilities\PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Internal\BehaviorLastValueEvent.cs" />
-    <Compile Include="Providers\TernaryLift.cs" />
     <Compile Include="Providers\UtcTime.cs" />
     <Compile Include="Providers\EqualityPredicate.cs" />
     <Compile Include="Providers\WebResource.cs" />

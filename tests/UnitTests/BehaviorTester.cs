@@ -74,16 +74,6 @@ namespace Potassium.Tests
         }
 
         [Test]
-        public void TestMapB2()
-        {
-            var behavior = new Identity<int>(1);
-            var behavior1 = new UnaryLift<int, int>(x => x * 3, behavior);
-            Assert.AreEqual(3, behavior1.Value);
-            behavior1.Dispose();
-            behavior.Dispose();
-        }
-
-        [Test]
         public void TestMapB3()
         {
             var publisher = new FirableEvent<int>();

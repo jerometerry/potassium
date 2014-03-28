@@ -1,8 +1,8 @@
 ﻿namespace Potassium.Tests
 {
     using System;
-    using Potassium.Utilities;
     using NUnit.Framework;
+    using Potassium.Utilities;
 
     [TestFixture]
     public class PriorityQueueTests
