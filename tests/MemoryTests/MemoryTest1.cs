@@ -50,7 +50,7 @@ namespace Potassium.MemoryTests
             var tensTupleBehavior = tensTupleWrappedBehavior.Switch();
             finalizers.Add(tensTupleBehavior);
 
-            var listener = tensTupleBehavior.SubscribeValues(tu => { });
+            var listener = tensTupleBehavior.SubscribeWithInitialFire(tu => { });
             var i = 0;
 
             while (i < iterations)

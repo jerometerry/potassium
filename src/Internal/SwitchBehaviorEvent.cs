@@ -18,7 +18,7 @@ namespace Potassium.Internal
         public SwitchBehaviorEvent(Behavior<Behavior<T>> source)
         {
             forward = Forward();
-            behaviorSubscription = source.SubscribeValues(new Observer<Behavior<T>>(CreateNewSubscription), Priority);
+            behaviorSubscription = source.SubscribeWithInitialFire(new Observer<Behavior<T>>(CreateNewSubscription), Priority);
         }
 
         protected override void Dispose(bool disposing)

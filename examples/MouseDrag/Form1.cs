@@ -27,7 +27,7 @@
             mouseButtonBehavior = mouseButtonEvent.Hold(MouseStatus.Up);
             this.mouseButtonDown = new EqualityPredicate<MouseStatus>(mouseButtonBehavior,  MouseStatus.Down);
             mouseDragEvent = mouseMoveEvent.Gate(this.mouseButtonDown);
-            mouseButtonBehavior.SubscribeValues(a =>
+            mouseButtonBehavior.SubscribeWithInitialFire(a =>
             {
                 status.Text = string.Format("{0} {1}", a, DateTime.Now);
             });

@@ -43,6 +43,22 @@
             <para>Converted Identity and Maybe to proper monads</para>
           </listItem>
 
+          <listItem>
+            <para>Added new method Behavior.Subscribe</para>
+          </listItem>
+
+          <listItem>
+            <para>Added new method Behavior.SubscribeWithInitialFire, the same as subscribe, except fires the value of the Behavior at the time of subscription</para>
+          </listItem>
+
+          <listItem>
+            <para>Behavior.Source now an internal property. Use the new Behavior.Subscribe method instead</para>
+          </listItem>
+
+          <listItem>
+            <para>Behavior.Values method now an internal method. Use the new Behavior.SubscribeWithInitialFire method instead</para>
+          </listItem>
+
         </list>
 
       </content>

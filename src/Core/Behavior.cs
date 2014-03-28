@@ -12,6 +12,7 @@ namespace Potassium.Core
     public class Behavior<T> : Provider<T>, IObservable<T>
     {
         private ObservedValue<T> observedValue;
+        private Event<T> source;
 
         /// <summary>
         /// Creates a constant Behavior
@@ -20,7 +21,7 @@ namespace Potassium.Core
         public Behavior(T value)
             : this(value, new Event<T>())
         {
-            this.Register(this.Source);
+            this.RegisterSource();
         }
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace Potassium.Core
         /// <param name="value">The initial value of the Behavior</param>
         public Behavior(T value, Event<T> source)
         {
-            this.Source = source;
+            this.source = source;
             this.observedValue = Transaction.Start(t => new ObservedValue<T>(value, source, t));
         }
 
@@ -57,11 +58,6 @@ namespace Potassium.Core
         }
 
         /// <summary>
-        /// The underlying Event of the current Behavior
-        /// </summary>
-        private Event<T> Source { get; set; }
-
-        /// <summary>
         /// Transform the behavior's value according to the supplied function.
         /// </summary>
         /// <typeparam name="TB">The return type of the mapping function</typeparam>
@@ -71,18 +67,28 @@ namespace Potassium.Core
         /// of the current event mapped.</returns>
         public Behavior<TB> Map<TB>(Func<T, TB> map)
         {
-            var mapEvent = this.Source.Map(map);
+            var mapEvent = this.source.Map(map);
             var behavior = mapEvent.Hold(map(this.Value));
             behavior.Register(mapEvent);
             return behavior;
         }
 
+        /// <summary>
+        /// Subscribe to updates of the Behavior's value
+        /// </summary>
+        /// <param name="callback">The callback method to receive notifications of value changes</param>
+        /// <returns>The subscription</returns>
         public ISubscription<T> Subscribe(Action<T> callback)
         {
-            return this.Source.Subscribe(callback);
+            return this.source.Subscribe(callback);
         }
 
-        public ISubscription<T> SubscribeValues(Action<T> callback)
+        /// <summary>
+        /// Same as Subscribe, but fires the Behaviors current value immediately
+        /// </summary>
+        /// <param name="callback">The callback method to receive notifications of value changes</param>
+        /// <returns>The subscription</returns>
+        public ISubscription<T> SubscribeWithInitialFire(Action<T> callback)
         {
             var vals = this.Values();
             var s = (Subscription<T>)vals.Subscribe(callback);
@@ -92,20 +98,20 @@ namespace Potassium.Core
 
         internal Event<T> LastFiring()
         {
-            return this.Source.LastFiring();
+            return this.source.LastFiring();
         }
 
         internal ISubscription<T> Subscribe(Observer<T> observer, Priority subscriptionRank)
         {
-            return this.Source.Subscribe(observer, subscriptionRank);
+            return this.source.Subscribe(observer, subscriptionRank);
         }
 
         internal ISubscription<T> Subscribe(Observer<T> observer, Priority superior, Transaction transaction)
         {
-            return this.Source.Subscribe(observer, superior, transaction);
+            return this.source.Subscribe(observer, superior, transaction);
         }
 
-        internal ISubscription<T> SubscribeValues(Observer<T> observer, Priority subscriptionRank)
+        internal ISubscription<T> SubscribeWithInitialFire(Observer<T> observer, Priority subscriptionRank)
         {
             var vals = this.Values();
             var s = (Subscription<T>)vals.Subscribe(observer, subscriptionRank);
@@ -113,7 +119,7 @@ namespace Potassium.Core
             return s;
         }
 
-        internal ISubscription<T> SubscribeValues(Observer<T> observer, Priority superior, Transaction transaction)
+        internal ISubscription<T> SubscribeWithInitialFire(Observer<T> observer, Priority superior, Transaction transaction)
         {
             var vals = this.Values();
             var s = (Subscription<T>)vals.Subscribe(observer, superior, transaction);
@@ -123,7 +129,7 @@ namespace Potassium.Core
 
         protected void RegisterSource()
         {
-            this.Register(this.Source);
+            this.Register(this.source);
         }
 
         /// <summary>
@@ -138,6 +144,8 @@ namespace Potassium.Core
                 observedValue.Dispose();
                 observedValue = null;
             }
+
+            this.source = null;
 
             base.Dispose(disposing);
         }

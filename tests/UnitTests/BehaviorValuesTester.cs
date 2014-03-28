@@ -17,7 +17,7 @@
             var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(9, publisher);
             var results = new List<int>();
-            var listener = behavior.SubscribeValues(results.Add);
+            var listener = behavior.SubscribeWithInitialFire(results.Add);
             publisher.Fire(2);
             publisher.Fire(7);
             listener.Dispose();

@@ -63,7 +63,7 @@ namespace Potassium.Tests
             var behavior = new Behavior<int>(6, publisher);
             var results = new List<string>();
             var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
-            var listener = map.SubscribeValues(results.Add);
+            var listener = map.SubscribeWithInitialFire(results.Add);
             publisher.Fire(8);
             listener.Dispose();
             map.Dispose();
@@ -78,7 +78,7 @@ namespace Potassium.Tests
             var behavior = new Behavior<int>(1, publisher);
             var behavior1 = behavior.Map(x => x * 3);
             var results = new List<int>();
-            var listener = behavior1.SubscribeValues(results.Add);
+            var listener = behavior1.SubscribeWithInitialFire(results.Add);
             publisher.Fire(2);
             listener.Dispose();
             behavior.Dispose();
@@ -93,7 +93,7 @@ namespace Potassium.Tests
             var results = new List<string>();
             var map = behavior.Map(x => x.ToString(CultureInfo.InvariantCulture));
             publisher.Fire(2);
-            var listener = map.SubscribeValues(results.Add);
+            var listener = map.SubscribeWithInitialFire(results.Add);
             publisher.Fire(8);
             listener.Dispose();
             map.Dispose();
@@ -110,7 +110,7 @@ namespace Potassium.Tests
             var ba = new Behavior<long>(5L, pba);
             var results = new List<string>();
             var apply = Core.Lifter.Apply(bf, ba);
-            var listener = apply.SubscribeValues(results.Add);
+            var listener = apply.SubscribeWithInitialFire(results.Add);
             pbf.Fire(b => "12 " + b);
             pba.Fire(6L);
             listener.Dispose();
@@ -129,7 +129,7 @@ namespace Potassium.Tests
             var behavior2 = new Behavior<long>(5L, pub2);
             var results = new List<string>();
             var combinedBehavior = Core.Lifter.Lift((x, y) => x + " " + y, behavior1, behavior2);
-            var listener = combinedBehavior.SubscribeValues(results.Add);
+            var listener = combinedBehavior.SubscribeWithInitialFire(results.Add);
             pub1.Fire(12);
             pub2.Fire(6L);
             listener.Dispose();
@@ -152,7 +152,7 @@ namespace Potassium.Tests
             var mappedBehavior2 = behavior.Map(x => x * 5);
             var results = new List<string>();
             var combinedBehavior = Core.Lifter.Lift((x, y) => x + " " + y, mappedBehavior1, mappedBehavior2);
-            var listener = combinedBehavior.SubscribeValues(results.Add);
+            var listener = combinedBehavior.SubscribeWithInitialFire(results.Add);
             publisher.Fire(2);
             listener.Dispose();
             behavior.Dispose();
@@ -188,7 +188,7 @@ namespace Potassium.Tests
             var bsw = sink.Map(s => s.Behavior).Where(x => x != null).Hold(behaviorA);
             var behavior = bsw.Switch();
             var results = new List<char>();
-            var listener = behavior.SubscribeValues(c =>
+            var listener = behavior.SubscribeWithInitialFire(c =>
             {
                 Assert.IsNotNull(c, "c != null");
                 results.Add(c.Value);
@@ -270,7 +270,7 @@ namespace Potassium.Tests
             var ea = new FirableEvent<int>();
             var o = new List<int>();
             var sum = ea.Hold(100).Collect((a, s) => new Tuple<int, int>(a + s, a + s), 0);
-            var l = sum.SubscribeValues(o.Add);
+            var l = sum.SubscribeWithInitialFire(o.Add);
             ea.Fire(5);
             ea.Fire(7);
             ea.Fire(1);
@@ -288,7 +288,7 @@ namespace Potassium.Tests
             var ea = new FirableEvent<int>();
             var o = new List<int>();
             var sum = ea.Accum((a, s) => a + s, 100);
-            var l = sum.SubscribeValues(o.Add);
+            var l = sum.SubscribeWithInitialFire(o.Add);
             ea.Fire(5);
             ea.Fire(7);
             ea.Fire(1);

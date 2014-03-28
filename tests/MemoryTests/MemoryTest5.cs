@@ -11,7 +11,7 @@ namespace Potassium.MemoryTests
         {
             var sink = new FirableEvent<int>();
             var obserable = sink.Hold(0);
-            var listener = obserable.SubscribeValues(tt => { });
+            var listener = obserable.SubscribeWithInitialFire(tt => { });
             var i = 0;
             while (i < iterations)
             {

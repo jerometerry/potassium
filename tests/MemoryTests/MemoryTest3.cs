@@ -15,7 +15,7 @@ namespace Potassium.MemoryTests
             var behavior = et.Hold(0);
             var eventOfBehaviors = evt.Map(x => behavior).Hold(behavior);
             var observable = eventOfBehaviors.Switch();
-            var l = observable.SubscribeValues(tt => { });
+            var l = observable.SubscribeWithInitialFire(tt => { });
             var i = 0;
             while (i < iterations)
             {
