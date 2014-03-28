@@ -142,7 +142,7 @@
             var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(9, publisher);
             var results = new List<int>();
-            var listener = behavior.Values().Filter(a => true).Subscribe(results.Add);
+            var listener = behavior.Values().Where(a => true).Subscribe(results.Add);
             publisher.Fire(2);
             publisher.Fire(7);
             listener.Dispose();
@@ -156,7 +156,7 @@
             var publisher = new FirableEvent<int>();
             var behavior = new Behavior<int>(9, publisher);
             var results = new List<int>();
-            var listener = DoubleUp(behavior.Values()).Filter(a => true).Subscribe(results.Add);
+            var listener = DoubleUp(behavior.Values()).Where(a => true).Subscribe(results.Add);
             publisher.Fire(2);
             publisher.Fire(7);
             listener.Dispose();

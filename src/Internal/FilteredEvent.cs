@@ -4,13 +4,13 @@ namespace Potassium.Internal
     using System.Linq;
     using Potassium.Core;
 
-    internal class FilterEvent<T> : FireEvent<T>
+    internal class FilteredEvent<T> : FireEvent<T>
     {
         private Observable<T> source;
         private Func<T, bool> f;
         private ISubscription<T> subscription;
 
-        public FilterEvent(Observable<T> source, Func<T, bool> f)
+        public FilteredEvent(Observable<T> source, Func<T, bool> f)
         {
             this.source = source;
             this.f = f;

@@ -92,7 +92,7 @@
     <Compile Include="Core\RefireEvent.cs" />
     <Compile Include="Internal\SuppressedSubscribeEvent.cs" />
     <Compile Include="Internal\SwitchBehaviorEvent.cs" />
-    <Compile Include="Internal\FilterEvent.cs" />
+    <Compile Include="Internal\FilteredEvent.cs" />
     <Compile Include="Core\ISubscription.cs" />
     <Compile Include="Internal\Subscription.cs" />
     <Compile Include="Internal\MapEvent.cs" />

@@ -29,7 +29,7 @@ namespace Potassium.MemoryTests
             var snapshotEvent = evt.Snapshot((neu, old) => neu.Equals(old) ? null : neu, behavior);
             finalizers.Add(snapshotEvent);
 
-            var changeTens = snapshotEvent.FilterNotNull();
+            var changeTens = snapshotEvent.Where(x => x != null);
             finalizers.Add(changeTens);
 
             var eventOfBehaviors = changeTens.Map(tens =>

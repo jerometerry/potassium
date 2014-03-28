@@ -11,6 +11,28 @@
     public class Event<T> : Observable<T>
     {
         /// <summary>
+        /// Overload the And operator to filter Events
+        /// </summary>
+        /// <param name="e">The Event to filter</param>
+        /// <param name="p">The filter predicate</param>
+        /// <returns>The filtered Event</returns>
+        public static Event<T> operator &(Event<T> e, Func<T, bool> p)
+        {
+            return e.Where(p);
+        }
+
+        /// <summary>
+        /// Overload the Or operator to merge two Events together
+        /// </summary>
+        /// <param name="e">The Event</param>
+        /// <param name="o">The Observable to merge with the Event</param>
+        /// <returns>The merged Event</returns>
+        public static Event<T> operator |(Event<T> e, Observable<T> o)
+        {
+            return e.Merge(o);
+        }
+
+        /// <summary>
         /// If there's more than one firing in a single transaction, combine them into
         /// one using the specified combining function.
         /// </summary>
@@ -43,31 +65,9 @@
         /// <param name="predicate">A predicate used to include firings</param>
         /// <returns>A new Event that is fired when the current Event fires and
         /// the predicate evaluates to true.</returns>
-        public Event<T> Filter(Func<T, bool> predicate)
+        public Event<T> Where(Func<T, bool> predicate)
         {
-            return new FilterEvent<T>(this, predicate);
-        }
-
-        /// <summary>
-        /// Overload the And operator to filter Events
-        /// </summary>
-        /// <param name="e">The Event to filter</param>
-        /// <param name="p">The filter predicate</param>
-        /// <returns>The filtered Event</returns>
-        public static Event<T> operator &(Event<T> e, Func<T, bool> p)
-        {
-            return e.Filter(p);
-        }
-
-        /// <summary>
-        /// Filter out any event occurrences whose value is null.
-        /// </summary>
-        /// <returns>A new Event that fires whenever the current Event fires with a non-null value</returns>
-        /// <remarks>For value types, comparison against null will always be false. 
-        /// FilterNotNull will not filter out any values for value types.</remarks>
-        public Event<T> FilterNotNull()
-        {
-            return new FilterEvent<T>(this, a => a != null);
+            return new FilteredEvent<T>(this, predicate);
         }
 
         /// <summary>
@@ -134,17 +134,6 @@
         public Event<T> Merge(Observable<T> observable)
         {
             return new MergeEvent<T>(this, observable);
-        }
-
-        /// <summary>
-        /// Overload the Or operator to merge two Events together
-        /// </summary>
-        /// <param name="e">The Event</param>
-        /// <param name="o">The Observable to merge with the Event</param>
-        /// <returns>The merged Event</returns>
-        public static Event<T> operator |(Event<T> e, Observable<T> o)
-        {
-            return e.Merge(o);
         }
 
         /// <summary>
