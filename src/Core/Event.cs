@@ -18,7 +18,7 @@
         /// <returns>The filtered Event</returns>
         public static Event<T> operator &(Event<T> e, Func<T, bool> p)
         {
-            return e.Where(p);
+            return e.Filter(p);
         }
 
         /// <summary>
@@ -65,7 +65,7 @@
         /// <param name="predicate">A predicate used to include firings</param>
         /// <returns>A new Event that is fired when the current Event fires and
         /// the predicate evaluates to true.</returns>
-        public Event<T> Where(Func<T, bool> predicate)
+        public Event<T> Filter(Func<T, bool> predicate)
         {
             return new FilteredEvent<T>(this, predicate);
         }

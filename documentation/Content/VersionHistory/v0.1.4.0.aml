@@ -20,11 +20,7 @@
           </listItem>
 
           <listItem>
-            <para>Event.Filter renamed to Where</para>
-          </listItem>
-
-          <listItem>
-            <para>Overloaded the Event logical and (&amp;) operator to invoke Where</para>
+            <para>Overloaded the Event logical and (&amp;) operator to invoke Filter</para>
           </listItem>
 
           <listItem>

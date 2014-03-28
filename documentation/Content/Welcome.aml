@@ -74,6 +74,10 @@
                       <legacyBold>Feed</legacyBold> - Feeding is a way of chaining together Events. Given an Event e and an EventFeed f, f.Feed(e) will cause firings on e to be fired on f.
                     </listItem>
 
+                  <listItem>
+                    <legacyBold>Filter</legacyBold> - Filters Event values based on a predicate, similar to the LINQ Where method.
+                  </listItem>
+
                     <listItem>
                       <legacyBold>Fire</legacyBold> - Firing is the process of sending a value through an Event.
                     </listItem>
@@ -112,10 +116,6 @@
 
                     <listItem>
                         <legacyBold>Switch</legacyBold> - Switch is the process of unwrapping a Behavior of Behaviors or a Behavior of Events into the inner Behavior or Event. Switch allows the reactive network to change dynamically, using reactive logic to modify reactive logic.
-                    </listItem>
-
-                    <listItem>
-                      <legacyBold>Where</legacyBold> - Filters Event values based on a predicate, similar to the LINQ Where method.
                     </listItem>
                 </list>
             </content>

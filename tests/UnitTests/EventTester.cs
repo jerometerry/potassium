@@ -98,7 +98,7 @@ namespace Potassium.Tests
         {
             var e = new FirableEvent<string>();
             var o = new List<string>();
-            var l = e.Where(x => x != null).Subscribe(o.Add);
+            var l = e.Filter(x => x != null).Subscribe(o.Add);
             e.Fire("tomato");
             e.Fire(null);
             e.Fire("peach");

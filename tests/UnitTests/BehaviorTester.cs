@@ -183,9 +183,9 @@ namespace Potassium.Tests
 
             // Split each field o of SB so we can update multiple behaviors in a
             // single transaction.
-            var behaviorA = sink.Map(s => s.C1).Where(x => x != null).Hold('A');
-            var behaviorB = sink.Map(s => s.C2).Where(x => x != null).Hold('a');
-            var bsw = sink.Map(s => s.Behavior).Where(x => x != null).Hold(behaviorA);
+            var behaviorA = sink.Map(s => s.C1).Filter(x => x != null).Hold('A');
+            var behaviorB = sink.Map(s => s.C2).Filter(x => x != null).Hold('a');
+            var bsw = sink.Map(s => s.Behavior).Filter(x => x != null).Hold(behaviorA);
             var behavior = bsw.Switch();
             var results = new List<char>();
             var listener = behavior.SubscribeWithInitialFire(c =>
@@ -218,7 +218,7 @@ namespace Potassium.Tests
             var ea = ese.Map(s => s.C1);
             var eb = ese.Map(s => s.C2);
             var tmp1 = ese.Map(s => s.Event);
-            var tmp2 = tmp1.Where(x => x != null);
+            var tmp2 = tmp1.Filter(x => x != null);
             var bsw = tmp2.Hold(ea);
             var o = new List<char>();
             var eo = bsw.Switch();
