@@ -50,8 +50,7 @@ namespace Potassium.MemoryTests
             var tensTupleBehavior = tensTupleWrappedBehavior.Switch();
             finalizers.Add(tensTupleBehavior);
 
-            var values = tensTupleBehavior.Values();
-            var listener = values.Subscribe(tu => { });
+            var listener = tensTupleBehavior.SubscribeValues(tu => { });
             var i = 0;
 
             while (i < iterations)
@@ -61,7 +60,6 @@ namespace Potassium.MemoryTests
             }
 
             listener.Dispose();
-            values.Dispose();
 
             DisposeFinalizers(finalizers);
             DisposeFinalizers(behaviorMapFinalizers);

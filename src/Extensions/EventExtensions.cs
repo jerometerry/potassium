@@ -2,6 +2,7 @@
 {
     using System;
     using Potassium.Core;
+    using Potassium.Internal;
 
     /// <summary>
     /// Event extension methods

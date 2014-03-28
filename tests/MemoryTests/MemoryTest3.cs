@@ -15,8 +15,7 @@ namespace Potassium.MemoryTests
             var behavior = et.Hold(0);
             var eventOfBehaviors = evt.Map(x => behavior).Hold(behavior);
             var observable = eventOfBehaviors.Switch();
-            var values = observable.Values();
-            var l = values.Subscribe(tt => { });
+            var l = observable.SubscribeValues(tt => { });
             var i = 0;
             while (i < iterations)
             {
@@ -25,7 +24,6 @@ namespace Potassium.MemoryTests
             }
 
             l.Dispose();
-            values.Dispose();
         }
     }
 }

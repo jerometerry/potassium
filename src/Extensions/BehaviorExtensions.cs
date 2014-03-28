@@ -23,7 +23,7 @@
         public static Behavior<TB> Collect<T, TB, TS>(this Behavior<T> behavior, Func<T, TS, Tuple<TB, TS>> snapshot, TS initState)
         {
             // Only listen for the last firing of the Source of the Current Behavior
-            Event<T> lastFiring = behavior.Source.LastFiring();
+            Event<T> lastFiring = behavior.LastFiring();
 
             // Event that fires whenever a new snapshot is generated
             EventFeed<Tuple<TB, TS>> snapshotFeed = new EventFeed<Tuple<TB, TS>>();

@@ -53,14 +53,11 @@
             runningEvent.Subscribe(r => { degreesSignal.Running = r; });
             
             runningBehavior = runningEvent.Hold(false);
-            runningBehavior.Values().Subscribe(EnableControls);
+            runningBehavior.SubscribeValues(EnableControls);
 
             intervalChanged = new FirableEvent<decimal>();
             intervalBehavior = intervalChanged.Hold(frequency.Value);
-            intervalBehavior
-                .Values()
-                .Map(Frequency.Hz)
-                .Subscribe(FrequencyChanged);
+            intervalBehavior.Map(Frequency.Hz).SubscribeValues(FrequencyChanged);
         }
 
         private void FrequencyChanged(Hz frequence)

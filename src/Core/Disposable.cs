@@ -32,7 +32,7 @@
         /// SodiumObject is disposed.
         /// </summary>
         /// <param name="o">The SodiumObject to register for disposal</param>
-        public void Register(IDisposable o)
+        public IDisposable Register(IDisposable o)
         {
             if (finalizers == null)
             {
@@ -40,6 +40,8 @@
             }
 
             finalizers.Add(o);
+
+            return o;
         }
 
         /// <summary>

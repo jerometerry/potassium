@@ -32,7 +32,7 @@
 
         private void CreateBehaviorSubscription(Behavior<Event<T>> source, Transaction transaction)
         {
-            behaviorSubscription = source.Source.Subscribe(
+            behaviorSubscription = source.Subscribe(
                 new Observer<Event<T>>((e, t) => 
                     t.Medium(() =>
                     {

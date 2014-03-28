@@ -3,12 +3,13 @@ namespace Potassium.Core
     using System;
     using Potassium.Internal;
     using Potassium.Providers;
+    using Potassium.Utilities;
 
     /// <summary>
     /// Behavior is a time varying value. A Behavior starts with an initial value which gets updated when the underlying Event is fired.
     /// </summary>
     /// <typeparam name="T">The type of values that will be fired through the Behavior.</typeparam>
-    public class Behavior<T> : Provider<T>
+    public class Behavior<T> : Provider<T>, IObservable<T>
     {
         private ObservedValue<T> observedValue;
 
@@ -34,11 +35,6 @@ namespace Potassium.Core
         }
 
         /// <summary>
-        /// The underlying Event of the current Behavior
-        /// </summary>
-        public Event<T> Source { get; private set; }
-
-        /// <summary>
         /// Evaluates the value of the Provider
         /// </summary>
         public override T Value
@@ -61,6 +57,11 @@ namespace Potassium.Core
         }
 
         /// <summary>
+        /// The underlying Event of the current Behavior
+        /// </summary>
+        private Event<T> Source { get; set; }
+
+        /// <summary>
         /// Transform the behavior's value according to the supplied function.
         /// </summary>
         /// <typeparam name="TB">The return type of the mapping function</typeparam>
@@ -76,13 +77,53 @@ namespace Potassium.Core
             return behavior;
         }
 
-        /// <summary>
-        /// Get an Event that fires the initial Behaviors value, and whenever the Behaviors value changes.
-        /// </summary>
-        /// <returns>The event streams</returns>
-        public Event<T> Values()
+        public ISubscription<T> Subscribe(Action<T> callback)
         {
-            return Transaction.Start(t => new BehaviorLastValueEvent<T>(this, t));
+            return this.Source.Subscribe(callback);
+        }
+
+        public ISubscription<T> SubscribeValues(Action<T> callback)
+        {
+            var vals = this.Values();
+            var s = (Subscription<T>)vals.Subscribe(callback);
+            s.Register(vals);
+            return s;
+        }
+
+        internal Event<T> LastFiring()
+        {
+            return this.Source.LastFiring();
+        }
+
+        internal ISubscription<T> Subscribe(Observer<T> observer, Priority subscriptionRank)
+        {
+            return this.Source.Subscribe(observer, subscriptionRank);
+        }
+
+        internal ISubscription<T> Subscribe(Observer<T> observer, Priority superior, Transaction transaction)
+        {
+            return this.Source.Subscribe(observer, superior, transaction);
+        }
+
+        internal ISubscription<T> SubscribeValues(Observer<T> observer, Priority subscriptionRank)
+        {
+            var vals = this.Values();
+            var s = (Subscription<T>)vals.Subscribe(observer, subscriptionRank);
+            s.Register(vals);
+            return s;
+        }
+
+        internal ISubscription<T> SubscribeValues(Observer<T> observer, Priority superior, Transaction transaction)
+        {
+            var vals = this.Values();
+            var s = (Subscription<T>)vals.Subscribe(observer, superior, transaction);
+            s.Register(vals);
+            return s;
+        }
+
+        protected void RegisterSource()
+        {
+            this.Register(this.Source);
         }
 
         /// <summary>
@@ -99,6 +140,15 @@ namespace Potassium.Core
             }
 
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Get an Event that fires the initial Behaviors value, and whenever the Behaviors value changes.
+        /// </summary>
+        /// <returns>The event streams</returns>
+        private Event<T> Values()
+        {
+            return Transaction.Start(t => new BehaviorLastValueEvent<T>(this, t));
         }
     }
 }

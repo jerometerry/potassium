@@ -162,7 +162,7 @@ namespace Potassium.Tests
             var ea = new FirableEvent<int>();
             var o = new List<int>();
             var sum = ea.Accum((a, s) => a + s, 100);
-            var l = sum.Source.Subscribe(o.Add);
+            var l = sum.Subscribe(o.Add);
             ea.Fire(5);
             ea.Fire(7);
             ea.Fire(1);

@@ -61,7 +61,7 @@
         private void SubscribeVal()
         {
             var observer = new Observer<TA>((a, t) => this.ScheduleFiring(t));
-            var subscription = this.valBehavior.Source.Subscribe(observer, this.Priority);
+            var subscription = this.valBehavior.Subscribe(observer, this.Priority);
             this.Register(subscription);
         }
 
@@ -72,7 +72,7 @@
         private void SubscribeFunc()
         {
             var observer = new Observer<Func<TA, TB>>((f, t) => this.ScheduleFiring(t));
-            var subscription = this.funcBehavior.Source.Subscribe(observer, this.Priority);
+            var subscription = this.funcBehavior.Subscribe(observer, this.Priority);
             this.Register(subscription);
         }
 

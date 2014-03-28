@@ -44,9 +44,11 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\IObservable.cs" />
     <Compile Include="Core\Lifter.cs" />
     <Compile Include="Dispatchers\CurrentThreadDispatcher.cs" />
     <Compile Include="Extensions\ProviderExtensions.cs" />
+    <Compile Include="Internal\HoldBehavior.cs" />
     <Compile Include="Providers\Toggle.cs" />
     <Compile Include="Utilities\Hz.cs" />
     <Compile Include="Dispatchers\IDispatcher.cs" />
@@ -56,7 +58,6 @@
     <Compile Include="Utilities\Frequency.cs" />
     <Compile Include="Internal\DelayEvent.cs" />
     <Compile Include="Internal\GateEvent.cs" />
-    <Compile Include="Internal\HoldBehavior.cs" />
     <Compile Include="Providers\AutoDouble.cs" />
     <Compile Include="Providers\AutoInt.cs" />
     <Compile Include="Providers\AutoLong.cs" />
