@@ -49,6 +49,17 @@
         }
 
         /// <summary>
+        /// Overload the And operator to filter Events
+        /// </summary>
+        /// <param name="e">The Event to filter</param>
+        /// <param name="p">The filter predicate</param>
+        /// <returns>The filtered Event</returns>
+        public static Event<T> operator &(Event<T> e, Func<T, bool> p)
+        {
+            return e.Filter(p);
+        }
+
+        /// <summary>
         /// Filter out any event occurrences whose value is null.
         /// </summary>
         /// <returns>A new Event that fires whenever the current Event fires with a non-null value</returns>

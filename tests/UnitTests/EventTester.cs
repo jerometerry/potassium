@@ -85,7 +85,7 @@ namespace Potassium.Tests
         {
             var e = new FirableEvent<char>();
             var o = new List<char>();
-            var l = e.Filter(char.IsUpper).Subscribe(o.Add);
+            var l = (e & (char.IsUpper)).Subscribe(o.Add);
             e.Fire('H');
             e.Fire('o');
             e.Fire('I');
@@ -113,7 +113,7 @@ namespace Potassium.Tests
             var eb = new EventFeed<int>();
             var evt = ea.Map(x => x % 10);
             var ec = evt.Merge(eb, (x, y) => x + y);
-            var ebO = ea.Map(x => x / 10).Filter(x => x != 0);
+            var ebO = ea.Map(x => x / 10) & (x => x != 0);
             eb.Feed(ebO);
             var o = new List<int>();
             var l = ec.Subscribe(o.Add);
