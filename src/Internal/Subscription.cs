@@ -13,7 +13,7 @@ namespace Potassium.Internal
         /// <param name="priority">The priority of the subscription.</param>
         /// <remarks>Priority will be Priority.Max for externally triggered subscriptions. Priority will
         /// be the current Priority of an Observable when triggered internally.</remarks>
-        public Subscription(Observable<T> source, Observer<T> observer, Priority priority)
+        public Subscription(IObservable<T> source, Observer<T> observer, Priority priority)
         {
             this.Source = source;
             this.Observer = observer;
@@ -23,7 +23,7 @@ namespace Potassium.Internal
         /// <summary>
         /// The publication source
         /// </summary>
-        public Observable<T> Source { get; private set; }
+        public IObservable<T> Source { get; private set; }
 
         /// <summary>
         /// Means to notify subscriber of updates via a callback method
@@ -44,7 +44,7 @@ namespace Potassium.Internal
         {
             if (this.Source != null)
             {
-                this.Source.CancelSubscription(this);
+                ((Observable<T>)this.Source).CancelSubscription(this);
                 this.Source = null;
             }
 

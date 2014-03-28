@@ -3,9 +3,9 @@ namespace Potassium.Core
     using System;
 
     /// <summary>
-    /// 
+    /// Notifies the provider that an observer is to receive notifications.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of values fired through the IObservable</typeparam>
     public interface IObservable<T>
     {
         /// <summary>

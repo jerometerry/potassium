@@ -12,7 +12,7 @@ namespace Potassium.Core
         /// <summary>
         /// Gets the IObserverable the current ISubscription is subscribed to
         /// </summary>
-        Observable<T> Source { get; }
+        IObservable<T> Source { get; }
 
         /// <summary>
         /// Cancels the current subscription
