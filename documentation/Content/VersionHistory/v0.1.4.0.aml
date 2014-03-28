@@ -31,6 +31,10 @@
             <para>Overloaded the Event logical or (|) operator to invoke Merge</para>
           </listItem>
 
+          <listItem>
+            <para>Removed experimental monad code from the Potassium.Providers namespace.</para>
+          </listItem>
+
         </list>
 
       </content>
