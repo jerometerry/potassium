@@ -63,14 +63,30 @@ namespace Potassium.Core
         /// <param name="behavior">The behavior to combine with the current Behavior</param>
         /// <param name="combine">The combining function, to combine the values of the two behaviors together</param>
         /// <returns>A new Behavior who's value is computed from the current and given Behaviors, using the combining function</returns>
+        /// <typeparam name="TB">The type of values in the given Behavior</typeparam>
+        /// <typeparam name="TC">The return type of the combine function</typeparam>
         public Behavior<TC> Combine<TB, TC>(Behavior<TB> behavior, Func<T, TB, TC> combine)
         {
+            // Listen for firings of the Behaviors. Don't care what the fired values are, 
+            // since the Behaviors hold their updted values.
             var m1 = this.source.Map(t => Maybe<T>.Nothing);
             var m2 = behavior.source.Map(t => Maybe<T>.Nothing);
+            
+            // Merge the firings of the underlying Events mapped to nothing into a single event
             var merged = m1 | m2;
+
+            // We're only interested in the last firing of the merged Event
             var last = merged.LastFiring();
+
+            // Create a new Event that fires the combined new values of the two behaviors.
+            // Use NewValue because Value isn't updated until the Transaction completes.
             var mapped = last.Map(t => combine(this.NewValue, behavior.NewValue));
+            
+            // Convert mapped into a Behavior, starting the the combined initial values 
+            // of the two Behaviors
             var b = mapped.Hold(combine(this.Value, behavior.Value));
+
+            // Register created events for cleanup
             b.Register(mapped);
             b.Register(last);
             b.Register(merged);
