@@ -71,14 +71,23 @@
         }
 
         /// <summary>
-        /// Let event occurrences through only when the behavior's value is True.
-        /// Note that the behavior's value is as it was at the start of the transaction,
-        /// that is, no state changes from the current transaction are taken into account.
+        /// Let event occurrences through only when the predicate is True.
         /// </summary>
-        /// <param name="predicate">A behavior who's current value acts as a predicate</param>
-        /// <returns>A new Event that fires whenever the current Event fires and the Behaviors value
+        /// <param name="predicate">The predicate function</param>
+        /// <returns>A new Event that fires whenever the current Event fires and the predicate
         /// is true.</returns>
-        public Event<T> Gate(Predicate predicate)
+        public Event<T> Gate(Func<bool> predicate)
+        {
+            return new GateEvent<T>(this, predicate);
+        }
+
+        /// <summary>
+        /// Let event occurrences through only when the predicate True.
+        /// </summary>
+        /// <param name="predicate">The predicate</param>
+        /// <returns>A new Event that fires whenever the current Event fires and the predicate
+        /// is true.</returns>
+        public Event<T> Gate(IProvider<bool> predicate)
         {
             return new GateEvent<T>(this, predicate);
         }

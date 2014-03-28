@@ -6,11 +6,16 @@
 
     internal class GateEvent<T> : EventFeed<T>
     {
-        public GateEvent(Event<T> source, Predicate predicate)
+        public GateEvent(Event<T> source, Func<bool> predicate)
+            : this(source, new QueryPredicate(predicate))
         {
-            Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : null;
+        }
+
+        public GateEvent(Event<T> source, IProvider<bool> predicate)
+        {
+            Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : Maybe<T>.Null;
             var sn = source.Snapshot(snapshot, predicate);
-            var filter = sn.Where(a => a != null);
+            var filter = sn.Where(a => a.HasValue);
             var map = filter.Map(a => a.Value);
             this.Feed(map);
             this.Register(map);

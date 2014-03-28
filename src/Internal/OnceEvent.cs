@@ -5,16 +5,13 @@ namespace Potassium.Internal
     internal sealed class OnceEvent<T> : FireEvent<T>
     {
         private Observable<T> source;
-        private ISubscription<T>[] subscriptions;
+        private ISubscription<T> subscription;
 
         public OnceEvent(Observable<T> source)
         {
             this.source = source;
-
-            // This is a bit long-winded but it's efficient because it de-registers
-            // the subscription.
-            this.subscriptions = new ISubscription<T>[1];
-            this.subscriptions[0] = source.Subscribe(new Observer<T>((a, t) => this.Fire(this.subscriptions, a, t)), this.Priority);
+            var observer = new Observer<T>(FireOnce);
+            this.subscription = source.Subscribe(observer, this.Priority);
         }
 
         public override T[] SubscriptionFirings()
@@ -31,39 +28,31 @@ namespace Potassium.Internal
                 results = new[] { firings[0] };
             }
 
-            if (this.subscriptions[0] != null)
-            {
-                this.subscriptions[0].Dispose();
-                this.subscriptions[0] = null;
-            }
+            this.Unsubscribe();
 
             return results;
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (this.subscriptions != null && this.subscriptions[0] != null)
-            {
-                this.subscriptions[0].Dispose();
-                this.subscriptions[0] = null;
-            }
-
+            this.Unsubscribe();
             this.source = null;
-            this.subscriptions = null;
-
             base.Dispose(disposing);
         }
 
-        private void Fire(ISubscription<T>[] la, T a, Transaction t)
+        private void FireOnce(T a, Transaction t)
         {
             this.Fire(a, t);
-            if (la[0] == null)
-            {
-                return;
-            }
+            this.Unsubscribe();
+        }
 
-            la[0].Dispose();
-            la[0] = null;
+        private void Unsubscribe()
+        {
+            if (this.subscription != null)
+            {
+                this.subscription.Dispose();
+                this.subscription = null;
+            }
         }
     }
 }
