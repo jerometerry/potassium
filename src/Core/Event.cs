@@ -126,6 +126,17 @@
         }
 
         /// <summary>
+        /// Overload the Or operator to merge two Events together
+        /// </summary>
+        /// <param name="e">The Event</param>
+        /// <param name="o">The Observable to merge with the Event</param>
+        /// <returns>The merged Event</returns>
+        public static Event<T> operator |(Event<T> e, Observable<T> o)
+        {
+            return e.Merge(o);
+        }
+
+        /// <summary>
         /// Throw away all event occurrences except for the first one.
         /// </summary>
         /// <returns>An Event that only fires one time, the first time the current event fires.</returns>

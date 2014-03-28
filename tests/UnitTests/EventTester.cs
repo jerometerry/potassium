@@ -69,7 +69,7 @@ namespace Potassium.Tests
             var e2 = new FirableEvent<int>();
             var o = new List<int>();
             var evt2 = e1.Map(x => x * 100);
-            var evt = evt2.Merge(e2);
+            var evt = evt2 | e2;
             var l = e1.Merge(evt)
                       .Coalesce((a, b) => a + b)
                       .Subscribe(o.Add);

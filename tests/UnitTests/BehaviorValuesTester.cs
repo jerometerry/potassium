@@ -209,7 +209,7 @@
 
         public Event<T> DoubleUp<T>(Event<T> e)
         {
-            return e.Merge(e);
+            return e | e;
         }
 
     }
