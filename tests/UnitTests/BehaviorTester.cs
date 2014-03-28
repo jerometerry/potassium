@@ -12,6 +12,25 @@ namespace Potassium.Tests
     public class BehaviorTester : TestBase
     {
         [Test]
+        public void TestCombine()
+        {
+            var e1 = new FirableEvent<int>();
+            var b1 = e1.Hold(100);
+
+            var e2 = new FirableEvent<int>();
+            var b2 = e2.Hold(200);
+
+            var b = b1.Combine(b2, (x, y) => x + y);
+
+            var results = new List<int>();
+            b.SubscribeWithInitialFire(results.Add);
+            e1.Fire(101);
+            e2.Fire(250);
+
+            AssertArraysEqual(Arrays<int>.AsList(300, 301, 351), results);
+        }
+
+        [Test]
         public void TestHold()
         {
             var evt = new FirableEvent<int>();

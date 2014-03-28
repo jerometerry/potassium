@@ -58,6 +58,28 @@ namespace Potassium.Core
         }
 
         /// <summary>
+        /// Combine two Behavior's values together
+        /// </summary>
+        /// <param name="behavior">The behavior to combine with the current Behavior</param>
+        /// <param name="combine">The combining function, to combine the values of the two behaviors together</param>
+        /// <returns>A new Behavior who's value is computed from the current and given Behaviors, using the combining function</returns>
+        public Behavior<TC> Combine<TB, TC>(Behavior<TB> behavior, Func<T, TB, TC> combine)
+        {
+            var m1 = this.source.Map(t => Maybe<T>.Nothing);
+            var m2 = behavior.source.Map(t => Maybe<T>.Nothing);
+            var merged = m1 | m2;
+            var last = merged.LastFiring();
+            var mapped = last.Map(t => combine(this.NewValue, behavior.NewValue));
+            var b = mapped.Hold(combine(this.Value, behavior.Value));
+            b.Register(mapped);
+            b.Register(last);
+            b.Register(merged);
+            b.Register(m1);
+            b.Register(m2);
+            return b;
+        }
+
+        /// <summary>
         /// Transform the behavior's value according to the supplied function.
         /// </summary>
         /// <typeparam name="TB">The return type of the mapping function</typeparam>

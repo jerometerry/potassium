@@ -9,7 +9,7 @@ namespace Potassium.Internal
     /// starting with an initial value.
     /// </summary>
     /// <typeparam name="T">The type of value fired through the Observable</typeparam>
-    internal sealed class ObservedValue<T> : Disposable
+    internal sealed class ObservedValue<T> : FirableEvent<T>
     {
         private Observable<T> source;
 

@@ -112,7 +112,7 @@ namespace Potassium.Tests
             var ea = new FirableEvent<int>();
             var eb = new EventFeed<int>();
             var evt = ea.Map(x => x % 10);
-            var ec = evt.Merge(eb, (x, y) => x + y);
+            var ec = evt.Merge(eb).Coalesce((x, y) => x + y);
             var ebO = ea.Map(x => x / 10) & (x => x != 0);
             eb.Feed(ebO);
             var o = new List<int>();

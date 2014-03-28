@@ -20,20 +20,7 @@
         }
 
         /// <summary>
-        /// Monadic bind method for Identity
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="func"></param>
-        /// <typeparam name="TA"></typeparam>
-        /// <typeparam name="TB"></typeparam>
-        /// <returns></returns>
-        public static Identity<TB> Bind<TA, TB>(this Identity<TA> a, Func<TA, Identity<TB>> func)
-        {
-            return func(a.Value);
-        }
-
-        /// <summary>
-        /// The monadic map method for Identity
+        /// Monadic map method for Identity
         /// </summary>
         /// <param name="a"></param>
         /// <param name="func"></param>
@@ -42,7 +29,7 @@
         /// <returns></returns>
         public static Identity<TB> Map<TA, TB>(this Identity<TA> a, Func<TA, Identity<TB>> func)
         {
-            return a.Bind(func);
+            return func(a.Value);
         }
 
         /// <summary>
@@ -72,22 +59,7 @@
         }
 
         /// <summary>
-        /// Monadic bind method for Maybe
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="func"></param>
-        /// <typeparam name="TA"></typeparam>
-        /// <typeparam name="TB"></typeparam>
-        /// <returns></returns>
-        public static Maybe<TB> Bind<TA, TB>(this Maybe<TA> a, Func<TA, Maybe<TB>> func)
-        {
-            return a.HasValue ?
-                func(a.Value) :
-                Maybe<TB>.Nothing;
-        }
-
-        /// <summary>
-        /// The monadic map method for Maybe
+        /// Monadic map method for Maybe
         /// </summary>
         /// <param name="a"></param>
         /// <param name="func"></param>
@@ -96,7 +68,9 @@
         /// <returns></returns>
         public static Maybe<TB> Map<TA, TB>(this Maybe<TA> a, Func<TA, Maybe<TB>> func)
         {
-            return a.Bind(func);
+            return a.HasValue ?
+                func(a.Value) :
+                Maybe<TB>.Nothing;
         }
 
         /// <summary>
@@ -111,8 +85,8 @@
         /// <returns></returns>
         public static Maybe<TC> FlapMap<TA, TB, TC>(this Maybe<TA> a, Func<TA, Maybe<TB>> func, Func<TA, TB, TC> select)
         {
-            return a.Bind(aval =>
-                    func(aval).Bind(bval =>
+            return a.Map(aval =>
+                    func(aval).Map(bval =>
                     select(aval, bval).ToMaybe()));
         }
     }

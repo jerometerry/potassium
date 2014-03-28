@@ -84,27 +84,5 @@
 
             return mappedEvent;
         }
-
-        /// <summary>
-        /// Merge two streams of events of the same type, combining simultaneous
-        /// event occurrences.
-        /// </summary>
-        /// <param name="source">The source Event</param>
-        /// <param name="observable">The Event to merge with the current Event</param>
-        /// <param name="coalesce">The coalesce function that combines simultaneous firings.</param>
-        /// <returns>An Event that is fired whenever the current or source Events fire, where
-        /// simultaneous firings are handled by the coalesce function.</returns>
-        /// <remarks>
-        /// In the case where multiple event occurrences are simultaneous (i.e. all
-        /// within the same transaction), they are combined using the same logic as
-        /// 'coalesce'.
-        /// </remarks>
-        public static Event<T> Merge<T>(this Event<T> source, Observable<T> observable, Func<T, T, T> coalesce)
-        {
-            var merge = source.Merge(observable);
-            var c = merge.Coalesce(coalesce);
-            c.Register(merge);
-            return c;
-        }
     }
 }

@@ -17,7 +17,7 @@
     public static class Functor
     {
         /// <summary>
-        /// Apply a value inside a behavior to a function inside a behavior. This is the
+        /// Apply a Behavior of values to Behavior of functions. This is the
         /// primitive for all function lifting.
         /// </summary>
         /// <typeparam name="TA">The type of the parameter to the lift function in the behavior</typeparam>

@@ -59,6 +59,17 @@
             <para>Static Lifter class renamed to Functor so that calls now look like Functor.Lift and Functor.Apply.</para>
           </listItem>
 
+          <listItem>
+            <para>Removed overload of Event.Merge that accepted a coalesce function, since it can be accomplished by invoking Merge followed by Coalesce,
+            which is what it was doing internally anyway.</para>
+          </listItem>
+
+          <listItem>
+            <para>
+              Adding method Behavior.Combine, to combine the values of two behaviors
+            </para>
+          </listItem>
+
         </list>
 
       </content>

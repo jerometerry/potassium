@@ -32,6 +32,7 @@
         /// SodiumObject is disposed.
         /// </summary>
         /// <param name="o">The SodiumObject to register for disposal</param>
+        /// <returns>The object that was registered</returns>
         public IDisposable Register(IDisposable o)
         {
             if (finalizers == null)
