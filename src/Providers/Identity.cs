@@ -1,5 +1,7 @@
 ﻿namespace Potassium.Providers
 {
+    using System;
+
     /// <summary>
     /// Identity is an IProvider having a constant value
     /// </summary>
@@ -16,6 +18,8 @@
         {
             this.value = value;
         }
+
+        
 
         /// <summary>
         /// Gets the constant identity value

@@ -14,7 +14,7 @@ namespace Potassium.Internal
     {
         private Func<T, T, T> coalesce;
         private ISubscription<T> subscription;
-        private Maybe<T> accumulatedValue = Maybe<T>.Null;
+        private Maybe<T> accumulatedValue = Maybe<T>.Nothing;
 
         public CoalesceEvent(Observable<T> source, Func<T, T, T> coalesce, Transaction transaction)
         {
@@ -106,7 +106,7 @@ namespace Potassium.Internal
         {
             var v = accumulatedValue.Value;
             this.Fire(v, transaction);
-            accumulatedValue = Maybe<T>.Null;
+            accumulatedValue = Maybe<T>.Nothing;
         }
 
         /// <summary>

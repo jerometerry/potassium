@@ -35,7 +35,7 @@
         /// <summary>
         /// A Maybe object without a value
         /// </summary>
-        public static Maybe<T> Null
+        public static Maybe<T> Nothing
         {
             get
             {

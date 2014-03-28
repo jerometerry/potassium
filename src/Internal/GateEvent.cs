@@ -13,7 +13,7 @@
 
         public GateEvent(Event<T> source, IProvider<bool> predicate)
         {
-            Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : Maybe<T>.Null;
+            Func<T, bool, Maybe<T>> snapshot = (a, p) => p ? new Maybe<T>(a) : Maybe<T>.Nothing;
             var sn = source.Snapshot(snapshot, predicate);
             var filter = sn.Where(a => a.HasValue);
             var map = filter.Map(a => a.Value);

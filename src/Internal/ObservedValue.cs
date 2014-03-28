@@ -17,7 +17,7 @@ namespace Potassium.Internal
         /// Holding tank for updates from the underlying Observable, waiting to be 
         /// moved into the current value.
         /// </summary>
-        private Maybe<T> update = Maybe<T>.Null;
+        private Maybe<T> update = Maybe<T>.Nothing;
 
         /// <summary>
         /// Subscription that listens for firings from the underlying Event.
@@ -118,7 +118,7 @@ namespace Potassium.Internal
         private void ApplyValueUpdate()
         {
             this.Value = this.update.Value;
-            this.update = Maybe<T>.Null;
+            this.update = Maybe<T>.Nothing;
         }
 
         /// <summary>

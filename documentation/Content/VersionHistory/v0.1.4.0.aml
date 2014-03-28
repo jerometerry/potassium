@@ -35,6 +35,10 @@
             <para>Removed experimental monad code from the Potassium.Providers namespace.</para>
           </listItem>
 
+          <listItem>
+            <para>Maybe.Null renamed to Maybe.Nothing.</para>
+          </listItem>
+
         </list>
 
       </content>
