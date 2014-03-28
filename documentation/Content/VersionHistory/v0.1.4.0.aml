@@ -39,6 +39,10 @@
             <para>Maybe.Null renamed to Maybe.Nothing.</para>
           </listItem>
 
+          <listItem>
+            <para>Converted Identity and Maybe to proper monads</para>
+          </listItem>
+
         </list>
 
       </content>
