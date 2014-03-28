@@ -55,6 +55,10 @@
             <para>Behavior.Values method now an internal method. Use the new Behavior.SubscribeWithInitialFire method instead</para>
           </listItem>
 
+          <listItem>
+            <para>Static Lifter class renamed to Functor so that calls now look like Functor.Lift and Functor.Apply.</para>
+          </listItem>
+
         </list>
 
       </content>

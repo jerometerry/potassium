@@ -60,7 +60,7 @@
         /// <returns>A constant Behavior having the given value</returns>
         public static Behavior<T> Lift<T>(this T value)
         {
-            return Lifter.Lift(value);
+            return Functor.Lift(value);
         }
 
         /// <summary>

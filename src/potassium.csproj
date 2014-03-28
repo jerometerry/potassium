@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\IObservable.cs" />
-    <Compile Include="Core\Lifter.cs" />
+    <Compile Include="Core\Functor.cs" />
     <Compile Include="Dispatchers\CurrentThreadDispatcher.cs" />
     <Compile Include="Extensions\ProviderExtensions.cs" />
     <Compile Include="Internal\HoldBehavior.cs" />

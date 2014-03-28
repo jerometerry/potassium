@@ -109,7 +109,7 @@ namespace Potassium.Tests
             var pba = new FirableEvent<long>();
             var ba = new Behavior<long>(5L, pba);
             var results = new List<string>();
-            var apply = Core.Lifter.Apply(bf, ba);
+            var apply = Functor.Apply(bf, ba);
             var listener = apply.SubscribeWithInitialFire(results.Add);
             pbf.Fire(b => "12 " + b);
             pba.Fire(6L);
@@ -128,7 +128,7 @@ namespace Potassium.Tests
             var pub2 = new FirableEvent<long>();
             var behavior2 = new Behavior<long>(5L, pub2);
             var results = new List<string>();
-            var combinedBehavior = Core.Lifter.Lift((x, y) => x + " " + y, behavior1, behavior2);
+            var combinedBehavior = Functor.Lift((x, y) => x + " " + y, behavior1, behavior2);
             var listener = combinedBehavior.SubscribeWithInitialFire(results.Add);
             pub1.Fire(12);
             pub2.Fire(6L);
@@ -151,7 +151,7 @@ namespace Potassium.Tests
             var mappedBehavior1 = behavior.Map(x => x * 3);
             var mappedBehavior2 = behavior.Map(x => x * 5);
             var results = new List<string>();
-            var combinedBehavior = Core.Lifter.Lift((x, y) => x + " " + y, mappedBehavior1, mappedBehavior2);
+            var combinedBehavior = Functor.Lift((x, y) => x + " " + y, mappedBehavior1, mappedBehavior2);
             var listener = combinedBehavior.SubscribeWithInitialFire(results.Add);
             publisher.Fire(2);
             listener.Dispose();

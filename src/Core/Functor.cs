@@ -4,7 +4,7 @@
     using Potassium.Internal;
 
     /// <summary>
-    /// Lifter providers methods to lift Unary, Binary and Ternary functions into Behaviors
+    /// Functor providers methods to lift Unary, Binary and Ternary functions into Behaviors
     /// </summary>
     /// <remarks>
     /// http://www.haskell.org/haskellwiki/Lifting
@@ -14,7 +14,7 @@
     /// http://en.wikipedia.org/wiki/Currying
     /// </remarks>
     /// <remarks></remarks>
-    public static class Lifter
+    public static class Functor
     {
         /// <summary>
         /// Apply a value inside a behavior to a function inside a behavior. This is the
