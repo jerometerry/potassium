@@ -19,10 +19,10 @@
         }
 
         /// <summary>
-        /// Creates a Observer that forwards events from an Observable to the current FirableEvent
+        /// Creates a Observer that repeats events from an Observable to the current FirableEvent
         /// </summary>
         /// <returns>An Observer that calls Fire, when invoked.</returns>
-        internal Observer<T> Forward()
+        internal Observer<T> Repeat()
         {
             return new Observer<T>((t, v) => this.Fire(t, v));
         }

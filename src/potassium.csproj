@@ -77,7 +77,7 @@
     <Compile Include="Core\BehaviorExtensions.cs" />
     <Compile Include="Core\Observable.cs" />
     <Compile Include="Internal\ObservedValue.cs" />
-    <Compile Include="Core\EventFeed.cs" />
+    <Compile Include="Core\EventRepeater.cs" />
     <Compile Include="Internal\FireEvent.cs" />
     <Compile Include="Internal\LastFiringEvent.cs" />
     <Compile Include="Core\Event.cs" />

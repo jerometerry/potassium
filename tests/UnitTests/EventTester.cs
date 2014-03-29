@@ -109,11 +109,11 @@ namespace Potassium.Tests
         public void TestLoopEvent()
         {
             var ea = new FirableEvent<int>();
-            var eb = new EventFeed<int>();
+            var eb = new EventRepeater<int>();
             var evt = ea.Map(x => x % 10);
             var ec = evt.Merge(eb).Coalesce((x, y) => x + y);
             var ebO = ea.Map(x => x / 10) & (x => x != 0);
-            eb.Feed(ebO);
+            eb.Repeat(ebO);
             var o = new List<int>();
             var l = ec.Subscribe(o.Add);
             ea.Fire(2);

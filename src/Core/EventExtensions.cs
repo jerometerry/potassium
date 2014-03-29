@@ -20,21 +20,21 @@
         /// is computed using the old value and the accumulator function.</returns>
         public static Behavior<TS> Accum<T, TS>(this Event<T> source, Func<T, TS, TS> accumulator, TS value)
         {
-            EventFeed<TS> eventFeed = new EventFeed<TS>();
+            EventRepeater<TS> repeater = new EventRepeater<TS>();
 
             // Behavior holds the running snapshot value
-            Behavior<TS> previousShapshotBehavior = eventFeed.Hold(value);
+            Behavior<TS> previousShapshotBehavior = repeater.Hold(value);
 
             // Event that fires the new accumulated values, using the accumulator and the previous values
             Event<TS> accumulationEvent = source.Snapshot(accumulator, previousShapshotBehavior);
 
-            // Feed the new accumulated values into the Behavior, to store the new snapshot as the previous snapshot
-            eventFeed.Feed(accumulationEvent);
+            // Repeat the new accumulated values into the Behavior, to store the new snapshot as the previous snapshot
+            repeater.Repeat(accumulationEvent);
 
             // Behavior that holds the value of the new accumulated values
             Behavior<TS> result = accumulationEvent.Hold(value);
 
-            result.Register(eventFeed);
+            result.Register(repeater);
             result.Register(previousShapshotBehavior);
             result.Register(accumulationEvent);
 
@@ -58,11 +58,11 @@
         /// next collected value.</remarks>
         public static Event<TB> Collect<T, TB, TS>(this Event<T> source, Func<T, TS, Tuple<TB, TS>> collector, TS initState)
         {
-            // snapshotFeed is used to create the Behavior that holds the snapshot values
-            EventFeed<TS> snapshotFeed = new EventFeed<TS>();
+            // snapshotRepeater is used to create the Behavior that holds the snapshot values
+            EventRepeater<TS> snapshotRepeater = new EventRepeater<TS>();
 
             // Behavior that holds the previous collected value
-            Behavior<TS> snapshotBehavior = snapshotFeed.Hold(initState);
+            Behavior<TS> snapshotBehavior = snapshotRepeater.Hold(initState);
 
             // Event that emits a Tuple<TB,TS> containing the mapped value and the snapshot
             Event<Tuple<TB, TS>> mappedEventSnapshot = source.Snapshot(collector, snapshotBehavior);
@@ -70,13 +70,13 @@
             // Event that emits the snapshot values from the mappedEventSnapshot above
             Event<TS> snapshotEvent = mappedEventSnapshot.Map(bs => bs.Item2);
 
-            // Feed the snapshots into the Behavior holding the snapshot values
-            snapshotFeed.Feed(snapshotEvent);
+            // Repeat the snapshots into the Behavior holding the snapshot values
+            snapshotRepeater.Repeat(snapshotEvent);
 
             // Event that extracts the mapped value from the mappedEventSnapshot above
             Event<TB> mappedEvent = mappedEventSnapshot.Map(bs => bs.Item1);
 
-            mappedEvent.Register(snapshotFeed);
+            mappedEvent.Register(snapshotRepeater);
             mappedEvent.Register(snapshotBehavior);
             mappedEvent.Register(mappedEventSnapshot);
             mappedEvent.Register(snapshotEvent);

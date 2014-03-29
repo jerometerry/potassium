@@ -42,11 +42,11 @@
           </listItem>
 
           <listItem>
-            <legacyBold>EventFeed</legacyBold> - EventFeed fires values observed from another Event
+            <legacyBold>EventRepeater</legacyBold> - EventRepeater fires values observed from another Event
           </listItem>
         </list>
 
-        <para>The operations are Accum, Apply, Coalesce, Collect, Feed, Filter, Fire, Gate, Hold, Lift, Map, Merge, Snapshot, Switch</para>
+        <para>The operations are Accum, Apply, Coalesce, Collect, Filter, Fire, Gate, Hold, Lift, Map, Merge, Repeat, Snapshot, Switch</para>
 
         <para>Potassium uses the Publish / Subscribe Pattern: FirableEvent fires events, Observable.Subscribe listens for the events.</para>
       </content>
@@ -72,10 +72,6 @@
 
           <listItem>
             <legacyBold>Collect</legacyBold> - Collect transforms an Event or Behavior with a generalized state loop (a mealy machine). The function is passed the input and the old state and returns the new state and output value.
-          </listItem>
-
-          <listItem>
-            <legacyBold>Feed</legacyBold> - Feeding is a way of chaining together Events. Given an Event e and an EventFeed f, f.Feed(e) will cause firings on e to be fired on f.
           </listItem>
 
           <listItem>
@@ -112,6 +108,10 @@
 
           <listItem>
             <legacyBold>Merge</legacyBold> - Merging is the process of combining two Events of the same type into a single Event, using a coalesce (combining) function.
+          </listItem>
+
+          <listItem>
+            <legacyBold>Repeat</legacyBold> - Repeating is a way of chaining together Events. Given an Event e and an EventRepeater f, f.Repeat(e) will cause firings on e to be fired on f.
           </listItem>
 
           <listItem>

@@ -17,7 +17,7 @@ namespace Potassium.Internal
 
         public SwitchBehaviorEvent(Behavior<Behavior<T>> source)
         {
-            forward = Forward();
+            forward = Repeat();
             behaviorSubscription = source.SubscribeWithInitialFire(new Observer<Behavior<T>>(CreateNewSubscription), Priority);
         }
 

@@ -259,29 +259,6 @@ namespace Potassium.Tests
             AssertArraysEqual(Arrays<char>.AsList('A', 'B', 'C', 'd', 'e', 'F', 'G', 'h', 'I'), o);
         }
 
-        //[Test]
-        //public void TestLoopBehavior()
-        //{
-        //    var feed = new EventFeed<int>();
-        //    var ea = new FirableEvent<int>();
-        //    var sum = new Behavior<int>(0, feed);
-        //    var sumOut = ea.Snapshot((x, y) => x + y, sum).Hold(0);
-        //    feed.Feed(sumOut.Source);
-        //    var o = new List<int>();
-        //    var values = sumOut.Values();
-        //    var l = values.Subscribe(o.Add);
-        //    ea.Fire(2);
-        //    ea.Fire(3);
-        //    ea.Fire(1);
-        //    var sample = sum.Value;
-        //    l.Dispose();
-        //    ea.Dispose();
-        //    sum.Dispose();
-        //    sumOut.Dispose();
-        //    AssertArraysEqual(Arrays<int>.AsList(0, 2, 5, 6), o);
-        //    Assert.AreEqual(6, sample);
-        //}
-
         [Test]
         public void TestCollect()
         {

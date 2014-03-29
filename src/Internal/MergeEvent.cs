@@ -15,7 +15,7 @@ namespace Potassium.Internal
             this.source1 = source1;
             this.source2 = source2;
 
-            var forward = this.Forward();
+            var forward = this.Repeat();
             l1 = source1.Subscribe(forward, this.Priority);
             l2 = source2.Subscribe(forward, this.Priority);
         }

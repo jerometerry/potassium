@@ -4,7 +4,7 @@
     using Potassium.Core;
     using Potassium.Providers;
 
-    internal class GateEvent<T> : EventFeed<T>
+    internal class GateEvent<T> : EventRepeater<T>
     {
         public GateEvent(Event<T> source, Func<bool> predicate)
             : this(source, new QueryPredicate(predicate))
@@ -17,7 +17,7 @@
             var sn = source.Snapshot(snapshot, predicate);
             var filter = sn.Filter(a => a.HasValue);
             var map = filter.Map(a => a.Value);
-            this.Feed(map);
+            this.Repeat(map);
             this.Register(map);
             this.Register(filter);
             this.Register(sn);

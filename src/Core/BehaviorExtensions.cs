@@ -26,10 +26,10 @@
             Event<T> lastFiring = behavior.LastFiring();
 
             // Event that fires whenever a new snapshot is generated
-            EventFeed<Tuple<TB, TS>> snapshotFeed = new EventFeed<Tuple<TB, TS>>();
+            EventRepeater<Tuple<TB, TS>> snapshotRepeater = new EventRepeater<Tuple<TB, TS>>();
 
             // Behavior that holds the last snapshot tuple
-            Behavior<Tuple<TB, TS>> snapshotBehavior = snapshotFeed.Hold(snapshot(behavior.Value, initState));
+            Behavior<Tuple<TB, TS>> snapshotBehavior = snapshotRepeater.Hold(snapshot(behavior.Value, initState));
 
             // Behavior that holds the last snapshot value, extracted out of the tuple
             Behavior<TS> lastSnapshotValue = snapshotBehavior.Map(x => x.Item2);
@@ -37,13 +37,13 @@
             // Takes snapshots from the last firing of the Source of the current Behavior
             Event<Tuple<TB, TS>> snapshotGenerator = lastFiring.Snapshot(snapshot, lastSnapshotValue);
 
-            // Feed the new snapshots back into the snapshot feed.
-            snapshotFeed.Feed(snapshotGenerator);
+            // Repeat the new snapshots back into the snapshot repeater.
+            snapshotRepeater.Repeat(snapshotGenerator);
 
             // Extracts the value out of the snapshot Behavior tuple
             var collected = snapshotBehavior.Map(x => x.Item1);
 
-            collected.Register(snapshotFeed);
+            collected.Register(snapshotRepeater);
             collected.Register(snapshotBehavior);
             collected.Register(lastFiring);
             collected.Register(snapshotGenerator);

@@ -56,9 +56,9 @@
         /// <returns>A new Event that fires whenever the source Event fires.</returns>
         public Event<T> Clone()
         {
-            var feed = new EventFeed<T>();
-            feed.Feed(this);
-            return feed;
+            var repeater = new EventRepeater<T>();
+            repeater.Repeat(this);
+            return repeater;
         }
 
         /// <summary>
