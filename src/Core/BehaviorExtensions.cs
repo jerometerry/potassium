@@ -1,4 +1,4 @@
-﻿namespace Potassium.Extensions
+﻿namespace Potassium.Core
 {
     using System;
     using Potassium.Core;

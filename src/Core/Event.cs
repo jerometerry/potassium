@@ -51,6 +51,17 @@
         }
 
         /// <summary>
+        /// Create a new Event that fires whenever the current Event fires.
+        /// </summary>
+        /// <returns>A new Event that fires whenever the source Event fires.</returns>
+        public Event<T> Clone()
+        {
+            var feed = new EventFeed<T>();
+            feed.Feed(this);
+            return feed;
+        }
+
+        /// <summary>
         /// Push each event occurrence onto a new transaction.
         /// </summary>
         /// <returns>An event that is fired with the lowest priority in the current Transaction the current Event is fired in.</returns>

@@ -1,7 +1,6 @@
 namespace Potassium.Core
 {
     using System;
-    using Potassium.Extensions;
     using Potassium.Internal;
     using Potassium.Providers;
     using Potassium.Utilities;
@@ -62,6 +61,17 @@ namespace Potassium.Core
             {
                 return this.observedValue.NewValue;
             }
+        }
+
+        /// <summary>
+        /// Creates a new Behavior with the Value of current Behavior, that updates 
+        /// whenever the current Behavior updates
+        /// </summary>
+        /// <returns>A new Behavior with the Value of current Behavior, that updates 
+        /// whenever the current Behavior updates</returns>
+        public Behavior<T> Clone()
+        {
+            return new Behavior<T>(this.Value, this.source);
         }
 
         /// <summary>

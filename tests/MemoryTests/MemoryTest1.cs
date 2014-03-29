@@ -3,7 +3,6 @@ namespace Potassium.MemoryTests
     using System;
     using System.Collections.Generic;
     using Potassium.Core;
-    using Potassium.Extensions;
     using NUnit.Framework;
 
     [TestFixture]

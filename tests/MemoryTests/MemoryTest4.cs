@@ -1,7 +1,6 @@
 namespace Potassium.MemoryTests
 {
     using Potassium.Core;
-    using Potassium.Extensions;
     using NUnit.Framework;
 
     [TestFixture]

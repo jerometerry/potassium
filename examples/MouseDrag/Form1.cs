@@ -3,7 +3,6 @@
     using System;
     using System.Windows.Forms;
     using Potassium.Core;
-    using Potassium.Extensions;
     using Potassium.Providers;
 
     public partial class Form1 : Form

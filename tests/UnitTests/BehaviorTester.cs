@@ -5,7 +5,6 @@ namespace Potassium.Tests
     using System.Globalization;
     using NUnit.Framework;
     using Potassium.Core;
-    using Potassium.Extensions;
     using Potassium.Providers;
 
     [TestFixture]

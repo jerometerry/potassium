@@ -1,4 +1,4 @@
-﻿namespace Potassium.Extensions
+﻿namespace Potassium.Providers
 {
     using System;
     using Potassium.Providers;

@@ -47,14 +47,14 @@
     <Compile Include="Core\IObservable.cs" />
     <Compile Include="Core\Functor.cs" />
     <Compile Include="Dispatchers\CurrentThreadDispatcher.cs" />
-    <Compile Include="Extensions\ProviderExtensions.cs" />
+    <Compile Include="Providers\ProviderExtensions.cs" />
     <Compile Include="Internal\HoldBehavior.cs" />
     <Compile Include="Providers\Toggle.cs" />
     <Compile Include="Utilities\Hz.cs" />
     <Compile Include="Dispatchers\IDispatcher.cs" />
     <Compile Include="Core\Signal.cs" />
     <Compile Include="Dispatchers\UiThreadDispatcher.cs" />
-    <Compile Include="Extensions\EventExtensions.cs" />
+    <Compile Include="Core\EventExtensions.cs" />
     <Compile Include="Utilities\Frequency.cs" />
     <Compile Include="Internal\DelayEvent.cs" />
     <Compile Include="Internal\GateEvent.cs" />
@@ -74,7 +74,7 @@
     <Compile Include="Providers\RandomDouble.cs" />
     <Compile Include="Providers\RandomInt.cs" />
     <Compile Include="Internal\Observer.cs" />
-    <Compile Include="Extensions\BehaviorExtensions.cs" />
+    <Compile Include="Core\BehaviorExtensions.cs" />
     <Compile Include="Core\Observable.cs" />
     <Compile Include="Internal\ObservedValue.cs" />
     <Compile Include="Core\EventFeed.cs" />
