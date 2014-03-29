@@ -8,7 +8,7 @@
     {
         public static void AssertArraysEqual<TA>(List<TA> l1, List<TA> l2)
         {
-            Assert.True(Arrays<TA>.AreArraysEqual(l1, l2));
+			Assert.AreEqual(true, Arrays<TA>.AreArraysEqual(l1, l2));
         }
 
         [TearDown]

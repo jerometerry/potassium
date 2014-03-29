@@ -34,6 +34,10 @@ namespace Potassium.Core
             this.Observe(source.Clone(), value);
         }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Potassium.Core.Behavior`1"/> class.
+		/// </summary>
+		/// <remarks>Caller assumes responsibility for calling Observes</remarks>
         protected Behavior()
         {
         }

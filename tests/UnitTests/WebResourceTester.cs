@@ -14,7 +14,7 @@
             var provider = new WebResource("http://google.com");
             var source = provider.Value;
             Console.WriteLine("Google.com Source: {0}", source);
-            Assert.IsNotNullOrEmpty(source);
+			Assert.IsNotNull(source);
         }
 
         [Test]
@@ -23,7 +23,7 @@
             var provider = new WebResource("http://ip.jsontest.com/");
             var json = provider.Value;
             Console.WriteLine("JSON: {0}", json);
-            Assert.IsNotNullOrEmpty(json);
+            Assert.IsNotNull(json);
         }
     }
 }
