@@ -15,7 +15,7 @@ namespace Potassium.Internal
             this.source = source;
             this.f = f;
 
-            var forward = this.Repeat();
+            var forward = this.CreateRepeatObserver();
             this.subscription = source.Subscribe(forward, this.Priority);
         }
 

@@ -45,7 +45,7 @@
 
         private void CreateEventSubscription(Behavior<Event<T>> source, Transaction transaction)
         {
-            forward = Repeat();
+            forward = CreateRepeatObserver();
             eventSubscription = source.Value.Subscribe(forward, Priority, transaction);
         }
 

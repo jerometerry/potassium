@@ -48,7 +48,7 @@ namespace Potassium.Internal
         /// <param name="transaction"></param>
         private void CreateLoop(Transaction transaction)
         {
-            var forward = this.Repeat();
+            var forward = this.CreateRepeatObserver();
             this.subscription = this.behavior.Subscribe(forward, this.Priority, transaction);
         }
     }

@@ -43,7 +43,7 @@
                 throw new ApplicationException("EventRepeater is already been fed from another Event.");
             }
 
-            var forward = this.Repeat();
+            var forward = this.CreateRepeatObserver();
             this.subscription = source.Subscribe(forward, this.Priority);
             return this;
         }
