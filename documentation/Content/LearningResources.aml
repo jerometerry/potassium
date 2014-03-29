@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="7cbbe252-1f3c-4fc4-af35-0fe0c5a54edb" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>
+        Learning Resources
+      </para>
+    </introduction>
+
+    <section>
+      <title>Links</title>
+      <content>
+        <list class="bullet">
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Push-Pull Functional Reactive Programming</linkText>
+                <linkUri>http://conal.net/papers/push-pull-frp/</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Functional Reactive Programming, Haskell Wiki</linkText>
+                <linkUri>http://www.haskell.org/haskellwiki/Functional_Reactive_Programming</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Functional Reactive Programming from First Principles</linkText>
+                <linkUri>http://haskell.cs.yale.edu/wp-content/uploads/2011/02/frp-1st.pdf</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Sodium GitHub Page</linkText>
+                <linkUri>https://github.com/kentuckyfriedtakahe/sodium</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Stephen Blackheath's Reactive Programming Blog</linkText>
+                <linkUri>http://blog.reactiveprogramming.org/</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Stephen Blackheath's Talk on FRP</linkText>
+                <linkUri>http://blog.reactiveprogramming.org/?p=136</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Flapjax on GitHub</linkText>
+                <linkUri>https://github.com/brownplt/flapjax/</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Flapjax: A Programming Language for Ajax Applications</linkText>
+                <linkUri>http://cs.brown.edu/~sk/Publications/Papers/Published/mgbcgbk-flapjax/paper.pdf</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Rx.net, Reactive Extensions .NET library from Microsoft</linkText>
+                <linkUri>https://rx.codeplex.com/</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+          
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>End-to-End Reactive Programming at Netflix</linkText>
+                <linkUri>http://www.infoq.com/presentations/reactive-programming-netflix</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+        </list>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="ffc5eed7-48fe-4cc5-bb25-9bf0131edb45" />
+    </relatedTopics>
+
+  </developerConceptualDocument>
+</topic>

@@ -1,22 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <topic id="ffc5eed7-48fe-4cc5-bb25-9bf0131edb45" revisionNumber="1">
-	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
-		<introduction>
-			<para>The topics in this section describe the various changes made to the Potassium Functional Reactive Programming Library over the
-life of the project.</para>
-		</introduction>
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+        The topics in this section describe the various changes made to the Potassium Functional Reactive Programming Library over the
+        life of the project.
+      </para>
+    </introduction>
 
-		<section>
-			<title>Version History</title>
-			<content>
-				<para>Select a version below to see a description of its changes.</para>
+    <section>
+      <title>Version History</title>
+      <content>
+        <para>Select a version below to see a description of its changes.</para>
 
-				<list class="bullet">
-					<listItem>
-						<para>
+        <list class="bullet">
+          <listItem>
+            <para>
               <link xlink:href="cd73863c-cd02-44da-89df-a83737ac75d2" />
             </para>
-					</listItem>
+          </listItem>
 
           <listItem>
             <para>
@@ -43,12 +45,12 @@ life of the project.</para>
           </listItem>
         </list>
 
-			</content>
-		</section>
+      </content>
+    </section>
 
-		<relatedTopics>
-			<link xlink:href="89e8c167-b620-4a41-9657-af64fb0101ce" />
-		</relatedTopics>
+    <relatedTopics>
+      <link xlink:href="89e8c167-b620-4a41-9657-af64fb0101ce" />
+    </relatedTopics>
 
-	</developerConceptualDocument>
+  </developerConceptualDocument>
 </topic>

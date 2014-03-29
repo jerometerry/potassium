@@ -34,10 +34,10 @@ namespace Potassium.Core
             this.Observe(source.Clone(), value);
         }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Potassium.Core.Behavior`1"/> class.
-		/// </summary>
-		/// <remarks>Caller assumes responsibility for calling Observes</remarks>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Potassium.Core.Behavior`1"/> class.
+        /// </summary>
+        /// <remarks>Caller assumes responsibility for calling Observes</remarks>
         protected Behavior()
         {
         }
@@ -78,7 +78,7 @@ namespace Potassium.Core
             // since the Behaviors hold their updted values.
             var m1 = this.source.Map(t => Maybe<T>.Nothing);
             var m2 = behavior.source.Map(t => Maybe<T>.Nothing);
-            
+
             // Merge the firings of the underlying Events mapped to nothing into a single event
             var merged = m1 | m2;
 
@@ -88,7 +88,7 @@ namespace Potassium.Core
             // Create a new Event that fires the combined new values of the two behaviors.
             // Use NewValue because Value isn't updated until the Transaction completes.
             var mapped = last.Map(t => combine(this.NewValue, behavior.NewValue));
-            
+
             // Convert mapped into a Behavior, starting the the combined initial values 
             // of the two Behaviors
             var b = mapped.Hold(combine(this.Value, behavior.Value));
@@ -216,7 +216,7 @@ namespace Potassium.Core
                 this.source.Dispose();
                 this.source = null;
             }
-            
+
             base.Dispose(disposing);
         }
 
