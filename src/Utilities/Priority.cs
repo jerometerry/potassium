@@ -91,7 +91,7 @@ namespace Potassium.Utilities
         /// Determine if the current Priority has a higher priority than the given Priority
         /// </summary>
         /// <param name="priority">The Priority to compare priority to</param>
-        /// <returns>True if the current Eank outranks the given Priority, false otherwise</returns>
+        /// <returns>True if the current Priority outranks the given Priority, false otherwise</returns>
         public bool Outranks(Priority priority)
         {
             return this.value > priority.value;

@@ -21,7 +21,7 @@
         /// Constructs a new Hz from the given Hertz value, as a double
         /// </summary>
         /// <param name="hz">The frequency, in Hertz</param>
-        /// <returns>The Hz frequence for the given Hertz value</returns>
+        /// <returns>The Hz frequency for the given Hertz value</returns>
         public static Hz Hz(double hz)
         {
             return new Hz(hz);
@@ -31,7 +31,7 @@
         /// Constructs a new Hz from the given Hertz value
         /// </summary>
         /// <param name="hz">The frequency, in Hertz, as a decimal</param>
-        /// <returns>The Hz frequence for the given Hertz value</returns>
+        /// <returns>The Hz frequency for the given Hertz value</returns>
         public static Hz Hz(decimal hz)
         {
             return new Hz(Convert.ToDouble(hz));

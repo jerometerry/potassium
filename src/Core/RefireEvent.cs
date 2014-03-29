@@ -5,7 +5,7 @@ namespace Potassium.Core
     using Potassium.Internal;
 
     /// <summary>
-    /// RefireEvent is an Event that refires values that have been fired in the current
+    /// RefireEvent is an Event that re-fires values that have been fired in the current
     /// Transaction when subscribed to.
     /// </summary>
     /// <typeparam name="T">The type of values fired through the Event</typeparam>
@@ -20,7 +20,7 @@ namespace Potassium.Core
 
         /// <summary>
         /// Fire the given value to all registered callbacks, and stores the firing 
-        /// to be refired to any subscribers in the same transaction.
+        /// to be re-fired to any subscribers in the same transaction.
         /// </summary>
         /// <param name="transaction">The transaction to invoke the callbacks on</param>
         /// <param name="value">The value to fire to registered callbacks</param>
@@ -46,7 +46,7 @@ namespace Potassium.Core
         }
 
         /// <summary>
-        /// Refires any values fired in the current transaction to the given subscription
+        /// Re-fires any values fired in the current transaction to the given subscription
         /// </summary>
         /// <param name="subscription">The newly created subscription</param>
         /// <param name="transaction">The current transaction</param>

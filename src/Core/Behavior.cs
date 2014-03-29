@@ -85,7 +85,7 @@ namespace Potassium.Core
         public Behavior<TC> Combine<TB, TC>(Behavior<TB> behavior, Func<T, TB, TC> combine)
         {
             // Listen for firings of the Behaviors. Don't care what the fired values are, 
-            // since the Behaviors hold their updted values.
+            // since the Behaviors hold their updated values.
             var m1 = this.source.Map(t => Maybe<T>.Nothing);
             var m2 = behavior.source.Map(t => Maybe<T>.Nothing);
 

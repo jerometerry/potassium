@@ -5,13 +5,13 @@
 
     /// <summary>
     /// ApplyEvent applies a behavior of values to a behavior of functions, firing the computed
-    /// value whenver either of the behavior fires.
+    /// value whenever either of the behavior fires.
     /// </summary>
     /// <typeparam name="TA">The type of value fired through the valueBehavior Behavior</typeparam>
     /// <typeparam name="TB">The return type of the Behavior partial function</typeparam>
     /// <remarks>
     /// The computed value fired on the current ApplyEvent is computed by applying the current
-    /// value of the behavior of values to the current functio of the behavior of functions.
+    /// value of the behavior of values to the current function of the behavior of functions.
     /// 
     /// ApplyEvent is the basis for all lifting operations.</remarks>
     internal sealed class ApplyEvent<TA, TB> : FirableEvent<TB>

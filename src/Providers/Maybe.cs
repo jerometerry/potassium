@@ -129,9 +129,9 @@
         }
 
         /// <summary>
-        /// Gets the hashcode of the current Maybe
+        /// Gets the hash code of the current Maybe
         /// </summary>
-        /// <returns>The hashcode of the underlying value if there is one, zero otherwise.</returns>
+        /// <returns>The hash code of the underlying value if there is one, zero otherwise.</returns>
         public override int GetHashCode()
         {
             return !HasValue ? 0 : Value.GetHashCode();

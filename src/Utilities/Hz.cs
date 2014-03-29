@@ -8,12 +8,12 @@
     public class Hz
     {
         /// <summary>
-        /// Gets the maximum value of Hz (1000 hz).
+        /// Gets the maximum value of Hz (1000 Hz).
         /// </summary>
         public static readonly Hz Max = new Hz(1000);
         
         /// <summary>
-        /// Constructs a new Hz, with the given frequence in Hertz
+        /// Constructs a new Hz, with the given frequency in Hertz
         /// </summary>
         /// <param name="hz"></param>
         public Hz(double hz)

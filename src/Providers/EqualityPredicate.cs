@@ -4,7 +4,7 @@
     /// EqualityPredicate is a Predicate that (lazily) determines if the value of an IProvider is equal to a given constant value
     /// </summary>
     /// <typeparam name="T">The underlying type of the Predicate</typeparam>
-    /// <remarks>EqualityPredicate is lazy in that the equality check doesn't happen until the Value (bool) is requestd.</remarks>
+    /// <remarks>EqualityPredicate is lazy in that the equality check doesn't happen until the Value (bool) is requested.</remarks>
     public class EqualityPredicate<T> : Predicate
     {
         private IProvider<T> provider;
