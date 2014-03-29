@@ -25,7 +25,24 @@
         /// <param name="action"></param>
         public void Dispatch(Action action)
         {
-            control.Invoke((MethodInvoker)(() => action()));
+            if (!control.IsDisposed && !control.Disposing)
+            { 
+                SafeInvoke(() => control.Invoke((MethodInvoker)(() => action())));
+            }
+        }
+
+        private void SafeInvoke(Action action)
+        {
+            try
+            {
+                if (!control.IsDisposed && !control.Disposing)
+                { 
+                    action();
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+            }
         }
     }
 }
