@@ -30,7 +30,7 @@ namespace Potassium.Core
         /// <param name="value">The initial value of the Behavior</param>
         public Behavior(T value, Event<T> source)
         {
-            this.Observe(source.Clone(), value);
+            this.Observe(source.Repeat(), value);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace Potassium.Core
         /// <returns>An Event that fires whenever the underlying Event fires</returns>
         public Event<T> ToEvent()
         {
-            return this.source.Clone();
+            return this.source.Repeat();
         }
 
         internal Event<T> LastFiring()

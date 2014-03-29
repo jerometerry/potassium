@@ -51,17 +51,6 @@
         }
 
         /// <summary>
-        /// Create a new Event that fires whenever the current Event fires.
-        /// </summary>
-        /// <returns>A new Event that fires whenever the source Event fires.</returns>
-        public Event<T> Clone()
-        {
-            var repeater = new EventRepeater<T>();
-            repeater.Repeat(this);
-            return repeater;
-        }
-
-        /// <summary>
         /// Push each event occurrence onto a new transaction.
         /// </summary>
         /// <returns>An event that is fired with the lowest priority in the current Transaction the current Event is fired in.</returns>
@@ -163,6 +152,15 @@
         public Event<T> Once()
         {
             return new OnceEvent<T>(this);
+        }
+
+        /// <summary>
+        /// Create a new Event that fires whenever the current Event fires.
+        /// </summary>
+        /// <returns>A new Event that fires whenever the source Event fires.</returns>
+        public Event<T> Repeat()
+        {
+            return new EventRepeater<T>(this);
         }
 
         /// <summary>

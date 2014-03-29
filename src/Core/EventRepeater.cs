@@ -13,6 +13,23 @@
         private ISubscription<T> subscription;
 
         /// <summary>
+        /// Constructs a new EventRepeater, that's not yet repeating any Events.
+        /// </summary>
+        /// <remarks>Call the Repeat method to start Repeating another Event</remarks>
+        public EventRepeater()
+        {
+        }
+
+        /// <summary>
+        /// Constructs a new EventRepeater, repeating the specified Event
+        /// </summary>
+        /// <param name="source">The Event to repeat</param>
+        public EventRepeater(Observable<T> source)
+        {
+            this.Repeat(source);
+        }
+
+        /// <summary>
         /// Firings on the given Event will be forwarded to the current Event
         /// </summary>
         /// <param name="source">Event who's firings will be looped to the current Event</param>
