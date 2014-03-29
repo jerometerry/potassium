@@ -5,9 +5,8 @@
     internal class HoldBehavior<T> : Behavior<T>
     {
         public HoldBehavior(Observable<T> source, T initValue, Transaction t)
-            : base(initValue, new LastFiringEvent<T>(source, t))
         {
-            this.RegisterSource();
+            this.Observe(new LastFiringEvent<T>(source, t), initValue);
         }
     }
 }

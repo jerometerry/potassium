@@ -1,7 +1,6 @@
 ﻿namespace Potassium.Providers
 {
     using System.Net;
-    using Potassium.Core;
     
     /// <summary>
     /// WebResource is a IProvider (of type string) who's value is computed by downloading content from the web (e.g. a REST web service returning JSON data).

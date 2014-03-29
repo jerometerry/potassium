@@ -11,8 +11,6 @@ namespace Potassium.Internal
     /// <typeparam name="T">The type of value fired through the Observable</typeparam>
     internal sealed class ObservedValue<T> : FirableEvent<T>
     {
-        private Observable<T> source;
-
         /// <summary>
         /// Holding tank for updates from the underlying Observable, waiting to be 
         /// moved into the current value.
@@ -42,9 +40,8 @@ namespace Potassium.Internal
         /// <param name="transaction">Transaction used to subscribe to the source</param>
         public ObservedValue(T initValue, Observable<T> source, Transaction transaction)
         {
-            this.source = source;
             this.Value = initValue;
-            this.subscription = this.Subscribe(transaction);
+            this.subscription = this.Subscribe(source, transaction);
         }
 
         /// <summary>
@@ -108,7 +105,6 @@ namespace Potassium.Internal
                 this.subscription = null;
             }
 
-            this.source = null;
             base.Dispose(disposing);
         }
 
@@ -124,12 +120,13 @@ namespace Potassium.Internal
         /// <summary>
         /// Listen to the underlying event for firings
         /// </summary>
+        /// <param name="source">The source</param>
         /// <param name="transaction">The transaction to schedule the subscription on.</param>
         /// <returns>The ISubscription registered with the underlying event.</returns>
-        private ISubscription<T> Subscribe(Transaction transaction)
+        private ISubscription<T> Subscribe(Observable<T> source, Transaction transaction)
         {
             var observer = new Observer<T>(this.ScheduleApplyValueUpdate);
-            var result = this.source.Subscribe(observer, Priority.Max, transaction);
+            var result = source.Subscribe(observer, Priority.Max, transaction);
             return result;
         }
     }

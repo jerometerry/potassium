@@ -1,7 +1,6 @@
 namespace Potassium.Internal
 {
     using System;
-    using Potassium.Core;
     using Potassium.Utilities;
 
     internal sealed class PrioritizedAction : IComparable<PrioritizedAction>

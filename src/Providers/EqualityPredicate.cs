@@ -1,7 +1,5 @@
 ﻿namespace Potassium.Providers
 {
-    using Potassium.Core;
-    
     /// <summary>
     /// EqualityPredicate is a Predicate that (lazily) determines if the value of an IProvider is equal to a given constant value
     /// </summary>

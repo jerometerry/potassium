@@ -2,7 +2,6 @@
 {
     using System;
     using System.Threading;
-    using Potassium.Core;
 
     /// <summary>
     /// A TransactionContext is responsible for obtaining a Transaction

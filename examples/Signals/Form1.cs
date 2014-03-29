@@ -112,6 +112,9 @@
             sineSignal.Dispose();
             sineSignal = null;
 
+            cosineSignal.Dispose();
+            cosineSignal = null;
+
             signalTickCount.Dispose();
             signalTickCount = null;
 

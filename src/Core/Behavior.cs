@@ -1,6 +1,7 @@
 namespace Potassium.Core
 {
     using System;
+    using Potassium.Extensions;
     using Potassium.Internal;
     using Potassium.Providers;
     using Potassium.Utilities;
@@ -19,9 +20,8 @@ namespace Potassium.Core
         /// </summary>
         /// <param name="value">The value of the Behavior</param>
         public Behavior(T value)
-            : this(value, new Event<T>())
         {
-            this.RegisterSource();
+            this.Observe(new Event<T>(), value);
         }
 
         /// <summary>
@@ -31,8 +31,11 @@ namespace Potassium.Core
         /// <param name="value">The initial value of the Behavior</param>
         public Behavior(T value, Event<T> source)
         {
-            this.source = source;
-            this.observedValue = Transaction.Start(t => new ObservedValue<T>(value, source, t));
+            this.Observe(source.Clone(), value);
+        }
+
+        protected Behavior()
+        {
         }
 
         /// <summary>
@@ -134,6 +137,15 @@ namespace Potassium.Core
             return s;
         }
 
+        /// <summary>
+        /// Convert the current Behavior to an Event
+        /// </summary>
+        /// <returns>An Event that fires whenever the underlying Event fires</returns>
+        public Event<T> ToEvent()
+        {
+            return this.source.Clone();
+        }
+
         internal Event<T> LastFiring()
         {
             return this.source.LastFiring();
@@ -165,9 +177,21 @@ namespace Potassium.Core
             return s;
         }
 
-        protected void RegisterSource()
+        /// <summary>
+        /// Listen to the source for updates
+        /// </summary>
+        /// <param name="src">The source</param>
+        /// <param name="value">The initial value of the Behavior</param>
+        /// <remarks>The source Event will be disposed when the current Behavior is disposed. </remarks>
+        protected void Observe(Event<T> src, T value)
         {
-            this.Register(this.source);
+            if (this.source != null)
+            {
+                throw new ApplicationException("The Behavior is already observing");
+            }
+
+            this.source = src;
+            this.observedValue = Transaction.Start(t => new ObservedValue<T>(value, this.source, t));
         }
 
         /// <summary>
@@ -183,8 +207,12 @@ namespace Potassium.Core
                 observedValue = null;
             }
 
-            this.source = null;
-
+            if (this.source != null)
+            {
+                this.source.Dispose();
+                this.source = null;
+            }
+            
             base.Dispose(disposing);
         }
 

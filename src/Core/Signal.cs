@@ -1,5 +1,6 @@
 ﻿namespace Potassium.Core
 {
+    using System;
     using System.Threading;
     using Potassium.Dispatchers;
     using Potassium.Providers;
@@ -148,7 +149,7 @@
 
         private void SetTimerInterval()
         {
-            if (this.frequency.Value == 0.0)
+            if (Math.Abs(this.frequency.Value) <= 1E-15)
             {
                 this.timer.Change(Timeout.Infinite, Timeout.Infinite);
             }

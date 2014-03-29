@@ -2,7 +2,6 @@
 {
     using System;
     using Potassium.Core;
-    using Potassium.Internal;
 
     /// <summary>
     /// Event extension methods
@@ -40,6 +39,19 @@
             result.Register(accumulationEvent);
 
             return result;
+        }
+
+        /// <summary>
+        /// Create a new Event that fires whenver the current Event fires.
+        /// </summary>
+        /// <typeparam name="T">The type of the source Event</typeparam>
+        /// <param name="source">The source Event</param>
+        /// <returns>A new Event that fires whenver the source Event fires.</returns>
+        public static Event<T> Clone<T>(this Event<T> source)
+        {
+            var feed = new EventFeed<T>();
+            feed.Feed(source);
+            return feed;
         }
 
         /// <summary>
