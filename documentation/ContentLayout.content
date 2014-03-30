@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Topics>
-  <Topic id="89e8c167-b620-4a41-9657-af64fb0101ce" visible="True" isDefault="true" isExpanded="true" isSelected="true" title="Potassium Functional Reactive Programming Library">
+  <Topic id="89e8c167-b620-4a41-9657-af64fb0101ce" visible="True" isDefault="true" isExpanded="true" title="Potassium Functional Reactive Programming Library">
     <HelpKeywords>
       <HelpKeyword index="K" term="Welcome" />
     </HelpKeywords>
@@ -43,6 +43,11 @@
     <Topic id="d22a4d4f-76d4-419c-80d5-6fee6cc048b8" visible="True" title="Version 0.1.4.0">
       <HelpKeywords>
         <HelpKeyword index="K" term="version, 0.1.4.0" />
+      </HelpKeywords>
+    </Topic>
+    <Topic id="63a17cd1-ff1a-4bfe-bce3-de9c403e960a" visible="True" isSelected="true" title="Version 0.1.5.0">
+      <HelpKeywords>
+        <HelpKeyword index="K" term="version, 0.1.5.0" />
       </HelpKeywords>
     </Topic>
   </Topic>

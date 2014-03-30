@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="63a17cd1-ff1a-4bfe-bce3-de9c403e960a" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>
+        Version 0.1.5 was released on Monday, March 31, 2014.
+      </para>
+    </introduction>
+
+    <section>
+      <title>Changes in This Release</title>
+      <content>
+
+        <list class="bullet">
+
+          <listItem>
+            <para>Added Behavior copy constructor</para>
+          </listItem>
+
+          <listItem>
+            <para>Added method Behavior.ToEvent()</para>
+          </listItem>
+
+          <listItem>
+            <para>Added back Behavior.Values(), but renamed to ToEventWithInitialFiring</para>
+          </listItem>
+
+          <listItem>
+            <para>Behavior.Lift extension method accepting a constant value was renamed to ToBehavior</para>
+          </listItem>
+
+          <listItem>
+            <para>EventFeed renamed to EventRepeater</para>
+          </listItem>
+
+          <listItem>
+            <para>Added method Event.Repeat, that creates a new EventRepeater, repeating the current Event. This could be thought of as cloning an Event.</para>
+          </listItem>
+
+          <listItem>
+            <para>Removed the Potassium.Extensions namesapce, moving the extension methods into the existing namespaces.</para>
+          </listItem>
+
+          <listItem>
+            <para>Added error handling to the UiThreadDispatcher, checking for object disposed exceptions</para>
+          </listItem>
+          
+          <listItem>
+            <para>Added FRP Resources page to the docuemtation</para>
+          </listItem>
+
+        </list>
+
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="ffc5eed7-48fe-4cc5-bb25-9bf0131edb45" />
+    </relatedTopics>
+    
+  </developerConceptualDocument>
+</topic>
