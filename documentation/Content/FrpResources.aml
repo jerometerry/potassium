@@ -9,7 +9,7 @@
     </introduction>
 
     <section>
-      <title>Links</title>
+      <title>Publications</title>
       <content>
         <list class="bullet">
           <listItem>
@@ -19,9 +19,16 @@
                 <linkUri>http://conal.net/papers/icfp97/</linkUri>
               </externalLink>
             </para>
+          </listItem>
 
+          <listItem>
             <para>
-              This paper introduced the concepts of Functional Reactive Programming.
+              <externalLink>
+                <linkText>
+                  The Haskell School of Expression: Learning Functional Programming through Multimedia, Paul Hudak, Cambridge University Press, New York, 2000
+                </linkText>
+                <linkUri>http://www.cs.yale.edu/homes/hudak/SOE/index.htm</linkUri>
+              </externalLink>
             </para>
           </listItem>
 
@@ -33,6 +40,36 @@
                   Language Design and Implementation
                 </linkText>
                 <linkUri>http://haskell.cs.yale.edu/wp-content/uploads/2011/02/frp-1st.pdf</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>
+                  Arrows, Robots, and Functional Reactive Programming, Paul Hudak et. al., Summer School on Advanced Functional Programming 2002, Oxford University
+                </linkText>
+                <linkUri>http://haskell.cs.yale.edu/wp-content/uploads/2011/02/oxford02.pdf</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>
+                  A Brief Introduction to Functional Reactive Programming and Yampa, Henrik Nilsson, January 2007</linkText>
+                <linkUri>http://channel9.msdn.com/shows/Going+Deep/Brian-Beckman-Dont-fear-the-Monads/</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Don't fear the Monad, Brian Beckman, November 2007</linkText>
+                <linkUri>http://channel9.msdn.com/shows/Going+Deep/Brian-Beckman-Dont-fear-the-Monads/</linkUri>
               </externalLink>
             </para>
           </listItem>
@@ -58,8 +95,214 @@
           <listItem>
             <para>
               <externalLink>
+                <linkText>Conal Elliott's Stack Overflow answer to "What is functional reactive programming?", June 2009</linkText>
+                <linkUri>http://stackoverflow.com/questions/1028250/what-is-functional-reactive-programming</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Reactive Functional Programming - From Models to Classrooms, Shriram Krishnamurthi, May 2011</linkText>
+                <linkUri>https://www.youtube.com/watch?v=y9xudo3C1Cw</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Monads and Gonads, Douglas Crockford, YUIConf, December 2012</linkText>
+                <linkUri>https://www.youtube.com/watch?v=dkZFtimgAcM</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Monads and Gonads, Douglas Crockford, Google Tech Talk, January 2013</linkText>
+                <linkUri>https://www.youtube.com/watch?v=b0EF0VTs9Dc</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>An Introduction to Functional Reactive Programming, Chris Meiklejohn, May 2013</linkText>
+                <linkUri>https://www.youtube.com/watch?v=y9xudo3C1Cw</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Reactive Programming as an Emerging Trend, Dio Synodinos, InfoQ, 2013</linkText>
+                <linkUri>http://www.infoq.com/news/2013/08/reactive-programming-emerging</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Why (Functional) Reactive Programming, Stephen Blackheath, December 2013</linkText>
+                <linkUri>http://blog.reactiveprogramming.org/?p=136</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+        </list>
+      </content>
+    </section>
+
+    <section>
+      <title>Links</title>
+      <content>
+        <list class="bullet">
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Yale Haskell Group</linkText>
+                <linkUri>http://haskell.cs.yale.edu/</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Haskell Wiki</linkText>
+                <linkUri>http://www.haskell.org/haskellwiki</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Haskell Wiki Books</linkText>
+                <linkUri>http://en.wikibooks.org/wiki/Haskell</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
                 <linkText>Functional Reactive Programming, Haskell Wiki</linkText>
                 <linkUri>http://www.haskell.org/haskellwiki/Functional_Reactive_Programming</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Arrow-based Functional Reactive Programming, Haskell Wiki</linkText>
+                <linkUri>http://www.haskell.org/haskellwiki/Arrows-based_Functional_Reactive_Programming</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>FRP explanation using reactive-banana, Haskell Wiki</linkText>
+                <linkUri>http://www.haskell.org/haskellwiki/FRP_explanation_using_reactive-banana</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Yampa, Haskell Wiki</linkText>
+                <linkUri>http://www.haskell.org/haskellwiki/Yampa</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Lifting, Haskell Wiki</linkText>
+                <linkUri>http://www.haskell.org/haskellwiki/Lifting</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Understanding Arrows, Haskell Wiki</linkText>
+                <linkUri>http://en.m.wikibooks.org/wiki/Haskell/Understanding_arrows</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Learn You a Haskell for Great Good!</linkText>
+                <linkUri>http://learnyouahaskell.com/</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Functors, Applicative Functors and Monoids</linkText>
+                <linkUri>http://learnyouahaskell.com/functors-applicative-functors-and-monoids</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Functors, Applicatives, And Monads In Pictures</linkText>
+                <linkUri>http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Monads in Small Bits - Part 1 - Functors</linkText>
+                <linkUri>http://www.leonardoborges.com/writings/2012/11/30/monads-in-small-bites-part-i-functors/</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Monads in Small Bites - Part 2 - Applicative Functors</linkText>
+                <linkUri>http://www.leonardoborges.com/writings/2012/12/02/monads-in-small-bites-part-ii-applicative-functors/</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Monads in Small Bites - Part 3 - Monoids</linkText>
+                <linkUri>http://www.leonardoborges.com/writings/2012/12/05/monads-in-small-bites-part-iii-monoids/</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Monads in Small Bites - Part 4 - Monads</linkText>
+                <linkUri>http://www.leonardoborges.com/writings/2012/12/08/monads-in-small-bites-part-iv-monads/</linkUri>
               </externalLink>
             </para>
           </listItem>
@@ -85,22 +328,11 @@
           <listItem>
             <para>
               <externalLink>
-                <linkText>Stephen Blackheath's Talk on FRP</linkText>
-                <linkUri>http://blog.reactiveprogramming.org/?p=136</linkUri>
-              </externalLink>
-            </para>
-          </listItem>
-
-          <listItem>
-            <para>
-              <externalLink>
                 <linkText>Flapjax on GitHub</linkText>
                 <linkUri>https://github.com/brownplt/flapjax/</linkUri>
               </externalLink>
             </para>
           </listItem>
-
-          
 
           <listItem>
             <para>
@@ -110,7 +342,16 @@
               </externalLink>
             </para>
           </listItem>
-          
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Rx Design Guidelines</linkText>
+                <linkUri>http://go.microsoft.com/fwlink/?LinkID=205219</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
           <listItem>
             <para>
               <externalLink>
