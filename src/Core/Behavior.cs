@@ -34,7 +34,7 @@ namespace Potassium.Core
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Potassium.Core.Behavior`1"/> class.
+        /// Initializes a new instance of the Behavior class.
         /// </summary>
         /// <remarks>Caller assumes responsibility for calling Observes</remarks>
         protected Behavior()
@@ -145,19 +145,28 @@ namespace Potassium.Core
         /// <returns>The subscription</returns>
         public ISubscription<T> SubscribeWithInitialFire(Action<T> callback)
         {
-            var vals = this.Values();
+            var vals = this.ToEventWithInitialFire();
             var s = (Subscription<T>)vals.Subscribe(callback);
             s.Register(vals);
             return s;
         }
 
         /// <summary>
-        /// Convert the current Behavior to an Event
+        /// Create an Event that fires whenever the Behavior updates.
         /// </summary>
         /// <returns>An Event that fires whenever the underlying Event fires</returns>
         public Event<T> ToEvent()
         {
             return this.source.Repeat();
+        }
+
+        /// <summary>
+        /// Creates an Event that fires the Behaviors initial value, and whenever the Behaviors value changes.
+        /// </summary>
+        /// <returns>The event streams</returns>
+        public Event<T> ToEventWithInitialFire()
+        {
+            return Transaction.Start(t => new BehaviorLastValueEvent<T>(this, t));
         }
 
         internal Event<T> LastFiring()
@@ -177,7 +186,7 @@ namespace Potassium.Core
 
         internal ISubscription<T> SubscribeWithInitialFire(Observer<T> observer, Priority subscriptionRank)
         {
-            var vals = this.Values();
+            var vals = this.ToEventWithInitialFire();
             var s = (Subscription<T>)vals.Subscribe(observer, subscriptionRank);
             s.Register(vals);
             return s;
@@ -185,7 +194,7 @@ namespace Potassium.Core
 
         internal ISubscription<T> SubscribeWithInitialFire(Observer<T> observer, Priority superior, Transaction transaction)
         {
-            var vals = this.Values();
+            var vals = this.ToEventWithInitialFire();
             var s = (Subscription<T>)vals.Subscribe(observer, superior, transaction);
             s.Register(vals);
             return s;
@@ -228,15 +237,6 @@ namespace Potassium.Core
             }
 
             base.Dispose(disposing);
-        }
-
-        /// <summary>
-        /// Get an Event that fires the initial Behaviors value, and whenever the Behaviors value changes.
-        /// </summary>
-        /// <returns>The event streams</returns>
-        private Event<T> Values()
-        {
-            return Transaction.Start(t => new BehaviorLastValueEvent<T>(this, t));
         }
     }
 }

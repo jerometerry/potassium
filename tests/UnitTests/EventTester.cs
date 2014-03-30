@@ -24,6 +24,39 @@ namespace Potassium.Tests
         }
 
         [Test]
+        public void TestRepeat1()
+        {
+            FirableEvent<int> src = new FirableEvent<int>();
+            var r = src.Repeat();
+            var o = new List<int>();
+            var s = r.Subscribe(o.Add);
+            src.Fire(1);
+            src.Fire(2);
+            src.Fire(3);
+            AssertArraysEqual(Arrays<int>.AsList(1,2,3), o);
+            s.Dispose();
+            r.Dispose();
+            src.Dispose();
+        }
+
+        [Test]
+        public void TestRepeat2()
+        {
+            var ea = new FirableEvent<int>();
+            var eb = new EventRepeater<int>();
+            var evt = ea.Map(x => x % 10);
+            var ec = evt.Merge(eb).Coalesce((x, y) => x + y);
+            var ebO = ea.Map(x => x / 10) & (x => x != 0);
+            eb.Repeat(ebO);
+            var o = new List<int>();
+            var l = ec.Subscribe(o.Add);
+            ea.Fire(2);
+            ea.Fire(52);
+            l.Dispose();
+            AssertArraysEqual(Arrays<int>.AsList(2, 7), o);
+        }
+
+        [Test]
         public void TestMap()
         {
             var e = new FirableEvent<int>();
@@ -103,23 +136,6 @@ namespace Potassium.Tests
             e.Fire("peach");
             l.Dispose();
             AssertArraysEqual(Arrays<string>.AsList("tomato", "peach"), o);
-        }
-
-        [Test]
-        public void TestLoopEvent()
-        {
-            var ea = new FirableEvent<int>();
-            var eb = new EventRepeater<int>();
-            var evt = ea.Map(x => x % 10);
-            var ec = evt.Merge(eb).Coalesce((x, y) => x + y);
-            var ebO = ea.Map(x => x / 10) & (x => x != 0);
-            eb.Repeat(ebO);
-            var o = new List<int>();
-            var l = ec.Subscribe(o.Add);
-            ea.Fire(2);
-            ea.Fire(52);
-            l.Dispose();
-            AssertArraysEqual(Arrays<int>.AsList(2, 7), o);
         }
 
         [Test]
