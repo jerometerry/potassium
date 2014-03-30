@@ -1,14 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Topics>
-  <Topic id="89e8c167-b620-4a41-9657-af64fb0101ce" visible="True" isDefault="true" title="Potassium Functional Reactive Programming Library">
+  <Topic id="89e8c167-b620-4a41-9657-af64fb0101ce" visible="True" isDefault="true" isExpanded="true" isSelected="true" title="Potassium Functional Reactive Programming Library">
     <HelpKeywords>
       <HelpKeyword index="K" term="Welcome" />
     </HelpKeywords>
-  </Topic>
-  <Topic id="7cbbe252-1f3c-4fc4-af35-0fe0c5a54edb" visible="True" isSelected="true" title="FRP Resources">
-    <HelpKeywords>
-      <HelpKeyword index="K" term="Learning, Resources" />
-    </HelpKeywords>
+    <Topic id="eca1751c-497d-472f-8734-07b05a0db91a" visible="True" title="Key Operations">
+      <HelpKeywords>
+        <HelpKeyword index="K" term="Key,Operations" />
+      </HelpKeywords>
+    </Topic>
+    <Topic id="94b28a86-db26-45b3-b4f0-264d507ef1ea" visible="True" title="Transactions">
+      <HelpKeywords>
+        <HelpKeyword index="K" term="Transactions" />
+      </HelpKeywords>
+    </Topic>
+    <Topic id="7cbbe252-1f3c-4fc4-af35-0fe0c5a54edb" visible="True" title="FRP Resources" />
   </Topic>
   <Topic id="ffc5eed7-48fe-4cc5-bb25-9bf0131edb45" visible="True" isExpanded="true" title="Version History">
     <HelpKeywords>

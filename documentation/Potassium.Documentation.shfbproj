@@ -27,8 +27,8 @@
       <Argument Key="maxVersionParts" Value="" xmlns="" />
     </TransformComponentArguments>
     <DocumentationSources>
-      <DocumentationSource sourceFile="..\src\bin\Debug\Potassium.dll" />
-      <DocumentationSource sourceFile="..\src\bin\Debug\Potassium.xml" />
+      <DocumentationSource sourceFile="..\src\bin\$(Configuration)\Potassium.dll" />
+      <DocumentationSource sourceFile="..\src\bin\$(Configuration)\Potassium.xml" />
     </DocumentationSources>
     <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
     <HelpFileFormat>HtmlHelp1, Website</HelpFileFormat>
@@ -49,10 +49,11 @@
     <ContentPlacement>AboveNamespaces</ContentPlacement>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="(global)" isDocumented="False" />
-<NamespaceSummaryItem name="Potassium.Core" isDocumented="True">Potassium.Core contains the main classes and interfaces for Potassium</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Potassium.Dispatchers" isDocumented="True">Potassium.Dispatchers contains Dispatchers used to invoke methods on different threads.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Potassium.Providers" isDocumented="True">Potassium.Providers contains monadic like wrapper classes that provide values to some methods of Events and Behaviors.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Potassium.Utilities" isDocumented="True">Potassium.Utility contains helper classes for Potassium.</NamespaceSummaryItem></NamespaceSummaries>
+      <NamespaceSummaryItem name="Potassium.Core" isDocumented="True">Potassium.Core contains the main classes and interfaces for Potassium</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Potassium.Dispatchers" isDocumented="True">Potassium.Dispatchers contains Dispatchers used to invoke methods on different threads.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Potassium.Providers" isDocumented="True">Potassium.Providers contains monadic like wrapper classes that provide values to some methods of Events and Behaviors.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Potassium.Utilities" isDocumented="True">Potassium.Utility contains helper classes for Potassium.</NamespaceSummaryItem>
+    </NamespaceSummaries>
     <VisibleItems>None</VisibleItems>
     <FeedbackEMailAddress>jerome.l.terry%40gmail.com</FeedbackEMailAddress>
     <FeedbackEMailLinkText>Jerome Terry</FeedbackEMailLinkText>
@@ -83,6 +84,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\FrpResources.aml" />
+    <None Include="Content\KeyOperations.aml" />
+    <None Include="Content\Transactions.aml" />
     <None Include="Content\VersionHistory\v0.1.0.0.aml" />
     <None Include="Content\VersionHistory\v0.1.1.0.aml" />
     <None Include="Content\VersionHistory\v0.1.2.0.aml" />

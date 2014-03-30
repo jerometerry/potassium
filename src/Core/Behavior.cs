@@ -24,6 +24,15 @@ namespace Potassium.Core
         }
 
         /// <summary>
+        /// Creates a new Behavior with the Value of given Behavior, that updates 
+        /// whenever the given Behavior updates
+        /// </summary>
+        public Behavior(Behavior<T> behavior)
+            : this(behavior.Value, behavior.source)
+        {
+        }
+
+        /// <summary>
         /// Create a behavior with a time varying value from an Event and an initial value
         /// </summary>
         /// <param name="source">The Observable to listen for updates from</param>
@@ -61,16 +70,6 @@ namespace Potassium.Core
             {
                 return this.observedValue.NewValue;
             }
-        }
-
-        /// <summary>
-        /// Creates a new Behavior with the Value of current Behavior, that updates 
-        /// whenever the current Behavior updates
-        /// </summary>
-        /// <returns>The clone</returns>
-        public Behavior<T> Clone()
-        {
-            return new Behavior<T>(this.Value, this.source);
         }
 
         /// <summary>
