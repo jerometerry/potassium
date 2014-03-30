@@ -82,7 +82,7 @@
     <Folder Include="Media" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\LearningResources.aml" />
+    <None Include="Content\FrpResources.aml" />
     <None Include="Content\VersionHistory\v0.1.0.0.aml" />
     <None Include="Content\VersionHistory\v0.1.1.0.aml" />
     <None Include="Content\VersionHistory\v0.1.2.0.aml" />

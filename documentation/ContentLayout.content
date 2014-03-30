@@ -1,10 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Topics>
-  <Topic id="89e8c167-b620-4a41-9657-af64fb0101ce" visible="True" isDefault="true" isExpanded="true" title="Potassium Functional Reactive Programming Library">
+  <Topic id="89e8c167-b620-4a41-9657-af64fb0101ce" visible="True" isDefault="true" title="Potassium Functional Reactive Programming Library">
     <HelpKeywords>
       <HelpKeyword index="K" term="Welcome" />
     </HelpKeywords>
-    <Topic id="7cbbe252-1f3c-4fc4-af35-0fe0c5a54edb" visible="True" isSelected="true" title="Learning Resources" />
+  </Topic>
+  <Topic id="7cbbe252-1f3c-4fc4-af35-0fe0c5a54edb" visible="True" isSelected="true" title="FRP Resources">
+    <HelpKeywords>
+      <HelpKeyword index="K" term="Learning, Resources" />
+    </HelpKeywords>
   </Topic>
   <Topic id="ffc5eed7-48fe-4cc5-bb25-9bf0131edb45" visible="True" isExpanded="true" title="Version History">
     <HelpKeywords>

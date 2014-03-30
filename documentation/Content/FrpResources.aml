@@ -4,7 +4,7 @@
 
     <introduction>
       <para>
-        Learning Resources
+        Functional Reactive Programming Resources
       </para>
     </introduction>
 
@@ -15,8 +15,42 @@
           <listItem>
             <para>
               <externalLink>
-                <linkText>Push-Pull Functional Reactive Programming</linkText>
+                <linkText>Functional Reactive Animation, Conal Elliott and Paul Hudak, ICFP 1997</linkText>
+                <linkUri>http://conal.net/papers/icfp97/</linkUri>
+              </externalLink>
+            </para>
+
+            <para>
+              This paper introduced the concepts of Functional Reactive Programming.
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>
+                  Functional Reactive Programming from First Principles, Zhanyong Wan and Paul Hudak, ACM SIGPLAN 2000, Conference on Programming
+                  Language Design and Implementation
+                </linkText>
+                <linkUri>http://haskell.cs.yale.edu/wp-content/uploads/2011/02/frp-1st.pdf</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Push-Pull Functional Reactive Programming, Conal Elliott, Haskell Symposium 2009</linkText>
                 <linkUri>http://conal.net/papers/push-pull-frp/</linkUri>
+              </externalLink>
+            </para>
+          </listItem>
+
+          <listItem>
+            <para>
+              <externalLink>
+                <linkText>Flapjax: A Programming Language for Ajax Applications, Shriram Krishnamurthi et al., OOPSLA 2009</linkText>
+                <linkUri>http://cs.brown.edu/~sk/Publications/Papers/Published/mgbcgbk-flapjax/paper.pdf</linkUri>
               </externalLink>
             </para>
           </listItem>
@@ -26,15 +60,6 @@
               <externalLink>
                 <linkText>Functional Reactive Programming, Haskell Wiki</linkText>
                 <linkUri>http://www.haskell.org/haskellwiki/Functional_Reactive_Programming</linkUri>
-              </externalLink>
-            </para>
-          </listItem>
-
-          <listItem>
-            <para>
-              <externalLink>
-                <linkText>Functional Reactive Programming from First Principles</linkText>
-                <linkUri>http://haskell.cs.yale.edu/wp-content/uploads/2011/02/frp-1st.pdf</linkUri>
               </externalLink>
             </para>
           </listItem>
@@ -75,14 +100,7 @@
             </para>
           </listItem>
 
-          <listItem>
-            <para>
-              <externalLink>
-                <linkText>Flapjax: A Programming Language for Ajax Applications</linkText>
-                <linkUri>http://cs.brown.edu/~sk/Publications/Papers/Published/mgbcgbk-flapjax/paper.pdf</linkUri>
-              </externalLink>
-            </para>
-          </listItem>
+          
 
           <listItem>
             <para>
