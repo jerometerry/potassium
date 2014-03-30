@@ -22,11 +22,7 @@
     <section>
       <title>Overview</title>
       <content>
-        <para>Potassium is made up of 4 primitives with 14 operations.</para>
-
-        <para>
-          The primitives are <legacyBold>Event</legacyBold>, and <legacyBold>Behavior</legacyBold>.
-        </para>
+        <para>There are two main primitives in FRP</para>
 
         <list class="bullet">
           <listItem>
@@ -36,19 +32,8 @@
           <listItem>
             <legacyBold>Event</legacyBold> - A stream of values (event occurrences) that can be observed
           </listItem>
-
-          <listItem>
-            <legacyBold>FirableEvent</legacyBold> - An Event that exposes a Fire method
-          </listItem>
-
-          <listItem>
-            <legacyBold>EventRepeater</legacyBold> - EventRepeater fires values observed from another Event
-          </listItem>
         </list>
-
-        <para>The operations are Accum, Apply, Coalesce, Collect, Filter, Fire, Gate, Hold, Lift, Map, Merge, Repeat, Snapshot, Switch</para>
-
-        <para>Potassium uses the Publish / Subscribe Pattern: FirableEvent fires events, Observable.Subscribe listens for the events.</para>
+        
       </content>
     </section>
 
