@@ -67,8 +67,7 @@ namespace Potassium.Core
         /// Creates a new Behavior with the Value of current Behavior, that updates 
         /// whenever the current Behavior updates
         /// </summary>
-        /// <returns>A new Behavior with the Value of current Behavior, that updates 
-        /// whenever the current Behavior updates</returns>
+        /// <returns>The clone</returns>
         public Behavior<T> Clone()
         {
             return new Behavior<T>(this.Value, this.source);
@@ -161,7 +160,7 @@ namespace Potassium.Core
         }
 
         /// <summary>
-        /// Creates an Event that fires the Behaviors initial value, and whenever the Behaviors value changes.
+        /// Creates an Event that fires the Behaviors initial value, and whenever the Behaviors underlying Event fires.
         /// </summary>
         /// <returns>The event streams</returns>
         public Event<T> ToEventWithInitialFire()
