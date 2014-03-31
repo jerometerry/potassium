@@ -3,9 +3,13 @@
   <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
     <introduction>
       <para>
-        According to the Haskell Wiki, 
+        According to the
+        <externalLink>
+          <linkText>Haskell Wiki</linkText>
+          <linkUri>http://www.haskell.org/haskellwiki/Functional_Reactive_Programming</linkUri>
+        </externalLink>,
         <quoteInline address="http://www.haskell.org/haskellwiki/Functional_Reactive_Programming">
-          Functional Reactive Programming (FRP) integrates time flow and compositional events into functional programming. 
+          Functional Reactive Programming (FRP) integrates time flow and compositional events into functional programming.
           This provides an elegant way to express computation in domains such as interactive animations, robotics, computer vision, user interfaces, and simulation.
         </quoteInline>
       </para>
