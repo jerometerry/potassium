@@ -36,7 +36,7 @@ Here's an example illustrating the use of Events and Behaviors. The values **1**
 ```
 	FirableEvent<int> evt = new FirableEvent<int>();
 	Behavior<int> beh = evt.Hold(0);
-	Event<int> vals = beh.Values();
+	Event<int> vals = beh.ToEventWithInitialFire();
 	ISubscription<int> s = vals.Subscribe((v) => {
 		Console.WriteLine("{0}", v);
 	});
@@ -45,7 +45,7 @@ Here's an example illustrating the use of Events and Behaviors. The values **1**
 	}
 ```
 
-**0** is written to the console because the **Behavior.Values()** generates an **Event** that, on subscription, fires the value of the **Behavior**.
+**0** is written to the console because the **Behavior.ToEventWithInitialFire()** generates an **Event** that, on subscription, fires the value of the **Behavior**.
 
 The operations on **Events** and **Behaviors** are what make FRP interesting. 
 
