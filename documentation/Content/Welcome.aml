@@ -3,7 +3,23 @@
   <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
     <introduction>
       <para>
-        Potassium is a Functional Reactive Programming Library for .NET, based on
+        According to the Haskell Wiki, 
+        <quoteInline address="http://www.haskell.org/haskellwiki/Functional_Reactive_Programming">
+          Functional Reactive Programming (FRP) integrates time flow and compositional events into functional programming. 
+          This provides an elegant way to express computation in domains such as interactive animations, robotics, computer vision, user interfaces, and simulation.
+        </quoteInline>
+      </para>
+
+      <para>
+        For a more elaborate explanation of FRP, see Conal Elliott's Stack Overflow answer to
+        <externalLink>
+          <linkText>"What is functional reactive programming?"</linkText>
+          <linkUri>http://stackoverflow.com/questions/1028250/what-is-functional-reactive-programming</linkUri>
+        </externalLink>
+      </para>
+
+      <para>
+        Potassium is a FRP Library for .NET, based on
         <externalLink>
           <linkText>Sodium</linkText>
           <linkUri>https://github.com/kentuckyfriedtakahe/sodium</linkUri>
@@ -33,7 +49,7 @@
             <legacyBold>Event</legacyBold> - A stream of values (event occurrences) that can be observed
           </listItem>
         </list>
-        
+
       </content>
     </section>
 
