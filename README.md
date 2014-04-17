@@ -7,7 +7,7 @@ FRP was introduced by [Conal Elliott](http://conal.net/) and [Paul Hudak](http:/
 
 [Conal Elliott's](http://conal.net/) answer to [What is (Functional) Reactive Programming?'](http://stackoverflow.com/questions/1028250/what-is-functional-reactive-programming) is a great resource for learning about FRP.
 
-Potassium API documentation is located [here](http://jterry.azurewebsites.net/potassium/).
+Potassium API documentation is located [here](http://www.jerometerry.com/potassium/).
 
 Installing
 ==========
